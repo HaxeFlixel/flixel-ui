@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<data>
+	
+	<sprite src="ui/title_back" x="0" y="0"/>
+		
+	<button center_x="true" y="535" width="64" height="32" label="Start" text_x="-3" text_y="-1">
+		<text id="hilight" font="vera" size="16" style="bold" color="0xffff00" shadow="1" align="center"/>
+		<text id="normal" font="vera" size="16" style="bold" color="0xffffff" shadow="1" align="center"/>		
+		<param type="string" value="start"/>
+		<graphic id="border" visible="false"/>
+		<graphic id="hilight" visible="false"/>
+		<graphic id="normal" visible="false"/>
+	</button>
+	
+</data>
