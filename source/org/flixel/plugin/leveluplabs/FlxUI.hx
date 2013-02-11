@@ -1,4 +1,6 @@
 package org.flixel.plugin.leveluplabs;
+import nme.geom.Point;
+import nme.geom.Rectangle;
 import haxe.xml.Fast;
 import nme.Assets;
 import nme.display.BitmapData;
@@ -219,6 +221,7 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 			definition = _definition_index.get(use_def);
 		}
 		switch(type) {
+			case "chrome","9slicesprite": return _load9SliceSprite(data, definition);
 			case "sprite": return _loadSprite(data,definition);
 			case "text": return _loadText(data,definition);
 			case "button": return _loadButton(data,definition);
@@ -294,33 +297,86 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 		if (the_data.hasNode.graphic) {
 			var up_graphic:String = "";
 			var over_graphic:String = "";
+			var up_slice9:String = "";
+			var over_slice9:String = "";
+			var up_rect:String = "";
+			var over_rect:String = "";
 			for (graphicNode in the_data.nodes.graphic) {
 				var graphic_id:String = U.xml_str(graphicNode.x, "id", true);
 				var vis:String = U.xml_str(graphicNode.x, "visible");
 				var image:String = U.xml_str(graphicNode.x, "image");
+				var slice9:String = U.xml_str(graphicNode.x, "slice9");
+				var rect:String = U.xml_str(graphicNode.x, "rect");
 				switch(graphic_id) {
 					case "inactive", "", "normal": 
 						fb.showNormal = (vis!="false");
 						if (image != "") { 
 							up_graphic = image;
 						}
+						up_slice9 = slice9;
+						up_rect = rect;
 					case "active", "hilight", "over", "hover": 
 						fb.showHilight = (vis!="false");
 						if (image != "") { 
 							over_graphic = image;
 						}
+						over_slice9 = slice9;
+						over_rect = rect;
 					case "border": 
 						if(vis == "false"){
 							fb.borderColor = 0x00000000;
 						}
 				}
 			}
-			
+						
 			if (up_graphic != "") {
 				if (over_graphic == "") {
 					over_graphic = up_graphic;
 				}
-				fb.loadGraphic(U.fs(U.gfx(up_graphic)),U.fs(U.gfx(over_graphic)));
+				
+				//The eventual sprites we feed into loadGraphic()
+				var up:FlxSprite = null;
+				var over:FlxSprite = null;
+				
+				/*
+				//Bitmap content
+				var bmp_up:BitmapData = null;
+				var bmp_over:BitmapData = null;
+				
+				if (up_rect != "") {
+					if(over_rect == "") {		//if over rectangle not defined, copy up rectangle
+						over_rect = up_rect;
+					}
+					bmp_up = _loadBitmapRect(up_graphic, up_rect);	//load part of a spritesheet
+				}else {
+					bmp_up = Assets.getBitmapData(U.gfx(up_graphic));				//load the whole thing
+				}
+				
+				if (over_rect != "") {			//same 
+					bmp_over = _loadBitmapRect(over_graphic, over_rect);
+				}else {
+					bmp_over = Assets.getBitmapData(U.gfx(over_graphic));
+				}*/
+								
+				
+				if (up_slice9 != ""){			//if over slice9 not defined, copy up slice9
+					if(over_slice9 == ""){
+						over_slice9 = up_slice9;
+					}
+					//load the slice9 sprite
+					up = new Flx9SliceSprite(0, 0, U.gfx(up_graphic), new Rectangle(0, 0, W, H), up_slice9);
+				}else {
+					up = U.fs(U.gfx(up_graphic));			//load the thing as-is
+				}
+				
+				if (over_slice9 != "") {		//same
+					over = new Flx9SliceSprite(0, 0, U.gfx(over_graphic), new Rectangle(0, 0, W, H), over_slice9);
+				}else {
+					over = U.fs(U.gfx(over_graphic));
+				}
+				
+				//load the resultant sprites
+				fb.loadGraphic(up, over);
 			}
 		}
 		
@@ -383,6 +439,48 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 		}			
 		
 		return fb;
+	}
+	
+	private static inline function _loadBitmapRect(source:String,rect_str:String):BitmapData {
+		var b1:BitmapData = Assets.getBitmapData(U.gfx(source));
+		var r:Rectangle = Flx9SliceSprite.getRectFromString(rect_str);
+		var b2:BitmapData = new BitmapData(Std.int(r.width), Std.int(r.height), true, 0x00ffffff);					
+		b2.copyPixels(b1, r, new Point(0, 0));
+		return b2;
+	}
+	
+	private function _load9SliceSprite(data:Fast,definition:Fast=null):Flx9SliceSprite{
+		var src:String = ""; 
+		var f9s:Flx9SliceSprite = null;
+		
+		var the_data:Fast = data;
+		if (definition != null) { the_data = definition;}
+		
+		src = U.xml_gfx(the_data.x, "src");
+		
+		var rc:Rectangle;
+		var slice9:String = "";
+		
+		var rect_w:Int = U.xml_i(data.x, "width");
+		var rect_h:Int = U.xml_i(data.x, "height");
+		
+		if (rect_w == 0 || rect_h == 0) {
+			return null;
+		}
+		
+		var rc:Rectangle = new Rectangle(0, 0, rect_w, rect_h);
+		var slice9:String = U.xml_str(the_data.x, "slice9");
+		
+		if (src != "") {
+			//(X:Float, Y:Float, Graphic:Dynamic, rc:Rectangle, slice9:String="3,3,7,7") 
+			if(slice9 != ""){
+				f9s = new Flx9SliceSprite(0, 0, src, rc, slice9);
+			}else {
+				f9s = new Flx9SliceSprite(0, 0, src, rc);
+			}
+		}
+		
+		return f9s;
 	}
 	
 	private function _loadSprite(data:Fast,definition:Fast=null):FlxSpriteX{

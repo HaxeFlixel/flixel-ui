@@ -3,6 +3,9 @@
 	
 	<definition id="save_slot">
 	
+		<definition id="chrome" src="ui/chrome/dark_grey"/>
+		<definition id="chrome_inset" src="ui/chrome/dark_grey_inset" slice9="4,4,8,8" />
+	
 		<definition id="sans18" font="vera" size="18" style="bold" color="0xffffff" shadow="1" align="left"/>
 		<definition id="sans14" font="vera" size="14" style="bold" color="0xffffff" shadow="1" align="left"/>
 		<definition id="sans14c" font="vera" size="14" style="bold" color="0xffffff" shadow="1" align="center" dropShadow="true"/>
@@ -15,36 +18,36 @@
 		<definition id="big_button_blue" width="93" height="31" text_x="-2" text_y="0">
 			<text id="hilight" use_def="sans14c"/>
 			<text id="normal" use_def="sans14c"/>
-			<graphic id="normal" image="ui/buttons/button_blue_up"/>
-			<graphic id="hilight" image="ui/buttons/button_blue_over"/>
+			<graphic id="normal" image="ui/buttons/blue" slice9="6,6,12,12"/>
+			<graphic id="hilight" image="ui/buttons/blue_over" slice9="6,6,12,12"/>
 		</definition>
 		
 		<definition id="big_button_gold" width="93" height="31" text_x="-2" text_y="0">
 			<text id="hilight" use_def="sans13c"/>
 			<text id="normal" use_def="sans13c"/>
-			<graphic id="normal" image="ui/buttons/button_gold_up"/>
-			<graphic id="hilight" image="ui/buttons/button_gold_over"/>
+			<graphic id="normal" image="ui/buttons/gold" slice9="6,6,12,12"/>
+			<graphic id="hilight" image="ui/buttons/gold_over" slice9="6,6,12,12"/>
 		</definition>		
 		
 		<definition id="skinny_button_gold" width="93" height="20" text_x="-2" text_y="0">
 			<text id="hilight" use_def="pixel"/>
 			<text id="normal" use_def="pixel"/>
-			<graphic id="normal" image="ui/buttons/button_gold_skinny_up"/>
-			<graphic id="hilight" image="ui/buttons/button_gold_skinny_over"/>
+			<graphic id="normal" image="ui/buttons/gold" slice9="6,6,12,12"/>
+			<graphic id="hilight" image="ui/buttons/gold_over" slice9="6,6,12,12"/>
 		</definition>	
 		
 		<definition id="skinny_button_red" width="93" height="20" text_x="-2" text_y="0">
 			<text id="hilight" use_def="pixel"/>
 			<text id="normal" use_def="pixel"/>
-			<graphic id="normal" image="ui/buttons/button_red_skinny_up"/>
-			<graphic id="hilight" image="ui/buttons/button_red_skinny_over"/>
+			<graphic id="normal" image="ui/buttons/red" slice9="6,6,12,12"/>
+			<graphic id="hilight" image="ui/buttons/red_over" slice9="6,6,12,12"/>
 		</definition>	
 		
 		<definition id="skinny_button_blue" width="93" height="20" text_x="-2" text_y="0">
 			<text id="hilight" use_def="pixel"/>
 			<text id="normal" use_def="pixel"/>
-			<graphic id="normal" image="ui/buttons/button_blue_skinny"/>
-			<graphic id="hilight" image="ui/buttons/button_blue_skinny_over"/>
+			<graphic id="normal" image="ui/buttons/blue" slice9="6,6,12,12"/>
+			<graphic id="hilight" image="ui/buttons/blue_over" slice9="6,6,12,12"/>
 		</definition>	
 		
 		<group id="shadow"/>
@@ -53,7 +56,11 @@
 		<group id="icon_texts"/>			
 		<group id="top"/>	
 		
-		<sprite id="back" src="ui/saveslot" group="back"/>
+		<chrome id="back" use_def="chrome" width="697" height="113" group="back"/>
+		<chrome id="back_inset" x="7" y="7" use_def="chrome_inset" width="574" height="99" group="back"/>
+		
+		<!--<sprite id="back" src="ui/saveslot" group="back"/>-->
+		
 		<sprite id="back_shadow" src="ui/saveslot_shadow" center_on="back" group="shadow"/>		
 				
 		<sprite id="icon" src="other/portrait_mane" x="10" y="11" group="icons"/>

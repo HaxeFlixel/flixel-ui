@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <data>
 	
-	<sprite src="ui/title_back" x="0" y="0"/>
+	<!--This will eventually have some test menus in it-->
+	
+	<sprite x="0" y="0" src="ui/title_back"/>
+	
+	<definition id="grey" src="ui/chrome/dark_grey"/>
 	
 	<definition id="text_button" width="64" height="32" text_x="-3" text_y="-1">
 		<text id="hilight" font="vera" size="16" style="bold" color="0xffff00" shadow="1" align="center"/>
@@ -11,12 +15,10 @@
 		<graphic id="normal" visible="false"/>
 	</definition>
 	
-	<button center_x="true" x="-100" y="535" id="start" use_def="text_button" group="top" label="Saves">
-		<param type="string" value="saves"/>
+	<button center_x="true" x="0" y="535" id="start" use_def="text_button" group="top" label="Back">
+		<param type="string" value="back"/>
 	</button>
 	
-	<button center_x="true" x="100" y="535" id="start" use_def="text_button" group="top" label="Menus">
-		<param type="string" value="menu"/>
-	</button>
+	<chrome x="50" y="150" width="700" height="300" use_def="grey"/>
 	
 </data>
