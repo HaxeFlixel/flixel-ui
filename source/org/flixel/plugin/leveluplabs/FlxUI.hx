@@ -470,13 +470,14 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 		
 		var rc:Rectangle = new Rectangle(0, 0, rect_w, rect_h);
 		var slice9:String = U.xml_str(the_data.x, "slice9");
+		var tile:Bool = U.xml_bool(the_data.x, "tile", false);
+		var smooth:Bool = U.xml_bool(the_data.x, "smooth", false);
 		
 		if (src != "") {
-			//(X:Float, Y:Float, Graphic:Dynamic, rc:Rectangle, slice9:String="3,3,7,7") 
 			if(slice9 != ""){
-				f9s = new Flx9SliceSprite(0, 0, src, rc, slice9);
+				f9s = new Flx9SliceSprite(0, 0, src, rc, slice9, tile, smooth);
 			}else {
-				f9s = new Flx9SliceSprite(0, 0, src, rc);
+				f9s = new Flx9SliceSprite(0, 0, src, rc,"",tile, smooth);
 			}
 		}
 		

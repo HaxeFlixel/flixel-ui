@@ -30,12 +30,17 @@ class Flx9SliceSprite extends FlxSprite
 	 * @param	Graphic	Asset
 	 * @param	Rect	Width/Height of the final scaled sprite
 	 * @param	slice9	"x1,y1,x2,y2" : 2 points (upper-left middle and lower-right middle) that define the 9-slice grid
+	 * @param	tile	Whether to tile the middle pieces or stretch them (default is false --> stretch)
+	 * @param	smooth	When stretching, whether to smooth middle pieces (default false)
 	 * @param 	id	if Graphic is a BitmapData, manually specify its original source id, if any
 	 */
 	
-	public function new(X:Float, Y:Float, Graphic:Dynamic, rc:Rectangle, slice9:String="4,4,8,8", id:String="") 
+	public function new(X:Float, Y:Float, Graphic:Dynamic, rc:Rectangle, slice9:String="", tile:Bool=false, smooth:Bool=false, id:String="") 
 	{
 		super(X, Y, null);
+		if (slice9 == "" || slice9 == null) {
+			slice9 = "4,4,7,7";
+		}
 		
 		if(_canvas == null){
 			_canvas = new Sprite();		
@@ -51,7 +56,7 @@ class Flx9SliceSprite extends FlxSprite
 			asset_id = id;
 		}
 				
-		paintScale9(_canvas.graphics, asset_id, slice9, rc);
+		paintScale9(_canvas.graphics, asset_id, slice9, rc, tile, smooth);
 		
 		var bitmap_data:BitmapData = new BitmapData(Std.int(rc.width), Std.int(rc.height),true,0x00ffffff);
 		bitmap_data.draw(_canvas);
@@ -89,7 +94,17 @@ class Flx9SliceSprite extends FlxSprite
 	//These functions were borrowed from:
 	//https://github.com/ianharrigan/YAHUI/blob/master/src/yahui/style/StyleHelper.hx
 	
-	public static function paintScale9(g:Graphics, assetId:String, scale9:String, rc:Rectangle):Void {
+	/**
+	 * Does the actual drawing for a 9-slice scaled graphic
+	 * @param	g the graphics object for drawing to (ie, sprite.graphic)
+	 * @param	assetId id of bitmapdata asset you are scaling
+	 * @param	scale9 string defining 2 points that define the grid as "x1,y1,x2,y2" (upper-interior-left, lower-interior-right)
+	 * @param	rc rectangle object defining how big you want to scale it to
+	 * @param	tile if false, scale middle pieces, if true, tile them (default false)
+	 * @param 	smooth whether to smooth when scaling or not (default false)
+	 */
+	
+	public static function paintScale9(g:Graphics, assetId:String, scale9:String, rc:Rectangle, tile:Bool=false, smooth:Bool = false):Void {
 		if (scale9 != null) { // create parts
 			var w:Int = Assets.getBitmapData(assetId).width;
 			var h:Int = Assets.getBitmapData(assetId).height;
@@ -113,11 +128,11 @@ class Flx9SliceSprite extends FlxSprite
 			rects.set("bottom", new Rectangle(x1, y2, x2 - x1, h - y2));
 			rects.set("bottom.right", new Rectangle(x2, y2, w - x2, h - y2));
 
-			paintCompoundBitmap(g, assetId, rects, rc);
+			paintCompoundBitmap(g, assetId, rects, rc, tile);
 		}
 	}
 
-	public static function paintCompoundBitmap(g:Graphics, assetId:String, sourceRects:Hash<Rectangle>, targetRect:Rectangle):Void {
+	public static function paintCompoundBitmap(g:Graphics, assetId:String, sourceRects:Hash<Rectangle>, targetRect:Rectangle, tile:Bool=false, smooth:Bool = false):Void {
 		var fillcolor = #if (neko) { rgb:0x00FFFFFF, a:0 }; #else 0x00FFFFFF; #end
 		targetRect.left = Std.int(targetRect.left);
 		targetRect.top = Std.int(targetRect.top);
@@ -127,21 +142,21 @@ class Flx9SliceSprite extends FlxSprite
 		// top row
 		var tl:Rectangle = sourceRects.get("top.left");
 		if (tl != null) {
-			paintBitmapSection(g, assetId, tl, new Rectangle(0, 0, tl.width, tl.height));
+			paintBitmapSection(g, assetId, tl, new Rectangle(0, 0, tl.width, tl.height),null,tile);
 		} else {
 			tl = new Rectangle();
 		}
 
 		var tr:Rectangle = sourceRects.get("top.right");
 		if (tr != null) {
-			paintBitmapSection(g, assetId, tr, new Rectangle(targetRect.width - tr.width, 0, tr.width, tr.height));
+			paintBitmapSection(g, assetId, tr, new Rectangle(targetRect.width - tr.width, 0, tr.width, tr.height),null,tile);
 		} else {
 			tr = new Rectangle();
 		}
 
 		var t:Rectangle = sourceRects.get("top");
 		if (t != null) {
-			paintBitmapSection(g, assetId, t, new Rectangle(tl.width, 0, (targetRect.width - tl.width - tr.width), t.height));
+			paintBitmapSection(g, assetId, t, new Rectangle(tl.width, 0, (targetRect.width - tl.width - tr.width), t.height),null,tile);
 		} else {
 			t = new Rectangle();
 		}
@@ -149,21 +164,21 @@ class Flx9SliceSprite extends FlxSprite
 		// bottom row
 		var bl:Rectangle = sourceRects.get("bottom.left");
 		if (bl != null) {
-			paintBitmapSection(g, assetId, bl, new Rectangle(0, targetRect.height - bl.height, bl.width, bl.height));
+			paintBitmapSection(g, assetId, bl, new Rectangle(0, targetRect.height - bl.height, bl.width, bl.height),null,tile);
 		} else {
 			bl = new Rectangle();
 		}
 
 		var br:Rectangle = sourceRects.get("bottom.right");
 		if (br != null) {
-			paintBitmapSection(g, assetId, br, new Rectangle(targetRect.width - br.width, targetRect.height - br.height, br.width, br.height));
+			paintBitmapSection(g, assetId, br, new Rectangle(targetRect.width - br.width, targetRect.height - br.height, br.width, br.height),null,tile);
 		} else {
 			br = new Rectangle();
 		}
 
 		var b:Rectangle = sourceRects.get("bottom");
 		if (b != null) {
-			paintBitmapSection(g, assetId, b, new Rectangle(bl.width, targetRect.height - b.height, (targetRect.width - bl.width - br.width), b.height));
+			paintBitmapSection(g, assetId, b, new Rectangle(bl.width, targetRect.height - b.height, (targetRect.width - bl.width - br.width), b.height),null,tile);
 		} else {
 			b = new Rectangle();
 		}
@@ -171,27 +186,27 @@ class Flx9SliceSprite extends FlxSprite
 		// middle row
 		var l:Rectangle = sourceRects.get("left");
 		if (l != null) {
-			paintBitmapSection(g, assetId, l, new Rectangle(0, tl.height, l.width, (targetRect.height - tl.height - bl.height)));
+			paintBitmapSection(g, assetId, l, new Rectangle(0, tl.height, l.width, (targetRect.height - tl.height - bl.height)),null,tile);
 		} else {
 			l = new Rectangle();
 		}
 
 		var r:Rectangle = sourceRects.get("right");
 		if (r != null) {
-			paintBitmapSection(g, assetId, r, new Rectangle(targetRect.width - r.width, tr.height, r.width, (targetRect.height - tl.height - bl.height)));
+			paintBitmapSection(g, assetId, r, new Rectangle(targetRect.width - r.width, tr.height, r.width, (targetRect.height - tl.height - bl.height)),null,tile);
 		} else {
 			r = new Rectangle();
 		}
 
 		var m:Rectangle = sourceRects.get("middle");
 		if (m != null) {
-			paintBitmapSection(g, assetId, m, new Rectangle(l.width, t.height, (targetRect.width - l.width - r.width), (targetRect.height - t.height - b.height)));
+			paintBitmapSection(g, assetId, m, new Rectangle(l.width, t.height, (targetRect.width - l.width - r.width), (targetRect.height - t.height - b.height)),null,tile);
 		} else {
 			m = new Rectangle();
 		}
 	}
 
-	public static function paintBitmapSection(g:Graphics, assetId:String, src:Rectangle, dst:Rectangle, srcData:BitmapData = null):Void {
+	public static function paintBitmapSection(g:Graphics, assetId:String, src:Rectangle, dst:Rectangle, srcData:BitmapData = null, tile:Bool = false, smooth:Bool = false):Void {
 		if (srcData == null) {
 			srcData = Assets.getBitmapData(assetId);
 		}
@@ -228,10 +243,18 @@ class Flx9SliceSprite extends FlxSprite
 		}
 
 		var mat:Matrix = new Matrix();
-        mat.scale(dst.width / section.width, dst.height / section.height);
-        mat.translate(dst.left, dst.top);
+		
+		if (!tile) {
+			mat = new Matrix();
+			mat.scale(dst.width / section.width, dst.height / section.height);
+			mat.translate(dst.left, dst.top);			
+			g.beginBitmapFill(section, mat, false, false);
+		}else {
+			mat.identity();
+			mat.translate(dst.left, dst.top);
+			g.beginBitmapFill(section, mat, true, false);
+		}		
 
-		g.beginBitmapFill(section, mat, false, false);
         g.drawRect(dst.x, dst.y, dst.width, dst.height);
         g.endFill();
 	}
