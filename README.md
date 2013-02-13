@@ -10,6 +10,9 @@ directory as "flixel/"
 If you want to include this in your own Haxe+Flixel project, just copy/paste the
 "leveluplabs" folder into org/flixel/plugin/ and you should be ready to go.
 
+Public Pivotal Tracker Project:
+https://www.pivotaltracker.com/projects/755921
+
 More documentation to follow.
 
 The example project uses free and CC licensed assets:
