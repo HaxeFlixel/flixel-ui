@@ -13,14 +13,16 @@ import org.flixel.FlxText;
 class FlxTextX extends FlxText
 {
 
-	public var dropShadow(getDropShadow, setDropShadow):Bool;
-	
+	public var dropShadow(getDropShadow, setDropShadow):Bool;	
 	private var _dropShadow:Bool = false;
 	
 	public function new(X:Float, Y:Float, Width:Int, Text:String = null, EmbeddedFont:Bool = true)	
 	{
 		super(X, Y, Width, Text, EmbeddedFont);
 	}
+	
+	public function textWidth():Float {	return _textField.textWidth; }
+	public function textHeight():Float { return _textField.textHeight; }
 	
 	public function getDropShadow():Bool {
 		return _dropShadow;

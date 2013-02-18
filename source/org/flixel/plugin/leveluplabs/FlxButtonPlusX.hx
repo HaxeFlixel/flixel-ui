@@ -50,8 +50,8 @@ class FlxButtonPlusX extends FlxButtonPlus
 		public function getTextX():Int { return _textX; }
 		public function getTextY():Int { return _textY; }
 	
-		public function setTextX(newX:Int) { _textX = newX; return setX(_x); }
-		public function setTextY(newY:Int) { _textY = newY; return setY(_y); } 
+		public function setTextX(newX:Int) { _textX = newX; setX(_x); return newX; }
+		public function setTextY(newY:Int) { _textY = newY; setY(_y); return newY; } 
 	
 		public override function setX(newX:Int):Int{
 			super.setX(newX);

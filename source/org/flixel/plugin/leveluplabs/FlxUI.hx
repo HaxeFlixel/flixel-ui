@@ -224,7 +224,8 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 			case "chrome","9slicesprite": return _load9SliceSprite(data, definition);
 			case "sprite": return _loadSprite(data,definition);
 			case "text": return _loadText(data,definition);
-			case "button": return _loadButton(data,definition);
+			case "button": return _loadButton(data, definition);
+			case "checkbox": return _loadCheckBox(data, definition);
 			case "save_slot": return _loadSaveSlot(data, definition);
 			default: 
 				//If I don't know how to load this thing, I will request it from my pointer:			
@@ -261,47 +262,84 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 		return ft;
 	}
 	
+	private function _loadCheckBox(data:Fast, definition:Fast = null):FlxCheckBox {
+		var src:String = "";
+		var fc:FlxCheckBox = null;
+		
+		var default_data:Fast = data;
+		if (definition != null) { default_data = definition; }
+		
+		var label:String = U.xml_str(data.x, "label");
+		var W:Int = U.xml_i(default_data.x, "width", 100);
+		var H:Int = U.xml_i(default_data.x, "height", 32);
+		var check_src:String = U.xml_str(default_data.x, "check_src", true);
+		var box_src:String = U.xml_str(default_data.x, "box_src", true);
+		var box_over_src:String = U.xml_str(default_data.x, "box_over_src", true);
+		
+		var params:Array<Dynamic> = getParams(data);
+		
+		var up_sprite:FlxSprite = U.fs(U.gfx(box_src));		
+		
+		var over_sprite:FlxSprite;
+		if (box_over_src != "") {
+			over_sprite = U.fs(U.gfx(box_over_src));
+		}else {
+			over_sprite = up_sprite;
+		}
+		
+		fc = new FlxCheckBox(0, 0, _onClickCheckBox, params, label, W, H);
+						
+		if (up_sprite != null) {
+			fc.loadGraphic(up_sprite, over_sprite);
+		}
+		
+		var check_sprite:FlxSprite = U.fs(U.gfx(check_src));
+		fc.loadCheckGraphic(check_sprite);
+		
+		formatButtonText(default_data, fc);
+		var text_x:Int = U.xml_i(default_data.x, "text_x");
+		var text_y:Int = U.xml_i(default_data.x, "text_y");		
+		
+		fc.textX = fc.textX + text_x;				
+		fc.textY = fc.textY + text_y;		
+						
+		return fc;
+	}
+	
 	private function _loadButton(data:Fast,definition:Fast=null):FlxButtonPlusX {
 		var src:String = ""; 
 		var fb:FlxButtonPlusX = null;
 		
-		var the_data:Fast = data;
-		if (definition != null) { the_data = definition;}
+		var default_data:Fast = data;
+		if (definition != null) { default_data = definition;}
 				
 		var label:String = U.xml_str(data.x, "label");
-		var W:Int = U.xml_i(the_data.x, "width");
-		var H:Int = U.xml_i(the_data.x, "height");	
+		var W:Int = U.xml_i(default_data.x, "width");
+		var H:Int = U.xml_i(default_data.x, "height");	
 		var vis_str:String = U.xml_str(data.x, "visible", true);
 		var isVis:Bool = U.xml_bool(data.x, "visible", true);		
 				
-		var params:Array<Dynamic> = null;
-		if (data.hasNode.param) {
-			params = new Array<Dynamic>();
-			for (param in data.nodes.param) {
-				if(param.has.type && param.has.value){
-					var type:String = param.att.type;
-					type = type.toLowerCase();
-					switch(type) {
-						case "string": params.push(new String(param.att.value));
-						case "int": params.push(Std.parseInt(param.att.value));
-						case "float": params.push(Std.parseFloat(param.att.value));
-						case "color", "hex":params.push(U.parseHex(param.att.value, true));
-					}
-				}
-			}
-		}		
-				
+		var params:Array<Dynamic> = getParams(data);
+		
 		fb = new FlxButtonPlusX(0, 0, _onClickButton, params, label, W, H);
 		fb.visible = isVis;
+				
+		formatButtonText(default_data, fb);
 		
-		if (the_data.hasNode.graphic) {
+		var text_x:Int = U.xml_i(data.x, "text_x");
+		var text_y:Int = U.xml_i(data.x, "text_y");
+			
+		fb.textY = Std.int((fb.height - fb.textNormal.frameHeight) / 2) + text_y;
+		fb.textX = text_x;
+				
+		if (default_data.hasNode.graphic) {
 			var up_graphic:String = "";
 			var over_graphic:String = "";
 			var up_slice9:String = "";
 			var over_slice9:String = "";
 			var up_rect:String = "";
 			var over_rect:String = "";
-			for (graphicNode in the_data.nodes.graphic) {
+			for (graphicNode in default_data.nodes.graphic) {
 				var graphic_id:String = U.xml_str(graphicNode.x, "id", true);
 				var vis:String = U.xml_str(graphicNode.x, "visible");
 				var image:String = U.xml_str(graphicNode.x, "image");
@@ -337,28 +375,7 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 				//The eventual sprites we feed into loadGraphic()
 				var up:FlxSprite = null;
 				var over:FlxSprite = null;
-				
-				/*
-				//Bitmap content
-				var bmp_up:BitmapData = null;
-				var bmp_over:BitmapData = null;
-				
-				if (up_rect != "") {
-					if(over_rect == "") {		//if over rectangle not defined, copy up rectangle
-						over_rect = up_rect;
-					}
-					bmp_up = _loadBitmapRect(up_graphic, up_rect);	//load part of a spritesheet
-				}else {
-					bmp_up = Assets.getBitmapData(U.gfx(up_graphic));				//load the whole thing
-				}
-				
-				if (over_rect != "") {			//same 
-					bmp_over = _loadBitmapRect(over_graphic, over_rect);
-				}else {
-					bmp_over = Assets.getBitmapData(U.gfx(over_graphic));
-				}*/
 								
-				
 				if (up_slice9 != ""){			//if over slice9 not defined, copy up slice9
 					if(over_slice9 == ""){
 						over_slice9 = up_slice9;
@@ -378,50 +395,13 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 				//load the resultant sprites
 				fb.loadGraphic(up, over);
 			}
-		}
+		}			
 		
-		if (the_data.hasNode.text) {
-			var text_x:Int = U.xml_i(the_data.x, "text_x");
-			var text_y:Int = U.xml_i(the_data.x, "text_y");
-			for (textNode in the_data.nodes.text) {
-				var use_def:String = U.xml_str(textNode.x, "use_def", true);
-				var text_def:Fast = textNode;
-				if (use_def != "") {
-					text_def = _definition_index.get(use_def);
-				}			
-				
-				var text_data:Fast = textNode;
-				if (text_def != null) { text_data = text_def; };
-				
-				var case_id:String = U.xml_str(textNode.x, "id", true);
-				var the_font:String = _loadFontFace(text_data);
-				var size:Int = U.xml_i(text_data.x, "size"); if (size == 0) { size = 8;}
-				var color:Int = _loadColor(text_data);				
-				var shadow:Int = U.xml_i(text_data.x, "shadow");
-				var dropShadow:Bool = U.xml_bool(text_data.x, "dropShadow");
-				var align:String = U.xml_str(text_data.x, "align", true); if (align == "") { align = null;}
-				switch(case_id) {
-					case "inactive","", "normal": 
-						fb.textNormalX.setFormat(the_font, size, color, align, shadow);
-						fb.textNormalX.dropShadow = true;
-					case "active","hilight", "over", "hover": 
-						fb.textHighlightX.setFormat(the_font, size, color, align, shadow);
-						fb.textHighlightX.dropShadow = true;
-				}				
-				
-				fb.textHighlight.visible = false;
-				fb.textNormal.visible = true;				
-				
-				fb.textY = Std.int((fb.height - fb.textNormal.frameHeight) / 2) + text_y;
-				fb.textX = text_x;
-			}
-		}
-		
-		if (the_data.hasNode.color) {
+		if (default_data.hasNode.color) {
 			var arrayActive:Array<BitmapInt32> = new Array<BitmapInt32>();
 			var arrayInactive:Array<BitmapInt32> = new Array<BitmapInt32>();
 			var borderColor:BitmapInt32 = 0xffffffff;
-			for (colorNode in the_data.nodes.color) {
+			for (colorNode in default_data.nodes.color) {
 				var color_id:String = U.xml_str(colorNode.x, "id", true);
 				var color:BitmapInt32 = cast(_loadColor(colorNode), BitmapInt32);
 				switch(color_id) {
@@ -564,12 +544,78 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 		return the_font;
 	}
 	
+	private function _onClickCheckBox(params:Dynamic = null):Void {
+		FlxG.log("FlxUI._onClickCheckBox(" + params + ")");
+		if (_ptr != null) {
+			_ptr.getEvent("click_checkbox", this, params);
+		}		
+	}
+	
 	private function _onClickButton(params:Dynamic = null):Void {
 		FlxG.log("FlxUI._onClickButton(" + params + ")");
 		if (_ptr != null) {
 			_ptr.getEvent("click_button", this, params);
 		}
 	}
-
 	
+	/**********UTILITY FUNCTIONS************/
+	
+	/**
+	 * Parses params out of xml and loads them in the correct type
+	 * @param	data
+	 */
+	
+	private static inline function getParams(data:Fast):Array<Dynamic>{
+		var params:Array<Dynamic> = null;
+		if (data.hasNode.param) {
+			params = new Array<Dynamic>();
+			for (param in data.nodes.param) {
+				if(param.has.type && param.has.value){
+					var type:String = param.att.type;
+					type = type.toLowerCase();
+					switch(type) {
+						case "string": params.push(new String(param.att.value));
+						case "int": params.push(Std.parseInt(param.att.value));
+						case "float": params.push(Std.parseFloat(param.att.value));
+						case "color", "hex":params.push(U.parseHex(param.att.value, true));
+					}
+				}
+			}
+		}
+		return params;
+	}	
+	
+	private inline function formatButtonText(data:Fast, fb:FlxButtonPlusX):Void {
+		if (data.hasNode.text) {
+			for (textNode in data.nodes.text) {
+				var use_def:String = U.xml_str(textNode.x, "use_def", true);
+				var text_def:Fast = textNode;
+				if (use_def != "") {
+					text_def = _definition_index.get(use_def);
+				}			
+				
+				var text_data:Fast = textNode;
+				if (text_def != null) { text_data = text_def; };
+				
+				var case_id:String = U.xml_str(textNode.x, "id", true);
+				var the_font:String = _loadFontFace(text_data);
+				var size:Int = U.xml_i(text_data.x, "size"); if (size == 0) { size = 8;}
+				var color:Int = _loadColor(text_data);				
+				var shadow:Int = U.xml_i(text_data.x, "shadow");
+				var dropShadow:Bool = U.xml_bool(text_data.x, "dropShadow");
+				var align:String = U.xml_str(text_data.x, "align", true); if (align == "") { align = null;}
+				switch(case_id) {
+					case "inactive","", "normal": 
+						fb.textNormalX.setFormat(the_font, size, color, align, shadow);
+						fb.textNormalX.dropShadow = true;
+					case "active","hilight", "over", "hover": 
+						fb.textHighlightX.setFormat(the_font, size, color, align, shadow);
+						fb.textHighlightX.dropShadow = true;
+				}				
+				
+				fb.textHighlight.visible = false;
+				fb.textNormal.visible = true;								
+			}
+		}
+	}
 }

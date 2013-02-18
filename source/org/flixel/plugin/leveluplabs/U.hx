@@ -46,26 +46,28 @@ class U
 	 * Safety wrapper for reading a float attribute from xml
 	 * @param	data the Xml object
 	 * @param	att the name of the attribute
+	 * @param 	default_ what to return if the value doesn't exist
 	 * @return  the attribute as a float if it exists, otherwise returns 0
 	 */
 	
-	public static function xml_f(data:Xml, att:String):Float{
+	public static function xml_f(data:Xml, att:String, default_:Float=0):Float{
 		if (data.get(att) != null) {
 			return Std.parseFloat(data.get(att));
-		}return 0;
+		}return default_;
 	}
 	
 	/**
 	 * Safety wrapper for reading an int attribute from xml
 	 * @param	data the Xml object
 	 * @param	att the name of the attribute
+	 * @param 	default_ what to return if the value doesn't exist
 	 * @return  the attribute as an int if it exists, otherwise returns 0
 	 */
 	
-	public static function xml_i(data:Xml, att:String):Int {
+	public static function xml_i(data:Xml, att:String, default_:Int=0):Int {
 		if (data.get(att) != null) {
 			return Std.parseInt(data.get(att));
-		}return 0;
+		}return default_;
 	}
 	
 	/**

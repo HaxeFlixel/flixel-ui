@@ -3,10 +3,26 @@
 	
 	<!--This will eventually have some test menus in it-->
 	
-	<sprite x="0" y="0" src="ui/title_back"/>
+	<!--DEFS-->
 	
 	<definition id="grey" src="ui/chrome/dark_grey"/>
 	
+	<definition id="sans12" font="vera" size="12" style="bold" color="0xffffff" shadow="1" align="left"/>
+	<definition id="sans12y" font="vera" size="12" style="bold" color="0xffcc00" shadow="1" align="left"/>
+	
+	<definition id="sans16" font="vera" size="16" style="bold" color="0xffffff" shadow="1" align="left"/>
+	<definition id="sans16y" font="vera" size="16" style="bold" color="0xffcc00" shadow="1" align="left"/>
+		
+	<definition id="check_small" box_src="ui/misc/check_box_small" check_src="ui/misc/check_small">
+		<text id="hilight" use_def="sans12y" />
+		<text id="normal" use_def="sans12" />				
+	</definition>
+	
+	<definition id="check_big" box_src="ui/misc/check_box_big" check_src="ui/misc/check_big">
+		<text id="hilight" use_def="sans16y"/>
+		<text id="normal" use_def="sans16"/>				
+	</definition>
+		
 	<definition id="text_button" width="64" height="32" text_x="-3" text_y="-1">
 		<text id="hilight" font="vera" size="16" style="bold" color="0xffff00" shadow="1" align="center"/>
 		<text id="normal" font="vera" size="16" style="bold" color="0xffffff" shadow="1" align="center"/>		
@@ -14,11 +30,23 @@
 		<graphic id="hilight" visible="false"/>
 		<graphic id="normal" visible="false"/>
 	</definition>
+
+	<!--STUFF-->
 	
+	<sprite x="0" y="0" src="ui/title_back"/>
+
 	<button center_x="true" x="0" y="535" id="start" use_def="text_button" group="top" label="Back">
 		<param type="string" value="back"/>
 	</button>
 	
 	<chrome x="50" y="150" width="700" height="300" use_def="grey"/>
+
+	<checkbox x="70" y="170" use_def="check_small" label="Thing 1">
+		<param type="string" value="thing 1"/>
+	</checkbox>
+	
+	<checkbox x="70" y="270" use_def="check_big" label="Thing 2">
+		<param type="string" value="thing 2"/>
+	</checkbox>
 	
 </data>
