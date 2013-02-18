@@ -40,6 +40,13 @@ class FlxCheckBox extends FlxButtonPlusX
 		_checkMark = null;
 	}
 	
+	public override function setText(value:String):String
+	{
+		super.setText(value);
+		_updateRect();
+		return value;
+	}
+	
 	public override function loadGraphic(normal:FlxSprite, highlight:FlxSprite):Void {
 		super.loadGraphic(normal, highlight);
 		lineUpTextFields();

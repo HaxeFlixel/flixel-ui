@@ -8,7 +8,9 @@
 	<definition id="grey" src="ui/chrome/dark_grey"/>
 	
 	<definition id="sans12" font="vera" size="12" style="bold" color="0xffffff" shadow="1" align="left"/>
+	<definition id="tempesta8" font="pf_tempesta_seven" size="8" style="bold" color="0xffffff" shadow="1" align="left"/>
 	<definition id="sans12y" font="vera" size="12" style="bold" color="0xffcc00" shadow="1" align="left"/>
+	<definition id="tempesta8y" font="pf_tempesta_seven" size="8" style="bold" color="0xffcc00" shadow="1" align="left"/>
 	
 	<definition id="sans16" font="vera" size="16" style="bold" color="0xffffff" shadow="1" align="left"/>
 	<definition id="sans16y" font="vera" size="16" style="bold" color="0xffcc00" shadow="1" align="left"/>
@@ -22,7 +24,12 @@
 		<text id="hilight" use_def="sans16y"/>
 		<text id="normal" use_def="sans16"/>				
 	</definition>
-		
+	
+	<definition id="radio_1" radio_src="ui/misc/radio" dot_src="ui/misc/radio_dot">
+		<text id="hilight" use_def="tempesta8y"/>
+		<text id="normal" use_def="tempesta8"/>
+	</definition>
+	
 	<definition id="text_button" width="64" height="32" text_x="-3" text_y="-1">
 		<text id="hilight" font="vera" size="16" style="bold" color="0xffff00" shadow="1" align="center"/>
 		<text id="normal" font="vera" size="16" style="bold" color="0xffffff" shadow="1" align="center"/>		
@@ -45,8 +52,19 @@
 		<param type="string" value="thing 1"/>
 	</checkbox>
 	
-	<checkbox x="70" y="270" use_def="check_big" label="Thing 2">
+	<checkbox x="70" y="200" use_def="check_big" label="Thing 2">
 		<param type="string" value="thing 2"/>
 	</checkbox>
+	
+	<radio_group x="200" y="170" use_def="radio_1">
+		<!--callback parameter for clicking anything in this group-->
+		<param type="string" value="dr_seuss"/>		
+		
+		<!--actual radio button elements-->
+		<radio code="1_fish" label="One Fish"/>
+		<radio code="2_fish" label="Two Fish"/>
+		<radio code="0xff0000_fish" label="Red Fish"/>
+		<radio code="0x0000ff_fish" label="Blue Fish"/>
+	</radio_group>
 	
 </data>

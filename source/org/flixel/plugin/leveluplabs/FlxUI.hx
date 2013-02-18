@@ -226,6 +226,7 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 			case "text": return _loadText(data,definition);
 			case "button": return _loadButton(data, definition);
 			case "checkbox": return _loadCheckBox(data, definition);
+			case "radio_group": return _loadRadioGroup(data, definition);
 			case "save_slot": return _loadSaveSlot(data, definition);
 			default: 
 				//If I don't know how to load this thing, I will request it from my pointer:			
@@ -260,6 +261,68 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 		var ft:FlxText = new FlxText(0, 0, W, text);
 		ft.setFormat(the_font, size, color, align, shadow);
 		return ft;
+	}
+	
+	private function _loadRadioGroup(data:Fast, definition:Fast = null):FlxRadioGroup {
+		var frg:FlxRadioGroup = null;
+		
+		var default_data:Fast = data;
+		if (definition != null) { default_data = definition; }
+		
+		var dot_src:String = U.xml_str(default_data.x, "dot_src", true);
+		var radio_src:String = U.xml_str(default_data.x, "radio_src", true);
+		var radio_over_src:String = U.xml_str(default_data.x, "radio_over_src", true);
+		
+		var labels:Array<String> = new Array<String>();
+		var codes:Array<String> = new Array<String>();
+		
+		for (radioNode in data.nodes.radio) {
+			var code:String = U.xml_str(radioNode.x, "code", true);
+			var label:String = U.xml_str(radioNode.x, "label");
+			codes.push(code);
+			labels.push(label);
+		}
+		
+		var y_space:Float = U.xml_f(data.x, "y_space", 25);
+		
+		var params:Array<Dynamic> = getParams(data);
+		
+		var up_sprite:FlxSprite = U.fs(U.gfx(radio_src));		
+		
+		var over_sprite:FlxSprite;
+		if (radio_over_src != "") {
+			over_sprite = U.fs(U.gfx(radio_over_src));
+		}else {
+			over_sprite = up_sprite;
+		}
+		
+		var dot_sprite:FlxSprite;
+		if (dot_src != "") {
+			dot_sprite = U.fs(U.gfx(dot_src));
+		}else {
+			dot_sprite = new FlxSprite(0, 0);
+			dot_sprite.makeGraphic(4, 4, 0x000000); //4x4 black square by default
+		}
+		
+		frg = new FlxRadioGroup(0, 0, codes, labels, _onClickRadioGroup, y_space);
+						
+		if (up_sprite != null) {
+			frg.loadGraphics(up_sprite, dot_sprite, over_sprite);
+		}
+		
+		var text_x:Int = U.xml_i(default_data.x, "text_x");
+		var text_y:Int = U.xml_i(default_data.x, "text_y");		
+		
+		for (fo in frg.members) {
+			if (Std.is(fo, FlxCheckBox)){
+				var fc:FlxCheckBox = cast(fo, FlxCheckBox);
+				formatButtonText(default_data, fc);
+				fc.textX = fc.textX + text_x;				
+				fc.textY = fc.textY + text_y;	
+			}
+		}
+						
+		return frg;
 	}
 	
 	private function _loadCheckBox(data:Fast, definition:Fast = null):FlxCheckBox {
@@ -542,6 +605,13 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 		var the_font:String = null;
 		if (fontFace != "") { the_font = U.font(fontFace, fontStyle); }
 		return the_font;
+	}
+	
+	private function _onClickRadioGroup(params:Dynamic = null):Void {
+		FlxG.log("FlxUI._onClickRadioGroup(" + params + ")");
+		if (_ptr != null) {
+			_ptr.getEvent("click_radio_group", this, params);
+		}	
 	}
 	
 	private function _onClickCheckBox(params:Dynamic = null):Void {
