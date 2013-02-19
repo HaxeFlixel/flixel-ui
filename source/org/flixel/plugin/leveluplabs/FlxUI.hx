@@ -67,12 +67,16 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 	 */
 	
 	public override function destroy():Void {
-		for (key in _group_index.keys()) {
-			_group_index.remove(key);
-		}_group_index = null;
-		for (key in _asset_index.keys()) {
-			_asset_index.remove(key);
-		}_asset_index = null;			
+		if(_group_index != null){
+			for (key in _group_index.keys()) {
+				_group_index.remove(key);
+			}_group_index = null;
+		}
+		if(_asset_index != null){
+			for (key in _asset_index.keys()) {
+				_asset_index.remove(key);
+			}_asset_index = null;			
+		}
 		_superIndexUI = null;
 		super.destroy();	
 	}
