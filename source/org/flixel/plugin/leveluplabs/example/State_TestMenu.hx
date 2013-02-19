@@ -18,7 +18,7 @@ class State_TestMenu extends FlxStateX
 	
 	public override function getRequest(id:String, target:Dynamic, data:Dynamic):Dynamic {
 		return null;
-	}
+	}	
 	
 	public override function getEvent(id:String,target:Dynamic,data:Dynamic):Void {
 		if (Std.is(data, String)) {

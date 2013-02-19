@@ -69,14 +69,15 @@ class Flx9SliceSprite extends FlxSprite
 	
 	public static inline function getRectFromString(str:String):Rectangle{
 		var coords:Array<String> = str.split(",");
+		var rect:Rectangle = null;
 		if(coords != null && coords.length == 4){
 			var x_:Int = Std.parseInt(coords[0]);
 			var y_:Int = Std.parseInt(coords[1]);
 			var w_:Int = Std.parseInt(coords[2]);
 			var h_:Int = Std.parseInt(coords[3]);
-			return new Rectangle(x_,y_,w_,h_);
+			rect = new Rectangle(x_,y_,w_,h_);
 		}
-		return null;
+		return rect;
 	}
 	
 	public static inline function getRectIntsFromString(str:String):Array<Int>{

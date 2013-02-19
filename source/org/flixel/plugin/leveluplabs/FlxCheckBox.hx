@@ -254,9 +254,9 @@ class FlxCheckBox extends FlxButtonPlusX
 		}
 				
 		if (_checked) {
-			arr.push("checked");
+			arr.push("checked:true");
 		}else {
-			arr.push("unchecked");
+			arr.push("checked:false");
 		}
 		_externalCallback(arr);		
 	}

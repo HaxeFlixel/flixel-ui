@@ -97,6 +97,15 @@ class FlxGroupX extends FlxGroup, implements IDestroyable
 		return obj;
 	}
 	
+	public function hasThis(Object:FlxBasic):Bool {
+		for (obj in members) {
+			if (obj == Object) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public override function add(fb:FlxBasic):FlxBasic {
 		var obj:FlxBasic = super.add(fb);
 		if (Std.is(fb, FlxObject)) {

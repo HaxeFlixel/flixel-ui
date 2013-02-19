@@ -22,7 +22,7 @@ class State_Title extends FlxStateX
 		super.create();
 	}
 	
-	public override function getEvent(id:String,target:Dynamic,data:Dynamic):Void {
+	public override function getEvent(id:String,sender:Dynamic,data:Dynamic):Void {
 		if (Std.is(data, String)) {
 			switch(cast(data, String)) {
 				case "saves": FlxG.switchState(new State_SaveMenu());

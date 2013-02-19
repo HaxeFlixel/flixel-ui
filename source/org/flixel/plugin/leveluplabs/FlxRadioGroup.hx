@@ -9,20 +9,19 @@ import org.flixel.FlxSprite;
 
 class FlxRadioGroup extends FlxGroupX
 {
-
 	public var clickable(getClickable, setClickable):Bool;
-	public var selectedCode(getSelectedCode, setSelectedCode):String;	
+	public var selectedId(getSelectedId, setSelectedId):String;	
 	public var selectedLabel(getSelectedLabel, setSelectedLabel):String;
 	public var selectedIndex(getSelectedIndex, setSelectedIndex):Int;
 	
-	public function new(X:Float, Y:Float, codes_:Array<String>,labels_:Array<String>, callback_:Dynamic, y_space_:Float=25):Void {
+	public function new(X:Float, Y:Float, ids_:Array<String>,labels_:Array<String>, callback_:Dynamic, y_space_:Float=25):Void {
 		super();
 		_y_space = y_space_;
 		_callback = callback_;
 		x = X;
 		y = Y;
 		_list_radios = new Array<FlxCheckBox>();
-		updateRadios(codes_,labels_);
+		updateRadios(ids_,labels_);
 	}
 	
 	public function loadGraphics(radio:FlxSprite, dot:FlxSprite, radioHilight:FlxSprite = null):Void {
@@ -37,7 +36,7 @@ class FlxRadioGroup extends FlxGroupX
 		if (_list_radios != null) {
 			U.clearArray(_list_radios);			
 		}
-		_codes = null;
+		_ids = null;
 		_labels = null;
 		_callback = null;
 		super.destroy();
@@ -53,9 +52,9 @@ class FlxRadioGroup extends FlxGroupX
 		return true;
 	}
 	
-	public function updateCode(i:Int, code_:String):Bool{
+	public function updateId(i:Int, id_:String):Bool{
 		if (i >= _list_radios.length) return false;
-		_codes[i] = code_;
+		_ids[i] = id_;
 		return true;
 	}
 	
@@ -65,8 +64,8 @@ class FlxRadioGroup extends FlxGroupX
 		}
 	}
 	
-	public function updateRadios(codes_:Array<String>, labels_:Array<String>):Void {
-		_codes = codes_;
+	public function updateRadios(ids_:Array<String>, labels_:Array<String>):Void {
+		_ids = ids_;
 		_labels = labels_;
 		for(c in _list_radios) {
 			c.visible = false;
@@ -114,19 +113,19 @@ class FlxRadioGroup extends FlxGroupX
 		return _labels[_selected];
 	}
 	
-	public function getSelectedCode():String { return _codes[_selected]; }
-	public function setSelectedCode(str:String):String {
+	public function getSelectedId():String { return _ids[_selected]; }
+	public function setSelectedId(str:String):String {
 		var i:Int = 0;
 		for(c in _list_radios) {
 			c.checked = false;
-			if (_codes[i] == str) {
+			if (_ids[i] == str) {
 				_selected = i;
 				c.checked = true;
 				break;
 			}
 			i++;
 		}
-		return _codes[_selected];
+		return _ids[_selected];
 	}
 	
 	/**
@@ -168,7 +167,7 @@ class FlxRadioGroup extends FlxGroupX
 	/***PRIVATE***/
 	
 	private var _labels:Array<String>;
-	private var _codes:Array<String>;
+	private var _ids:Array<String>;
 	private var _callback:Dynamic;
 	
 	private var _y_space:Float = 25;
@@ -185,12 +184,12 @@ class FlxRadioGroup extends FlxGroupX
 		var xx:Float = 0;
 		var yy:Float = 0;
 		var i:Int = 0;
-		for(code in _codes) {
+		for(id in _ids) {
 			var label:String = "";
 			if (_labels != null && _labels.length > i) {
 				label = _labels[i];
 			}else {
-				label = "<" + code + ">";	//"soft" error, indicates undefined label
+				label = "<" + id + ">";	//"soft" error, indicates undefined label
 			}
 			var c:FlxCheckBox;
 			if (_list_radios.length > i) {
@@ -202,7 +201,7 @@ class FlxRadioGroup extends FlxGroupX
 					yy = c.y;
 				}
 			}else {
-				c = new FlxCheckBox(Std.int(xx), Std.int(yy), _onClick, [code], label);
+				c = new FlxCheckBox(Std.int(xx), Std.int(yy), _onClick, [id], label);
 				add(c);
 				_list_radios.push(c);
 			}
@@ -216,9 +215,9 @@ class FlxRadioGroup extends FlxGroupX
 		
 		var i:Int = 0;
 		for(c in _list_radios) {
-			var code:String = params_[0];
+			var id:String = params_[0];
 			c.checked = false;
-			if (code == _codes[i]) {
+			if (id == _ids[i]) {
 				_selected = i;
 				c.checked = true;
 			}

@@ -41,13 +41,25 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 		
 	/***PUBLIC FUNCTIONS***/
 		
-	public function new(data:Fast=null,ptr:IEventGetter=null) 
+	public function new(data:Fast=null,ptr:IEventGetter=null,superIndex_:FlxUI=null) 
 	{
 		super();
 		_ptr = ptr;
+		if (superIndex_ != null) {
+			setSuperIndex(superIndex_);
+		}
 		if(data != null){
 			load(data);
 		}
+	}
+	
+	/**
+	 * Set a pointer to another FlxUI for the purposes of indexing
+	 * @param	flxUI
+	 */
+	
+	public function setSuperIndex(flxUI:FlxUI):Void {
+		_superIndexUI = flxUI;
 	}
 	
 	/**
@@ -60,8 +72,9 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 		}_group_index = null;
 		for (key in _asset_index.keys()) {
 			_asset_index.remove(key);
-		}_asset_index = null;
-		super.destroy();		
+		}_asset_index = null;			
+		_superIndexUI = null;
+		super.destroy();	
 	}
 	
 	/**
@@ -129,12 +142,13 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 					var obj:Fast = new Fast(node);
 					var group_id:String="";
 					var group:FlxGroupX = null;		
+					
 					var thing_id:String = U.xml_str(obj.x, "id", true);
 										
 					//If it belongs to a group, get that information ready:
 					if (obj.has.group) { 
 						group_id = obj.att.group; 
-						group = _group_index.get(group_id);
+						group = getGroup(group_id);
 					}
 					
 					//Make the thing
@@ -143,10 +157,8 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 					if (thing != null) {
 						if (group != null) {
 							group.add(thing);
-							//FlxG.log("adding (" + thing_id + "," + type + ") to group(" + group_id + ")");
 						}else {
 							add(thing);			
-							//FlxG.log("adding (" + thing_id + "," + type + ")");
 						}		
 						
 						_loadPosition(obj, thing);	//Position the thing if possible						
@@ -159,8 +171,32 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 			}
 		}
 	}
-		
+	
 	/******UTILITY INLINES**********/
+	
+	public function getGroup(key:String, recursive:Bool=true):FlxGroupX{
+		var group:FlxGroupX = _group_index.get(key);
+		if (group == null && recursive && _superIndexUI != null) {
+			return _superIndexUI.getGroup(key, recursive);
+		}
+		return group;
+	}
+	
+	public function getAsset(key:String, recursive:Bool=true):FlxBasic{
+		var asset:FlxBasic = _asset_index.get(key);
+		if (asset == null && recursive && _superIndexUI != null) {
+			return _superIndexUI.getAsset(key, recursive);
+		}
+		return asset;
+	}
+	
+	public function getDefinition(key:String,recursive:Bool=true):Fast{
+		var definition:Fast = _definition_index.get(key);
+		if (definition == null && recursive && _superIndexUI != null) {
+			return _superIndexUI.getDefinition(key, recursive);
+		}
+		return definition;
+	}
 	
 	/**
 	 * Adds to thing.x and/or thing.y with wrappers depending on type
@@ -211,6 +247,8 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 	private var _asset_index:Hash<FlxBasic>;
 	private var _definition_index:Hash<Fast>;
 	private var _ptr:IEventGetter;	
+
+	private var _superIndexUI:FlxUI;
 	
 	/************LOADING FUNCTIONS**************/
 	
@@ -218,13 +256,15 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 		var use_def:String = U.xml_str(data.x, "use_def", true);		
 		var definition:Fast = null;
 		if (use_def != "") {
-			definition = _definition_index.get(use_def);
+			definition = getDefinition(use_def);
 		}
 		switch(type) {
 			case "chrome","9slicesprite": return _load9SliceSprite(data, definition);
 			case "sprite": return _loadSprite(data,definition);
 			case "text": return _loadText(data,definition);
 			case "button": return _loadButton(data, definition);
+			case "button_toggle": return _loadButtonToggle(data, definition);
+			case "tab_menu": return _loadTabMenu(data, definition);
 			case "checkbox": return _loadCheckBox(data, definition);
 			case "radio_group": return _loadRadioGroup(data, definition);
 			case "save_slot": return _loadSaveSlot(data, definition);
@@ -274,12 +314,12 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 		var radio_over_src:String = U.xml_str(default_data.x, "radio_over_src", true);
 		
 		var labels:Array<String> = new Array<String>();
-		var codes:Array<String> = new Array<String>();
+		var ids:Array<String> = new Array<String>();
 		
 		for (radioNode in data.nodes.radio) {
-			var code:String = U.xml_str(radioNode.x, "code", true);
+			var id:String = U.xml_str(radioNode.x, "id", true);
 			var label:String = U.xml_str(radioNode.x, "label");
-			codes.push(code);
+			ids.push(id);
 			labels.push(label);
 		}
 		
@@ -304,7 +344,7 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 			dot_sprite.makeGraphic(4, 4, 0x000000); //4x4 black square by default
 		}
 		
-		frg = new FlxRadioGroup(0, 0, codes, labels, _onClickRadioGroup, y_space);
+		frg = new FlxRadioGroup(0, 0, ids, labels, _onClickRadioGroup, y_space);
 						
 		if (up_sprite != null) {
 			frg.loadGraphics(up_sprite, dot_sprite, over_sprite);
@@ -369,7 +409,95 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 		return fc;
 	}
 	
-	private function _loadButton(data:Fast,definition:Fast=null):FlxButtonPlusX {
+	private function _loadTabMenu(data:Fast, definition:Fast = null):FlxTabMenu{
+		var default_data:Fast = data;
+		if (definition != null) { default_data = definition;}
+		
+		var back_def_str:String = U.xml_str(default_data.x, "back_def");
+		var back_def:Fast = getDefinition(back_def_str);
+		if (back_def == null) {
+			back_def = default_data;
+		}
+		
+		var back:Flx9SliceSprite = _load9SliceSprite(data, back_def);
+		
+		var tab_def:Fast = null;
+			
+		if (default_data.hasNode.tab) {
+			var tab_def_str:String = U.xml_str(default_data.node.tab.x, "use_def");
+			if (tab_def_str != "") {
+				tab_def = getDefinition(tab_def_str);
+			}else {
+				tab_def = default_data.node.tab;
+			}
+		}
+		
+		var list_tabs:Array<FlxButtonToggle> = new Array<FlxButtonToggle>();
+		
+		var id:String = "";
+		
+		if (data.hasNode.tab) {
+			for (tab_node in data.nodes.tab) {
+				id = U.xml_str(tab_node.x, "id", true);
+				var label:String = U.xml_str(tab_node.x, "label");
+				var tab:FlxButtonToggle = _loadButtonToggle(tab_node, tab_def);
+				list_tabs.push(tab);
+			}			
+		}
+		
+		var fg:FlxTabMenu = new FlxTabMenu(back,list_tabs);		
+		
+		if (data.hasNode.group) {
+			for (group_node in data.nodes.group) {
+				id = U.xml_str(group_node.x, "id", true);
+				var _ui:FlxUI = new FlxUI(group_node, fg, this);
+				_ui.str_id = id;
+				fg.addGroup(_ui);				
+			}
+		}		
+		
+		fg.showTabInt(0);
+		
+		return fg;
+	}
+	
+	private function _loadButtonToggle(data:Fast, definition:Fast = null):FlxButtonToggle {
+	
+		var default_data:Fast = data;
+		if (definition != null) { default_data = definition;}
+		
+		var label:String = U.xml_str(data.x, "label");		
+		var W:Int = U.xml_i(default_data.x, "width");
+		var H:Int = U.xml_i(default_data.x, "height");	
+		var id:String = U.xml_str(data.x, "id",true);
+		var params:Array<Dynamic> = getParams(data);
+		if (id != "") { 
+			if (params == null) { 
+				params = []; 
+			}
+			params.push(id);
+		}
+		
+		var btn_def_normal:Fast = null;
+		var btn_def_toggle:Fast = null;
+		if (default_data.hasNode.normal) {
+			btn_def_normal = default_data.node.normal;			
+		}
+		if (default_data.hasNode.toggle) {
+			btn_def_toggle = default_data.node.toggle;
+		}
+		if (btn_def_toggle == null) { btn_def_toggle = btn_def_normal; }
+		if (btn_def_normal == null) { throw "ERROR! FlxUI._loadButtonToggle() - no definition specified for normal button state!"; }
+		
+		var btn_normal:FlxButtonPlusX = _loadButton(data, btn_def_normal,false);
+		var btn_toggle:FlxButtonPlusX = _loadButton(data, btn_def_toggle,false);
+		
+		var fbt:FlxButtonToggle = new FlxButtonToggle(0, 0, _onClickButtonToggle, params, btn_normal, btn_toggle, id);
+		
+		return fbt;
+	}
+	
+	private function _loadButton(data:Fast,definition:Fast=null,setCallback:Bool=true):FlxButtonPlusX {
 		var src:String = ""; 
 		var fb:FlxButtonPlusX = null;
 		
@@ -384,13 +512,29 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 				
 		var params:Array<Dynamic> = getParams(data);
 		
-		fb = new FlxButtonPlusX(0, 0, _onClickButton, params, label, W, H);
+		if(setCallback){
+			fb = new FlxButtonPlusX(0, 0, _onClickButton, params, label, W, H);
+		}else {
+			fb = new FlxButtonPlusX(0, 0, null, null, label, W, H);
+		}
 		fb.visible = isVis;
 				
 		formatButtonText(default_data, fb);
 		
-		var text_x:Int = U.xml_i(data.x, "text_x");
-		var text_y:Int = U.xml_i(data.x, "text_y");
+		var text_x:Int = 0;
+		var text_y:Int = 0;
+		if (data.x.get("text_x") != null) {
+			text_x = U.xml_i(data.x, "text_x");			
+		}else {
+			text_x = U.xml_i(default_data.x, "text_x");
+		}
+			
+		if (data.x.get("text_y") != null) {
+			text_y = U.xml_i(data.x, "text_y");			
+		}else {
+			text_y = U.xml_i(default_data.x, "text_y");
+		}
+			
 			
 		fb.textY = Std.int((fb.height - fb.textNormal.frameHeight) / 2) + text_y;
 		fb.textX = text_x;
@@ -566,19 +710,19 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 				
 		//Then, try to center it on another object:
 		if (center_on != "") {
-			var other:FlxBasic = _asset_index.get(center_on);
+			var other:FlxBasic = getAsset(center_on);
 			if (other != null && Std.is(other, FlxBasic)) {
 				U.center(cast(other, FlxObject), cast(thing, FlxObject));
 			}
 		}else {
 			if (center_on_x != "") {
-				var other:FlxBasic = _asset_index.get(center_on);
+				var other:FlxBasic = getAsset(center_on);
 				if (other != null && Std.is(other, FlxBasic)) {
 					U.center(cast(other, FlxObject), cast(thing, FlxObject), true, false);
 				}
 			}
 			if (center_on_y != "") {
-				var other:FlxBasic = _asset_index.get(center_on);
+				var other:FlxBasic = getAsset(center_on);
 				if (other != null && Std.is(other, FlxBasic)) {
 					U.center(cast(other, FlxObject), cast(thing, FlxObject), false, true);
 				}
@@ -628,6 +772,13 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 		}
 	}
 	
+	private function _onClickButtonToggle(params:Dynamic = null):Void {
+		FlxG.log("FlxUI._onClickButtonToggle(" + params + ")");
+		if (_ptr != null) {
+			_ptr.getEvent("click_button_toggle", this, params);
+		}
+	}
+	
 	/**********UTILITY FUNCTIONS************/
 	
 	/**
@@ -655,13 +806,13 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 		return params;
 	}	
 	
-	private inline function formatButtonText(data:Fast, fb:FlxButtonPlusX):Void {
+	private function formatButtonText(data:Fast, fb:FlxButtonPlusX):Void {
 		if (data.hasNode.text) {
 			for (textNode in data.nodes.text) {
 				var use_def:String = U.xml_str(textNode.x, "use_def", true);
 				var text_def:Fast = textNode;
 				if (use_def != "") {
-					text_def = _definition_index.get(use_def);
+					text_def = getDefinition(use_def);
 				}			
 				
 				var text_data:Fast = textNode;

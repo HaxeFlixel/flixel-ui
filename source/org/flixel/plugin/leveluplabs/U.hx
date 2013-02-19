@@ -409,7 +409,7 @@ class U
 	}
 	
 	public static inline function copyXml(data:Xml):Xml {
-		return Xml.parse(data.toString());
+		return Xml.parse(data.toString()).firstElement();
 	}
 	
 	public static function getXML(str:String, folder:String=""):Dynamic {
@@ -430,7 +430,7 @@ class U
 			return the_xml.firstElement();
 		}
 	}
-		
+	
 	public static function clearArray(array:Array<Dynamic>):Void {
 		if (array == null) return;
 		var i:Int = array.length - 1; while (i >= 0) {
