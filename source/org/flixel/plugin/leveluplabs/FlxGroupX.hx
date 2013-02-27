@@ -106,7 +106,10 @@ class FlxGroupX extends FlxGroup, implements IDestroyable
 		return false;
 	}
 	
-	public override function add(fb:FlxBasic):FlxBasic {
+	public override function add(fb:FlxBasic):FlxBasic {	
+		
+	
+		
 		var obj:FlxBasic = super.add(fb);
 		if (Std.is(fb, FlxObject)) {
 			var fo:FlxObject = cast(fb, FlxObject);
@@ -122,13 +125,16 @@ class FlxGroupX extends FlxGroup, implements IDestroyable
 			if (ww > width) width = ww;
 			if (hh > height) height = hh;*/
 		}
-		
+			
 		#if (cpp || neko)
-			if(__atlas != null){
-				obj.atlas = __atlas;
+			if (__atlas != null) {
+				if (obj != null) {
+					if(Std.is(obj,FlxGroup) == false){
+						obj.atlas = __atlas;
+					}
+				}
 			}
 		#end
-		
 		return obj;
 	}
 	

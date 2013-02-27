@@ -28,6 +28,11 @@ import org.flixel.plugin.leveluplabs.IEventGetter;
 
 class FlxUI extends FlxGroupX, implements IEventGetter
 {
+	
+	//If this is true, the first few frames after initialization ignore all input so you can't auto-click anything
+	public var do_safe_input_delay:Bool = true;
+	public var safe_input_delay_time:Float = 0.01;
+	
 	/***EVENT HANDLING***/
 	
 	public function getEvent(id:String, sender:Dynamic, data:Dynamic):Void {
@@ -62,6 +67,18 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 		_superIndexUI = flxUI;
 	}
 	
+	public override function update():Void {
+		if (do_safe_input_delay) {
+			_safe_input_delay_elapsed += FlxG.elapsed;
+			if (_safe_input_delay_elapsed > safe_input_delay_time) {
+				do_safe_input_delay = false;
+			}else {
+				return;
+			}
+		}
+		super.update();
+	}
+	
 	/**
 	 * Remove all the references and pointers, then destroy everything
 	 */
@@ -91,7 +108,8 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 		_group_index = new Hash<FlxGroupX>();
 		_asset_index = new Hash<FlxBasic>();
 		_definition_index = new Hash<Fast>();
-		
+		_mode_index = new Hash<Fast>();
+
 		if (data != null) {
 			
 			//First, load all our definitions
@@ -101,7 +119,15 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 					_definition_index.set(def_id, def_data);					
 				}
 			}
-			
+		
+			//Next, load all our modes
+			if (data.hasNode.mode) {
+				for (mode_data in data.nodes.mode) {
+					var mode_id:String = mode_data.att.id;
+					_mode_index.set(mode_id, mode_data);
+				}
+			}
+		
 			//Then, load all our group definitions
 			if(data.hasNode.group){
 				for (group_data in data.nodes.group) {
@@ -120,7 +146,7 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 					FlxG.log("Creating group (" + id + ")");
 				}
 			}
-			
+					
 			#if debug
 				//Useful debugging info, make sure things go in the right group:
 				FlxG.log("Member list...");
@@ -140,12 +166,20 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 			if (data.x.firstElement() != null) {
 				//Load the actual things
 				var node:Xml;
-				for (node in data.x.elements()) {
+				for (node in data.x.elements()) 
+				{
 					var type:String = node.nodeName;
 					type.toLowerCase();
 					var obj:Fast = new Fast(node);
 					var group_id:String="";
 					var group:FlxGroupX = null;		
+				
+					#if cpp
+						#if debug
+							trace("Loading node(" + type + "," + group_id + "," + group + ")");
+							trace("data = " + obj.x.toString());
+						#end
+					#end
 					
 					var thing_id:String = U.xml_str(obj.x, "id", true);
 										
@@ -159,6 +193,7 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 					var thing:FlxBasic = _loadThing(type,obj);
 							
 					if (thing != null) {
+
 						if (group != null) {
 							group.add(thing);
 						}else {
@@ -176,7 +211,47 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 		}
 	}
 	
-	/******UTILITY INLINES**********/
+	/**
+	 * Set a mode for this UI. This lets you show/hide stuff basically. 
+	 * @param	mode_id The mode you want, say, "empty" or "play" for a save slot
+	 * @param	target_id UI element to target - "" for the UI itself, otherwise the id of an element that is itself a FlxUI
+	 */
+	
+	public function setMode(mode_id:String,target_id:String=""):Void {
+		var mode:Fast = getMode(mode_id);
+		var id:String = "";
+		var thing:FlxBasic;
+		if(target_id == ""){			
+			if (mode != null) {
+				if (mode.hasNode.show) {
+					for (show_node in mode.nodes.show) {
+						id = show_node.att.id;
+						thing = getAsset(id);
+						if (thing != null) {
+							thing.visible = true;
+						}
+					}
+				}
+				if (mode.hasNode.hide) {
+					for (hide_node in mode.nodes.hide) {
+						id = hide_node.att.id;
+						thing = getAsset(id);
+						if (thing != null) {
+							thing.visible = false;
+						}
+					}
+				}
+			}
+		}else {
+			var target:FlxBasic = getAsset(target_id);
+			if (target != null && Std.is(target, FlxUI)) {
+				var targetUI:FlxUI = cast(target, FlxUI);
+				targetUI.setMode(mode_id, "");
+			}
+		}
+	}
+	
+	/******UTILITY FUNCTIONS**********/
 	
 	public function getGroup(key:String, recursive:Bool=true):FlxGroupX{
 		var group:FlxGroupX = _group_index.get(key);
@@ -192,6 +267,14 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 			return _superIndexUI.getAsset(key, recursive);
 		}
 		return asset;
+	}
+	
+	public function getMode(key:String, recursive:Bool = true):Fast {
+		var mode:Fast = _mode_index.get(key);
+		if (mode == null && recursive && _superIndexUI != null) {
+			return _superIndexUI.getMode(key, recursive);
+		}
+		return mode;
 	}
 	
 	public function getDefinition(key:String,recursive:Bool=true):Fast{
@@ -250,9 +333,11 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 	private var _group_index:Hash<FlxGroupX>;
 	private var _asset_index:Hash<FlxBasic>;
 	private var _definition_index:Hash<Fast>;
+	private var _mode_index:Hash<Fast>;
 	private var _ptr:IEventGetter;	
 
 	private var _superIndexUI:FlxUI;
+	private var _safe_input_delay_elapsed:Float = 0.0;
 	
 	/************LOADING FUNCTIONS**************/
 	
@@ -271,17 +356,13 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 			case "tab_menu": return _loadTabMenu(data, definition);
 			case "checkbox": return _loadCheckBox(data, definition);
 			case "radio_group": return _loadRadioGroup(data, definition);
-			case "save_slot": return _loadSaveSlot(data, definition);
 			default: 
 				//If I don't know how to load this thing, I will request it from my pointer:			
-				return _ptr.getRequest("ui_get:" + type, this, data);
+				var dataObject = { data:data, definition:definition };
+				var result = _ptr.getRequest("ui_get:" + type, this, dataObject);
+				return result;
 		}
 		return null;
-	}
-	
-	private function _loadSaveSlot(data:Fast,definition:Fast=null):FlxUI_SaveSlot {
-		var s:FlxUI_SaveSlot = new FlxUI_SaveSlot(data, definition, this);		
-		return s;
 	}
 	
 	private function _loadText(data:Fast,definition:Fast=null):FlxText{
@@ -693,6 +774,12 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 			fs = new FlxSpriteX(0, 0);
 			fs.makeGraphic(W, H, C);
 		}
+		
+		#if cpp
+			#if debug
+				trace("_loadSprite() end");
+			#end
+		#end
 		
 		return fs;
 	}

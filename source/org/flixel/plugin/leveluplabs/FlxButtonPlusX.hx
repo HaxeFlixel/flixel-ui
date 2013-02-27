@@ -1,4 +1,5 @@
 package org.flixel.plugin.leveluplabs;
+import nme.events.MouseEvent;
 import org.flixel.plugin.photonstorm.FlxButtonPlus;
 
 /**
@@ -21,6 +22,14 @@ class FlxButtonPlusX extends FlxButtonPlus
 	//Simple flags to show/not-show the normal and hilight state
 	public var showNormal:Bool = true;
 	public var showHilight:Bool = true;
+	
+	//Set to true to allow clicking old-school flixel button style (ie, don't have to start
+	//the click on the button)
+	public var easy_click:Bool = true;
+	
+	static public inline var NORMAL:Int = 0;
+	static public inline var HIGHLIGHT:Int = 1;
+	static public inline var PRESSED:Int = 2;
 	
 	public function new(X:Int, Y:Int, Callback:Dynamic, Params:Array<Dynamic> = null, Label:String = null, Width:Int = 100, Height:Int = 20)
 	{
@@ -77,6 +86,19 @@ class FlxButtonPlusX extends FlxButtonPlus
 		super.draw();
 		buttonNormal.visible = oN;
 		buttonHighlight.visible = oH;	
+	}
+	
+	/**
+	 * Internal function for handling the actual callback call (for UI thread dependent calls like <code>FlxU.openURL()</code>).
+	 */
+	public override function onMouseUp(MouseEvent):Void
+	{
+		var click_test:Bool = easy_click ? (_status == PRESSED|| _status == HIGHLIGHT) : (_status == PRESSED);
+		
+		if (exists && visible && active && click_test && (_onClick != null) && (pauseProof || !FlxG.paused))
+		{
+			Reflect.callMethod(this, Reflect.getProperty(this, "_onClick"), onClickParams);
+		}
 	}
 	
 	/******PRIVATE******/

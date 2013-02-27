@@ -40,9 +40,12 @@ class FlxStateX extends FlxState, implements IEventGetter
 		if (_xml_id == "") {
 			throw "FlxStateX has no xml id defined!";
 		}
-		var data:Fast = U.xml(_xml_id);
-		_ui = new FlxUI(data,this);
+		
+		_ui = new FlxUI(null,this);
 		add(_ui);
+		
+		var data:Fast = U.xml(_xml_id);		
+		_ui.load(data);
 	}
 	
 	public override function destroy():Void {

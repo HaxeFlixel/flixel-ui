@@ -3,6 +3,7 @@ import haxe.xml.Fast;
 import nme.Lib;
 import org.flixel.FlxG;
 import org.flixel.plugin.leveluplabs.FlxStateX;
+import org.flixel.plugin.leveluplabs.FlxUI_SaveSlot;
 
 /**
  * ...
@@ -19,6 +20,17 @@ class State_SaveMenu extends FlxStateX
 	}
 	
 	public override function getRequest(id:String, target:Dynamic, data:Dynamic):Dynamic {
+		var xml:Fast;
+		if (Std.is(data, Fast)) {
+			xml = cast(data, Fast);
+		}
+		if (id.indexOf("ui_get:") == 0) {
+			var str:String = StringTools.replace(id,"ui_get:","");
+			switch(str) {
+				case "save_slot": 					
+					return new FlxUI_SaveSlot(data.data, data.definition, _ui);
+			}
+		}
 		return null;
 	}
 	
