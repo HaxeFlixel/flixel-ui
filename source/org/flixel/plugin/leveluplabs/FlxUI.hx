@@ -173,14 +173,7 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 					var obj:Fast = new Fast(node);
 					var group_id:String="";
 					var group:FlxGroupX = null;		
-				
-					#if cpp
-						#if debug
-							trace("Loading node(" + type + "," + group_id + "," + group + ")");
-							trace("data = " + obj.x.toString());
-						#end
-					#end
-					
+									
 					var thing_id:String = U.xml_str(obj.x, "id", true);
 										
 					//If it belongs to a group, get that information ready:
@@ -774,12 +767,6 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 			fs = new FlxSpriteX(0, 0);
 			fs.makeGraphic(W, H, C);
 		}
-		
-		#if cpp
-			#if debug
-				trace("_loadSprite() end");
-			#end
-		#end
 		
 		return fs;
 	}

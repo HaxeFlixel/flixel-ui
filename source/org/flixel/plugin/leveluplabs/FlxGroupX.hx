@@ -129,9 +129,9 @@ class FlxGroupX extends FlxGroup, implements IDestroyable
 		#if (cpp || neko)
 			if (__atlas != null) {
 				if (obj != null) {
-					if(Std.is(obj,FlxGroup) == false){
+					/*if(Std.is(obj,FlxGroup)){
 						obj.atlas = __atlas;
-					}
+					}*/
 				}
 			}
 		#end
