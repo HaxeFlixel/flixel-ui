@@ -12,7 +12,7 @@ import org.flixel.FlxG;
  */class FlxCircle extends FlxShape {
 
 	var radius : Float;
-	public function new(p : Point, r : Float, st : Float, sc : UInt, fill : Bool = false, fc : UInt = 0xFFFFFF) {
+	public function new(p : Point, r : Float, st : Float, sc : Int, fill : Bool = false, fc : Int = 0xFFFFFF) {
 		shape_id = "circle";
 		radius = r;
 		super(st, sc, fill, fc, p.x, p.y, Std.int(radius), Std.int(radius));

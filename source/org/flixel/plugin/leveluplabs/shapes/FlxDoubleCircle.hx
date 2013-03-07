@@ -27,7 +27,7 @@ import org.flixel.plugin.leveluplabs.FlxTextX;
 	var in_text : FlxTextX;
 	var out_str : String;
 	var in_str : String;
-	public function new(p : Point, r1 : Float, r2 : Float, st : Float, sc : UInt, la : Float = 1, fill : Bool = false, fc : UInt = 0xFFFFFF, fa : Float = 1, outlabel : String = "", inlabel : String = "") {
+	public function new(p : Point, r1 : Float, r2 : Float, st : Float, sc : Int, la : Float = 1, fill : Bool = false, fc : Int = 0xFFFFFF, fa : Float = 1, outlabel : String = "", inlabel : String = "") {
 		out_str = outlabel;
 		in_str = inlabel;
 		shape_id = "double_circle";

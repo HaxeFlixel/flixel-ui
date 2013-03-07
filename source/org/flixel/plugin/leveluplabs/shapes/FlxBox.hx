@@ -10,7 +10,7 @@ import nme.geom.Point;
 
  */class FlxBox extends FlxShape {
 
-	public function new(p : Point, w : Int, h : Int, st : Float = 1, sc : UInt = 0xFFFFFF, fill : Bool = false, fc : UInt = 0xFFFFFF) {
+	public function new(p : Point, w : Int, h : Int, st : Float = 1, sc : Int = 0xFFFFFF, fill : Bool = false, fc : Int = 0xFFFFFF) {
 		shape_id = "box";
 		super(st, sc, fill, fc, p.x, p.y, w, h);
 		buffer();

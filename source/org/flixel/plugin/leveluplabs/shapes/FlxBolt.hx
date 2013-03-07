@@ -50,7 +50,7 @@ import org.flixel.FlxPoint;
 
 	 * @param	halo_c colors of the halo
 
-	 */	public function new(a : Point, b : Point, det : Float = 1, disp : Float = 200, branches : Int = 5, branch_level : Int = 3, thick : Float = 3, col : UInt = 0xFFFFFF, halo_c : Array<Dynamic> = null) {
+	 */	public function new(a : Point, b : Point, det : Float = 1, disp : Float = 200, branches : Int = 5, branch_level : Int = 3, thick : Float = 3, col : Int = 0xFFFFFF, halo_c : Array<Dynamic> = null) {
 		curr_branches = 0;
 		default_cols = [0x88aaee, 0x5555cc, 0x334488];
 		shape_id = "bolt";

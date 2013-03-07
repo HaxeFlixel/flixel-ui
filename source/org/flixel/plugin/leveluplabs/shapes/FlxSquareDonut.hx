@@ -22,7 +22,7 @@ import org.flixel.FlxG;
 	var draw_point : Point;
 	var line_alpha : Float;
 	var fill_alpha : Float;
-	public function new(p : Point, r1 : Float, r2 : Float, st : Float, sc : UInt, la : Float = 1, fill : Bool = false, fc : UInt = 0xFFFFFF, fa : Float = 1) {
+	public function new(p : Point, r1 : Float, r2 : Float, st : Float, sc : Int, la : Float = 1, fill : Bool = false, fc : Int = 0xFFFFFF, fa : Float = 1) {
 		shape_id = "square_donut";
 		radius_out = r1;		
 		radius_in = r2;

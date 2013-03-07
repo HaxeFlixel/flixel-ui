@@ -19,7 +19,7 @@ class FlxArrow extends FlxShape {
 	var _triangle : Shape;
 	var vec : Vector2D;
 	var arrow_angle : Float;
-	public function new(a : FlxPoint, b : FlxPoint, thick : Float = 1, col : UInt = 0xFFFFFF, col2 : UInt = 0x000000) {
+	public function new(a : FlxPoint, b : FlxPoint, thick : Float = 1, col : Int = 0xFFFFFF, col2 : Int = 0x000000) {
 		arrow_angle = 0;
 		vec = new Vector2D(0, 0);
 		shape_id = "line";

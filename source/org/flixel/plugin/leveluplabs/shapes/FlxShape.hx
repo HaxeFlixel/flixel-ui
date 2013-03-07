@@ -85,13 +85,13 @@ class FlxShape extends FlxObject {
 		return n;
 	}
 
-	public function setFill(u : UInt) : UInt {
+	public function setFill(u : Int) : Int {
 		fill_col = u;
 		buffer();
 		return u;
 	}
 
-	public function setLine_col(u : UInt) : UInt {
+	public function setLine_col(u : Int) : Int {
 		stroke_col = u;
 		buffer();
 		return u;

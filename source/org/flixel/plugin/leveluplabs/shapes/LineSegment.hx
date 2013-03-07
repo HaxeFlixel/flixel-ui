@@ -10,7 +10,7 @@ import nme.geom.Point;
 	public var a : Point;
 	public var b : Point;
 	public var thick : Int;
-	public function new(_a : Point, _b : Point, t : UInt = 1) {
+	public function new(_a : Point, _b : Point, t : Int = 1) {
 		thick = 1;
 		a = _a.clone();
 		b = _b.clone();

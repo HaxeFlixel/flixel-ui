@@ -11,7 +11,7 @@ import nme.geom.Point;
  */class FlxCross extends FlxShape {
 
 	var size : Float;
-	public function new(p : Point, s : Float, thick : Float = 1, col : UInt = 0xFFFFFF) {
+	public function new(p : Point, s : Float, thick : Float = 1, col : Int = 0xFFFFFF) {
 		shape_id = "cross";
 		size = s;
 		super(thick, col, false, 0xFFFFFF, x, y, Std.int(size), Std.int(size));

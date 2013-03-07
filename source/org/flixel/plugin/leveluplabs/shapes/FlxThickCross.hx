@@ -11,7 +11,7 @@ import nme.geom.Point;
 	var arm_size : Float;
 	var points : Array<Dynamic>;
 	var fill_alpha : Float;
-	public function new(p : Point, s : Float, arm_s : Float, thick : Float = 1, s_c : UInt = 0xFFFFFF, s_a : Float = 1, fill_ : Bool = false, fc : UInt = 0xffffff, fa : Float = 1) {
+	public function new(p : Point, s : Float, arm_s : Float, thick : Float = 1, s_c : Int = 0xFFFFFF, s_a : Float = 1, fill_ : Bool = false, fc : Int = 0xffffff, fa : Float = 1) {
 		shape_id = "cross";
 		size = s;
 		arm_size = arm_s;

@@ -13,12 +13,12 @@ import nme.geom.Point;
 
 	public var grid_size : Float;
 	public var data : Array<Dynamic>;
-	public var illegal_color : UInt;
+	public var illegal_color : Int;
 	
 	public SQUARES_WIDE:Int = 10;
 	public SQUARES_TALL:Int = 10;
 	
-	public function new(p : Point, w : Float, h : Float, size : Float, st : Float = 1, sc : UInt = 0xFFFFFF, arr : Array<Dynamic> = null, i_color : UInt = 0) {
+	public function new(p : Point, w : Float, h : Float, size : Float, st : Float = 1, sc : Int = 0xFFFFFF, arr : Array<Dynamic> = null, i_color : Int = 0) {
 		grid_size = 1;
 		shape_id = "grid";
 		grid_size = size;
