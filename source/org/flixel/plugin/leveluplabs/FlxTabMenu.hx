@@ -34,9 +34,15 @@ class FlxTabMenu extends FlxGroupX, implements IEventGetter
 		var xx:Float = 0;
 		for (tab in _tabs) {
 			add(tab);
-			tab.x = xx;
+			tab.x = xx;			
 			tab.y = -(tab.btn_normal.height-2);
+			#if cpp
+				tab.y += 1;	//cpp target is off by 1 for some reason
+			#end
 			xx += tab.btn_normal.width;
+			#if cpp
+				xx -= 1;	//cpp target is off by 1 for some reason
+			#end
 			tab.Callback = onClickTab;
 		}
 				
@@ -75,7 +81,6 @@ class FlxTabMenu extends FlxGroupX, implements IEventGetter
 	
 	public function onClickTab(Params:Dynamic):Void {
 		var id:String = "";
-		FlxG.log("FlxTabMenu.onClickTab: " + Params);
 		if (Std.is(Params,Array)) {
 			if (Std.is(Params[0], String)) {
 				id = Params[0];
