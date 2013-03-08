@@ -2,6 +2,7 @@ package org.flixel.plugin.leveluplabs;
 import haxe.xml.Fast;
 import nme.Assets;
 import nme.display.BitmapData;
+import nme.display.BlendMode;
 import nme.geom.Point;
 import nme.Lib;
 import nme.text.Font;
@@ -531,7 +532,30 @@ class U
 		}
 		return str;
 	}
-		
+	
+	public static function blendModeFromString(str:String):BlendMode
+	{
+		str = str.toLowerCase();
+		switch(str)
+		{
+			case "add"		 : 	return BlendMode.ADD;
+			case "alpha" 	 :	return BlendMode.ALPHA;
+			case "darken" 	 : 	return BlendMode.DARKEN;
+			case "difference":  return BlendMode.DIFFERENCE;
+			case "erase" 	 :  return BlendMode.ERASE;
+			case "hardlight" : 	return BlendMode.HARDLIGHT;
+			case "invert" 	 : 	return BlendMode.INVERT;
+			case "layer" 	 : 	return BlendMode.LAYER;
+			case "lighten" 	 : 	return BlendMode.LIGHTEN;
+			case "multiply"  : 	return BlendMode.MULTIPLY;
+			case "normal" 	 : 	return BlendMode.NORMAL;
+			case "overlay" 	 : 	return BlendMode.OVERLAY;
+			case "screen" 	 : 	return BlendMode.SCREEN;
+			case "shader" 	 : 	return BlendMode.SHADER;
+			case "subtract"  : 	return BlendMode.SUBTRACT;
+		}
+		return BlendMode.NORMAL;
+	}
 	
 	public static function gfx(id:String, dir1:String = "", dir2:String = "", dir3:String = "", dir4:String = "",suppressError:Bool=false):String{
 		if (id != null) {
