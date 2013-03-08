@@ -32,7 +32,7 @@ class U
 	 * @return  the attribute as a string if it exists, otherwise returns ""
 	 */
 	
-	public static function xml_str(data:Xml, att:String, lower_case:Bool=false):String{
+	public static function xml_str(data:Xml, att:String, lower_case:Bool = false):String {
 		if (data.get(att) != null) {
 			if (lower_case) {
 				return data.get(att).toLowerCase();
