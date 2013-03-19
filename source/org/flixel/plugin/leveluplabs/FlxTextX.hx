@@ -2,6 +2,7 @@ package org.flixel.plugin.leveluplabs;
 import nme.filters.DropShadowFilter;
 import nme.filters.GlowFilter;
 import nme.text.AntiAliasType;
+import nme.text.TextFormat;
 import org.flixel.FlxText;
 
 /**
@@ -15,6 +16,7 @@ class FlxTextX extends FlxText
 
 	public var dropShadow(getDropShadow, setDropShadow):Bool;	
 	private var _dropShadow:Bool = false;
+	public var bold(default, setBold):Bool;
 	
 	public function new(X:Float, Y:Float, Width:Int, Text:String = null, EmbeddedFont:Bool = true)	
 	{
@@ -42,5 +44,12 @@ class FlxTextX extends FlxText
 		return _dropShadow;
 	}	
 	
+	function setBold(b:Bool):Bool
+	{
+		var format:TextFormat =  _textField.getTextFormat();
+		format.bold = b;
+		_textField.setTextFormat(format);
+		return b;
+	}
 	
 }

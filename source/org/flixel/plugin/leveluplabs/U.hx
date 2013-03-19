@@ -497,6 +497,8 @@ class U
 	public static inline function copy_shallow_arr(src:Array<Dynamic>):Array<Dynamic> {
 		var arr:Array<Dynamic> = new Array<Dynamic>();
 		var thing:Dynamic;
+		if (src == null) 
+			return arr;
 		for (thing in src) {
 			arr.push(thing);
 		}
