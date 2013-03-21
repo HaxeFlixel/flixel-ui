@@ -569,13 +569,13 @@ class U
 		var prefix:String = "";
 		
 		if (dir1 != "") {
-			prefix = dir1 + "__";
+			prefix = dir1 + "/";
 			if (dir2 != "") {
-				prefix += dir2 + "__";
+				prefix += dir2 + "/";
 				if (dir3 != "") {
-					prefix += dir3 + "__";
+					prefix += dir3 + "/";
 					if (dir4 != "") {
-						prefix += dir4 + "__";
+						prefix += dir4 + "/";
 					}
 				}
 			}
