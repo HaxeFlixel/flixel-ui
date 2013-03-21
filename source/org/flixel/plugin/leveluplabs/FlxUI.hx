@@ -80,6 +80,77 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 	}
 	
 	/**
+	 * Removes an asset
+	 * @param	key the asset to remove
+	 * @param	destroy whether to destroy it
+	 * @return	the asset, or null if destroy=true
+	 */
+	
+	public function removeAsset(key:String,destroy:Bool=true):FlxBasic{
+		var asset:FlxBasic = getAsset(key, false);
+		if (asset != null) {
+			replaceInGroup(asset, null, true);
+			_asset_index.remove(key);
+		}
+		if (destroy) {
+			asset.destroy();
+			asset = null;
+		}
+		return asset;
+	}
+	
+	/**
+	 * Replaces an asset, both in terms of location & group position
+	 * @param	key the string id of the original
+	 * @param	replace the replacement object
+	 * @param 	destroy_old kills the original if true
+	 * @return	the old asset, or null if destroy_old=true
+	 */
+	
+	public function replaceAsset(key:String, replace:FlxBasic, center_x:Bool=true, center_y:Bool=true, destroy_old:Bool=true):FlxBasic{
+		//get original asset
+		var original:FlxBasic = getAsset(key, false);
+		
+		if(original != null){
+			//set replacement in its location
+			if (Std.is(original, FlxObject) && Std.is(replace, FlxObject)) {
+				var r:FlxObject = cast(replace, FlxObject);
+				var o:FlxObject = cast(original, FlxObject);
+				if(!center_x){
+					r.x = o.x;
+				}else {
+					r.x = o.x + (o.width-r.width) / 2;
+				}
+				if (!center_y) {
+					r.y = o.y;
+				}else {
+					r.y = o.y + (o.height - o.height) / 2;
+				}
+				r = null; o = null;
+			}
+			
+			//switch original for replacement in whatever group it was in
+			replaceInGroup(original, replace);
+			
+			//remove the original asset index key
+			_asset_index.remove(key);
+			
+			//key the replacement to that location
+			_asset_index.set(key, replace);
+			
+			//destroy the original if necessary
+			if (destroy_old) {
+				original.destroy();
+				original = null;
+			}
+		}
+		
+		return original;
+	}
+	
+	
+	
+	/**
 	 * Remove all the references and pointers, then destroy everything
 	 */
 	
@@ -254,6 +325,16 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 		return group;
 	}
 	
+	public function getFlxText(key:String, recursive:Bool = true):FlxText {
+		var asset:FlxBasic = getAsset(key, recursive);
+		if (asset != null) {
+			if (Std.is(asset, FlxText)) {
+				return cast(asset, FlxText);
+			}
+		}
+		return null;
+	}
+	
 	public function getAsset(key:String, recursive:Bool=true):FlxBasic{
 		var asset:FlxBasic = _asset_index.get(key);
 		if (asset == null && recursive && _superIndexUI != null) {
@@ -331,6 +412,57 @@ class FlxUI extends FlxGroupX, implements IEventGetter
 
 	private var _superIndexUI:FlxUI;
 	private var _safe_input_delay_elapsed:Float = 0.0;
+	
+	/**
+	 * Replace an object in whatever group it is in
+	 * @param	original the original object
+	 * @param	replace	the replacement object
+	 * @param	splice if replace is null, whether to splice the entry
+	 */
+
+	 
+	private function replaceInGroup(original:FlxBasic,replace:FlxBasic,splice:Bool=false){
+		//Slow, unoptimized, searches through everything
+		if(_group_index != null){
+			for (key in _group_index.keys()) {
+				var group:FlxGroupX = _group_index.get(key);
+				if (group.members != null) {
+					var i:Int = 0;
+					for (member in group.members) {
+						if (member == original) {
+							group.members[i] = replace;
+							if (replace == null) {
+								if (splice) {
+									group.members.splice(i, 1);
+									i--;
+								}
+							}
+							return;
+						}
+						i++;
+					}
+				}
+			}
+		}
+		
+		//if we get here, it's not in any group, it's just in our global member list
+		if (this.members != null) {
+			var i:Int = 0;
+			for (member in this.members) {				
+				if (member == original) {
+					members[i] = replace;
+					if (replace == null) {
+						if (splice) {
+							members.splice(i, 1);
+							i--;
+						}
+					}
+					return;
+				}
+				i++;
+			}
+		}
+	}
 	
 	/************LOADING FUNCTIONS**************/
 	

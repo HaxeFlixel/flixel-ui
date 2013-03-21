@@ -432,6 +432,27 @@ class U
 		}
 	}
 	
+	/**
+	 * This will remove an array structure, but will leave its contents untouched.
+	 * This can lead to memory leaks! Only use this when you want an array gone but
+	 * you still need the original elements and know what you're doing.
+	 * @param	array
+	 */
+	
+	public static function clearArraySoft(array:Array<Dynamic>):Void {
+		if (array == null) return;
+		var i:Int = array.length - 1; while (i >= 0) {
+			array[i] = null;
+			array.splice(i, 1);
+			i--;
+		}array = null;
+	}
+	
+	/**
+	 * This will MURDER an array, removing all traces of both it and its contents
+	 * @param	array
+	 */
+	
 	public static function clearArray(array:Array<Dynamic>):Void {
 		if (array == null) return;
 		var i:Int = array.length - 1; while (i >= 0) {
