@@ -81,7 +81,7 @@ class FlxCheckBox extends FlxButtonPlusX
 		}
 	}
 	
-	public override function setX(newX:Int):Int
+	public override function set_x(newX:Int):Int
 	{
 		_x = newX;
 		
@@ -96,7 +96,7 @@ class FlxCheckBox extends FlxButtonPlusX
 		return newX;
 	}
 	
-	public override function setY(newY:Int):Int
+	public override function set_y(newY:Int):Int
 	{
 		_y = newY;
 		

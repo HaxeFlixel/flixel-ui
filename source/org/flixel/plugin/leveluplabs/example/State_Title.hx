@@ -1,5 +1,4 @@
 package org.flixel.plugin.leveluplabs.example;
-import com.leveluplabs.tdrpg.BasicEntity;
 import org.flixel.FlxG;
 import org.flixel.plugin.leveluplabs.FlxStateX;
 

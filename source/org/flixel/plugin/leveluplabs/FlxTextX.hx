@@ -2,6 +2,7 @@ package org.flixel.plugin.leveluplabs;
 import nme.filters.DropShadowFilter;
 import nme.filters.GlowFilter;
 import nme.text.AntiAliasType;
+import nme.text.TextField;
 import nme.text.TextFormat;
 import org.flixel.FlxText;
 
@@ -48,7 +49,7 @@ class FlxTextX extends FlxText
 	
 	function setBold(b:Bool):Bool
 	{
-		var format:TextFormat =  _textField.getTextFormat();
+		var format:TextFormat = _format;
 		format.bold = b;
 		_textField.setTextFormat(format);
 		return b;

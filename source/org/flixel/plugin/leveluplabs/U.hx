@@ -33,7 +33,7 @@ class U
 	 * @return  the attribute as a string if it exists, otherwise returns ""
 	 */
 	
-	public static function xml_str(data:Xml, att:String, lower_case:Bool=false):String{
+	public static function xml_str(data:Xml, att:String, lower_case:Bool = false):String {
 		if (data.get(att) != null) {
 			if (lower_case) {
 				return data.get(att).toLowerCase();
@@ -432,6 +432,27 @@ class U
 		}
 	}
 	
+	/**
+	 * This will remove an array structure, but will leave its contents untouched.
+	 * This can lead to memory leaks! Only use this when you want an array gone but
+	 * you still need the original elements and know what you're doing.
+	 * @param	array
+	 */
+	
+	public static function clearArraySoft(array:Array<Dynamic>):Void {
+		if (array == null) return;
+		var i:Int = array.length - 1; while (i >= 0) {
+			array[i] = null;
+			array.splice(i, 1);
+			i--;
+		}array = null;
+	}
+	
+	/**
+	 * This will MURDER an array, removing all traces of both it and its contents
+	 * @param	array
+	 */
+	
 	public static function clearArray(array:Array<Dynamic>):Void {
 		if (array == null) return;
 		var i:Int = array.length - 1; while (i >= 0) {
@@ -494,11 +515,12 @@ class U
 		return str.substr(0, 1).toUpperCase() + str.substr(1, str.length - 1);
 	}
 		
-	public static inline function copy_shallow_arr(src:Array<Dynamic>):Array<Dynamic> {
+	public static function copy_shallow_arr(src:Array<Dynamic>):Array<Dynamic> {
 		var arr:Array<Dynamic> = new Array<Dynamic>();
 		var thing:Dynamic;
-		if (src == null) 
+		if (src == null){ 
 			return arr;
+		}
 		for (thing in src) {
 			arr.push(thing);
 		}
@@ -553,8 +575,10 @@ class U
 			case "normal" 	 : 	return BlendMode.NORMAL;
 			case "overlay" 	 : 	return BlendMode.OVERLAY;
 			case "screen" 	 : 	return BlendMode.SCREEN;
-			case "shader" 	 : 	return BlendMode.SHADER;
-			case "subtract"  : 	return BlendMode.SUBTRACT;
+			case "subtract"  : 	return BlendMode.SUBTRACT;			
+			#if flash
+				case "shader" 	 : 	return BlendMode.SHADER;
+			#end
 		}
 		return BlendMode.NORMAL;
 	}
@@ -567,13 +591,13 @@ class U
 		var prefix:String = "";
 		
 		if (dir1 != "") {
-			prefix = dir1 + "__";
+			prefix = dir1 + "/";
 			if (dir2 != "") {
-				prefix += dir2 + "__";
+				prefix += dir2 + "/";
 				if (dir3 != "") {
-					prefix += dir3 + "__";
+					prefix += dir3 + "/";
 					if (dir4 != "") {
-						prefix += dir4 + "__";
+						prefix += dir4 + "/";
 					}
 				}
 			}
