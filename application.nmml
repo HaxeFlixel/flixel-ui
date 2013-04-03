@@ -49,7 +49,7 @@
 	<haxedef name="swfstats"/>
 	<!--<haxedef name="kong"/>-->
 	
-	<haxelib name="nme" />
 	<classpath name="../HaxeFlixel/src"/>
+	<classpath name="../../Projects/NME"/>
 	<!--<haxelib name="flixel"/>-->
 </project>

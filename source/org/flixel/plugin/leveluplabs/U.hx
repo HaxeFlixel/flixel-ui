@@ -515,11 +515,12 @@ class U
 		return str.substr(0, 1).toUpperCase() + str.substr(1, str.length - 1);
 	}
 		
-	public static inline function copy_shallow_arr(src:Array<Dynamic>):Array<Dynamic> {
+	public static function copy_shallow_arr(src:Array<Dynamic>):Array<Dynamic> {
 		var arr:Array<Dynamic> = new Array<Dynamic>();
 		var thing:Dynamic;
-		if (src == null) 
+		if (src == null){ 
 			return arr;
+		}
 		for (thing in src) {
 			arr.push(thing);
 		}
