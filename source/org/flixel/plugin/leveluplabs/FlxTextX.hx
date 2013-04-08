@@ -31,17 +31,19 @@ class FlxTextX extends FlxText
 		return _dropShadow;
 	}
 	
-	public function setDropShadow(b:Bool):Bool{
+	public function setDropShadow(b:Bool):Bool {
 		_dropShadow = b;
-		if (b) {
-			_textField.filters = 
-			[new GlowFilter(_shadow,1, 2, 2, 2, 1, false, false),
-			new DropShadowFilter(1, 45, _shadow,1,1, 1, 0.25)];
-		}else {
-			_textField.filters = [];
+		
+		if (_dropShadow) 
+		{
+			addFilter(new GlowFilter(_shadow, 1, 2, 2, 2, 1, false, false));
+			addFilter(new DropShadowFilter(1, 45, _shadow, 1, 1, 1, 0.25));
+		} 
+		else
+		{
+			removeAllFilters();
 		}
-		_regen = true;
-		calcFrame();
+		
 		return _dropShadow;
 	}	
 	
