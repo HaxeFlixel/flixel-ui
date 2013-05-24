@@ -134,6 +134,7 @@ class U
 		}return null;
 	}*/
 	
+	
 	/**
 	 * Simple rand function - return an integer in this range
 	 * @param	min	smallest possible value
@@ -810,5 +811,144 @@ class U
 		}
 		return final;
 	}
+	
+	public static function getShortTextFromFlxKeyText(str:String):String {
+			var s:String = str.toUpperCase();
+			switch(str) {
+				case "ESC": 
+				case "ESCAPE": s = "EC"; 
+				case "MINUS": s = "-"; 
+				case "PLUS": s = "+"; 
+				case "EQUALS": s = "="; 				
+				case "DELETE": s = "DE"; 
+				case "BACKSPACE": s = "BK"; 
+				case "LBRACKET": s = "["; 
+				case "RBRACKET": s = "]"; 
+				case "BACKSLASH": s = "\\"; 
+				case "SEMICOLON": s = ";"; 
+				case "QUOTE": s = "\""; 
+				case "ENTER": s = "EN"; 
+				case "SHIFT": s = "SH"; 
+				case "COMMA": s = ","; 
+				case "PERIOD": s = "."; 
+				case "SLASH": s = "/"; 
+				case "CONTROL": s = "CT"; 
+				case "ALT": s = "AT"; 
+				case "SPACE": s = "SP"; 
+				case "UP": s = "UP"; 
+				case "DOWN": s = "DN"; 
+				case "LEFT": s = "LT"; 
+				case "RIGHT": s = "RT"; 
+				case "ZERO": s = "0"; 
+				case "ONE": s = "1"; 
+				case "TWO": s = "2"; 
+				case "THREE": s = "3"; 
+				case "FOUR": s = "4"; 
+				case "FIVE": s = "5"; 
+				case "SIX": s = "6"; 
+				case "SEVEN": s = "7"; 
+				case "EIGHT": s = "8"; 
+				case "NINE": s = "9"; 
+				case "TEN": s = "10"; 
+				case "ACCENT": s = "`"; 
+				case "TAB": s = "TB"; 
+				case "CAPSLOCK": s = "CP"; 
+				case "PAUSEBREAK": s = "PB"; 
+				case "HOME": s = "HM"; 
+				case "INSERT": s = "IN"; 
+				case "PAGEUP": s = "PU"; 
+				case "PAGEDOWN": s = "PD"; 
+				case "END": s = "ED"; 
+				case "NUMLOCK": s = "NM"; 
+				case "SCROLLLOCK": s = "SC"; 
+				case "NUM0": s = "N0"; 
+				case "NUM1": s = "N1"; 
+				case "NUM2": s = "N2";  
+				case "NUM3": s = "N3";  
+				case "NUM4": s = "N4";  
+				case "NUM5": s = "N5";  
+				case "NUM6": s = "N6";  
+				case "NUM7": s = "N7";  
+				case "NUM8": s = "N8";  
+				case "NUM9": s = "N9";  
+				case "NUMDIV": s = "N/"; 
+				case "NUMMULT": s = "N*"; 
+				case "NUMPLUS": s = "N+"; 
+				case "NUMMINUS": s = "N-"; 
+				case "NUMDEC": s = "N."; 
+				case "NULL": s = " "; 
+				default: s = str; 
+			}
+			return s;
+		}
+		
+		public static function getFlxKeyTextFromShortText(str:String):String {
+			var s:String = str.toUpperCase();
+			switch(str) {
+				case "EC": s = "ESCAPE"; 
+				case "-": s = "MINUS"; 
+				case "=": s = "EQUALS"; 
+				case "+": s = "PLUS"; 
+				case "DE": s = "DELETE"; 
+				case "BK": s = "BACKSPACE"; 
+				case "[": s = "LBRACKET"; 
+				case "]": s = "RBRACKET"; 
+				case "\\": s = "BACKSLASH"; 
+				case "CP": s = "CAPSLOCK"; 
+				case ";": s = "SEMICOLON"; 
+				case "\"": s = "QUOTE"; 
+				case "EN": s = "ENTER"; 
+				case "SH": s = "SHIFT"; 
+				case ",": s = "COMMA"; 
+				case ".": s = "PERIOD"; 
+				case "/": s = "SLASH"; 
+				case "CT": s = "CONTROL"; 
+				case "AT": s = "ALT"; 
+				case "SP": s = "SPACE"; 
+				case "UP": s = "UP"; 
+				case "DN": s = "DOWN"; 
+				case "LT": s = "LEFT"; 
+				case "RT": s = "RIGHT"; 
+				case "0": s = "ZERO"; 
+				case "1": s = "ONE"; 
+				case "2": s = "TWO"; 
+				case "3": s = "THREE"; 
+				case "4": s = "FOUR"; 
+				case "5": s = "FIVE"; 
+				case "6": s = "SIX"; 
+				case "7": s = "SEVEN"; 
+				case "8": s = "EIGHT"; 
+				case "9": s = "NINE"; 
+				case "10": s = "TEN"; 
+				case "`": s = "ACCENT"; 
+				case "TB": s = "TAB"; 
+				case "PB": s = "PAUSEBREAK"; 
+				case "HM": s = "HOME"; 
+				case "IN": s = "INSERT"; 
+				case "PU": s = "PAGEUP"; 
+				case "PD": s = "PAGEDOWN"; 
+				case "ED": s = "END"; 
+				case "NM": s = "NUMLOCK"; 
+				case "SC": s = "SCROLLLOCK"; 
+				case "N0": s = "NUM0"; 
+				case "N1": s = "NUM1"; 
+				case "N2": s = "NUM2"; 
+				case "N3": s = "NUM3"; 
+				case "N4": s = "NUM4"; 
+				case "N5": s = "NUM5"; 
+				case "N6": s = "NUM6"; 
+				case "N7": s = "NUM7"; 
+				case "N8": s = "NUM8"; 
+				case "N9": s = "NUM9"; 
+				case "N.": s = "NUMDEC"; 
+				case "N/": s = "NUMDIV"; 
+				case "N+": s = "NUMPLUS"; 
+				case "N-": s = "NUMMINUS"; 
+				case "*": s = "NUMMULT"; 
+				case "": s = " "; 
+				default: s = str; 
+			}
+			return s;
+		}
 		
 }

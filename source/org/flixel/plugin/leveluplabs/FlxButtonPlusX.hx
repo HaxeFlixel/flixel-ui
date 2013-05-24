@@ -10,6 +10,9 @@ import org.flixel.plugin.photonstorm.FlxButtonPlus;
 
 class FlxButtonPlusX extends FlxButtonPlus
 {
+	
+	public var id:String; 
+	
 	//Get-Set the position of the main text field	
 	public var textX(getTextX, setTextX):Int;
 	public var textY(getTextY, setTextY):Int;
@@ -31,7 +34,7 @@ class FlxButtonPlusX extends FlxButtonPlus
 	static public inline var HIGHLIGHT:Int = 1;
 	static public inline var PRESSED:Int = 2;
 	
-	public function new(X:Int, Y:Int, Callback:Dynamic, Params:Array<Dynamic> = null, Label:String = null, Width:Int = 100, Height:Int = 20)
+	public function new(X:Int, Y:Int, Callback:Dynamic, Params:Array<Dynamic> = null, Label:String = "", Width:Int = 100, Height:Int = 20)
 	{
 		super(X, Y, Callback, Params, Label, Width, Height);		
 		
@@ -49,6 +52,8 @@ class FlxButtonPlusX extends FlxButtonPlus
 			textHighlight.setFormat(null, 8, 0xffffff, "center", 0x000000);					
 			add(textHighlight);
 		}
+		
+		centerLabelY();
 	}
 	
 		/**** Getter/setter functionality: ****/
@@ -64,15 +69,23 @@ class FlxButtonPlusX extends FlxButtonPlus
 	
 		public override function set_x(newX:Int):Int{
 			super.set_x(newX);
-			textNormal.x += _textX;
-			textHighlight.x += _textX;
+			
+			if (textNormal != null) 
+				textNormal.x += _textX;
+			if (textHighlight != null)
+				textHighlight.x += _textX;
+			
 			return newX;
 		}
 		
 		public override function set_y(newY:Int):Int{
 			super.set_y(newY);
-			textNormal.y += _textY;
-			textHighlight.y += _textY;
+			
+			if (textNormal != null)
+				textNormal.y += _textY;
+			if (textHighlight != null)
+				textHighlight.y += _textY;
+				
 			return newY;
 		}
 		
@@ -87,6 +100,14 @@ class FlxButtonPlusX extends FlxButtonPlus
 		buttonNormal.visible = oN;
 		buttonHighlight.visible = oH;	
 	}
+	
+	
+	public function centerLabelY(offsetY:Int = 0)
+	{
+		setTextY(Std.int((this.height - this.textNormal.frameHeight) / 2) + offsetY);
+	}
+	
+	
 	
 	/**
 	 * Internal function for handling the actual callback call (for UI thread dependent calls like <code>FlxU.openURL()</code>).

@@ -18,6 +18,7 @@ class FlxTextX extends FlxText
 	public var dropShadow(getDropShadow, setDropShadow):Bool;	
 	private var _dropShadow:Bool = false;
 	public var bold(default, setBold):Bool;
+	public var outline(default, setOutline):Bool;
 	
 	public function new(X:Float, Y:Float, Width:Int, Text:String = null, EmbeddedFont:Bool = true)	
 	{
@@ -47,12 +48,29 @@ class FlxTextX extends FlxText
 		return _dropShadow;
 	}	
 	
+	function setOutline(b:Bool) {
+		if (b) {
+			addFilter(new GlowFilter(0, 1, 2, 2, 1, 1, false, false));
+		}else {
+			removeAllFilters();
+		}
+		_regen = true;
+		outline = b;
+		calcFrame();
+		return b;
+	}
+	
 	function setBold(b:Bool):Bool
 	{
 		var format:TextFormat = _format;
 		format.bold = b;
 		_textField.setTextFormat(format);
 		return b;
+	}
+	
+	public function getTextField()
+	{
+		return _textField;
 	}
 	
 }
