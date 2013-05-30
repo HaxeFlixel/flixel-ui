@@ -98,9 +98,10 @@ class ConfirmationBox extends BasicPopUp
 	{
 		if (!active) return;
 		
-		var text:String = textEntry.text;
+		var text:String;
 		
 		if (textEntry != null && textEntry.active && textEntry.visible) {
+			text = textEntry.text;
 			hide();
 			//_callback("yes", text);	
 			_callback("yes"); // TODO - possible need implement callback second argument.
@@ -202,18 +203,21 @@ class ConfirmationBox extends BasicPopUp
 		text = fixword(text);
 		
 		yes_btn = new FlxButtonPlusX(35, 147, pressYes);
-		yes_btn.loadGraphic(new FlxSprite(0, 0, U.gfx("button_confirmation_up","ui","buttons")), new FlxSprite(0, 0, U.gfx("button_confirmation_over","ui","buttons")));
-		yes_btn.text = STR_YES;
-		fb.textNormalX.setFormat(the_font, size, color, align, shadow);
-		fb.textNormalX.dropShadow = true;
+		yes_btn.loadGraphic(new FlxSprite(0, 0, U.gfx("button_confirmation_up", "ui", "buttons")), new FlxSprite(0, 0, U.gfx("button_confirmation_over", "ui", "buttons")));
+		yes_btn.setSimpleLabel(STR_YES);
+		//yes_btn.text = STR_YES;
+		//fb.textNormalX.setFormat(the_font, size, color, align, shadow);
+		//fb.textNormalX.dropShadow = true;
 		
 		no_btn = new FlxButtonPlusX(118, 147, pressNo);
-		no_btn.loadGraphic(new FlxSprite(0, 0, U.gfx("button_confirmation_red_up","ui","buttons")), new FlxSprite(0, 0, U.gfx("button_confirmation_red_over","ui","buttons")));
-		no_btn.text = STR_NO;
+		no_btn.loadGraphic(new FlxSprite(0, 0, U.gfx("button_confirmation_red_up", "ui", "buttons")), new FlxSprite(0, 0, U.gfx("button_confirmation_red_over", "ui", "buttons")));
+		no_btn.setSimpleLabel(STR_NO);
+		//no_btn.text = STR_NO;
 
 		cancel_btn = new FlxButtonPlusX(200, 147, pressCancel);
-		cancel_btn.loadGraphic(new FlxSprite(0, 0, U.gfx("button_confirmation_red_up","ui","buttons")), new FlxSprite(0, 0, U.gfx("button_confirmation_red_over","ui","buttons")));
-		cancel_btn.text = STR_CANCEL;
+		cancel_btn.loadGraphic(new FlxSprite(0, 0, U.gfx("button_confirmation_red_up", "ui", "buttons")), new FlxSprite(0, 0, U.gfx("button_confirmation_red_over", "ui", "buttons")));
+		cancel_btn.setSimpleLabel(STR_CANCEL);
+		//cancel_btn.text = STR_CANCEL;
 		
 		titleBox = new FlxTextX(0, 10, 350, title);
 		titleBox.setFormat(U.font("verdana"), 18, 0xffffff, "center");

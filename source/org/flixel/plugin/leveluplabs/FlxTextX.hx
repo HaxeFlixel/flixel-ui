@@ -37,7 +37,7 @@ class FlxTextX extends FlxText
 		
 		if (_dropShadow) 
 		{
-			addFilter(new GlowFilter(_shadow, 1, 2, 2, 2, 1, false, false));
+			//addFilter(new GlowFilter(_shadow, 1, 2, 2, 2, 1, false, false));
 			addFilter(new DropShadowFilter(1, 45, _shadow, 1, 1, 1, 0.25));
 		} 
 		else

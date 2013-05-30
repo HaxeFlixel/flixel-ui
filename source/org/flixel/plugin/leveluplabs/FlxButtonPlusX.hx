@@ -107,7 +107,173 @@ class FlxButtonPlusX extends FlxButtonPlus
 		setTextY(Std.int((this.height - this.textNormal.frameHeight) / 2) + offsetY);
 	}
 	
-	
+	public function updateLabel(str:String, autoFit:Bool = false) {
+		var old_size:Float = textNormal.size;
+		
+		textNormal.text = str;
+		textHighlight.text = str;
+		
+		if(autoFit){
+			var failsafe:Int = 0;			
+			while(textNormal.frameWidth > (textNormal.width*0.85) && (failsafe < 99)) {
+				if (textNormal.size < 6) {
+					failsafe = 99;
+					break;
+				}
+				textNormal.size -= 1;
+				textHighlight.size -= 1;
+				textNormal.y += 1;
+				textHighlight.y += 1;
+				
+				textY = Std.int(textNormal.y);
+				failsafe++;								
+			}
+		}
+	}
+
+	public function updateLabels(str:String,str2:String) {
+		textNormal.text = str;
+		textHighlight.text = str2;
+	}
+
+		
+	public function changeText(str:String = "",str2:String="") {
+		var ontx:FlxTextX = cast(textHighlight, FlxTextX);
+		var offtx:FlxTextX = cast(textNormal, FlxTextX);
+		if(ontx != null){
+
+			if (str2 != "") {
+				textHighlight.text = str2;
+			}else {
+				textHighlight.text = str;
+			}
+		
+		}
+		
+		if(offtx != null){
+
+			if (str != "") {
+				textNormal.text = str;
+			}
+		}
+	}
+		
+	public function changeSimpleLabel(color:Int = 0xffffff, size:Int = 14, str:String = "", bold:Bool = true, shadow:Int = 1,doOffsets:Bool=false,offset:Float=0,offx:Float=0,overColor:Int=0,outline:Bool=false,underline:Bool=false,onstr:String="",aa:Int=2) {
+		var ontx:FlxTextX = cast(textHighlight, FlxTextX);
+		var offtx:FlxTextX = cast(textNormal, FlxTextX);
+		
+		if(doOffsets){
+			ontx.x = x + -2 + offx;
+			ontx.y = y + offset;
+			
+			if (height > ontx.height) {
+				ontx.y += (height - ontx.height) / 4;
+			}else {
+				ontx.y += (ontx.height - height) / 4;
+			}
+			
+			offtx.x = ontx.x;
+			offtx.y = ontx.y;
+		}
+		
+		if (ontx != null) {
+			if(aa == 0 || aa != 1 && size < 16){
+				ontx.setFormat(U.font("verdana"), size, color, "center", shadow);
+			}else {
+				ontx.setFormat(U.font("verdana"), size, color, "center", shadow);					
+			}
+			ontx.bold = bold;
+			ontx.dropShadow = (shadow != 0);
+			if (onstr != "") {
+				textHighlight.text = onstr;
+			}else if (str != "") {
+				textHighlight.text = str;
+			}
+		
+		}
+		
+		if(offtx != null){
+			if(aa == 0 || aa != 1 && size < 16){
+				offtx.setFormat(U.font("verdana"), size, color, "center", shadow);
+			}else {
+				offtx.setFormat(U.font("Verdana"), size, color, "center", shadow);					
+			}
+			offtx.bold = bold;
+			offtx.dropShadow = (shadow != 0);
+			if (str != "") {
+				textNormal.text = str;
+			}
+		}
+	}
+		
+	public function setSimpleLabel(str:String,size:Int=14,color:Int=0xffffff,bold:Bool=true,shadow:Int=1,offset:Float=0,offx:Float=0,overColor:Int=0xffffff,outline:Bool=false,underline:Bool=false,shadow_which:Int=0,new_width:Int=0,align_:String="center",aa:Int=2) {
+		
+		if (new_width == 0) {
+			new_width = width;
+		}
+		
+		//var ft:FlxTextX = new FlxTextX(-2, 0, new_width, str);
+		var ft:FlxTextX = cast(textNormal, FlxTextX);
+		ft.x = -2;
+		ft.y = 0;
+		ft.width = new_width;
+		ft.text = str;
+		if(height > ft.height)
+			ft.y += (height - ft.height) / 4;
+		else
+			ft.y += (ft.height - height) / 4;
+
+		ft.y += offset;
+		ft.x += offx;
+		
+		var shade:Int = shadow;
+		if (shadow_which == 2) {
+			shade = 0;
+		}
+		
+		if(aa == 0 || aa != 1 && size < 16){
+			ft.setFormat(U.font("verdana"), size, color, align_, shade);
+		}else {
+			ft.setFormat(U.font("Verdana"), size, color, align_, shade);				
+		}
+			
+		ft.bold = bold;
+		//ft.underline = underline;
+		if (outline) {
+			ft.outline = true;
+		}else {
+			if(shadow_which == 0 || shadow_which == 1){
+				ft.dropShadow = (shadow != 0);
+			}
+		}
+
+		var fto:FlxTextX = cast(textHighlight, FlxTextX);
+		fto.x = ft.x;
+		fto.y = ft.y;
+		fto.width = new_width;
+		fto.text = str;
+		
+		shade = shadow;
+		if (shadow_which == 1) {
+			shade = 0;
+		}				
+		
+		if(aa == 0 || aa != 1 && size < 16){				
+			fto.setFormat(U.font("verdana"), size, overColor, align_, shade);
+		}else {
+			fto.setFormat(U.font("verdana"), size, overColor, align_, shade);				
+		}
+		
+		fto.bold = bold;
+		//fto.underline = underline;
+		if(shadow_which ==0 || shadow_which == 2){
+			fto.dropShadow = (shadow != 0);
+		}
+		
+		fto.visible = false;
+		textX = Std.int(textHighlight.x);
+		textY = Std.int(textHighlight.y);
+	}
 	
 	/**
 	 * Internal function for handling the actual callback call (for UI thread dependent calls like <code>FlxU.openURL()</code>).
