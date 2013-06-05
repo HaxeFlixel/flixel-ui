@@ -6,7 +6,7 @@ import org.flixel.FlxSprite;
  * @author Lars Doucet
  */
 
-class FlxTabMenu extends FlxGroupX, implements IEventGetter
+class FlxTabMenu extends FlxGroupX implements IEventGetter
 {
 
 	/***Event Handling***/

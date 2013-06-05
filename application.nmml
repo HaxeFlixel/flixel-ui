@@ -49,7 +49,9 @@
 	<haxedef name="swfstats"/>
 	<!--<haxedef name="kong"/>-->
 	
-	<classpath name="../HaxeFlixel/src"/>
-	<classpath name="../../Projects/NME"/>
+	<!--<classpath name="../../Projects/NME"/>-->
+	<haxelib name="flixel"/>
+	<haxelib name="openfl"/>
+	<haxelib name="openfl-compatibility"/>
 	<!--<haxelib name="flixel"/>-->
 </project>

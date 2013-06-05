@@ -9,10 +9,10 @@ import org.flixel.FlxSprite;
 
 class FlxRadioGroup extends FlxGroupX
 {
-	public var clickable(getClickable, setClickable):Bool;
-	public var selectedId(getSelectedId, setSelectedId):String;	
-	public var selectedLabel(getSelectedLabel, setSelectedLabel):String;
-	public var selectedIndex(getSelectedIndex, setSelectedIndex):Int;
+	public var clickable(get_clickable, set_clickable):Bool;
+	public var selectedId(get_selectedId, set_selectedId):String;	
+	public var selectedLabel(get_selectedLabel, set_selectedLabel):String;
+	public var selectedIndex(get_selectedIndex, set_selectedIndex):Int;
 	
 	public function new(X:Float, Y:Float, ids_:Array<String>,labels_:Array<String>, callback_:Dynamic, y_space_:Float=25):Void {
 		super();
@@ -75,8 +75,8 @@ class FlxRadioGroup extends FlxGroupX
 	
 	/***GETTER / SETTER***/
 	
-	public function getClickable():Bool { return _clickable; }
-	public function setClickable(b:Bool):Bool { 
+	public function get_clickable():Bool { return _clickable; }
+	public function set_clickable(b:Bool):Bool { 
 		_clickable = b;
 		for(c in _list_radios) {
 			c.active = b;
@@ -84,8 +84,8 @@ class FlxRadioGroup extends FlxGroupX
 		return _clickable;
 	}
 	
-	public function getSelectedIndex():Int { return _selected; }
-	public function setSelectedIndex(i:Int):Int {
+	public function get_selectedIndex():Int { return _selected; }
+	public function set_selectedIndex(i:Int):Int {
 		_selected = i;
 		var j:Int = 0;
 		for(c in _list_radios) {
@@ -98,8 +98,8 @@ class FlxRadioGroup extends FlxGroupX
 		return _selected;
 	}
 	
-	public function getSelectedLabel():String { return _labels[_selected]; }
-	public function setSelectedLabel(str:String):String {
+	public function get_selectedLabel():String { return _labels[_selected]; }
+	public function set_selectedLabel(str:String):String {
 		var i:Int = 0;
 		for(c in _list_radios) {
 			c.checked = false;
@@ -113,8 +113,8 @@ class FlxRadioGroup extends FlxGroupX
 		return _labels[_selected];
 	}
 	
-	public function getSelectedId():String { return _ids[_selected]; }
-	public function setSelectedId(str:String):String {
+	public function get_selectedId():String { return _ids[_selected]; }
+	public function set_selectedId(str:String):String {
 		var i:Int = 0;
 		for(c in _list_radios) {
 			c.checked = false;

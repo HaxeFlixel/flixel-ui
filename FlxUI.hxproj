@@ -6,8 +6,8 @@
     <movie input="" />
     <movie path="application.nmml" />
     <movie fps="30" />
-    <movie width="800" />
-    <movie height="600" />
+    <movie width="1280" />
+    <movie height="720" />
     <movie version="3" />
     <movie minorVersion="0" />
     <movie platform="NME" />
@@ -16,13 +16,14 @@
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
     <class path="source" />
-    <class path="C:\Motion-Twin\haxe\lib\nme/3,5,5/" />
-    <class path="flixel/src" />
+    <class path="source" />
+    <class path="../HaxeFlixel/src" />
+    <class path="C:\HaxeToolkit\haxe/lib\nme/3,5,6/" />
     <class path="export/flash/haxe" />
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="swfstats&#xA;nme_install_tool&#xA;web" />
+    <option directives="swfstats&#xA;nme&#xA;nme_ver=3.5.6&#xA;nme_install_tool=1&#xA;nme3=1&#xA;web" />
     <option flashStrict="False" />
     <option mainClass="ApplicationMain" />
     <option enabledebug="True" />

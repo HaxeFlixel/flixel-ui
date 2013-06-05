@@ -1,6 +1,6 @@
 package org.flixel.plugin.leveluplabs;
 import haxe.xml.Fast;
-import nme.geom.ColorTransform;
+import flash.geom.ColorTransform;
 import org.flixel.FlxGroup;
 import org.flixel.FlxSprite;
 
@@ -9,7 +9,7 @@ import org.flixel.FlxSprite;
  * @author Lars Doucet
  */
 
-class FlxSpriteX extends FlxSprite, implements IDestroyable
+class FlxSpriteX extends FlxSprite implements IDestroyable
 {
 	//simple string ID, handy for identification, etc
 	public var str_id:String;			

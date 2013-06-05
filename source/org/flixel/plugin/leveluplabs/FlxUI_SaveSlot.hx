@@ -1,6 +1,6 @@
 package org.flixel.plugin.leveluplabs;
 import haxe.xml.Fast;
-import nme.geom.Point;
+import flash.geom.Point;
 import nme.Lib;
 import org.flixel.FlxG;
 import org.flixel.FlxGroup;

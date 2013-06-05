@@ -15,7 +15,7 @@ import org.flixel.plugin.photonstorm.FlxButtonPlus;
  * @author Lars Doucet
  */
 
-class FlxGroupX extends FlxGroup, implements IDestroyable
+class FlxGroupX extends FlxGroup implements IDestroyable
 {	
 	/***PUBLIC VARS***/
 		

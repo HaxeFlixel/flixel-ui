@@ -1,8 +1,7 @@
 package org.flixel.plugin.leveluplabs;
 import haxe.xml.Fast;
 import nme.Assets;
-import nme.display.BitmapData;
-import nme.display.BitmapInt32;
+import flash.display.BitmapData;
 import nme.Lib;
 import org.flixel.FlxBasic;
 import org.flixel.FlxButton;
@@ -26,7 +25,7 @@ import org.flixel.FlxText;
  * @author Lars Doucet
  */
 
-class FlxStateX extends FlxState, implements IEventGetter
+class FlxStateX extends FlxState implements IEventGetter
 {
 	private var _xml_id:String = "";	//the xml to load
 	private var _ui:FlxUI;
@@ -43,9 +42,11 @@ class FlxStateX extends FlxState, implements IEventGetter
 		
 		_ui = new FlxUI(null,this);
 		add(_ui);
-		
-		var data:Fast = U.xml(_xml_id);		
+				
+		var data:Fast = U.xml(_xml_id);
 		_ui.load(data);
+		
+		useMouse = true;
 	}
 	
 	public override function destroy():Void {

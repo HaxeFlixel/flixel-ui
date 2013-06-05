@@ -16,10 +16,10 @@ import org.flixel.FlxObject;
  * @author Lars A. Doucet
  */
 class FlxShape extends FlxObject {
-	public var st_thick(never, setSt_thick) : Float;
-	public var fill(never, setFill) : Int;
-	public var line_col(never, setLine_col) : Int;
-	public var alpha(getAlpha, setAlpha) : Float;
+	public var st_thick(never, set_st_thick) : Float;
+	public var fill(never, set_fill) : Int;
+	public var line_col(never, set_line_col) : Int;
+	public var alpha(get_alpha, set_alpha) : Float;
 
 	var has_fill : Bool;
 	var fill_col : Int;
@@ -79,25 +79,25 @@ class FlxShape extends FlxObject {
 		super.destroy();
 	}
 
-	public function setSt_thick(n : Float) : Float {
+	public function set_st_thick(n : Float) : Float {
 		stroke_thick = n;
 		buffer();
 		return n;
 	}
 
-	public function setFill(u : Int) : Int {
+	public function set_fill(u : Int) : Int {
 		fill_col = u;
 		buffer();
 		return u;
 	}
 
-	public function setLine_col(u : Int) : Int {
+	public function set_line_col(u : Int) : Int {
 		stroke_col = u;
 		buffer();
 		return u;
 	}
 
-	public function setAlpha(n : Float) : Float {
+	public function set_alpha(n : Float) : Float {
 		if(n > 1) 
 			n = 1;
 		if(n < 0) 
@@ -106,21 +106,21 @@ class FlxShape extends FlxObject {
 		return n;
 	}
 
-	public function getAlpha() : Float {
+	public function get_alpha() : Float {
 		return _alpha;
 	}
 
-	public function setLoc(X : Float, Y : Float) : Void {
+	public function set_loc(X : Float, Y : Float) : Void {
 		x = X;
 		y = Y;
 		buffer();
 	}
 
-	public function getLoc() : Point {
+	public function get_loc() : Point {
 		return _pt.clone();
 	}
 
-	public function setSize(W : Int, H : Int) : Void {
+	public function set_size(W : Int, H : Int) : Void {
 		if(W != -1) 
 			_w = W;
 		if(H != -1) 

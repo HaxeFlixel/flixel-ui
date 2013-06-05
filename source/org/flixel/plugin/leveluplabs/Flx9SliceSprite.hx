@@ -1,11 +1,11 @@
 package org.flixel.plugin.leveluplabs;
-import nme.Assets;
-import nme.display.Graphics;
-import nme.display.Sprite;
+import flash.geom.Point;
 import nme.geom.Matrix;
-import nme.geom.Point;
-import nme.geom.Rectangle;
-import nme.display.BitmapData;
+import nme.Assets;
+import flash.display.Graphics;
+import flash.display.Sprite;
+import flash.geom.Rectangle;
+import flash.display.BitmapData;
 import org.flixel.FlxObject;
 import org.flixel.FlxSprite;
 
@@ -13,7 +13,7 @@ import org.flixel.FlxSprite;
  * @author Lars Doucet
  */
 
-class Flx9SliceSprite extends FlxSprite
+class Flx9SliceSprite extends FlxSprite implements IResizable
 {
 	
 	private static var bitmapsCreated:Int = 0; // for debug
@@ -21,10 +21,14 @@ class Flx9SliceSprite extends FlxSprite
 	private static var _canvas:Sprite;	//drives the 9-slice drawing
 	
 	private static var useSectionCache:Bool = true;
-	private static var sectionCache:Hash<BitmapData>;
+	private static var sectionCache:Map<String,BitmapData>;
 	
-	/**
-	 * 
+	private var _slice9:String = "";
+	private var _tile:Bool = false;
+	private var _smooth:Bool = false;
+	private var _asset_id:String = "";
+	
+	/** 
 	 * @param	X	X position of final sprite
 	 * @param	Y	Y position of final sprite
 	 * @param	Graphic	Asset
@@ -38,8 +42,23 @@ class Flx9SliceSprite extends FlxSprite
 	public function new(X:Float, Y:Float, Graphic:Dynamic, rc:Rectangle, slice9:String="", tile:Bool=false, smooth:Bool=false, id:String="") 
 	{
 		super(X, Y, null);
-		if (slice9 == "" || slice9 == null) {
-			slice9 = "4,4,7,7";
+		
+		_slice9 = slice9;
+		_tile = tile;
+		_smooth = smooth;
+				
+		_asset_id = "";
+		
+		if(Std.is(Graphic,String)){
+			_asset_id = Graphic;
+		}else if (Std.is(Graphic, BitmapData)) {
+			_asset_id = id;
+		}
+				
+		resize(rc.width, rc.height);
+		
+		/*if (_slice9 == "" || _slice9 == null) {
+			_slice9 = "4,4,7,7";
 		}
 		
 		if(_canvas == null){
@@ -56,15 +75,40 @@ class Flx9SliceSprite extends FlxSprite
 			asset_id = id;
 		}
 				
-		paintScale9(_canvas.graphics, asset_id, slice9, rc, tile, smooth);
+		paintScale9(_canvas.graphics, asset_id, _slice9, _rc, _tile, _smooth);
 		
 		var bitmap_data:BitmapData = new BitmapData(Std.int(rc.width), Std.int(rc.height),true,0x00ffffff);
 		bitmap_data.draw(_canvas);
 		
 		//for caching purposes:
-		var key:String = asset_id + "_" + slice9 + "_" + rc.width + "x" + rc.height;
+		var key:String = asset_id + "_" + _slice9 + "_" + rc.width + "x" + rc.height;
 		
-		loadGraphic(bitmap_data,false,false,bitmap_data.width,bitmap_data.height,false,key);
+		loadGraphic(bitmap_data,false,false,bitmap_data.width,bitmap_data.height,false,key);*/
+	}
+	
+	public function resize(w:Float, h:Float):Void {		
+		if (_slice9 == "" || _slice9 == null) {
+			_slice9 = "4,4,7,7";
+		}
+		
+		if(_canvas == null){
+			_canvas = new Sprite();		
+		}
+		
+		_canvas.graphics.clear();
+
+		paintScale9(_canvas.graphics, _asset_id, _slice9, new Rectangle(0,0,w,h), _tile, _smooth);
+		
+		var iw:Int = Std.int(w);
+		var ih:Int = Std.int(h);
+		
+		var bitmap_data:BitmapData = new BitmapData(iw, ih,true,0x00ffffff);
+		bitmap_data.draw(_canvas);
+		
+		//for caching purposes:
+		var key:String = _asset_id + "_" + _slice9 + "_" + iw + "x" + ih;
+		
+		loadGraphic(bitmap_data, false, false, bitmap_data.width, bitmap_data.height, false, key);
 	}
 	
 	public static inline function getRectFromString(str:String):Rectangle{
@@ -115,7 +159,7 @@ class Flx9SliceSprite extends FlxSprite
 			var x2:Int = Std.parseInt(coords[2]);
 			var y2:Int = Std.parseInt(coords[3]);
 
-			var rects:Hash<Rectangle> = new Hash<Rectangle>();
+			var rects:Map<String,Rectangle> = new Map<String,Rectangle>();
 
 			rects.set("top.left", new Rectangle(0, 0, x1, y1));
 			rects.set("top", new Rectangle(x1, 0, x2 - x1, y1));
@@ -133,7 +177,7 @@ class Flx9SliceSprite extends FlxSprite
 		}
 	}
 
-	public static function paintCompoundBitmap(g:Graphics, assetId:String, sourceRects:Hash<Rectangle>, targetRect:Rectangle, tile:Bool=false, smooth:Bool = false):Void {
+	public static function paintCompoundBitmap(g:Graphics, assetId:String, sourceRects:Map<String,Rectangle>, targetRect:Rectangle, tile:Bool=false, smooth:Bool = false):Void {
 		var fillcolor = #if (neko) { rgb:0x00FFFFFF, a:0 }; #else 0x00FFFFFF; #end
 		targetRect.left = Std.int(targetRect.left);
 		targetRect.top = Std.int(targetRect.top);
@@ -227,7 +271,7 @@ class Flx9SliceSprite extends FlxSprite
 		var cacheId:String = null;
 		if (useSectionCache == true && assetId != null) {
 			if (sectionCache == null) {
-				sectionCache = new Hash<BitmapData>();
+				sectionCache = new Map<String,BitmapData>();
 			}
 			cacheId = assetId + "_" + src.left + "_" + src.top + "_" + src.width + "_" + src.height;
 			section = sectionCache.get(cacheId);

@@ -14,11 +14,11 @@ class FlxButtonToggle extends FlxGroupX
 		public function get_btn_normal():FlxButtonPlusX { return _btn_normal;}
 		public function get_btn_toggle():FlxButtonPlusX { return _btn_toggle;}
 	
-		public var Callback(null, set_callback):Dynamic;
+		public var Callback(null, set_Callback):Dynamic;
 		
 		public var id(get_id, set_id):String;
 	
-		public var toggle(get_toggle, forceToggle):Bool;
+		public var toggle(get_toggle, set_toggle):Bool;
 		
 	public function new(X:Float,Y:Float, Callback:Dynamic, Params:Array<Dynamic>=null, btn_normal_:FlxButtonPlusX, btn_toggle_:FlxButtonPlusX, id_:String="") 
 	{
@@ -51,6 +51,10 @@ class FlxButtonToggle extends FlxGroupX
 		_ignore_clicks_this_frame = false;
 	}
 	
+	public function set_toggle(value:Bool):Bool {
+		return forceToggle(value);
+	}
+	
 	public function forceToggle(value:Bool):Bool{
 		_toggle = value;
 		_btn_normal.visible = !_toggle;
@@ -60,7 +64,7 @@ class FlxButtonToggle extends FlxGroupX
 		
 	/***GETTERS/SETTERS***/
 	
-	public function set_callback(d:Dynamic):Dynamic {
+	public function set_Callback(d:Dynamic):Dynamic {
 		_callback = d;
 		return _callback;
 	}

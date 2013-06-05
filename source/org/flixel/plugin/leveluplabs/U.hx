@@ -1,11 +1,11 @@
 package org.flixel.plugin.leveluplabs;
 import haxe.xml.Fast;
 import nme.Assets;
-import nme.display.BitmapData;
-import nme.display.BlendMode;
-import nme.geom.Point;
+import flash.display.BitmapData;
+import flash.display.BlendMode;
+import flash.geom.Point;
 import nme.Lib;
-import nme.text.Font;
+import flash.text.Font;
 import org.flixel.FlxBasic;
 import org.flixel.FlxG;
 import org.flixel.FlxGroup;
@@ -42,6 +42,70 @@ class U
 			}
 		}return "";
 	} 
+	
+	/**
+	 * If a string is a number that ends with a % sign, it will return a normalized percent float (0-100% = 0.0-1.0)
+	 * @param  str a percentage value, such as "5%" or "236.214%"
+	 * @return a normalized float, or null if not valid input
+	 */
+	
+	public static function perc_to_float(str:String):{percent:Float,error:Bool}{
+		if (str.lastIndexOf("%") == str.length - 1) {
+			str = str.substr(0, str.length - 1);	//trim the % off
+			var r:EReg = ~/[0-9]+(?:\.[0-9]*)?/;		//make sure it's just numbers & at most 1 decimal
+			if (r.match(str)) {
+				var match: { pos:Int, len:Int } = r.matchedPos();
+				if (match.pos == 0 && match.len == str.length) {
+					var perc_float:Float = Std.parseFloat(str);
+					perc_float /= 100;
+					return { percent:perc_float, error:false };
+				}
+			}
+		}
+		return {percent:0,error:true};
+	}
+	
+	public static function arrayContains(arr:Array<Dynamic>, thing:Dynamic):Bool {
+		for (i in 0...arr.length) {
+			if (arr[i] == thing) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static function isStrNum(str:String):Bool {
+		var r:EReg = ~/[0-9]+(?:\.[0-9]*)?/;
+			if (r.match(str)) {
+			var p: { pos:Int, len:Int } = r.matchedPos();
+			if (p.pos == 0 && p.len == str.length) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static function isStrInt(str:String):Bool {
+		var r:EReg = ~/[0-9]+/;
+			if (r.match(str)) {
+			var p: { pos:Int, len:Int } = r.matchedPos();
+			if (p.pos == 0 && p.len == str.length) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static function isStrFloat(str:String):Bool {
+		var r:EReg = ~/[0-9]+\.[0-9]+/;
+			if (r.match(str)) {
+			var p: { pos:Int, len:Int } = r.matchedPos();
+			if (p.pos == 0 && p.len == str.length) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	/**
 	 * Safety wrapper for reading a float attribute from xml

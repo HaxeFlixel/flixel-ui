@@ -1,5 +1,5 @@
 package org.flixel.plugin.leveluplabs;
-import nme.events.MouseEvent;
+import flash.events.MouseEvent;
 import org.flixel.plugin.photonstorm.FlxButtonPlus;
 
 /**
@@ -11,13 +11,16 @@ import org.flixel.plugin.photonstorm.FlxButtonPlus;
 class FlxButtonPlusX extends FlxButtonPlus
 {
 	//Get-Set the position of the main text field	
-	public var textX(getTextX, setTextX):Int;
-	public var textY(getTextY, setTextY):Int;
+	public var textX(get_textX, set_textX):Int;
+	public var textY(get_textY, set_textY):Int;
 	
 	//Get the internal text fields cast as a FlxTextX - "X" naming convention here is almost
 	//certainly confusing and should probably be changed
 	public var textNormalX(get_textNormalX, null):FlxTextX;
 	public var textHighlightX(get_textHighlightX, null):FlxTextX;
+	
+	private var _textNormalX:FlxTextX;
+	private var _textHighlightX:FlxTextX;
 	
 	//Simple flags to show/not-show the normal and hilight state
 	public var showNormal:Bool = true;
@@ -40,6 +43,7 @@ class FlxButtonPlusX extends FlxButtonPlus
 			textNormal = null;
 			textNormal = new FlxTextX(X, Y + 3, Width, Label);
 			textNormal.setFormat(null, 8, 0xffffff, "center", 0x000000);	
+			_textNormalX = cast textNormal;
 			add(textNormal);
 		}
 		if (textHighlight != null) {
@@ -47,20 +51,27 @@ class FlxButtonPlusX extends FlxButtonPlus
 			textHighlight = null;
 			textHighlight = new FlxTextX(X, Y + 3, Width, Label);
 			textHighlight.setFormat(null, 8, 0xffffff, "center", 0x000000);					
+			_textHighlightX = cast textHighlight;
 			add(textHighlight);
 		}
 	}
 	
+	public override function destroy():Void {
+		_textNormalX = null;
+		_textHighlightX = null;
+		super.destroy();
+	}
+	
 		/**** Getter/setter functionality: ****/
 	
-		public function get_textNormalX():FlxTextX{ return cast(textNormal, FlxTextX);}
-		public function get_textHighlightX():FlxTextX{ return cast(textHighlight, FlxTextX);}
+		public function get_textNormalX():FlxTextX{ return _textNormalX;}
+		public function get_textHighlightX():FlxTextX{ return _textHighlightX;}
 						
-		public function getTextX():Int { return _textX; }
-		public function getTextY():Int { return _textY; }
+		public function get_textX():Int { return _textX; }
+		public function get_textY():Int { return _textY; }
 	
-		public function setTextX(newX:Int) { _textX = newX; set_x(_x); return newX; }
-		public function setTextY(newY:Int) { _textY = newY; set_y(_y); return newY; } 
+		public function set_textX(newX:Int) { _textX = newX; set_x(_x); return newX; }
+		public function set_textY(newY:Int) { _textY = newY; set_y(_y); return newY; } 
 	
 		public override function set_x(newX:Int):Int{
 			super.set_x(newX);
@@ -97,7 +108,7 @@ class FlxButtonPlusX extends FlxButtonPlus
 		
 		if (exists && visible && active && click_test && (_onClick != null) && (pauseProof || !FlxG.paused))
 		{
-			Reflect.callMethod(this, Reflect.getProperty(this, "_onClick"), onClickParams);
+			Reflect.callMethod(this, Reflect.getProperty(this, "_onClick"),onClickParams);
 		}
 	}
 	

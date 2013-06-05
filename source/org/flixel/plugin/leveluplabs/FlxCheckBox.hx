@@ -1,5 +1,5 @@
 package org.flixel.plugin.leveluplabs;
-import nme.events.MouseEvent;
+import flash.events.MouseEvent;
 import org.flixel.FlxCamera;
 import org.flixel.FlxG;
 import org.flixel.FlxRect;
@@ -17,7 +17,7 @@ class FlxCheckBox extends FlxButtonPlusX
 	static public inline var HIGHLIGHT:Int = 1;
 	static public inline var PRESSED:Int = 2;
 	
-	public var checked(getChecked, setChecked):Bool;	
+	public var checked(get_checked, set_checked):Bool;	
 	
 	//Set this to false if you just want the checkbox itself to be clickable
 	public var textIsClickable:Bool = true;
@@ -40,9 +40,9 @@ class FlxCheckBox extends FlxButtonPlusX
 		_checkMark = null;
 	}
 	
-	public override function setText(value:String):String
+	public override function set_text(value:String):String
 	{
-		super.setText(value);
+		super.set_text(value);
 		_updateRect();
 		return value;
 	}
@@ -219,8 +219,8 @@ class FlxCheckBox extends FlxButtonPlusX
 	
 	/*****GETTER/SETTER***/
 	
-	public function getChecked():Bool { return _checked; }
-	public function setChecked(b:Bool):Bool { _checked = b; return b; }
+	public function get_checked():Bool { return _checked; }
+	public function set_checked(b:Bool):Bool { _checked = b; return b; }
 	
 	/*****PRIVATE******/
 	private var _checkMark:FlxSprite;
