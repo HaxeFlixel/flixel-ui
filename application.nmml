@@ -2,14 +2,11 @@
 <project>
 	<app title="FlxUI" file="FlxUI" main="Main" version="0.0.0" company="Level Up Labs"/>
 	
-	<window width="800" height="600" fps="30" orientation="portrait" resizable="true" if="web" />
-	<window width="800" height="600" fps="30" orientation="landscape" fullscreen="false" unless="web" />
+	<window width="800" height="600" fps="30" orientation="landscape" fullscreen="false"/>
  	
 	<set name="BUILD_DIR" value="export" />
 	
 	<!--<setenv name="no_console" value="1" />-->
-	
-	<classpath name="source"/>
 	
 	<classpath name="source" />
 	

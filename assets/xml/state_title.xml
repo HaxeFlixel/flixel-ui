@@ -11,15 +11,15 @@
 		<graphic id="normal" visible="false"/>
 	</definition>
 	
-	<button center_x="true" x="-100" y="535" id="saves" use_def="text_button" group="top" label="Saves">
+	<button center_x="true" x="-100" y="505" id="saves" use_def="text_button" group="top" label="Saves">
 		<param type="string" value="saves"/>
 	</button>
 	
-	<button center_x="true" x="100" y="535" id="menu" use_def="text_button" group="top" label="Menus">
+	<button center_x="true" x="100" y="505" id="menu" use_def="text_button" group="top" label="Menus">
 		<param type="string" value="menu"/>
 	</button>
 	
-	<button center_x="true" x="0" y="535" id="battle" use_def="text_button" group="top" label="Battle">
+	<button center_x="true" x="0" y="505" id="battle" use_def="text_button" group="top" label="Battle">
 		<param type="string" value="battle"/>
 	</button>
 	

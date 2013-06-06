@@ -1232,7 +1232,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			if (str.indexOf("stretch:") == 0) {
 				str = StringTools.replace(str, "stretch:", "");
 				var arr:Array<String> = str.split(",");
-				var stretch_0:Float = _getStretch(0,target, arr[0],data);
+				var stretch_0:Float = _getStretch(0, target, arr[0],data);
 				var stretch_1:Float = _getStretch(1, target, arr[1], data);
 				if(stretch_0 != -1 && stretch_1 != -1){
 					return stretch_1 - stretch_0;

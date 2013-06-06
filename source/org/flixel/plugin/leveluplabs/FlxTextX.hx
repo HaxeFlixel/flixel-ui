@@ -1,10 +1,9 @@
 package org.flixel.plugin.leveluplabs;
-import flash.filters.DropShadowFilter;
-import flash.filters.GlowFilter;
-import flash.text.AntiAliasType;
-import flash.text.TextField;
-import flash.text.TextFormat;
-import org.flixel.FlxG;
+import nme.filters.DropShadowFilter;
+import nme.filters.GlowFilter;
+import nme.text.AntiAliasType;
+import nme.text.TextField;
+import nme.text.TextFormat;
 import org.flixel.FlxText;
 
 /**
@@ -16,9 +15,10 @@ import org.flixel.FlxText;
 class FlxTextX extends FlxText
 {
 
-	public var dropShadow(get_dropShadow, set_dropShadow):Bool;	
+	public var dropShadow(get, set):Bool;	
 	private var _dropShadow:Bool = false;
-	public var bold(default, set_bold):Bool;
+	public var bold(default, set):Bool;
+	public var outline(default, set):Bool;
 	
 	public function new(X:Float, Y:Float, Width:Int, Text:String = null, EmbeddedFont:Bool = true)	
 	{
@@ -37,12 +37,8 @@ class FlxTextX extends FlxText
 		
 		if (_dropShadow) 
 		{
-			#if flash
-				addFilter(new GlowFilter(_shadow, 1, 2, 2, 2, 1, false, false));
-				addFilter(new DropShadowFilter(1, 45, _shadow, 1, 1, 1, 0.25));
-			#else
-				//filters currently broken in NME. Wait for a fix.
-			#end
+			//addFilter(new GlowFilter(_shadow, 1, 2, 2, 2, 1, false, false));
+			addFilter(new DropShadowFilter(1, 45, _shadow, 1, 1, 1, 0.25));
 		} 
 		else
 		{
@@ -52,12 +48,29 @@ class FlxTextX extends FlxText
 		return _dropShadow;
 	}	
 	
+	function set_outline(b:Bool) {
+		if (b) {
+			addFilter(new GlowFilter(0, 1, 2, 2, 1, 1, false, false));
+		}else {
+			removeAllFilters();
+		}
+		_regen = true;
+		outline = b;
+		calcFrame();
+		return b;
+	}
+	
 	function set_bold(b:Bool):Bool
 	{
 		var format:TextFormat = _format;
 		format.bold = b;
 		_textField.setTextFormat(format);
 		return b;
+	}
+	
+	public function getTextField()
+	{
+		return _textField;
 	}
 	
 }
