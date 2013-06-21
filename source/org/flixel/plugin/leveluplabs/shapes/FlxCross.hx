@@ -1,6 +1,6 @@
 package org.flixel.plugin.leveluplabs.shapes;
 
-import nme.geom.Point;
+import flash.geom.Point;
 
 /**
 

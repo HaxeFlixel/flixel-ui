@@ -2,9 +2,9 @@ package org.flixel.plugin.leveluplabs;
 import flash.events.MouseEvent;
 import org.flixel.FlxCamera;
 import org.flixel.FlxG;
-import org.flixel.FlxRect;
+import org.flixel.util.FlxRect;
 import org.flixel.FlxSprite;
-import org.flixel.plugin.photonstorm.FlxMath;
+import org.flixel.util.FlxMath;
 
 /**
  * @author Lars Doucet
