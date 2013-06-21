@@ -2,7 +2,7 @@ package org.flixel.plugin.leveluplabs;
 import org.flixel.FlxBasic;
 import org.flixel.FlxGroup;
 import org.flixel.FlxObject;
-import org.flixel.FlxPoint;
+import org.flixel.util.FlxPoint;
 import org.flixel.FlxSprite;
 import org.flixel.plugin.photonstorm.FlxButtonPlus;
 #if (cpp || neko)
@@ -85,11 +85,11 @@ class FlxGroupX extends FlxGroup implements IDestroyable
 		super();
 	}	
 	
-	#if (cpp || neko)	
+	/*#if (cpp || neko)	
 		public function makeAtlas(id:String,ww:Int,hh:Int):Void {
-			__atlas = new Atlas(id, ww, hh);
+			//__atlas = new Atlas(id, ww, hh);
 		}
-	#end
+	#end*/
 		
 	public override function remove(Object:FlxBasic,Splice:Bool=false):FlxBasic {
 		var obj:FlxBasic = super.remove(Object, Splice);

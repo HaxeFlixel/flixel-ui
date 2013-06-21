@@ -1,8 +1,7 @@
 package org.flixel.plugin.leveluplabs;
 import haxe.xml.Fast;
-import nme.Assets;
 import flash.display.BitmapData;
-import nme.Lib;
+import flash.Lib;
 import org.flixel.FlxBasic;
 import org.flixel.FlxButton;
 import org.flixel.FlxG;

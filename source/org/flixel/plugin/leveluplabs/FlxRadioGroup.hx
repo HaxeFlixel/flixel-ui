@@ -1,6 +1,6 @@
 package org.flixel.plugin.leveluplabs;
 import org.flixel.FlxObject;
-import org.flixel.FlxPoint;
+import org.flixel.util.FlxPoint;
 import org.flixel.FlxSprite;
 
 /**

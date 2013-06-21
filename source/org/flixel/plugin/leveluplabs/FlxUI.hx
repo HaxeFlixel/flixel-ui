@@ -2,9 +2,9 @@ package org.flixel.plugin.leveluplabs;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import haxe.xml.Fast;
-import nme.Assets;
 import flash.display.BitmapData;
-import nme.Lib;
+import flash.Lib;
+import openfl.Assets;
 import org.flixel.FlxBasic;
 import org.flixel.FlxButton;
 import org.flixel.FlxG;
@@ -217,9 +217,10 @@ class FlxUI extends FlxGroupX implements IEventGetter
 					_group_index.set(id, group);
 					add(group);
 					
-					#if (cpp || neko)
+					// TODO - CREATE ATLAS COMMENTED FOR CPP TARGET.
+					/*#if (cpp || neko)
 						group.makeAtlas(str_id, FlxG.width, FlxG.height);
-					#end
+					#end*/
 					
 					FlxG.log("Creating group (" + id + ")");
 				}
@@ -638,8 +639,8 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			fbx = fp.x; fby = fp.y;
 		}
 		
-		_delta(fb, -fbx, -fby);			//reset position to 0,0
-		_loadPosition(data,fb);				//reposition
+		//_delta(fb, -fbx, -fby);			//reset position to 0,0
+		//_loadPosition(data,fb);				//reposition
 	}
 	
 	private function _loadTileTest(data:Fast, definition:Fast = null):FlxTileTest {

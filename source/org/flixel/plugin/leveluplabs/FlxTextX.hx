@@ -1,9 +1,9 @@
 package org.flixel.plugin.leveluplabs;
-import nme.filters.DropShadowFilter;
-import nme.filters.GlowFilter;
-import nme.text.AntiAliasType;
-import nme.text.TextField;
-import nme.text.TextFormat;
+import flash.filters.DropShadowFilter;
+import flash.filters.GlowFilter;
+import flash.text.AntiAliasType;
+import flash.text.TextField;
+import flash.text.TextFormat;
 import org.flixel.FlxText;
 
 /**
