@@ -1,11 +1,11 @@
 package org.flixel.plugin.leveluplabs;
 import flash.geom.Point;
-import nme.geom.Matrix;
-import nme.Assets;
+import flash.geom.Matrix;
 import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.geom.Rectangle;
 import flash.display.BitmapData;
+import openfl.Assets;
 import org.flixel.FlxObject;
 import org.flixel.FlxSprite;
 

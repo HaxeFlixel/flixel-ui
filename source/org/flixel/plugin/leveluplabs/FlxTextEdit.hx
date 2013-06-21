@@ -1,11 +1,11 @@
 package org.flixel.plugin.leveluplabs;
-import nme.geom.Rectangle;
-import nme.text.TextField;
-import nme.text.TextFieldType;
+import flash.geom.Rectangle;
+import flash.text.TextField;
+import flash.text.TextFieldType;
 import org.flixel.FlxButton;
 import org.flixel.FlxG;
 import org.flixel.FlxGroup;
-import org.flixel.FlxRect;
+import org.flixel.util.FlxRect;
 import org.flixel.FlxSprite;
 import org.flixel.plugin.leveluplabs.FlxTextX;
 import org.flixel.plugin.leveluplabs.U;
@@ -176,6 +176,8 @@ class FlxTextEdit extends FlxGroup
 	}
 		
 	private function onClick() {
+		// TODO - Implement onClick for cpp.
+		#if flash
 		_blink = false;
 		_blinkTime = 0;
 		var xx:Float = FlxG.mouse.x - _text.x;
@@ -196,9 +198,12 @@ class FlxTextEdit extends FlxGroup
 			}
 		}
 		updateCaret(i);
+		#end
 	}
 	
 	private function updateCaret(i:Int) {
+		// TODO implement updateCaret on cpp
+		#if flash
 		_blinkTime = 0;
 		_blink = false;
 		if (i >= _tf.length) {
@@ -253,6 +258,7 @@ class FlxTextEdit extends FlxGroup
 		}
 		caret.y = _y - 2;
 		caret.x -= 1;
+		#end
 	}
 		
 	public override function update() {

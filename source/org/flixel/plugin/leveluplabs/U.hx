@@ -1,11 +1,11 @@
 package org.flixel.plugin.leveluplabs;
 import haxe.xml.Fast;
-import nme.Assets;
 import flash.display.BitmapData;
 import flash.display.BlendMode;
 import flash.geom.Point;
-import nme.Lib;
+import flash.Lib;
 import flash.text.Font;
+import openfl.Assets;
 import org.flixel.FlxBasic;
 import org.flixel.FlxG;
 import org.flixel.FlxGroup;
@@ -165,7 +165,7 @@ class U
 					}
 					testbmp = null;					
 				}catch (msg:String) {
-					Lib.trace("***ERROR*** U.xml_gfx() : " + msg);
+					trace("***ERROR*** U.xml_gfx() : " + msg);
 				}
 			}			
 		}

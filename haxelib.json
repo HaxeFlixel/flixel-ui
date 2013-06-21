@@ -1,0 +1,14 @@
+{
+ "name": "flxui",
+ "url" : "https://github.com/larsiusprime/haxe-flx-ui",
+ "license": "MIT",
+ "tags": ["flash", "game", "cpp", "openfl", "flixel", "ui"],
+ "description": "A UI library for Flixel",
+ "version": "0.0.1",
+ "releasenote": "Pre-alpha release",
+ "contributors": ["larsiusprime"],
+ "dependencies": { 
+  "openfl": "",
+  "flixel": ""   
+ }
+}
