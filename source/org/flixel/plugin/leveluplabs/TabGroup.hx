@@ -1,8 +1,8 @@
 package org.flixel.plugin.leveluplabs;
 
+import nme.Lib;
 import flash.display.BitmapData;
 import flash.geom.Rectangle;
-import nme.Lib;
 import org.flixel.FlxBasic;
 import org.flixel.FlxButton;
 import org.flixel.FlxG;
@@ -417,9 +417,8 @@ class TabGroup extends FlxGroupX
 			//else
 			//if (Std.is(b, FlxButtonPlusX))
 				//_b = cast(b, FlxButtonPlusX);
-			
-			var axy:Float = (a.y * Lib.stage.stageWidth) + a.x;
-			var bxy:Float = (b.y * Lib.stage.stageHeight) + b.x;
+			var axy:Float = (a.x * Lib.current.stage.stageWidth) + a.x;
+			var bxy:Float = (b.y * Lib.current.stage.stageHeight) + b.x;
 			if (axy < bxy) return -1;
 			if (axy > bxy) return 1;
 			return 0;
