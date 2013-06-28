@@ -1015,4 +1015,42 @@ class U
 			return s;
 		}
 		
+		static public function formatXml(_xml:Xml):String 
+		{
+			var s:String = _xml.toString();
+			
+			var r:EReg = ~/>[^`<]*</g;
+			s = r.replace(s, ">___SPLITHERE___<"); // inserts identifier between tags.
+			
+			r = ~/___SPLITHERE___/g;
+			var split:Array<String> = r.split(s); // splits into tags using the identifier.
+			
+			// Now assembles each tag sepparated by newLines and identented according to child depth.
+			s = "";
+			var childDepht:Int = 0;
+			var whiteSpace = '\t';
+			
+			for (str in split)
+			{
+				for (i in 0...childDepht)
+				{
+					s += whiteSpace;
+				}
+				
+				if (str.charAt(0) == '<' && str.charAt(1) == '/') // If its a closing bracket
+				{
+					childDepht--;
+					s = s.substr(0, s.length - whiteSpace.length);
+				} 
+				else
+				if (str.charAt(str.length - 1) == '>' && str.charAt(str.length - 2) != '/' && str.charAt(str.length - 2) != '-') // if its an open bracket.
+				{
+					childDepht++;	
+				}
+				
+				s += str + "\n"; // Concatenates the tag in the output with a newline at the end.
+			}
+			
+			return s;
+		}
 }
