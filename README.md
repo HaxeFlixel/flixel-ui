@@ -5,15 +5,7 @@ ______________________________________________________
 
 FlxUI - GUI library for Haxe+Flixel
 
-This project depends on the Haxe+Flixel project. To compile the test project,
-you should include a clone of the Haxe+Flixel repo in the top level of this
-directory as "flixel/"
-
-If you want to include this in your own Haxe+Flixel project, just copy/paste the
-"leveluplabs" folder into org/flixel/plugin/ and you should be ready to go.
-
-Public Pivotal Tracker Project:
-https://www.pivotaltracker.com/projects/755921
+This project depends on the Haxe+Flixel project. A [test project](https://github.com/HaxeFlixel/flixel-demos/tree/master/FlxUI/Menus) is available in [flixel-demos](https://github.com/HaxeFlixel/flixel-demos).
 
 More documentation to follow.
 
