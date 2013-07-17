@@ -1,12 +1,12 @@
-package org.flixel.plugin.leveluplabs.shapes;
+package flixel.addons.ui.shapes;
 
-import nme.display.Shape;
-import nme.geom.ColorTransform;
-import nme.geom.Matrix;
-import org.cheezeworld.math.Vector2D;
+import flash.display.Shape;
+import flash.geom.ColorTransform;
+import flash.geom.Matrix;
+import flixel.addons.ui.Vector2D;
 import flixel.FlxG;
 import flixel.FlxObject;
-import flixel.FlxPoint;
+import flixel.util.FlxPoint;
 
 class FlxArrow extends FlxShape {
 	public var point(getPoint, setPoint) : FlxPoint;

@@ -1,4 +1,4 @@
-package org.flixel.plugin.leveluplabs.shapes;
+package flixel.addons.ui.shapes;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;

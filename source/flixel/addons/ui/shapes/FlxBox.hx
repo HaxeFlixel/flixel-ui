@@ -1,14 +1,12 @@
-package org.flixel.plugin.leveluplabs.shapes;
+package flixel.addons.ui.shapes;
 
 import flash.geom.Point;
 
 /**
-
  * ...
-
  * @author Lars A. Doucet
-
- */class FlxBox extends FlxShape {
+ */
+ class FlxBox extends FlxShape {
 
 	public function new(p : Point, w : Int, h : Int, st : Float = 1, sc : Int = 0xFFFFFF, fill : Bool = false, fc : Int = 0xFFFFFF) {
 		shape_id = "box";

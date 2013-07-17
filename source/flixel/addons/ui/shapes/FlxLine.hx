@@ -1,10 +1,10 @@
-package org.flixel.plugin.leveluplabs.shapes;
+package flixel.addons.ui.shapes;
 
-import nme.display.BitmapData;
-import nme.display.Shape;
+import flash.display.BitmapData;
+import flash.display.Shape;
 import flixel.FlxG;
 import flixel.FlxObject;
-import flixel.FlxPoint;
+import flixel.util.FlxPoint;
 
 class FlxLine extends FlxShape {
 	public var point(getPoint, setPoint) : FlxPoint;

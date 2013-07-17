@@ -1,10 +1,10 @@
-package org.flixel.plugin.leveluplabs.shapes;
+package flixel.addons.ui.shapes;
 
-import nme.display.BitmapData;
-import nme.filters.GlowFilter;
-import nme.geom.Point;
-import org.cheezeworld.math.Vector2D;
-import flixel.FlxPoint;
+import flash.display.BitmapData;
+import flash.filters.GlowFilter;
+import flash.geom.Point;
+import flixel.addons.ui.Vector2D;
+import flixel.util.FlxPoint;
 
 /**
 

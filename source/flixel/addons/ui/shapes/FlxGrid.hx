@@ -1,8 +1,8 @@
-package org.flixel.plugin.leveluplabs.shapes;
+package flixel.addons.ui.shapes;
 
-import nme.display.BitmapData;
-import nme.display.BlendMode;
-import nme.geom.Point;
+import flash.display.BitmapData;
+import flash.display.BlendMode;
+import flash.geom.Point;
 
 /**
  * ...
