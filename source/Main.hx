@@ -1,7 +1,7 @@
 import nme.Lib;
-import org.flixel.FlxG;
-import org.flixel.FlxGame;
-import org.flixel.plugin.leveluplabs.example.State_Title;
+import flixel.FlxG;
+import flixel.FlxGame;
+import flixel.addons.ui.example.State_Title;
 	
 class Main extends FlxGame
 {	

@@ -46,8 +46,8 @@
 	<haxedef name="swfstats"/>
 	<!--<haxedef name="kong"/>-->
 	
-	<!--<classpath name="../../Projects/NME"/>-->
 	<haxelib name="flixel"/>
+	<haxelib name="flixel-addons"/>
 	<haxelib name="openfl"/>
 	<haxelib name="openfl-compatibility"/>
 	<!--<haxelib name="flixel"/>-->
