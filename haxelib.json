@@ -1,10 +1,10 @@
 {
- "name": "flxui",
- "url" : "https://github.com/larsiusprime/haxe-flx-ui",
+ "name": "flixel-ui",
+ "url" : "https://github.com/HaxeFlixel/flixel-ui",
  "license": "MIT",
- "tags": ["flash", "game", "cpp", "openfl", "flixel", "ui"],
+ "tags": ["flash", "game", "cpp", "openfl", "flixel", "ui", "flixel-ui"],
  "description": "A UI library for Flixel",
- "version": "0.0.1",
+ "version": "0.0.2",
  "releasenote": "Pre-alpha release",
  "contributors": ["larsiusprime"],
  "dependencies": { 
