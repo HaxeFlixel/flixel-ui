@@ -290,7 +290,7 @@ class FlxButtonPlusX extends FlxButtonPlus
 		
 		if (exists && visible && active && click_test && (_onClick != null) && (pauseProof || !FlxG.paused))
 		{
-			Reflect.callMethod(this, Reflect.getProperty(this, "_onClick"),_onClickParams);
+			Reflect.callMethod(this, Reflect.getProperty(this, "_onClick"),[_onClickParams]);
 		}
 	}
 	
