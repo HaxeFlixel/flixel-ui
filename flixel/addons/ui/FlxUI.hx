@@ -1393,7 +1393,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		}		
 	}
 	
-	private function _onClickButton(params:Dynamic = null):Void {
+	private function _onClickButton(params:Array<Dynamic> = null):Void {
 		FlxG.log.add("FlxUI._onClickButton(" + params + ")");
 		if (_ptr != null) {
 			_ptr.getEvent("click_button", this, params);
