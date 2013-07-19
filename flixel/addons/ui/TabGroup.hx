@@ -1,17 +1,18 @@
 package flixel.addons.ui;
 
 import flash.display.BitmapData;
+import flash.errors.Error;
 import flash.geom.Rectangle;
 import flash.Lib;
 import flixel.FlxBasic;
-import flixel.FlxButton;
+import flixel.ui.FlxButton;
 import flixel.FlxG;
-import flixel.FlxGroup;
+import flixel.group.FlxGroup;
 import flixel.FlxObject;
 import flixel.util.FlxPoint;
 import flixel.util.FlxRect;
 import flixel.FlxSprite;
-import flixel.plugin.leveluplabs.FlxGroupX;
+import flixel.addons.ui.FlxGroupX;
 /**
 * ...
 * @author 
@@ -298,7 +299,10 @@ class TabGroup extends FlxGroupX
 		}else if (Std.is(curr_obj ,FlxButton)) {
 			
 			var btn:FlxButton = cast(curr_obj, FlxButton);
-			if (btn.onUp != null) {	
+			var onup:Dynamic = null;
+			
+			try { onup = Reflect.getProperty(btn, "_onUp"); } catch (e:Error) { };
+			if (onup != null) {	
 				if (Std.is(btn , FlxButtonPlusX) && cast(btn, FlxButtonPlusX).id == "invis") {	
 					// TODO - implement mouse snap.
 					//FlxG.snapVMouseToLoc(btn.x + btn.width/2, btn.y + btn.height/2); 

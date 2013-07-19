@@ -2,13 +2,13 @@ package flixel.addons.ui;
 import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFieldType;
-import flixel.FlxButton;
+import flixel.ui.FlxButton;
 import flixel.FlxG;
-import flixel.FlxGroup;
+import flixel.group.FlxGroup;
 import flixel.util.FlxRect;
 import flixel.FlxSprite;
-import flixel.plugin.leveluplabs.FlxTextX;
-import flixel.plugin.leveluplabs.U;
+import flixel.addons.ui.FlxTextX;
+import flixel.addons.ui.U;
 
 /**
  * ...
@@ -170,8 +170,8 @@ class FlxTextEdit extends FlxGroup
 		refresh();
 	}
 	
-	public function set_outline(b:Bool) {
-		_text.outline = b;
+	public function set_outline(i:Int) {
+		_text.outline = i;
 		refresh();
 	}
 		
