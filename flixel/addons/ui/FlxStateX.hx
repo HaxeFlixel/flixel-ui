@@ -55,12 +55,32 @@ class FlxStateX extends FlxState implements IEventGetter
 		super.destroy();
 	}
 		
-	public function getEvent(id:String, sender:Dynamic, data:Dynamic):Void {
+	public function getEvent(id:String, sender:Dynamic, data:Dynamic):Void {		
+		eventResponse(id, sender, processEventData(data));
+	}
+	
+	public function eventResponse(id:String, sender:Dynamic, data:Array<Dynamic>):Void {
 		//define per subclass
 	}
 	
 	public function getRequest(id:String, sender:Dynamic, data:Dynamic):Dynamic {
 		//define per subclass
+		return null;
+	}
+	
+	/**
+	 * Convenient helper function to make sure your event data is safe
+	 * @param	data
+	 * @return
+	 */
+	
+	private static inline function processEventData(data:Dynamic):Array<Dynamic> {
+		if (data != null && Std.is(data, Array)) {
+			var arr:Array<Dynamic> = cast data;
+			if (arr.length >= 1) {
+				return arr;
+			}
+		}
 		return null;
 	}
 	
