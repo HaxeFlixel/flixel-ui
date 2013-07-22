@@ -74,15 +74,14 @@ class FlxStateX extends FlxState implements IEventGetter
 	 * @return
 	 */
 	
-	private static inline function processEventData(data:Dynamic):Array<Dynamic> {
-		var arr:Array<Dynamic>=null;
+	private static function processEventData(data:Dynamic):Array<Dynamic> {
 		if (data != null && Std.is(data, Array)) {
-			arr = cast data;
-			if (arr.length < 1) {
-				arr = null;
+			var arr:Array<Dynamic> = cast data;
+			if (arr.length >= 1) {
+				return arr;
 			}
 		}
-		return arr;
+		return null;
 	}
 	
 }
