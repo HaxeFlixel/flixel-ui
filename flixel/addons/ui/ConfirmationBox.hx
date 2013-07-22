@@ -94,7 +94,7 @@ class ConfirmationBox extends BasicPopUp
 		//textEntry.
 	}
 		
-	override function pressYes(b:FlxButtonPlusX=null)
+	/*override function pressYes(b:FlxButtonPlusX=null)
 	{
 		if (!active) return;
 		
@@ -118,7 +118,7 @@ class ConfirmationBox extends BasicPopUp
 		
 		hide();			
 		_callback("yes"); // TODO
-	}
+	}*/
 	
 	private function onTextEdit(text:String) {
 		//trace("text = " + text);
@@ -202,19 +202,19 @@ class ConfirmationBox extends BasicPopUp
 		title = fixword(title);
 		text = fixword(text);
 		
-		yes_btn = new FlxButtonPlusX(35, 147, pressYes);
+		yes_btn = new FlxButtonPlusX(35, 147, pressButton,["yes"]);
 		yes_btn.loadGraphic(new FlxSprite(0, 0, U.gfx("button_confirmation_up", "ui", "buttons")), new FlxSprite(0, 0, U.gfx("button_confirmation_over", "ui", "buttons")));
 		yes_btn.setSimpleLabel(STR_YES);
 		//yes_btn.text = STR_YES;
 		//fb.textNormalX.setFormat(the_font, size, color, align, shadow);
 		//fb.textNormalX.dropShadow = true;
 		
-		no_btn = new FlxButtonPlusX(118, 147, pressNo);
+		no_btn = new FlxButtonPlusX(118, 147, pressButton,["no"]);
 		no_btn.loadGraphic(new FlxSprite(0, 0, U.gfx("button_confirmation_red_up", "ui", "buttons")), new FlxSprite(0, 0, U.gfx("button_confirmation_red_over", "ui", "buttons")));
 		no_btn.setSimpleLabel(STR_NO);
 		//no_btn.text = STR_NO;
 
-		cancel_btn = new FlxButtonPlusX(200, 147, pressCancel);
+		cancel_btn = new FlxButtonPlusX(200, 147, pressButton,["cancel"]);
 		cancel_btn.loadGraphic(new FlxSprite(0, 0, U.gfx("button_confirmation_red_up", "ui", "buttons")), new FlxSprite(0, 0, U.gfx("button_confirmation_red_over", "ui", "buttons")));
 		cancel_btn.setSimpleLabel(STR_CANCEL);
 		//cancel_btn.text = STR_CANCEL;
