@@ -7,4 +7,8 @@ FlxUI - GUI library for Haxe+Flixel
 
 This project depends on the Haxe+Flixel project. A [test project](https://github.com/HaxeFlixel/flixel-demos/tree/master/FlxUI/Menus) is available in [flixel-demos](https://github.com/HaxeFlixel/flixel-demos).
 
-More documentation to follow.
+Please note the test project in flixel-demos requires the localization library **[fireTongue](https://github.com/larsiusprime/firetongue)**, which can be installed thus:
+
+    haxelib git firetongue https://github.com/larsiusprime/firetongue
+
+(at least until I get around to submitting it to haxelibs officially)

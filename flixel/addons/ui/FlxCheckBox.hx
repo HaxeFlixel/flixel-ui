@@ -61,7 +61,8 @@ class FlxCheckBox extends FlxButtonPlusX
 	}
 	
 	public function lineUpTextFields():Void {
-		if(textNormal != null){
+		
+		if (textNormal != null) {
 			textNormal.x = Std.int(buttonNormal.x + buttonNormal.width + 3);
 			textNormal.y = Std.int(buttonNormal.y + (buttonNormal.height - textNormal.height) / 2);
 			textNormal.x += _textX;
@@ -70,7 +71,8 @@ class FlxCheckBox extends FlxButtonPlusX
 				textHighlight.x = textNormal.x;
 				textHighlight.y = textNormal.y;
 			}
-		}		
+		}				
+		
 		_updateRect();
 	}
 		
@@ -127,8 +129,7 @@ class FlxCheckBox extends FlxButtonPlusX
 	{
 		buttonNormal.x = (FlxG.width / 2) - (width / 2);
 		buttonHighlight.x = (FlxG.width / 2) - (width / 2);
-		
-		
+				
 		if (_checkMark != null) {
 			_checkMark.x = buttonNormal.x;
 			_checkMark.y = buttonNormal.y;

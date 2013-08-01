@@ -9,6 +9,7 @@ import flixel.FlxBasic;
 import flixel.ui.FlxButton;
 import flixel.FlxG;
 import flixel.group.FlxGroup;
+import flixel.FlxBasic;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -36,6 +37,31 @@ class FlxUI extends FlxGroupX implements IEventGetter
 	public var failed:Bool = false;
 	public var failed_by:Float = 0;
 	
+	public var tongue(get, set):IFireTongue;
+	public function get_tongue():IFireTongue { return _ptr_tongue; }
+	public function set_tongue(t:IFireTongue):IFireTongue {
+		_ptr_tongue = t;		
+		_tongueSet(members, t);
+		return _ptr_tongue;
+	}	
+	
+	private var _ptr_tongue:IFireTongue;
+	
+	/**Make sure to recursively propogate the tongue pointer 
+	 * down to all my members
+	 */
+	private function _tongueSet(list:Array<FlxBasic>,tongue:IFireTongue):Void {		
+		for (fb in list) {
+			if (Std.is(fb, FlxGroupX)) {
+				var g:FlxGroupX = cast(fb, FlxGroupX);
+				_tongueSet(g.members, tongue);
+			}else if (Std.is(fb, FlxUI)) {
+				var fu:FlxUI = cast(fb, FlxUI);
+				fu.tongue = tongue;
+			}
+		}
+	}
+	
 	/***EVENT HANDLING***/
 	
 	public function getEvent(id:String, sender:Dynamic, data:Dynamic):Void {
@@ -49,9 +75,13 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		
 	/***PUBLIC FUNCTIONS***/
 		
-	public function new(data:Fast=null,ptr:IEventGetter=null,superIndex_:FlxUI=null) 
+	public function new(data:Fast=null,ptr:IEventGetter=null,superIndex_:FlxUI=null,tongue_:IFireTongue=null) 
 	{
 		super();
+		_ptr_tongue = tongue_;	//set the localization data structure, if any.
+								//we set this directly b/c no children have been created yet
+								//when children FlxUI elements are added, this pointer is passed down
+								//on destroy(), it is recurvisely removed from all of them
 		_ptr = ptr;
 		if (superIndex_ != null) {
 			setSuperIndex(superIndex_);
@@ -60,7 +90,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			load(data);
 		}
 	}
-	
+		
 	/**
 	 * Set a pointer to another FlxUI for the purposes of indexing
 	 * @param	flxUI
@@ -169,6 +199,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			}_asset_index = null;			
 		}
 		_superIndexUI = null;
+		_ptr_tongue = null;
 		super.destroy();	
 	}
 	
@@ -307,7 +338,8 @@ class FlxUI extends FlxGroupX implements IEventGetter
 				_failure_checks = null;
 			}
 		}
-		
+	
+		_onFinishLoad();
 	}
 	
 	/**
@@ -510,6 +542,39 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		if (use_def != "") {
 			definition = getDefinition(use_def);
 		}
+		
+		//If we have per-locale UI tweaks
+		if (data.hasNode.locale) {
+			
+			//Deep-copy the data and definition xml objects
+			data = U.copyFast(data);
+			if (definition != null) {
+				definition = U.copyFast(definition);
+			}
+			
+			if (_ptr_tongue != null) {
+				for (lNode in data.nodes.locale) {
+					var lid:String = U.xml_str(lNode.x, "id", true);
+					if (lid == _ptr_tongue.locale.toLowerCase()) {
+						if (lNode.hasNode.change) {
+							for (change in lNode.nodes.change) {
+								var att:String = U.xml_str(change.x, "att");
+								var value:String = U.xml_str(change.x, "value");
+								if (data.x.exists(att)) {
+									data.x.set(att, value);
+								}
+								if (definition != null) {
+									if (definition.x.exists(att)) {
+										definition.x.set(att, value);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
 		switch(type) {
 			case "chrome", "9slicesprite": return _load9SliceSprite(data, definition);
 			case "tile_test": return _loadTileTest(data, definition);
@@ -684,9 +749,11 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var size:Int = U.xml_i(the_data.x, "size"); if (size == 0) { size = 8;}
 		var color:Int = _loadColor(the_data);
 		var shadow:Int = U.xml_i(the_data.x, "shadow");
+		var drop_shadow:Bool = U.xml_str(the_data.x, "drop_shadow", true) == "true";
 				
-		var ft:FlxText = new FlxText(0, 0, W, text);
+		var ft:FlxTextX = new FlxTextX(0, 0, W, text);
 		ft.setFormat(the_font, size, color, align, shadow);
+		ft.dropShadow = drop_shadow;
 		return ft;
 	}
 	
@@ -703,9 +770,17 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var labels:Array<String> = new Array<String>();
 		var ids:Array<String> = new Array<String>();
 		
+		var W:Int = U.xml_i(default_data.x, "width", 100);
+		var H:Int = U.xml_i(default_data.x, "height", 20);
+		
 		for (radioNode in data.nodes.radio) {
 			var id:String = U.xml_str(radioNode.x, "id", true);
 			var label:String = U.xml_str(radioNode.x, "label");
+			var context:String = U.xml_str(radioNode.x, "context", true, "ui");
+			label = getText(label,context);
+		
+			var context:String = U.xml_str(radioNode.x, "context",true,"ui");
+			label = getText(label,context);
 			ids.push(id);
 			labels.push(label);
 		}
@@ -731,7 +806,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			dot_sprite.makeGraphic(4, 4, 0x000000); //4x4 black square by default
 		}
 		
-		frg = new FlxRadioGroup(0, 0, ids, labels, _onClickRadioGroup, y_space);
+		frg = new FlxRadioGroup(0, 0, ids, labels, _onClickRadioGroup, y_space, W, H);
 						
 		if (up_sprite != null) {
 			frg.loadGraphics(up_sprite, dot_sprite, over_sprite);
@@ -744,8 +819,8 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			if (Std.is(fo, FlxCheckBox)){
 				var fc:FlxCheckBox = cast(fo, FlxCheckBox);
 				formatButtonText(default_data, fc);
-				fc.textX = fc.textX + text_x;				
-				fc.textY = fc.textY + text_y;	
+				fc.textX = text_x;				
+				fc.textY = text_y;	
 			}
 		}
 						
@@ -760,6 +835,12 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		if (definition != null) { default_data = definition; }
 		
 		var label:String = U.xml_str(data.x, "label");
+		var context:String = U.xml_str(data.x, "context", true, "ui");
+		label = getText(label,context);
+		
+		var context:String = U.xml_str(data.x, "context", true, "ui");
+		label = getText(label,context);
+			
 		var W:Int = U.xml_i(default_data.x, "width", 100);
 		var H:Int = U.xml_i(default_data.x, "height", 32);
 		var check_src:String = U.xml_str(default_data.x, "check_src", true);
@@ -801,7 +882,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		if (definition != null) { default_data = definition;}
 				
 		var id:String = U.xml_str(data.x, "id", true);
-		var _ui:FlxUI = new FlxUI(data, this, this);
+		var _ui:FlxUI = new FlxUI(data, this, this,_ptr_tongue);
 		_ui.str_id = id;
 		
 		return _ui;
@@ -838,6 +919,12 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			for (tab_node in data.nodes.tab) {
 				id = U.xml_str(tab_node.x, "id", true);
 				var label:String = U.xml_str(tab_node.x, "label");
+				var context:String = U.xml_str(tab_node.x, "context", true, "ui");
+				label = getText(label,context);
+		
+				var context:String = U.xml_str(tab_node.x, "context", true, "ui");
+				label = getText(label,context);
+		
 				var tab:FlxButtonToggle = _loadButtonToggle(tab_node, tab_def);
 				list_tabs.push(tab);
 			}			
@@ -848,9 +935,9 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		if (data.hasNode.group) {
 			for (group_node in data.nodes.group) {
 				id = U.xml_str(group_node.x, "id", true);
-				var _ui:FlxUI = new FlxUI(group_node, fg, this);
+				var _ui:FlxUI = new FlxUI(group_node, fg, this,_ptr_tongue);
 				_ui.str_id = id;
-				fg.addGroup(_ui);				
+				fg.addGroup(_ui);
 			}
 		}		
 		
@@ -865,6 +952,12 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		if (definition != null) { default_data = definition;}
 		
 		var label:String = U.xml_str(data.x, "label");		
+		var context:String = U.xml_str(data.x, "context", true, "ui");
+		label = getText(label,context);
+		
+		var context:String = U.xml_str(data.x, "context", true, "ui");
+		label = getText(label,context);
+		
 		var W:Int = U.xml_i(default_data.x, "width");
 		var H:Int = U.xml_i(default_data.x, "height");	
 		var id:String = U.xml_str(data.x, "id",true);
@@ -895,15 +988,17 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		return fbt;
 	}
 	
-	private function _loadButton(data:Fast,definition:Fast=null,setCallback:Bool=true):FlxButtonPlusX {
+ 	private function _loadButton(data:Fast,definition:Fast=null,setCallback:Bool=true):FlxButtonPlusX {
 		var src:String = ""; 
 		var fb:FlxButtonPlusX = null;
-		
-		
+				
 		var default_data:Fast = data;
 		if (definition != null) { default_data = definition;}
 				
 		var label:String = U.xml_str(data.x, "label");
+		var context:String = U.xml_str(data.x, "context", true, "ui");
+		label = getText(label,context);
+		
 		var W:Int = U.xml_i(default_data.x, "width");
 		var H:Int = U.xml_i(default_data.x, "height");	
 		var vis_str:String = U.xml_str(data.x, "visible", true);
@@ -1379,6 +1474,12 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		return the_font;
 	}
 	
+	private function _onFinishLoad():Void {
+		if (_ptr != null) {
+			_ptr.getEvent("finish_load", this, null);
+		}
+	}
+	
 	private function _onClickRadioGroup(params:Dynamic = null):Void {
 		FlxG.log.add("FlxUI._onClickRadioGroup(" + params + ")");
 		if (_ptr != null) {
@@ -1408,6 +1509,13 @@ class FlxUI extends FlxGroupX implements IEventGetter
 	}
 	
 	/**********UTILITY FUNCTIONS************/
+	
+	private function getText(flag:String, context:String = "data", safe:Bool = true):String {
+		if(_ptr_tongue != null){
+			return _ptr_tongue.get(flag, context, safe);
+		}
+		return flag;
+	}
 	
 	/**
 	 * Parses params out of xml and loads them in the correct type
@@ -1445,8 +1553,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 				
 				var text_data:Fast = textNode;
 				if (text_def != null) { text_data = text_def; };
-				
-				
+								
 				var case_id:String = U.xml_str(textNode.x, "id", true);
 				var the_font:String = _loadFontFace(text_data);
 				var size:Int = U.xml_i(text_data.x, "size"); if (size == 0) { size = 8;}

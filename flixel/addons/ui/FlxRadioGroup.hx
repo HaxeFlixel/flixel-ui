@@ -14,10 +14,12 @@ class FlxRadioGroup extends FlxGroupX
 	public var selectedLabel(get_selectedLabel, set_selectedLabel):String;
 	public var selectedIndex(get_selectedIndex, set_selectedIndex):Int;
 	
-	public function new(X:Float, Y:Float, ids_:Array<String>,labels_:Array<String>, callback_:Dynamic, y_space_:Float=25):Void {
+	public function new(X:Float, Y:Float, ids_:Array<String>,labels_:Array<String>, callback_:Dynamic, y_space_:Float=25, width_:Int=100, height_:Int=20):Void {
 		super();
 		_y_space = y_space_;
 		_callback = callback_;
+		_width = width_;
+		_height = height_;
 		x = X;
 		y = Y;
 		_list_radios = new Array<FlxCheckBox>();
@@ -170,6 +172,9 @@ class FlxRadioGroup extends FlxGroupX
 	private var _ids:Array<String>;
 	private var _callback:Dynamic;
 	
+	private var _width:Int = 100;
+	private var _height:Int = 20;
+	
 	private var _y_space:Float = 25;
 	private var _selected:Int = 0;
 	
@@ -182,7 +187,7 @@ class FlxRadioGroup extends FlxGroupX
 	
 	private function _refreshRadios():Void {
 		var xx:Float = 0;
-		var yy:Float = 0;
+		var yy:Float = 0;		
 		var i:Int = 0;
 		for(id in _ids) {
 			var label:String = "";
@@ -201,7 +206,7 @@ class FlxRadioGroup extends FlxGroupX
 					yy = c.y;
 				}
 			}else {
-				c = new FlxCheckBox(Std.int(xx), Std.int(yy), _onClick, [id], label);
+				c = new FlxCheckBox(Std.int(xx), Std.int(yy), _onClick, [id], label, _width, _height);
 				add(c);
 				_list_radios.push(c);
 			}

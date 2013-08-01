@@ -28,6 +28,11 @@ class FlxStateX extends FlxState implements IEventGetter
 {
 	private var _xml_id:String = "";	//the xml to load
 	private var _ui:FlxUI;
+	private var _tongue:IFireTongue;
+	
+	public static var static_tongue:IFireTongue=null;	
+	//if this is not null, each state will grab this auto-magically
+	//otherwise it's up to you to set _tongue before the UI stuff loads.
 	
 	public function new() 
 	{
@@ -39,7 +44,11 @@ class FlxStateX extends FlxState implements IEventGetter
 			throw "FlxStateX has no xml id defined!";
 		}
 		
-		_ui = new FlxUI(null,this);
+		if (static_tongue != null) {
+			_tongue = static_tongue;
+		}
+		
+		_ui = new FlxUI(null,this,null,_tongue);
 		add(_ui);
 				
 		var data:Fast = U.xml(_xml_id);
@@ -67,6 +76,7 @@ class FlxStateX extends FlxState implements IEventGetter
 		//define per subclass
 		return null;
 	}
+	
 	
 	/**
 	 * Convenient helper function to make sure your event data is safe
