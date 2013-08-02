@@ -552,20 +552,23 @@ class FlxUI extends FlxGroupX implements IEventGetter
 				definition = U.copyFast(definition);
 			}
 			
+			//Make any necessary UI adjustments based on locale
 			if (_ptr_tongue != null) {
 				for (lNode in data.nodes.locale) {
 					var lid:String = U.xml_str(lNode.x, "id", true);
 					if (lid == _ptr_tongue.locale.toLowerCase()) {
 						if (lNode.hasNode.change) {
 							for (change in lNode.nodes.change) {
-								var att:String = U.xml_str(change.x, "att");
-								var value:String = U.xml_str(change.x, "value");
-								if (data.x.exists(att)) {
-									data.x.set(att, value);
-								}
-								if (definition != null) {
-									if (definition.x.exists(att)) {
-										definition.x.set(att, value);
+								var xml:Xml;
+								for (att in change.x.attributes()) {
+									var value:String = change.x.get(att);
+									if (data.x.exists(att)) {
+										data.x.set(att, value);
+									}											
+									if (definition != null) {
+										if (definition.x.exists(att)) {
+											definition.x.set(att, value);
+										}
 									}
 								}
 							}
@@ -672,10 +675,6 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			return;
 		}
 		
-		if (id == "options") {
-			trace("BOINK");
-		}
-		
 		var use_def:String = U.xml_str(data.x, "use_def", true);		
 		var definition:Fast = null;
 		if (use_def != "") {
@@ -737,10 +736,9 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		if (definition != null) { the_data = definition;}
 		
 		var text:String = U.xml_str(data.x, "text");
-		while (text.indexOf("$N") != -1) {				
-			text = StringTools.replace(text,"$N","\n");	
-		}
-		
+		var context:String = U.xml_str(data.x, "context", true, "ui");
+		text = getText(text,context);
+				
 		var W:Int = U.xml_i(data.x, "width"); if (W == 0) { W = 100; }
 		
 		var the_font:String = _loadFontFace(the_data);
@@ -776,11 +774,10 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		for (radioNode in data.nodes.radio) {
 			var id:String = U.xml_str(radioNode.x, "id", true);
 			var label:String = U.xml_str(radioNode.x, "label");
+			
 			var context:String = U.xml_str(radioNode.x, "context", true, "ui");
 			label = getText(label,context);
 		
-			var context:String = U.xml_str(radioNode.x, "context",true,"ui");
-			label = getText(label,context);
 			ids.push(id);
 			labels.push(label);
 		}
@@ -871,8 +868,8 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var text_x:Int = U.xml_i(default_data.x, "text_x");
 		var text_y:Int = U.xml_i(default_data.x, "text_y");		
 		
-		fc.textX = fc.textX + text_x;				
-		fc.textY = fc.textY + text_y;		
+		fc.textX = text_x;				
+		fc.textY = text_y;		
 						
 		return fc;
 	}
@@ -1471,6 +1468,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var fontStyle:String = U.xml_str(data.x, "style");
 		var the_font:String = null;
 		if (fontFace != "") { the_font = U.font(fontFace, fontStyle); }
+		
 		return the_font;
 	}
 	

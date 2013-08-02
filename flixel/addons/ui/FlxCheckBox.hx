@@ -48,7 +48,7 @@ class FlxCheckBox extends FlxButtonPlusX
 	}
 	
 	public override function loadGraphic(normal:FlxSprite, highlight:FlxSprite):Void {
-		super.loadGraphic(normal, highlight);
+		super.loadGraphic(normal, highlight);		
 		lineUpTextFields();
 	}
 	
@@ -63,16 +63,19 @@ class FlxCheckBox extends FlxButtonPlusX
 	public function lineUpTextFields():Void {
 		
 		if (textNormal != null) {
+			
 			textNormal.x = Std.int(buttonNormal.x + buttonNormal.width + 3);
-			textNormal.y = Std.int(buttonNormal.y + (buttonNormal.height - textNormal.height) / 2);
+			textNormal.y = Std.int(buttonNormal.y + (buttonNormal.height - textNormalX.textHeight())/2);
+			
 			textNormal.x += _textX;
 			textNormal.y += _textY;
+			
 			if (textHighlight != null) {
 				textHighlight.x = textNormal.x;
 				textHighlight.y = textNormal.y;
 			}
-		}				
-		
+		}						
+				
 		_updateRect();
 	}
 		
@@ -116,7 +119,7 @@ class FlxCheckBox extends FlxButtonPlusX
 		if (_checkMark != null) {
 			_checkMark.y = buttonNormal.y;
 		}
-		
+				
 		lineUpTextFields();
 		return newY;
 	}
@@ -134,7 +137,7 @@ class FlxCheckBox extends FlxButtonPlusX
 			_checkMark.x = buttonNormal.x;
 			_checkMark.y = buttonNormal.y;
 		}
-		
+						
 		lineUpTextFields();
 	}
 	
