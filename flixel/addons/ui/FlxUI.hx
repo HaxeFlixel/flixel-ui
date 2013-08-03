@@ -1000,8 +1000,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var H:Int = U.xml_i(default_data.x, "height");	
 		var vis_str:String = U.xml_str(data.x, "visible", true);
 		var isVis:Bool = U.xml_bool(data.x, "visible", true);		
-		
-		
+				
 		var params:Array<Dynamic> = getParams(data);
 		
 		if(setCallback){
@@ -1025,10 +1024,12 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			text_y = U.xml_i(data.x, "text_y");			
 		}else {
 			text_y = U.xml_i(default_data.x, "text_y");
-		}
-			
-			
-		fb.textY = Std.int((fb.height - fb.textNormal.frameHeight) / 2) + text_y;
+		}		
+		
+		fb.textNormalX.forceCalcFrame();
+		fb.textHighlightX.forceCalcFrame();
+				
+		fb.textY = Std.int((fb.height - Math.ceil(fb.textNormalX.textHeight())) / 2) + text_y;
 		fb.textX = text_x;
 				
 		if (default_data.hasNode.graphic) {

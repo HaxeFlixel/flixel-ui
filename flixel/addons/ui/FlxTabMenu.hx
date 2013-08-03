@@ -36,13 +36,7 @@ class FlxTabMenu extends FlxGroupX implements IEventGetter
 			add(tab);
 			tab.x = xx;			
 			tab.y = -(tab.btn_normal.height-2);
-			#if cpp
-				tab.y += 1;	//cpp target is off by 1 for some reason
-			#end
 			xx += tab.btn_normal.width;
-			#if cpp
-				xx -= 1;	//cpp target is off by 1 for some reason
-			#end
 			tab.Callback = onClickTab;
 		}
 				
