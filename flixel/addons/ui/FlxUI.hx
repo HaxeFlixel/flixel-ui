@@ -18,8 +18,6 @@ import flixel.util.FlxPoint;
 import flixel.text.FlxText;
 import flixel.tile.FlxTilemap;
 import flixel.addons.ui.IEventGetter;
-import task.Task;
-import task.TaskList;
 import flixel.addons.ui.IResizable;
 
 
