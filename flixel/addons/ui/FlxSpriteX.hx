@@ -38,7 +38,7 @@ class FlxSpriteX extends FlxSprite implements IDestroyable
 	{
 		super(X, Y, SimpleGraphic);
 	}
-
+	
 	public function recycle(data:Dynamic):Void {
 		recycled = true;
 		//override per subclass
