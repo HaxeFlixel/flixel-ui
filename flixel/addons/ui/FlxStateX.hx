@@ -1,4 +1,5 @@
 package flixel.addons.ui;
+import flixel.FlxCamera;
 import haxe.xml.Fast;
 import flash.display.BitmapData;
 import flash.Lib;
@@ -64,7 +65,7 @@ class FlxStateX extends FlxState implements IEventGetter
 		useMouse = true;
 	}
 	
-	public override function onResize():Void {
+	public override function onResize(Width:Int, Height:Int):Void {
 		var stageWidth = Lib.current.stage.stageWidth;
         var stageHeight = Lib.current.stage.stageHeight;
 

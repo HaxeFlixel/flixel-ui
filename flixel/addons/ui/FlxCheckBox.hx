@@ -172,7 +172,7 @@ class FlxCheckBox extends FlxButtonPlusX
 				{
 					offAll = false;
 					
-					if (FlxG.mouse.justPressed())
+					if (FlxG.mouse.justPressed)
 					{
 						_status = PRESSED;
 					}
