@@ -63,14 +63,10 @@ class FlxStateX extends FlxState implements IEventGetter
 		useMouse = true;
 	}
 	
-	public override function onResize():Void {
-		var stageWidth = Lib.current.stage.stageWidth;
-        var stageHeight = Lib.current.stage.stageHeight;
-
-        FlxG.cameras.reset(new FlxCamera(0, 0, stageWidth, stageHeight));
-        FlxG.width = stageWidth;
-        FlxG.height = stageHeight; 
-		
+	public override function onResize(Width:Int,Height:Int):Void {
+		FlxG.cameras.reset(new FlxCamera(0, 0, Width, Height));
+        FlxG.width = Width;
+        FlxG.height = Height; 		
 		_reload_countdown = 5;
 		_reload = true;
 	}	

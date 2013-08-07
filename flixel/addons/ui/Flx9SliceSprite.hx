@@ -28,6 +28,8 @@ class Flx9SliceSprite extends FlxSprite implements IResizable
 	private var _smooth:Bool = false;
 	private var _asset_id:String = "";
 	
+	private var _resize_ratio:Float = -1; 	//resize ratio to force when resizing, == (W/H)
+	
 	/** 
 	 * @param	X	X position of final sprite
 	 * @param	Y	Y position of final sprite
@@ -37,9 +39,10 @@ class Flx9SliceSprite extends FlxSprite implements IResizable
 	 * @param	tile	Whether to tile the middle pieces or stretch them (default is false --> stretch)
 	 * @param	smooth	When stretching, whether to smooth middle pieces (default false)
 	 * @param 	id	if Graphic is a BitmapData, manually specify its original source id, if any
+	 * @param   ratio	Resize ratio to force, if desired (W/H)
 	 */
 	
-	public function new(X:Float, Y:Float, Graphic:Dynamic, rc:Rectangle, slice9:String="", tile:Bool=false, smooth:Bool=false, id:String="") 
+	public function new(X:Float, Y:Float, Graphic:Dynamic, rc:Rectangle, slice9:String="", tile:Bool=false, smooth:Bool=false, id:String="",ratio:Float=-1) 
 	{
 		super(X, Y, null);
 		
@@ -54,6 +57,8 @@ class Flx9SliceSprite extends FlxSprite implements IResizable
 		}else if (Std.is(Graphic, BitmapData)) {
 			_asset_id = id;
 		}
+		
+		_resize_ratio = ratio;
 				
 		resize(rc.width, rc.height);
 		
@@ -91,6 +96,14 @@ class Flx9SliceSprite extends FlxSprite implements IResizable
 	public function get_height():Float { return height; }
 	
 	public function resize(w:Float, h:Float):Void {		
+		
+		if(_resize_ratio > 0){
+			var effective_ratio:Float = (w / h);
+			if (Math.abs(effective_ratio - _resize_ratio) > 0.0001) {
+				h = w * (1 / _resize_ratio);
+			}
+		}
+		
 		if (_slice9 == "" || _slice9 == null) {
 			_slice9 = "4,4,7,7";
 		}

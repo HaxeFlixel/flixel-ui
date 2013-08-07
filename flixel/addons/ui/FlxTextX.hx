@@ -12,7 +12,7 @@ import flixel.text.FlxText;
  * @author Lars Doucet
  */
 
-class FlxTextX extends FlxText
+class FlxTextX extends FlxText implements IResizable
 {
 
 	public var dropShadow(get, set):Bool;	
@@ -23,6 +23,21 @@ class FlxTextX extends FlxText
 	public function new(X:Float, Y:Float, Width:Int, Text:String = null, EmbeddedFont:Bool = true)	
 	{
 		super(X, Y, Width, Text, EmbeddedFont);
+	}
+	
+	public function resize(w:Float, h:Float):Void {
+		width = w;
+		height = h;
+		calcFrame();
+	}
+	
+	
+	//For IResizable:
+	public function get_width():Float {
+		return width;
+	}	
+	public function get_height():Float {
+		return height;
 	}
 	
 	public function textWidth():Float {	return _textField.textWidth; }

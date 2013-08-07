@@ -601,7 +601,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			case "chrome", "9slicesprite": return _load9SliceSprite(data, definition);
 			case "tile_test": return _loadTileTest(data, definition);
 			case "sprite": return _loadSprite(data,definition);
-			case "text": return _loadText(data,definition);
+			case "text": return _loadText(data, definition);
 			case "button": return _loadButton(data, definition);
 			case "button_toggle": return _loadButtonToggle(data, definition);
 			case "tab_menu": return _loadTabMenu(data, definition);
@@ -625,52 +625,52 @@ class FlxUI extends FlxGroupX implements IEventGetter
 	
 	private function _alignThing(data:Fast):Void {
 		var datastr:String = data.x.toString();
-		var objects:Array<String> = null;
-		if (data.hasNode.objects) {
-			objects = U.xml_str(data.node.objects.x, "value", true, "").split(",");
+		if (data.hasNode.objects) {			
+			for (objectNode in data.nodes.objects) {
+				var objects:Array<String> = U.xml_str(objectNode.x, "value", true, "").split(",");
+			
+				var axis:String = U.xml_str(data.x, "axis", true);
+				var spacing:Float = U.xml_f(data.x, "spacing", -1);
+				var resize:Bool = U.xml_bool(data.x, "resize");
+				var bounds:FlxPoint = new FlxPoint(-1,-1);
+				
+				if (axis != "horizontal" && axis != "vertical") {
+					throw new Error("FlxUI._alignThing(): axis must be \"horizontal\" or \"vertical\"!");
+					return;
+				}			
+							
+				if (data.hasNode.bounds) {
+					var bound_range:Float = -1;
+					
+					if (axis == "horizontal") {
+						bounds.x = _getDataSize("w", U.xml_str(data.node.bounds.x, "left"), -1);
+						bounds.y = _getDataSize("w", U.xml_str(data.node.bounds.x, "right"), -1);					
+					}else if (axis == "vertical") {
+						bounds.x = _getDataSize("h", U.xml_str(data.node.bounds.x, "top"), -1);
+						bounds.y = _getDataSize("h", U.xml_str(data.node.bounds.x, "bottom"), -1);
+					}
+				
+					if (bounds.x != -1 && bounds.y != -1) {
+						if(bounds.y <= bounds.x){
+							throw new Error("FlxUI._alignThing(): bounds max must be > bounds min!");
+							return;
+						}
+					}else {
+						throw new Error("FlxUI._alignThing(): missing bound!");
+						return;
+					}
+					
+					_doAlign(objects, axis, spacing, resize, bounds);
+				
+				}else {
+					throw new Error("FlxUI._alignThing(): <bounds> node not found!");
+					return;
+				}
+			}
 		}else {
 			throw new Error("FlxUI._alignThing(): <objects> node not found!");
 			return;
-		}
-		if(objects != null){
-			var axis:String = U.xml_str(data.x, "axis", true);
-			var spacing:Float = U.xml_f(data.x, "spacing", -1);
-			var resize:Bool = U.xml_bool(data.x, "resize");
-			var bounds:FlxPoint = new FlxPoint(-1,-1);
-			
-			if (axis != "horizontal" && axis != "vertical") {
-				throw new Error("FlxUI._alignThing(): axis must be \"horizontal\" or \"vertical\"!");
-				return;
-			}			
-						
-			if (data.hasNode.bounds) {
-				var bound_range:Float = -1;
-				
-				if (axis == "horizontal") {
-					bounds.x = _getDataSize("w", U.xml_str(data.node.bounds.x, "left"), -1);
-					bounds.y = _getDataSize("w", U.xml_str(data.node.bounds.x, "right"), -1);					
-				}else if (axis == "vertical") {
-					bounds.x = _getDataSize("h", U.xml_str(data.node.bounds.x, "top"), -1);
-					bounds.y = _getDataSize("h", U.xml_str(data.node.bounds.x, "bottom"), -1);
-				}
-			
-				if (bounds.x != -1 && bounds.y != -1) {
-					if(bounds.y <= bounds.x){
-						throw new Error("FlxUI._alignThing(): bounds max must be > bounds min!");
-						return;
-					}
-				}else {
-					throw new Error("FlxUI._alignThing(): missing bound!");
-					return;
-				}
-				
-				_doAlign(objects, axis, spacing, resize, bounds);
-				
-			}else {
-				throw new Error("FlxUI._alignThing(): <bounds> node not found!");
-				return;
-			}
-		}		
+		}				
 	}
 	
 	private function _doAlign(objects:Array<String>, axis:String, spacing:Float, resize:Bool, bounds:FlxPoint):Void {
@@ -685,7 +685,10 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		
 		var size_prop:String = "width";
 		var pos_prop:String = "x";
-		if (axis == "vertical") { size_prop = "height"; pos_prop = "y"; }
+		if (axis == "vertical") { 
+			size_prop = "height"; 
+			pos_prop = "y"; 
+		}
 		
 		//calculate total size of everything
 		for (id in objects) {
@@ -920,15 +923,25 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		
 		var the_font:String = _loadFontFace(the_data);
 		
+		var input:Bool = U.xml_bool(the_data.x, "input");
+		
 		var align:String = U.xml_str(the_data.x, "align"); if (align == "") { align = null;}
 		var size:Int = U.xml_i(the_data.x, "size"); if (size == 0) { size = 8;}
 		var color:Int = _loadColor(the_data);
 		var shadow:Int = U.xml_i(the_data.x, "shadow");
 		var drop_shadow:Bool = U.xml_str(the_data.x, "drop_shadow", true) == "true";
 				
-		var ft:FlxTextX = new FlxTextX(0, 0, W, text);
-		ft.setFormat(the_font, size, color, align, shadow);
-		ft.dropShadow = drop_shadow;
+		var ft:FlxText;
+		if(input == false){
+			var ftx:FlxTextX = new FlxTextX(0, 0, W, text);
+			ftx.setFormat(the_font, size, color, align, shadow);
+			ftx.dropShadow = drop_shadow;
+			ft = ftx;
+		}else {
+			var fti:FlxInputTextX = new FlxInputTextX(0, 0, W, text);
+			fti.setFormat(the_font, size, color, align, shadow);
+			ft = fti;
+		}		
 		return ft;
 	}
 	
@@ -1320,6 +1333,8 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var the_data:Fast = data;
 		if (definition != null) { the_data = definition;}
 		
+		var resize_ratio:Float = U.xml_f(data.x, "resize_ratio", -1);
+		
 		var bounds: { min_width:Float, min_height:Float, 
 			          max_width:Float, max_height:Float } = calcMaxMinSize(data);				
 		
@@ -1347,9 +1362,9 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		
 		if (src != "") {
 			if (slice9 != "") {
-				f9s = new Flx9SliceSprite(0, 0, src, rc, slice9, tile, smooth);
+				f9s = new Flx9SliceSprite(0, 0, src, rc, slice9, tile, smooth,"",resize_ratio);
 			}else {
-				f9s = new Flx9SliceSprite(0, 0, src, rc,"",tile, smooth);
+				f9s = new Flx9SliceSprite(0, 0, src, rc,"",tile, smooth,"",resize_ratio);
 			}
 		}
 		
@@ -1485,32 +1500,43 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var temp_max_w:Float = Math.POSITIVE_INFINITY;
 		var temp_max_h:Float = Math.POSITIVE_INFINITY;
 		
-		if (data.hasNode.min_size) {
-			for(minNode in data.nodes.min_size){
-				var min_w_str:String = U.xml_str(minNode.x, "width");
-				var min_h_str:String = U.xml_str(minNode.x, "height");
-				temp_min_w = _getDataSize("w", min_w_str, 0);
-				temp_min_h = _getDataSize("h", min_h_str, 0);			
-				if (temp_min_w > min_w) {
-					min_w = temp_min_w;
-				}
-				if (temp_min_h > min_h) {
-					min_h = temp_min_h;
+		if (data.hasNode.exact_size) {
+			for (exactNode in data.nodes.exact_size) {
+				var exact_w_str:String = U.xml_str(exactNode.x, "width");
+				var exact_h_str:String = U.xml_str(exactNode.x, "height");
+				min_w = _getDataSize("w", exact_w_str, 0);
+				min_h = _getDataSize("h", exact_h_str, 0);
+				max_w = min_w;
+				max_h = min_h;
+			}
+		}else{		
+			if (data.hasNode.min_size) {
+				for(minNode in data.nodes.min_size){
+					var min_w_str:String = U.xml_str(minNode.x, "width");
+					var min_h_str:String = U.xml_str(minNode.x, "height");
+					temp_min_w = _getDataSize("w", min_w_str, 0);
+					temp_min_h = _getDataSize("h", min_h_str, 0);			
+					if (temp_min_w > min_w) {
+						min_w = temp_min_w;
+					}
+					if (temp_min_h > min_h) {
+						min_h = temp_min_h;
+					}
 				}
 			}
-		}
-		
-		if (data.hasNode.max_size) {
-			for(maxNode in data.nodes.max_size){
-				var max_w_str:String = U.xml_str(maxNode.x, "width");
-				var max_h_str:String = U.xml_str(maxNode.x, "height");
-				temp_max_w = _getDataSize("w", max_w_str, Math.POSITIVE_INFINITY);
-				temp_max_h = _getDataSize("h", max_h_str, Math.POSITIVE_INFINITY);			
-				if (temp_max_w < max_w) {
-					max_w = temp_max_w;
-				}
-				if (temp_max_h < max_h) {
-					max_h = temp_max_h;
+			
+			if (data.hasNode.max_size) {
+				for(maxNode in data.nodes.max_size){
+					var max_w_str:String = U.xml_str(maxNode.x, "width");
+					var max_h_str:String = U.xml_str(maxNode.x, "height");
+					temp_max_w = _getDataSize("w", max_w_str, Math.POSITIVE_INFINITY);
+					temp_max_h = _getDataSize("h", max_h_str, Math.POSITIVE_INFINITY);			
+					if (temp_max_w < max_w) {
+						max_w = temp_max_w;
+					}
+					if (temp_max_h < max_h) {
+						max_h = temp_max_h;
+					}
 				}
 			}
 		}
