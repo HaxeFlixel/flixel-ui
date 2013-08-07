@@ -2,6 +2,7 @@ package flixel.addons.ui;
 import flash.display.BitmapData;
 import flash.events.KeyboardEvent;
 import flash.geom.Rectangle;
+import flash.text.TextField;
 import flixel.text.FlxText;
 import flixel.util.FlxTimer;
 import flixel.util.FlxPoint;
@@ -190,7 +191,7 @@ class FlxInputText extends FlxText
 		super.update();
 		
 		// Set focus and caretIndex as a response to mouse press
-		if (FlxG.mouse.justPressed()) {
+		if (FlxG.mouse.justPressed) {
 			if (overlapsPoint(new FlxPoint(FlxG.mouse.x, FlxG.mouse.y))) {
 				caretIndex = getCaretIndexFromPoint(new FlxPoint(FlxG.mouse.x, FlxG.mouse.y));
 				hasFocus = true;
@@ -302,18 +303,29 @@ class FlxInputText extends FlxText
 			hit.x = _textField.getLineMetrics(_textField.numLines - 1).width;
 			caretRightOfText = true;
 		}
-		var index:Int;
-		if (caretRightOfText) index = _textField.getCharIndexAtPoint(hit.x, hit.y) + 1;
-		else {
-			index = _textField.getCharIndexAtPoint(hit.x, hit.y);
-		}
+		
+		var index:Int = 0;
+		
+		#if flash
+			if (caretRightOfText) index = _textField.getCharIndexAtPoint(hit.x, hit.y) + 1;
+			else {
+				index = _textField.getCharIndexAtPoint(hit.x, hit.y);
+			}
+		#elseif cpp
+			//TODO: getCharIndexAtPoint() isn't yet available in openfl-native's TextField. 
+			//Figure something else out instead, or augment openfl-native's TextField
+		#end
 		return index;
 	}
 	
 	/**
 	 * Draws the frame of animation for the input text.
 	 */
-	override private function calcFrame():Void 
+	#if flash
+	private override function calcFrame():Void
+	#else
+	private override function calcFrame(AreYouSure:Bool = false):Void
+	#end
 	{
 		super.calcFrame();
 		
@@ -432,39 +444,44 @@ class FlxInputText extends FlxText
 	 */
 	public function set_caretIndex(newCaretIndex:Int):Int
 	{
-		_caretIndex = newCaretIndex;
+		#if flash
+			_caretIndex = newCaretIndex;
 		
-		// If caret is too far to the right something is wrong
-		if (_caretIndex > text.length + 1) _caretIndex = -1; 
-		
-		// Caret is OK, proceed to position
-		if (_caretIndex != -1) 
-		{
-			var boundaries:Rectangle;
+			// If caret is too far to the right something is wrong
+			if (_caretIndex > text.length + 1) _caretIndex = -1; 
 			
-			// Caret is not to the right of text
-			if (_caretIndex < _textField.length) { 
-				boundaries = _textField.getCharBoundaries(_caretIndex);
-				if (boundaries != null) {
-					caret.x = boundaries.left + x;
-					caret.y = boundaries.top + y;
+			// Caret is OK, proceed to position
+			if (_caretIndex != -1) 
+			{
+				var boundaries:Rectangle;
+				
+				// Caret is not to the right of text
+				if (_caretIndex < _textField.length) { 
+					boundaries = _textField.getCharBoundaries(_caretIndex);
+					if (boundaries != null) {
+						caret.x = boundaries.left + x;
+						caret.y = boundaries.top + y;
+					}
 				}
-			}
-			// Caret is to the right of text
-			else { 
-				boundaries = _textField.getCharBoundaries(_caretIndex - 1);
-				if (boundaries != null) {
-					caret.x = boundaries.right + x;
-					caret.y = boundaries.top + y;
+				// Caret is to the right of text
+				else { 
+					boundaries = _textField.getCharBoundaries(_caretIndex - 1);
+					if (boundaries != null) {
+						caret.x = boundaries.right + x;
+						caret.y = boundaries.top + y;
+					}
+					// Text box is empty
+					else if (text.length == 0) { 
+						// 2 px gutters
+						caret.x = x + 2; 
+						caret.y = y + 2; 
+					}
 				}
-				// Text box is empty
-				else if (text.length == 0) { 
-					// 2 px gutters
-					caret.x = x + 2; 
-					caret.y = y + 2; 
-				}
-			}
 		}
+		#elseif cpp
+			//TODO: openfl's textfield doesn't have length and getCharBoundaries()
+			//figure something out!
+		#end
 		
 		// Make sure the caret doesn't leave the textfield on single-line input texts
 		if (lines == 1 && caret.x + caret.width > x + width) {
