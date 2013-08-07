@@ -2,3 +2,4 @@ bin/
 psds/
 *.psd
 export/*
+flixel/addons/ui/FlxStateX.hx.orig

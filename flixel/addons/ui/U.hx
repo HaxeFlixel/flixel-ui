@@ -30,19 +30,20 @@ class U
 	 * @param	data the Xml object
 	 * @param	att the name of the attribute
 	 * @param	lower_case force lower_case or not
+	 * @param   what to return if it is ""
 	 * @return  the attribute as a string if it exists, otherwise returns ""
 	 */
 	
-	public static function xml_str(data:Xml, att:String, lower_case:Bool = false):String {
+	public static function xml_str(data:Xml, att:String, lower_case:Bool = false, default_str:String = ""):String {
 		if (data.get(att) != null) {
 			if (lower_case) {
 				return data.get(att).toLowerCase();
 			}else{
 				return data.get(att);
 			}
-		}return "";
+		}return default_str;
 	} 
-	
+		
 	/**
 	 * If a string is a number that ends with a % sign, it will return a normalized percent float (0-100% = 0.0-1.0)
 	 * @param  str a percentage value, such as "5%" or "236.214%"

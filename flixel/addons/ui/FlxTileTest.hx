@@ -7,12 +7,30 @@ import flash.geom.Point;
  * @author 
  */
 
-class FlxTileTest extends FlxSpriteX
+class FlxTileTest extends FlxSpriteX implements IResizable
 {
-
+	private var _tilesWide:Int=2;
+	private var _tilesTall:Int=2;
+	private var _color1:Int=0;
+	private var _color2:Int=0;
+	
 	public function new(X:Float,Y:Float,tileWidth:Int,tileHeight:Int,tilesWide:Int,tilesTall:Int,color1:Int=0xff808080,color2:Int=0xffc4c4c4) 
 	{
 		super(X, Y);
+		
+		_tilesWide = tilesWide;
+		_tilesTall = tilesTall;
+		_color1 = color1;
+		_color2 = color2;
+		
+		makeTiles(tileWidth,tileHeight,_tilesWide,_tilesTall,_color1,_color2);
+	}
+	
+	//For IResizable
+	public function get_width():Float { return width; }
+	public function get_height():Float { return height; }
+	
+	private function makeTiles(tileWidth:Int,tileHeight:Int,tilesWide:Int,tilesTall:Int,color1:Int=0xff808080,color2:Int=0xffc4c4c4):Void {
 		makeGraphic(tileWidth * tilesWide, tileHeight * tilesTall, color1);
 		
 		var brush:BitmapData = new BitmapData(tileWidth, tileHeight, true, color2);
@@ -36,6 +54,12 @@ class FlxTileTest extends FlxSpriteX
 		
 		pt = null;
 		pixels = canvas;
+	}
+	
+	public function resize(w:Float, h:Float):Void {		
+		var tileWidth:Int = Std.int(w / _tilesWide);
+		var tileHeight:Int = Std.int(h / _tilesTall);		
+		makeTiles(tileWidth,tileHeight,_tilesWide,_tilesTall,_color1,_color2);
 	}
 	
 }

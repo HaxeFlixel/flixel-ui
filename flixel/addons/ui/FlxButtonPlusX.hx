@@ -1,6 +1,7 @@
 package flixel.addons.ui;
 import flash.events.MouseEvent;
 import flixel.addons.ui.FlxButtonPlus;
+import flixel.FlxSprite;
 
 /**
  * An extension of Photonstorm's FlxButtonPlus, this adds more control over
@@ -8,7 +9,7 @@ import flixel.addons.ui.FlxButtonPlus;
  * @author Lars Doucet
  */
 
-class FlxButtonPlusX extends FlxButtonPlus
+class FlxButtonPlusX extends FlxButtonPlus implements IResizable
 {
 	
 	public var id:String; 
@@ -62,9 +63,39 @@ class FlxButtonPlusX extends FlxButtonPlus
 		centerLabelY();
 	}
 	
+	//For IResizable
+	public function get_width():Float { return width; }
+	public function get_height():Float { return height; }
+	
+	public function resize(w:Float, h:Float):Void {
+		
+		if(_9sliceNormal != null && _9sliceHighlight != null) {
+			_9sliceNormal.resize(w, h);
+			_9sliceHighlight.resize(w, h);
+			loadGraphic(_9sliceNormal, _9sliceHighlight);
+		}		
+		
+		if(textNormalX != null){
+			textNormalX.width = w;
+			textNormalX.height = h;
+		}
+		if(textHighlightX != null){
+			textHighlightX.width = w;
+			textHighlightX.height = h;
+		}
+	}
+	
 	public override function destroy():Void {
 		_textNormalX = null;
 		_textHighlightX = null;
+		if (_9sliceNormal != null) {
+			_9sliceNormal.destroy();
+		}
+		if (_9sliceHighlight != null) {
+			_9sliceHighlight.destroy();
+		}
+		_9sliceNormal = null;
+		_9sliceHighlight = null;
 		super.destroy();
 	}
 	
@@ -306,7 +337,21 @@ class FlxButtonPlusX extends FlxButtonPlus
 		}
 	}
 	
+	public override function loadGraphic(Normal:FlxSprite, Highlight:FlxSprite):Void {
+		if (Std.is(Normal, Flx9SliceSprite)){
+			_9sliceNormal = cast Normal;
+		}
+		if (Std.is(Highlight, Flx9SliceSprite)) {
+			_9sliceHighlight = cast Highlight;
+		}
+		super.loadGraphic(Normal, Highlight);
+	}
+	
+	
 	/******PRIVATE******/
+		
+	private var _9sliceNormal:Flx9SliceSprite;
+	private var _9sliceHighlight:Flx9SliceSprite;
 		
 	private var _textX:Float = 0;
 	private var _textY:Float = 0;
