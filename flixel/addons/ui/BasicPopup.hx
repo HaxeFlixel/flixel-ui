@@ -187,11 +187,12 @@ class BasicPopUp extends FlxGroupX
 	}
 	
 	public function forcePush(str:String) {
-		switch(str) {
+		/*switch(str) {
 			case "cancel": pressCancel(null);
 			case "no": pressNo(null); 
 			case "yes": pressYes(null);
-		}
+		}*/
+		pressButton([str]);
 	}
 	
 	function waitASec(){
@@ -199,7 +200,21 @@ class BasicPopUp extends FlxGroupX
 		wait_a_sec_time = 0;
 	}
 	
-	function pressCancel(b:FlxButtonPlusX = null) {
+	function pressButton(params:Array<Dynamic> = null) {
+		if (!active) return;
+		if (wait_a_sec) return;
+		
+		hide();
+		waitASec();
+		if (_callback != null) {
+			if(params != null && params.length > 0){
+				_callback(Std.string(params[0]));
+			}
+		}
+	}
+	
+	/*
+	function pressCancel(params:Array<Dynamic>=null) {
 		if (!active) return;
 		if (wait_a_sec) return;
 		
@@ -210,7 +225,7 @@ class BasicPopUp extends FlxGroupX
 		}
 	}
 	
-	function pressYes(b:FlxButtonPlusX=null)
+	function pressYes(params:Array<Dynamic>=null)
 	{
 		if (!active) return;
 		if (wait_a_sec) return;
@@ -220,7 +235,7 @@ class BasicPopUp extends FlxGroupX
 		_callback("yes");			
 	}
 	
-	function pressNo(b:FlxButtonPlusX = null) {
+	function pressNo(params:Array<Dynamic>=null) {
 		if (!active) return;
 		if (wait_a_sec) return;
 		
@@ -228,5 +243,6 @@ class BasicPopUp extends FlxGroupX
 		waitASec();
 		_callback("no");
 	}
+	*/
 		
 }
