@@ -238,11 +238,12 @@ class FlxButtonPlusX extends FlxButtonPlus
 			shade = 0;
 		}
 		
-		if(aa == 0 || aa != 1 && size < 16){
+		// TODO - Get "Verdana" font to work? 
+		//if(aa == 0 || aa != 1 && size < 16){
 			ft.setFormat(U.font("verdana"), size, color, align_, shade);
-		}else {
-			ft.setFormat(U.font("Verdana"), size, color, align_, shade);				
-		}
+		//}else {
+			//ft.setFormat(U.font("Verdana"), size, color, align_, shade);				
+		//}
 			
 		ft.bold = bold;
 		if (outline) {
@@ -279,6 +280,17 @@ class FlxButtonPlusX extends FlxButtonPlus
 		fto.visible = false;
 		textX = Std.int(textHighlight.x);
 		textY = Std.int(textHighlight.y);
+	}
+	
+	/**
+	 * Helper method to change the button position.
+	 * @param	X
+	 * @param	Y
+	 */
+	public function reset(X:Float, Y:Float)
+	{
+		set_textX(X);
+		set_textY(Y);
 	}
 	
 	/**

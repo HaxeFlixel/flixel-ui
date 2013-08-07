@@ -36,6 +36,8 @@ class FlxGroupX extends FlxGroup implements IDestroyable
 	//group. Probably should switch this so it just precomposites the
 	//whole deal and then alphas the composited result
 	public var alpha(get_alpha, set_alpha):Float;
+	
+	public var velocity:FlxPoint;
 		
 	//move all of the contents around - it saves the last anchor point,
 	//so it works "automagically"
@@ -171,6 +173,14 @@ class FlxGroupX extends FlxGroup implements IDestroyable
 	}
 	
 	public override function update():Void {
+		if (velocity != null)
+		{
+			var temp:Bool = instant_update;
+			instant_update = false;
+			set_x(x + velocity.x);
+			set_y(y + velocity.y);
+			instant_update = temp;
+		}
 		updateDirty();
 		super.update();
 	}
@@ -240,6 +250,17 @@ class FlxGroupX extends FlxGroup implements IDestroyable
 			width = best_w;
 			height = best_h;
 		}
+	}
+	
+	/**
+	 * Helper to change the position of this group of objects.
+	 * @param	x
+	 * @param	y
+	 */
+	public function reset(X:Float, Y:Float)
+	{
+		set_x(X);
+		set_y(Y);
 	}
 	
 	//Recalculate the bound size of the group's contents:

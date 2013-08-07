@@ -699,6 +699,58 @@ class U
 		return c;*/
 	}
 	
+	/**
+	* Converts a PNG file to a comma-separated string.
+	* pixels that match color_index are flagged
+	* others are ignored
+	* must be a PERFECT MATCH
+	* 
+	* @param   color_index   The matching color index
+	* 
+	* @return	A comma-separated string containing the level data in a <code>FlxTilemap</code>-friendly format.
+	*/
+   public static function bmpToCSVLayer(color_index:Int, bd:BitmapData):String{
+	   
+	   //Walk image and export pixel values
+	   var p:Int;
+	   var last_p:Int=-1;
+	   var csv:String = "";
+	   var w:Int = bd.width;
+	   var h:Int = bd.height;
+	   for(r in 0...h){
+		   for(c in 0...w){
+			   //Decide if this pixel/tile is solid (1) or not (0)
+			   p = bd.getPixel(c, r);
+			   
+			   if(p == color_index) //it matches our color
+				   p = 1;			 //solid tile
+			   else {				//some other color, ignore it
+				   p = 0;
+			   }
+				   
+			   //Write the result to the string
+			   if(c == 0)
+			   {
+				   if(r == 0)
+					   csv += p;
+				   else {
+					   csv += "\n" + p;
+				   }
+			   }
+			   else{
+				   csv += ", " + p;
+				   if (c == w - 1) {
+					   if (last_p != -1) {
+						   csv += ", " + last_p;
+					   }
+				   }
+			   }
+			   last_p = p;
+		   }
+	   }
+	   return csv;
+   }
+	
 	public static inline function get_gfx(str:String):String{
 		return "assets/gfx/" + str + ".png";
 	}
