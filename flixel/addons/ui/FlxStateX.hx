@@ -1,4 +1,5 @@
 package flixel.addons.ui;
+import flixel.FlxCamera;
 import haxe.xml.Fast;
 import flash.display.BitmapData;
 import flash.Lib;
@@ -26,6 +27,7 @@ import flixel.text.FlxText;
 
 class FlxStateX extends FlxState implements IEventGetter
 {
+	public var destroyed:Bool;
 	private var _xml_id:String = "";	//the xml to load
 	private var _ui:FlxUI;
 	private var _tongue:IFireTongue;
@@ -88,6 +90,8 @@ class FlxStateX extends FlxState implements IEventGetter
 	}
 	
 	public override function destroy():Void {
+		destroyed = true;
+		
 		_ui.destroy();
 		remove(_ui, true);
 		_ui = null;

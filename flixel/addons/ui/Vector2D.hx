@@ -30,10 +30,10 @@ package flixel.addons.ui;
 import flash.geom.Point;
 
 class Vector2D {
-	public var length(getLength, never) : Float;
-	public var lengthSq(getLengthSq, never) : Float;
+	public var length(get, never) : Float;
+	public var lengthSq(get, never) : Float;
 
-	public function getLength() : Float {
+	public function get_length() : Float {
 		//length = sqrt(x^2 + y^2)
 		// ..Only calculate length if it has changed ...
 		if(_oldX != x || _oldY != y)  {
@@ -44,7 +44,7 @@ class Vector2D {
 		return _length;
 	}
 
-	public function getLengthSq() : Float {
+	public function get_lengthSq() : Float {
 		return x * x + y * y;
 	}
 
@@ -626,7 +626,7 @@ class Vector2D {
 		var _oldX : Float;
 	var _oldY : Float;
 	//used in some calculations
-		static inline var RAD_TO_DEG : Float = (180 / Math.PI);
-	static inline var DEG_TO_RAD : Float = (Math.PI / 180);
+	static var RAD_TO_DEG : Float = (180 / Math.PI);
+	static var DEG_TO_RAD : Float = (Math.PI / 180);
 }
 

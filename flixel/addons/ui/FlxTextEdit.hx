@@ -262,7 +262,7 @@ class FlxTextEdit extends FlxGroup
 	}
 		
 	public override function update() {
-		if (FlxG.mouse.justPressed()) {
+		if (FlxG.mouse.justPressed) {
 			if(_needsFocus){
 				_focus = false;
 			}
