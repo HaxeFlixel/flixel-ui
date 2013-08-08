@@ -827,7 +827,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var fb:FlxBasic = getAsset(id);
 		
 		#if debug
-			trace("FlxUI._postLoadThing(" + type + ") id=" + id);
+		trace("FlxUI._postLoadThing(" + type + ") id=" + id);
 		#end
 		
 		if (type == "align") {
@@ -848,7 +848,8 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			var bounds: { min_width:Float, min_height:Float, 
 			              max_width:Float, max_height:Float } = calcMaxMinSize(data);				
 			
-			_resizeThing(cast(fb, IResizable), bounds);					
+			_resizeThing(cast(fb, IResizable), bounds);		
+			
 		}						
 		
 		var fbx:Float=0;
@@ -914,8 +915,10 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var context:String = U.xml_str(data.x, "context", true, "ui");
 		text = getText(text,context);
 				
-		var W:Int = U.xml_i(data.x, "width"); if (W == 0) { W = 100; }		
-		var the_font:String = _loadFontFace(the_data);		
+		var W:Int = U.xml_i(data.x, "width"); if (W == 0) { W = 100; }
+		
+		var the_font:String = _loadFontFace(the_data);
+		
 		var input:Bool = U.xml_bool(the_data.x, "input");
 		
 		var align:String = U.xml_str(the_data.x, "align"); if (align == "") { align = null;}

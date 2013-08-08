@@ -166,7 +166,9 @@ class U
 					}
 					testbmp = null;					
 				}catch (msg:String) {
+					#if debug
 					trace("***ERROR*** U.xml_gfx() : " + msg);
+					#end
 				}
 			}			
 		}

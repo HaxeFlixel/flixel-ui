@@ -285,9 +285,11 @@ class Vector2D {
  		 * 
 
  		 */	public function divide(scalar : Float) : Void {
+		#if debug
 		if(scalar == 0)  {
 			trace("Vector::dividedBy() - Illegal Divide by Zero!");
 		}
+		#end
 
 		else  {
 			x /= scalar;

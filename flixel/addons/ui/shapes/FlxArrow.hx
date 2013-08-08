@@ -108,7 +108,9 @@ class FlxArrow extends FlxShape {
 		m.identity();
 		m.rotate(arrow_angle);
 		m.translate(_pt2.x, _pt2.y);
+		#if debug
 		//trace("angle to = " + angle);
+		#end
 		var c : ColorTransform = new ColorTransform(1, 1, 1, 1, 0, 0, 0, (-255 + (256 * alpha)));
 		//FlxG.buffer.copyPixels(_framePixels,_flashRect,_flashPoint,null,null,true);
 		FlxG.buffer.draw(_triangle, m, c, blend);

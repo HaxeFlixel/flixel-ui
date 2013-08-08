@@ -16,7 +16,9 @@ import flash.geom.Point;
 		size = s;
 		arm_size = arm_s;
 		fill_alpha = fa;
+		#if debug
 		trace("FlxThickCross() arm_size = " + arm_size);
+		#end
 		super(thick, s_c, fill_, fc, x, y, size, size);
 		buffer();
 	}
