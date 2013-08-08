@@ -58,7 +58,7 @@ class FlxStateX extends FlxState implements IEventGetter
 		
 		_ui = new FlxUI(null,this,null,_tongue);
 		add(_ui);
-				
+		
 		var data:Fast = U.xml(_xml_id);
 		_ui.load(data);
 		
@@ -66,9 +66,7 @@ class FlxStateX extends FlxState implements IEventGetter
 	}
 	
 	public override function onResize(Width:Int,Height:Int):Void {
-		FlxG.cameras.reset(new FlxCamera(0, 0, Width, Height));
-        FlxG.width = Width;
-        FlxG.height = Height; 		
+		FlxG.resizeGame(Width, Height);	
 		_reload_countdown = 5;
 		_reload = true;
 	}	
