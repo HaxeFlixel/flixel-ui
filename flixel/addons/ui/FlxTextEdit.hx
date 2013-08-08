@@ -287,7 +287,7 @@ class FlxTextEdit extends FlxGroup
 		var str_a:String;
 		var str_b:String;
 		var i:Int = 0;
-		if (FlxG.keys.justPressed("BACKSPACE")) {
+		if (FlxG.keys.justPressed.BACKSPACE) {
 			if (caret_index > 0 || caret_index == -2) {
 				if (caret_index == -2) {
 					str_a = _text.text.substr(0, _text.text.length - 1);
@@ -307,7 +307,7 @@ class FlxTextEdit extends FlxGroup
 				
 			}
 			updateCaret(caret_index);
-		}else if (FlxG.keys.justPressed("DELETE")) {
+		}else if (FlxG.keys.justPressed.DELETE) {
 			var ci:Int = caret_index;
 			if (caret_index != -2) {
 				if (ci == -1) {
@@ -321,7 +321,7 @@ class FlxTextEdit extends FlxGroup
 				trace("caret = " + caret_index + " text = " + _text.text);
 			}
 			updateCaret(caret_index);
-		}else if (FlxG.keys.justPressed("LEFT")) {
+		}else if (FlxG.keys.justPressed.LEFT) {
 			if (caret_index > 0) {
 				caret_index--;
 			}else if (caret_index == -2) {
@@ -329,7 +329,7 @@ class FlxTextEdit extends FlxGroup
 			}		
 			updateCaret(caret_index);
 			
-		}else if (FlxG.keys.justPressed("RIGHT")) {
+		}else if (FlxG.keys.justPressed.RIGHT) {
 			if (caret_index != -2) {
 				caret_index++;
 			}
@@ -341,14 +341,14 @@ class FlxTextEdit extends FlxGroup
 		}else {
 			var letter:String = checkLetterKeys();
 			var isCaps:Bool=true;
-			/*if (FlxG.keys.CAPSLOCK) {
-				if (FlxG.keys.SHIFT) { 
+			/*if (FlxG.keys.pressed.CAPSLOCK) {
+				if (FlxG.keys.pressed.SHIFT) { 
 					isCaps = false; 
 				}else { 
 					isCaps = true 
 				}
 			}else {
-				if (FlxG.keys.SHIFT) {
+				if (FlxG.keys.pressed.SHIFT) {
 					isCaps = true;
 				}else {
 					isCaps = false;
@@ -395,7 +395,7 @@ class FlxTextEdit extends FlxGroup
 	private function checkLetterKeys():String {
 		if(_text.text.length < _maxChars){
 			for (s in letter_set) {
-				if (FlxG.keys.justPressed(s)) {
+				if (FlxG.keyboard.justPressed(s)) {
 					return U.getShortTextFromFlxKeyText(s);
 				}
 			}

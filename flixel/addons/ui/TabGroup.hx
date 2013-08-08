@@ -165,9 +165,9 @@ class TabGroup extends FlxGroupX
 		}
 		
 		if(!failsafe_tripped){
-			if (FlxG.keys.justPressed(tab_key)) {
+			if (FlxG.keyboard.justPressed(tab_key)) {
 				tabCycle(1);
-			}else if (FlxG.keys.justPressed(back_key)) {
+			}else if (FlxG.keyboard.justPressed(back_key)) {
 				tabCycle( -1);
 			}
 			failsafe = 0;
