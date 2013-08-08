@@ -1,4 +1,5 @@
 package flixel.addons.ui;
+import flash.display.Bitmap;
 import flash.errors.Error;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -52,6 +53,10 @@ class FlxUI extends FlxGroupX implements IEventGetter
 	private var _ptr_tongue:IFireTongue;
 	private var _data:Fast;
 		
+	private static var _flashRect:Rectangle;
+	private static var _flashRect2:Rectangle;
+	private static var _flashPoint:Point;
+	private static var _flashPointZero:Point;
 	
 	/**Make sure to recursively propogate the tongue pointer 
 	 * down to all my members
@@ -83,6 +88,14 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		
 	public function new(data:Fast=null,ptr:IEventGetter=null,superIndex_:FlxUI=null,tongue_:IFireTongue=null) 
 	{
+		//to help with drawing
+		if(_flashRect == null){
+			_flashRect = new Rectangle();
+			_flashRect2 = new Rectangle();
+			_flashPoint = new Point();
+			_flashPointZero = new Point();
+		}
+		
 		super();
 		_ptr_tongue = tongue_;	//set the localization data structure, if any.
 								//we set this directly b/c no children have been created yet
@@ -596,6 +609,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			case "tile_test": return _loadTileTest(data, definition);
 			case "sprite": return _loadSprite(data,definition);
 			case "text": return _loadText(data, definition);
+			case "button_v": return _loadButtonVanilla(data, definition);
 			case "button": return _loadButton(data, definition);
 			case "button_toggle": return _loadButtonToggle(data, definition);
 			case "tab_menu": return _loadTabMenu(data, definition);
@@ -1174,6 +1188,245 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var fbt:FlxButtonToggle = new FlxButtonToggle(0, 0, _onClickButtonToggle, params, btn_normal, btn_toggle, id);
 		
 		return fbt;
+	}
+
+	/**
+	 * Give me a sprite with three vertically stacked button frames and the 
+	 * frame index you want and I'll slice it off for you
+	 * @param	all_frames
+	 * @param	button_state
+	 * @return
+	 */
+	
+	public static function grabButtonFrame(all_frames:BitmapData, button_state:Int):BitmapData{
+		var h:Int = cast all_frames.height / 3;
+		var w:Int = cast all_frames.width;
+		var pixels:BitmapData = new BitmapData(w,h);
+		_flashRect.x = 0;
+		_flashRect.y = button_state * h;
+		_flashRect.width = w;
+		_flashRect.height = h;		
+		pixels.copyPixels(all_frames, _flashRect, _flashPointZero);
+		return pixels;
+	}
+	
+	/**
+	 * Give me three bitmapdatas and I'll return an assembled button bitmapdata for you.
+	 * If overB or downB are missing, it will not include those frames.
+	 * @param	upB
+	 * @param	overB
+	 * @param	downB
+	 * @return
+	 */
+	
+	public static function assembleButtonFrames(upB:BitmapData, overB:BitmapData, downB:BitmapData):BitmapData {
+		var pixels:BitmapData;
+		
+		if (overB != null) {
+			if (downB != null) {
+				pixels = new BitmapData(upB.width, upB.height * 3);						
+			}else {				
+				pixels = new BitmapData(upB.width, upB.height * 2);						
+			}
+		}else {
+			pixels = new BitmapData(upB.width, upB.height);						
+		}
+		
+		pixels.copyPixels(upB, upB.rect, _flashPointZero);
+		
+		if(overB != null){
+			_flashPoint.x = 0;
+			_flashPoint.y = upB.height;		
+			pixels.copyPixels(overB, overB.rect, _flashPoint);
+			if (downB != null) {
+				_flashPoint.y = upB.height * 2;
+				pixels.copyPixels(downB, downB.rect, _flashPoint);		
+			}
+		}
+		
+		return pixels;
+	}
+	
+	private function _loadButtonVanilla(data:Fast, definition:Fast = null, setCallback:Bool = true):FlxButtonX {
+		var src:String = ""; 
+		var fb:FlxButtonX = null;
+				
+		var default_data:Fast = data;
+		if (definition != null) { default_data = definition;}
+		
+		var resize_ratio:Float = U.xml_f(data.x, "resize_ratio", -1);
+				
+		var label:String = U.xml_str(data.x, "label");
+		var context:String = U.xml_str(data.x, "context", true, "ui");
+		label = getText(label,context);
+		
+		var W:Int = U.xml_i(default_data.x, "width");
+		var H:Int = U.xml_i(default_data.x, "height");	
+				
+		var params:Array<Dynamic> = getParams(data);
+		
+		fb = new FlxButtonX(0, 0, label, resize_ratio);			
+		
+		if (setCallback) {
+			fb.setOnUpCallback(_onClickButton, params);
+		}
+		
+		/***Begin graphics loading block***/
+		
+		var final_pixels:BitmapData = new BitmapData(W, H*3,true,0x00FFFFFF);
+			
+		if (default_data.hasNode.graphic) {
+			var up_graphic:String = "";
+			var over_graphic:String = "";
+			var down_graphic:String = "";
+			var all_graphic:String = "";
+			
+			var up_slice9:String = "";
+			var over_slice9:String = "";
+			var down_slice9:String = "";
+			var all_slice9:String = "";
+			
+			var up_rect:String = "";
+			var over_rect:String = "";
+			var down_rect:String = "";
+			var all_rect:String = "";
+			
+			for (graphicNode in default_data.nodes.graphic) {
+				var graphic_id:String = U.xml_str(graphicNode.x, "id", true);
+				var image:String = U.xml_str(graphicNode.x, "image");
+				var slice9:String = U.xml_str(graphicNode.x, "slice9");
+				var rect:String = U.xml_str(graphicNode.x, "rect");
+				
+				switch(graphic_id) {
+					case "inactive", "", "normal", "up": 
+						if (image != "") { up_graphic = image; }
+						up_slice9 = slice9;
+						up_rect = rect;
+					case "active", "hilight", "over", "hover": 
+						if (image != "") { over_graphic = image; }
+						over_slice9 = slice9;
+						over_rect = rect;
+					case "down", "pressed", "pushed":
+						if (image != "") { down_graphic = image; }
+						down_slice9 = slice9;
+						down_rect = rect;
+					case "all":
+						if (image != "") { all_graphic = image; }
+						all_slice9 = slice9;
+						all_rect = rect;
+				}
+			}
+				
+			//temps
+			var up:FlxSprite = null;
+			var over:FlxSprite = null;
+			var down:FlxSprite = null;
+			
+			var all:BitmapData = null;
+						
+			//set width and height for the button for drawing purposes
+			_flashRect2.width = W;		//x,y of _flashRect2 is always 0,0
+			_flashRect2.height = H;
+			
+			var upB:BitmapData = null;
+			var overB:BitmapData = null;
+			var downB:BitmapData = null;
+			
+			if (all_graphic != "") {	//we're loading all the graphics at once from one file
+			
+				all = Assets.getBitmapData(U.gfx(all_graphic));		//load the graphic
+				
+				upB = grabButtonFrame(all, FlxButton.NORMAL);		//get each button frame
+				overB = grabButtonFrame(all, FlxButton.HIGHLIGHT);
+				downB = grabButtonFrame(all, FlxButton.PRESSED);
+				
+				if (all_slice9 != "") {		//9slicesprites
+					
+					//Scale each 9slicesprite
+					up = new Flx9SliceSprite(0, 0, upB, _flashRect2, all_slice9,false,false,all_graphic+":up");
+					over = new Flx9SliceSprite(0, 0, overB, _flashRect2, all_slice9,false,false,all_graphic+":over");
+					down = new Flx9SliceSprite(0, 0, downB, _flashRect2, all_slice9,false,false,all_graphic+":down");					
+		
+					//grab the pixel data:
+					upB = up.pixels;
+					overB = over.pixels;
+					downB = down.pixels;					
+				}else {						//fixed size sprites
+					//Nothing, the bitmaps are fine as-is
+				}		
+				
+			}else {						//we're loading all the graphics separately from loose files
+				if (up_graphic != "") {
+					if (up_slice9 != "") {	//load as 9slicesprites
+						
+						up = new Flx9SliceSprite(0, 0, U.gfx(up_graphic),_flashRect2, up_slice9);
+						upB = up.pixels;
+						
+						if (over_graphic != "") {
+							if (over_slice9 == "") { over_slice9 = up_slice9;}	//copy 9slice rule if doesn't exist
+							over = new Flx9SliceSprite(0, 0, U.gfx(over_graphic), _flashRect2, over_slice9);
+							overB = over.pixels;
+						}
+						
+						if (down_graphic != "") {
+							if (down_slice9 == "") { down_slice9 = up_slice9;}	//copy 9slice rule if doesn't exist
+							down = new Flx9SliceSprite(0, 0, U.gfx(down_graphic), _flashRect2, down_slice9);
+							downB = down.pixels;
+						}
+						
+					}else {					//load as static buttons
+						
+						upB   = Assets.getBitmapData(U.gfx(up_graphic));
+						downB = Assets.getBitmapData(U.gfx(down_graphic));
+						overB = Assets.getBitmapData(U.gfx(over_graphic));
+					}
+				}
+			}
+			
+			if(upB != null){
+				final_pixels = assembleButtonFrames(upB, overB, downB);
+			}
+						
+			//Cleanup:
+			if (up != null) { up.destroy(); up = null; }
+			if (over != null) { over.destroy(); over = null; }
+			if (down != null) { down.destroy(); down = null; }
+			try {
+				if (upB != null) { upB.dispose(); upB = null; }
+				if (overB != null) { overB.dispose(); overB = null; }
+				if (downB != null) { downB.dispose(); downB = null; }
+			}catch (e:Dynamic) {
+				#if debug
+					trace("ERROR DISPOSING BITMAPS");
+				#end
+			}			
+		}			
+		
+		fb.loadGraphic(final_pixels,true,false,W,H);
+		
+		/***End graphics loading block***/
+			
+		formatButtonTextVanilla(default_data, fb);
+		
+		var text_x:Int = 0;
+		var text_y:Int = 0;
+		if (data.x.get("text_x") != null) {
+			text_x = U.xml_i(data.x, "text_x");			
+		}else {
+			text_x = U.xml_i(default_data.x, "text_x");
+		}
+			
+		if (data.x.get("text_y") != null) {
+			text_y = U.xml_i(data.x, "text_y");			
+		}else {
+			text_y = U.xml_i(default_data.x, "text_y");
+		}		
+		
+		//label offset has already been 'centered,' this adjust from there:
+		fb.labelOffset.x += text_x;
+		fb.labelOffset.y += text_y;		
+			
+		return fb;
 	}
 	
  	private function _loadButton(data:Fast,definition:Fast=null,setCallback:Bool=true):FlxButtonPlusX {
@@ -1929,4 +2182,51 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		}
 		fb.centerLabelY();
 	}
+	
+	private function formatButtonTextVanilla(data:Fast, fb:FlxButtonX):Void {
+		if (data != null && data.hasNode.text) {
+			var textNode = data.node.text;
+			var use_def:String = U.xml_str(textNode.x, "use_def", true);
+			var text_def:Fast = textNode;
+			
+			if (use_def != "") {
+				text_def = getDefinition(use_def);
+			}			
+			
+			var text_data:Fast = textNode;
+			if (text_def != null) { text_data = text_def; };
+							
+			var case_id:String = U.xml_str(textNode.x, "id", true);
+			var the_font:String = _loadFontFace(text_data);
+			var size:Int = U.xml_i(text_data.x, "size"); if (size == 0) { size = 8;}
+			var color:Int = _loadColor(text_data);				
+							
+			var shadow:Int = U.xml_i(text_data.x, "shadow");
+			var dropShadow:Bool = U.xml_bool(text_data.x, "dropShadow");
+			var align:String = U.xml_str(text_data.x, "align", true); if (align == "") { align = null;}
+				
+			fb.label.setFormat(the_font, size, color, align, shadow);
+			//TODO: text.dropShadow = true;		
+			
+			if (Std.is(fb.label, FlxTextX)) {
+				var ftx:FlxTextX = cast fb.label;
+				ftx.forceCalcFrame();
+			}
+			
+			fb.up_color = color;
+			fb.down_color = 0;
+			fb.over_color = 0;
+						
+			for (textColorNode in textNode.nodes.color) {
+				var color:Int = _loadColor(textColorNode);
+				var state_id:String = U.xml_str(textColorNode.x, "id", true);
+				switch(state_id) {
+					case "up", "inactive", "", "up": fb.up_color = color;
+					case "active", "hilight", "over", "hover": fb.over_color = color;
+					case "down", "pressed", "pushed": fb.down_color = color;
+				}
+			}
+		}
+	}
+
 }
