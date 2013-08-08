@@ -6,7 +6,7 @@ import flixel.FlxSprite;
  * @author Lars Doucet
  */
 
-class FlxButtonToggle extends FlxGroupX
+class FlxButtonToggle extends FlxGroupX implements IResizable
 {
 	public var btn_normal(get_btn_normal, null):FlxButtonPlusX;
 	public var btn_toggle(get_btn_toggle, null):FlxButtonPlusX;
@@ -36,6 +36,31 @@ class FlxButtonToggle extends FlxGroupX
 		y = Y;
 		_id = id_;
 		_doToggle(false, null);
+	}
+	
+	/**IResizable**/
+	
+	public function get_width():Float {
+		if(_btn_normal != null){
+			return _btn_normal.get_width();
+		}
+		return 0;
+	}
+	
+	public function get_height():Float {
+		if(_btn_normal != null){
+			return _btn_normal.get_height();
+		}
+		return 0;
+	}
+	
+	public function resize(W:Float, H:Float):Void {
+		if (_btn_normal != null) {
+			_btn_normal.resize(W, H);
+		}
+		if (_btn_toggle != null) {
+			_btn_toggle.resize(W, H);
+		}
 	}
 	
 	public override function destroy():Void {

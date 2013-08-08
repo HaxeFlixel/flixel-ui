@@ -222,8 +222,6 @@ class FlxUI extends FlxGroupX implements IEventGetter
 	 */
 	
 	public function load(data:Fast):Void {
-		trace("load()");
-		
 		_group_index = new Map<String,FlxGroupX>();
 		_asset_index = new Map<String,FlxBasic>();
 		_definition_index = new Map<String,Fast>();
@@ -335,8 +333,6 @@ class FlxUI extends FlxGroupX implements IEventGetter
 	
 	private function _postLoad(data:Fast):Void {
 		
-		trace("_postLoad()");
-		
 		if (data.x.firstElement() != null) {
 			//Load the actual things
 			var node:Xml;
@@ -346,8 +342,6 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			}
 		}
 			
-		//trace("Failures = " + _failure_checks.x);
-		
 		if (_failure_checks != null) {
 			for (data in _failure_checks) {					
 				if (_checkFailure(data)) {
@@ -832,7 +826,9 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var id:String = U.xml_str(data.x, "id", true);
 		var fb:FlxBasic = getAsset(id);
 		
-		trace("FlxUI._postLoadThing(" + type + ") id=" + id);
+		#if debug
+			trace("FlxUI._postLoadThing(" + type + ") id=" + id);
+		#end
 		
 		if (type == "align") {
 			_alignThing(data);
@@ -852,8 +848,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			var bounds: { min_width:Float, min_height:Float, 
 			              max_width:Float, max_height:Float } = calcMaxMinSize(data);				
 			
-			_resizeThing(cast(fb, IResizable), bounds);		
-			
+			_resizeThing(cast(fb, IResizable), bounds);					
 		}						
 		
 		var fbx:Float=0;
@@ -919,10 +914,8 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var context:String = U.xml_str(data.x, "context", true, "ui");
 		text = getText(text,context);
 				
-		var W:Int = U.xml_i(data.x, "width"); if (W == 0) { W = 100; }
-		
-		var the_font:String = _loadFontFace(the_data);
-		
+		var W:Int = U.xml_i(data.x, "width"); if (W == 0) { W = 100; }		
+		var the_font:String = _loadFontFace(the_data);		
 		var input:Bool = U.xml_bool(the_data.x, "input");
 		
 		var align:String = U.xml_str(the_data.x, "align"); if (align == "") { align = null;}
@@ -936,10 +929,12 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			var ftx:FlxTextX = new FlxTextX(0, 0, W, text);
 			ftx.setFormat(the_font, size, color, align, shadow);
 			ftx.dropShadow = drop_shadow;
+			ftx.forceCalcFrame();
 			ft = ftx;
 		}else {
 			var fti:FlxInputTextX = new FlxInputTextX(0, 0, W, text);
-			fti.setFormat(the_font, size, color, align, shadow);
+			fti.setFormat(the_font, size, color, align, shadow);			
+			fti.forceCalcFrame();
 			ft = fti;
 		}		
 		return ft;
@@ -1088,7 +1083,9 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var back:Flx9SliceSprite = _load9SliceSprite(data, back_def);
 		
 		var tab_def:Fast = null;
-			
+		
+		var stretch_tabs:Bool = U.xml_bool(default_data.x, "stretch_tabs",false);
+		
 		if (default_data.hasNode.tab) {
 			var tab_def_str:String = U.xml_str(default_data.node.tab.x, "use_def");
 			if (tab_def_str != "") {
@@ -1103,6 +1100,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var id:String = "";
 		
 		if (data.hasNode.tab) {
+			
 			for (tab_node in data.nodes.tab) {
 				id = U.xml_str(tab_node.x, "id", true);
 				var label:String = U.xml_str(tab_node.x, "label");
@@ -1117,7 +1115,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			}			
 		}
 		
-		var fg:FlxTabMenu = new FlxTabMenu(back,list_tabs);		
+		var fg:FlxTabMenu = new FlxTabMenu(back,list_tabs,stretch_tabs);		
 		
 		if (data.hasNode.group) {
 			for (group_node in data.nodes.group) {
@@ -1181,6 +1179,8 @@ class FlxUI extends FlxGroupX implements IEventGetter
 				
 		var default_data:Fast = data;
 		if (definition != null) { default_data = definition;}
+		
+		var resize_ratio:Float = U.xml_f(data.x, "resize_ratio", -1);
 				
 		var label:String = U.xml_str(data.x, "label");
 		var context:String = U.xml_str(data.x, "context", true, "ui");
@@ -1194,9 +1194,9 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var params:Array<Dynamic> = getParams(data);
 		
 		if(setCallback){
-			fb = new FlxButtonPlusX(0, 0, _onClickButton, params, label, W, H);
+			fb = new FlxButtonPlusX(0, 0, _onClickButton, params, label, W, H, resize_ratio);
 		}else {
-			fb = new FlxButtonPlusX(0, 0, null, null, label, W, H);
+			fb = new FlxButtonPlusX(0, 0, null, null, label, W, H, resize_ratio);
 		}
 		fb.visible = isVis;
 				
@@ -1312,9 +1312,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			fb.updateActiveButtonColors(arrayActive);
 			fb.updateInactiveButtonColors(arrayInactive);
 		}
-		/*
-		*/
-		
+	
 		return fb;
 	}
 	
@@ -1748,11 +1746,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		if (data.hasNode.anchor) {
 			anchor_x_str = U.xml_str(data.node.anchor.x, "x");
 			anchor_y_str = U.xml_str(data.node.anchor.x, "y");
-			
-			if (anchor_x_str == "options.right") {
-				trace("BOINK");
-			}
-			
+						
 			anchor_x = _getAnchorPos(thing, "x", anchor_x_str);
 			anchor_y = _getAnchorPos(thing, "y", anchor_y_str);
 			anchor_x_flush = U.xml_str(data.node.anchor.x, "x-flush",true);

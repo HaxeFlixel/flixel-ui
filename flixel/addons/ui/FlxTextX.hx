@@ -48,7 +48,8 @@ class FlxTextX extends FlxText implements IResizable
 	}
 	
 	public function forceCalcFrame():Void {
-		super.calcFrame();
+		_regen = true;
+		calcFrame();
 	}
 	
 	public function set_dropShadow(b:Bool):Bool {
@@ -56,12 +57,13 @@ class FlxTextX extends FlxText implements IResizable
 		
 		if (_dropShadow) 
 		{
+			//TODO: add these back in later:
 			//addFilter(new GlowFilter(_shadow, 1, 2, 2, 2, 1, false, false));
-			addFilter(new DropShadowFilter(1, 45, _shadow, 1, 1, 1, 0.25));
+			//addFilter(new DropShadowFilter(1, 45, _shadow, 1, 1, 1, 0.25));
 		} 
 		else
 		{
-			removeAllFilters();
+			//removeAllFilters();
 		}
 		
 		return _dropShadow;
@@ -69,9 +71,10 @@ class FlxTextX extends FlxText implements IResizable
 	
 	private override function set_outline(Color:Int) {
 		if (Color != 0) {
-			addFilter(new GlowFilter(Color, 1, 2, 2, 1, 1, false, false));
+			//TODO: re-enable when filters are added back
+			//addFilter(new GlowFilter(Color, 1, 2, 2, 1, 1, false, false));
 		}else {
-			removeAllFilters();
+			//removeAllFilters();
 		}
 		_regen = true;
 		useOutline = true;

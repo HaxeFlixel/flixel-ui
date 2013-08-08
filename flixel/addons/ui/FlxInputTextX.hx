@@ -24,4 +24,8 @@ class FlxInputTextX extends FlxInputText implements IResizable
 		calcFrame();
 	}
 	
+	public function forceCalcFrame():Void {
+		calcFrame();
+	}
+	
 }

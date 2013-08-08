@@ -38,8 +38,12 @@ class FlxButtonPlusX extends FlxButtonPlus implements IResizable
 	static public inline var HIGHLIGHT:Int = 1;
 	static public inline var PRESSED:Int = 2;
 	
-	public function new(X:Int, Y:Int, Callback:Dynamic, Params:Array<Dynamic> = null, Label:String = "", Width:Int = 100, Height:Int = 20)
+	private var _resize_ratio:Float = -1;
+	
+	public function new(X:Int, Y:Int, Callback:Dynamic, Params:Array<Dynamic> = null, Label:String = "", Width:Int = 100, Height:Int = 20, Ratio:Float=-1)
 	{
+		_resize_ratio = Ratio;
+		
 		super(X, Y, Callback, Params, Label, Width, Height);		
 		
 		if (textNormal != null) {
@@ -69,8 +73,10 @@ class FlxButtonPlusX extends FlxButtonPlus implements IResizable
 	
 	public function resize(w:Float, h:Float):Void {
 		
-		if(_9sliceNormal != null && _9sliceHighlight != null) {
+		if (_9sliceNormal != null && _9sliceHighlight != null) {
+			_9sliceNormal.resize_ratio = _resize_ratio;
 			_9sliceNormal.resize(w, h);
+			_9sliceHighlight.resize_ratio = _resize_ratio;
 			_9sliceHighlight.resize(w, h);
 			loadGraphic(_9sliceNormal, _9sliceHighlight);
 		}		
@@ -340,11 +346,22 @@ class FlxButtonPlusX extends FlxButtonPlus implements IResizable
 	public override function loadGraphic(Normal:FlxSprite, Highlight:FlxSprite):Void {
 		if (Std.is(Normal, Flx9SliceSprite)){
 			_9sliceNormal = cast Normal;
+			checkResize(_9sliceNormal);
 		}
 		if (Std.is(Highlight, Flx9SliceSprite)) {
 			_9sliceHighlight = cast Highlight;
+			checkResize(_9sliceHighlight);
 		}
 		super.loadGraphic(Normal, Highlight);
+	}
+	
+	private function checkResize(flx9:Flx9SliceSprite):Void {
+		//force assets to resize according to scaling rules
+		var test_ratio:Float = flx9.width / flx9.height;
+		if (Math.abs(_resize_ratio - test_ratio) > 0.0001) {
+			flx9.resize_ratio = _resize_ratio;
+			flx9.resize(flx9.width, flx9.height);
+		}
 	}
 	
 	

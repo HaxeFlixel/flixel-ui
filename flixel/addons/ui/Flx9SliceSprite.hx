@@ -91,6 +91,10 @@ class Flx9SliceSprite extends FlxSprite implements IResizable
 		loadGraphic(bitmap_data,false,false,bitmap_data.width,bitmap_data.height,false,key);*/
 	}
 	
+	public var resize_ratio(get, set):Float;
+	public function get_resize_ratio():Float { return _resize_ratio;}
+	public function set_resize_ratio(r:Float):Float { _resize_ratio = r; return r;}
+	
 	//For IResizable
 	public function get_width():Float { return width; }
 	public function get_height():Float { return height; }

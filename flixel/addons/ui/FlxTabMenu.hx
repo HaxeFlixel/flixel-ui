@@ -6,7 +6,7 @@ import flixel.FlxSprite;
  * @author Lars Doucet
  */
 
-class FlxTabMenu extends FlxGroupX implements IEventGetter
+class FlxTabMenu extends FlxGroupX implements IEventGetter implements IResizable
 {
 
 	/***Event Handling***/
@@ -20,9 +20,45 @@ class FlxTabMenu extends FlxGroupX implements IEventGetter
 		return null;
 	}	
 	
+	/**For IResizable**/
+	
+	public function get_width():Float {
+		return _back.width;
+	}
+	
+	public function get_height():Float {
+		var fbt = getFirstTab();
+		if (fbt != null) {
+			return (_back.y + _back.height) - fbt.y;
+		}		
+		return _back.height;
+	}
+	
+	public function resize(W:Float, H:Float):Void {
+		var ir:IResizable;
+		if (Std.is(_back, IResizable)) {
+			ir = cast _back;
+			var fbt = getFirstTab();
+			if(fbt != null){
+				ir.resize(W, H-fbt.get_height());
+			}else {
+				ir.resize(W, H);
+			}
+		}
+		distributeTabs();
+	}
+	
+	private inline function getFirstTab():FlxButtonToggle{
+		var _the_tab:FlxButtonToggle = null;
+		if(_tabs != null && _tabs.length > 0){
+			_the_tab = _tabs[0];
+		}
+		return _the_tab;
+	}
+	
 	/***PUBLIC***/
 	
-	public function new(back_:FlxSprite,tabs_:Array<FlxButtonToggle>) 
+	public function new(back_:FlxSprite,tabs_:Array<FlxButtonToggle>,stretch_tabs:Bool=false) 
 	{
 		super();		
 		_back = back_;
@@ -31,16 +67,41 @@ class FlxTabMenu extends FlxGroupX implements IEventGetter
 		var offset_y:Float = 0;
 		
 		_tabs = tabs_;
-		var xx:Float = 0;
+		_stretch_tabs = stretch_tabs;
+				
 		for (tab in _tabs) {
 			add(tab);
-			tab.x = xx;			
-			tab.y = -(tab.btn_normal.height-2);
-			xx += tab.btn_normal.width;
 			tab.Callback = onClickTab;
 		}
+		
+		distributeTabs();
 				
 		_tab_groups = new Array<FlxGroupX>();
+	}
+	
+	private function distributeTabs():Void {
+		var xx:Float = 0;
+		
+		var tab_width:Float = 0;
+		
+		if (_stretch_tabs) {
+			tab_width = _back.width / _tabs.length;
+		}
+		
+		for (tab in _tabs) {
+			
+			tab.x = xx;			
+			tab.y = -(tab.btn_normal.height - 2);			
+			
+			if (_stretch_tabs) {
+				tab.resize(tab_width, tab.get_height());
+				xx += tab_width;	
+				//this is to avoid small rounding errors
+				//(this guarantees we'll use up the whole space)
+			}else{
+				xx += tab.btn_normal.width;
+			}
+		}
 	}
 	
 	public override function destroy():Void {
@@ -101,6 +162,7 @@ class FlxTabMenu extends FlxGroupX implements IEventGetter
 	private var _back:FlxSprite;
 	private var _tabs:Array<FlxButtonToggle>;
 	private var _tab_groups:Array<FlxGroupX>;
+	private var _stretch_tabs:Bool = false;
 	
 	private function _showOnlyGroup(id:String):Void {
 		for (group in _tab_groups) {
