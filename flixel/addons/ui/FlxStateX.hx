@@ -79,7 +79,9 @@ class FlxStateX extends FlxState implements IEventGetter
 					_reload_countdown--;
 					if (_reload_countdown == 0) {
 						_reload = false;
+						#if debug
 						trace("RELOAD UI!");
+						#end
 						reloadUI();
 					}
 				}

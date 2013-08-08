@@ -295,7 +295,7 @@ class Flx9SliceSprite extends FlxSprite implements IResizable
 		}
 
 		if (section == null) {
-			var fillcolor = #if (neko) {rgb:0x00FFFFFF, a:0 }; #else 0x00FFFFFF; #end
+			var fillcolor = 0x00FFFFFF;
 			section = new BitmapData(Std.int(src.width), Std.int(src.height), true, fillcolor);
 			section.copyPixels(srcData, src, new Point(0, 0));
 			if (useSectionCache == true && cacheId != null) {

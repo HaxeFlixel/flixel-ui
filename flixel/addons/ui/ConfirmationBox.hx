@@ -121,7 +121,9 @@ class ConfirmationBox extends BasicPopUp
 	}*/
 	
 	private function onTextEdit(text:String) {
+		#if debug
 		//trace("text = " + text);
+		#end
 	}
 	
 	override function showButtons(yes:Bool, no:Bool, cancel:Bool):Void {

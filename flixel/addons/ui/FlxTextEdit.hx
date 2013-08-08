@@ -210,7 +210,9 @@ class FlxTextEdit extends FlxGroup
 			i = -2;
 		}
 		caret_index = i;
+		#if debug
 		trace("char = [" + i + "]");
+		#end
 		_focus = true;
 		refresh();
 		caret.visible = true;
@@ -238,7 +240,9 @@ class FlxTextEdit extends FlxGroup
 		
 		if(_flashrect != null){
 			caret.x = _text.x + _flashrect.x;
+			#if debug
 			trace("rect = " + _flashrect);
+			#end
 			_y = _text.y + _flashrect.y + _flashrect.height - caret.height;
 		}else {
 			if (i == -1) {
@@ -303,8 +307,9 @@ class FlxTextEdit extends FlxGroup
 				}else {
 					//caret_index = text.text.length - 1;
 				}
+				#if debug
 				//trace("caret = " + caret_index + " text = " + _text.text);
-				
+				#end
 			}
 			updateCaret(caret_index);
 		}else if (FlxG.keys.justPressed.DELETE) {
@@ -317,8 +322,10 @@ class FlxTextEdit extends FlxGroup
 				str_b = _text.text.substr(ci+1, _text.text.length - 1);
 				_text.text = str_a + str_b;
 				changed = true;
-
+				
+				#if debug
 				trace("caret = " + caret_index + " text = " + _text.text);
+				#end
 			}
 			updateCaret(caret_index);
 		}else if (FlxG.keys.justPressed.LEFT) {

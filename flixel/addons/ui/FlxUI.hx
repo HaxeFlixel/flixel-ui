@@ -222,7 +222,9 @@ class FlxUI extends FlxGroupX implements IEventGetter
 	 */
 	
 	public function load(data:Fast):Void {
+		#if debug
 		trace("load()");
+		#end
 		
 		_group_index = new Map<String,FlxGroupX>();
 		_asset_index = new Map<String,FlxBasic>();
@@ -334,8 +336,9 @@ class FlxUI extends FlxGroupX implements IEventGetter
 	}
 	
 	private function _postLoad(data:Fast):Void {
-		
+		#if debug
 		trace("_postLoad()");
+		#end
 		
 		if (data.x.firstElement() != null) {
 			//Load the actual things
@@ -345,8 +348,10 @@ class FlxUI extends FlxGroupX implements IEventGetter
 				_postLoadThing(node.nodeName.toLowerCase(), new Fast(node));					
 			}
 		}
-			
+		
+		#if debug
 		//trace("Failures = " + _failure_checks.x);
+		#end
 		
 		if (_failure_checks != null) {
 			for (data in _failure_checks) {					
@@ -832,7 +837,9 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var id:String = U.xml_str(data.x, "id", true);
 		var fb:FlxBasic = getAsset(id);
 		
+		#if debug
 		trace("FlxUI._postLoadThing(" + type + ") id=" + id);
+		#end
 		
 		if (type == "align") {
 			_alignThing(data);
@@ -1749,9 +1756,11 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			anchor_x_str = U.xml_str(data.node.anchor.x, "x");
 			anchor_y_str = U.xml_str(data.node.anchor.x, "y");
 			
+			#if debug
 			if (anchor_x_str == "options.right") {
 				trace("BOINK");
 			}
+			#end
 			
 			anchor_x = _getAnchorPos(thing, "x", anchor_x_str);
 			anchor_y = _getAnchorPos(thing, "y", anchor_y_str);
