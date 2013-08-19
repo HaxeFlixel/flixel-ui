@@ -98,8 +98,14 @@ class Flx9SliceSprite extends FlxSprite implements IResizable
 		_flashRect2.height = h;
 		paintScale9(_canvas.graphics, _asset_id, _slice9, _flashRect2, _tile, _smooth, _raw_pixels);
 		
-		var iw:Int = Std.int(w);
-		var ih:Int = Std.int(h);
+		var iw:Int = Std.int(w); 
+		if (iw < 1) { 
+			iw = 1;
+		}
+		var ih:Int = Std.int(h); 
+		if (ih < 1) { 
+			ih = 1;
+		}
 		
 		var bitmap_data:BitmapData = new BitmapData(iw, ih,true,0x00ffffff);
 		bitmap_data.draw(_canvas);
