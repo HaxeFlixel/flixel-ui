@@ -1,4 +1,5 @@
 package flixel.addons.ui;
+import flash.display.Bitmap;
 import flash.errors.Error;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -52,6 +53,10 @@ class FlxUI extends FlxGroupX implements IEventGetter
 	private var _ptr_tongue:IFireTongue;
 	private var _data:Fast;
 		
+	private static var _flashRect:Rectangle;
+	private static var _flashRect2:Rectangle;
+	private static var _flashPoint:Point;
+	private static var _flashPointZero:Point;
 	
 	/**Make sure to recursively propogate the tongue pointer 
 	 * down to all my members
@@ -83,6 +88,14 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		
 	public function new(data:Fast=null,ptr:IEventGetter=null,superIndex_:FlxUI=null,tongue_:IFireTongue=null) 
 	{
+		//to help with drawing
+		if(_flashRect == null){
+			_flashRect = new Rectangle();
+			_flashRect2 = new Rectangle();
+			_flashPoint = new Point();
+			_flashPointZero = new Point();
+		}
+		
 		super();
 		_ptr_tongue = tongue_;	//set the localization data structure, if any.
 								//we set this directly b/c no children have been created yet
@@ -451,9 +464,6 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		if(Std.is(thing,FlxObject)){
 			var obj:FlxObject = cast(thing, FlxObject);
 			obj.x += X; obj.y += Y;
-		}else if (Std.is(thing, FlxButtonPlusX)) {
-			var butt:FlxButtonPlusX = cast(thing, FlxButtonPlusX);
-			butt.x += Std.int(X); butt.y += Std.int(Y);
 		}else if (Std.is(thing, FlxGroupX)) {
 			var group:FlxGroupX = cast(thing, FlxGroupX);
 			group.instant_update = true;
@@ -474,11 +484,6 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			if (X) { obj.x = (FlxG.width - obj.width) / 2; }
 			if (Y) { obj.y = (FlxG.height - obj.height) / 2;}
 			return_thing = obj;
-		}else if (Std.is(thing, FlxButtonPlusX)) {
-			var butt:FlxButtonPlusX = cast(thing, FlxButtonPlusX);
-			if (X) { butt.x = Std.int((FlxG.width - butt.width) / 2); }
-			if (Y) { butt.y = Std.int((FlxG.height - butt.height) / 2);}
-			return_thing = butt;
 		}
 		return return_thing;
 	}
@@ -597,7 +602,9 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			case "sprite": return _loadSprite(data,definition);
 			case "text": return _loadText(data, definition);
 			case "button": return _loadButton(data, definition);
-			case "button_toggle": return _loadButtonToggle(data, definition);
+			
+			case "button_toggle": return _loadButton(data, definition,true,true);
+						
 			case "tab_menu": return _loadTabMenu(data, definition);
 			case "checkbox": return _loadCheckBox(data, definition);
 			case "radio_group": return _loadRadioGroup(data, definition);
@@ -687,7 +694,11 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		//calculate total size of everything
 		for (id in objects) {
 			var flxb:FlxBasic = getAsset(id);			
-			//use reflection to deal with FlxButtonPlus & crap
+			
+			
+			//use reflection to deal with groups & crap
+			//TODO:
+			//could be optimized if everything was guaranteed to have those properties
 			total_size += Reflect.getProperty(flxb, size_prop);
 		}
 		
@@ -861,9 +872,6 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		}else if (Std.is(fb, FlxGroupX)) {
 			var fg:FlxGroupX = cast fb;
 			fbx = fg.x; fby = fg.y;
-		}else if (Std.is(fb, FlxButtonPlusX)) {
-			var fp:FlxButtonPlusX = cast fb;
-			fbx = fp.x; fby = fp.y;
 		}
 		
 		_delta(fb, -fbx, -fby);			//reset position to 0,0
@@ -951,13 +959,14 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		
 		var dot_src:String = U.xml_str(default_data.x, "dot_src", true);
 		var radio_src:String = U.xml_str(default_data.x, "radio_src", true);
-		var radio_over_src:String = U.xml_str(default_data.x, "radio_over_src", true);
 		
 		var labels:Array<String> = new Array<String>();
 		var ids:Array<String> = new Array<String>();
 		
-		var W:Int = U.xml_i(default_data.x, "width", 100);
-		var H:Int = U.xml_i(default_data.x, "height", 20);
+		var W:Int = U.xml_i(default_data.x, "radio_width", 11);
+		var H:Int = U.xml_i(default_data.x, "radio_height", 11);
+		
+		var labelW:Int = U.xml_i(default_data.x, "label_width", 100);
 		
 		for (radioNode in data.nodes.radio) {
 			var id:String = U.xml_str(radioNode.x, "id", true);
@@ -974,27 +983,20 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		
 		var params:Array<Dynamic> = getParams(data);
 		
-		var up_sprite:FlxSprite = U.fs(U.gfx(radio_src));		
-		
-		var over_sprite:FlxSprite;
-		if (radio_over_src != "") {
-			over_sprite = U.fs(U.gfx(radio_over_src));
-		}else {
-			over_sprite = up_sprite;
-		}
-		
-		var dot_sprite:FlxSprite;
+		var radio_asset:String = U.gfx(radio_src);		
+			
+		var dot_asset:Dynamic=null;
 		if (dot_src != "") {
-			dot_sprite = U.fs(U.gfx(dot_src));
+			dot_asset = U.gfx(dot_src);
 		}else {
-			dot_sprite = new FlxSprite(0, 0);
-			dot_sprite.makeGraphic(4, 4, 0x000000); //4x4 black square by default
+			dot_asset = new FlxSprite(0, 0);
+			dot_asset.makeGraphic(4, 4, 0x000000); //4x4 black square by default
 		}
 		
-		frg = new FlxRadioGroup(0, 0, ids, labels, _onClickRadioGroup, y_space, W, H);
+		frg = new FlxRadioGroup(0, 0, ids, labels, _onClickRadioGroup, y_space, W, H, labelW);
 						
-		if (up_sprite != null) {
-			frg.loadGraphics(up_sprite, dot_sprite, over_sprite);
+		if (radio_asset != "") {
+			frg.loadGraphics(radio_asset,dot_asset);
 		}
 		
 		var text_x:Int = U.xml_i(default_data.x, "text_x");
@@ -1005,7 +1007,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 				var fc:FlxCheckBox = cast(fo, FlxCheckBox);
 				formatButtonText(default_data, fc);
 				fc.textX = text_x;				
-				fc.textY = text_y;	
+				fc.textY = text_y;
 			}
 		}
 						
@@ -1026,39 +1028,30 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var context:String = U.xml_str(data.x, "context", true, "ui");
 		label = getText(label,context);
 			
-		var W:Int = U.xml_i(default_data.x, "width", 100);
-		var H:Int = U.xml_i(default_data.x, "height", 32);
+		//var W:Int = U.xml_i(default_data.x, "box_width", 16);
+		//var H:Int = U.xml_i(default_data.x, "box_height", 16);
+		
+		var labelW:Int = U.xml_i(default_data.x, "label_width", 100);
+		
 		var check_src:String = U.xml_str(default_data.x, "check_src", true);
 		var box_src:String = U.xml_str(default_data.x, "box_src", true);
-		var box_over_src:String = U.xml_str(default_data.x, "box_over_src", true);
 		
 		var params:Array<Dynamic> = getParams(data);
+				
+		var box_asset:String = U.gfx(box_src);		
+		var check_asset:String = U.gfx(check_src);		
 		
-		var up_sprite:FlxSprite = U.fs(U.gfx(box_src));		
-		
-		var over_sprite:FlxSprite;
-		if (box_over_src != "") {
-			over_sprite = U.fs(U.gfx(box_over_src));
-		}else {
-			over_sprite = up_sprite;
-		}
-		
-		fc = new FlxCheckBox(0, 0, _onClickCheckBox, params, label, W, H);
-						
-		if (up_sprite != null) {
-			fc.loadGraphic(up_sprite, over_sprite);
-		}
-		
-		var check_sprite:FlxSprite = U.fs(U.gfx(check_src));
-		fc.loadCheckGraphic(check_sprite);
-		
+		fc = new FlxCheckBox(0, 0, box_asset, check_asset, label, labelW, _onClickCheckBox, params);
 		formatButtonText(default_data, fc);
+		
 		var text_x:Int = U.xml_i(default_data.x, "text_x");
 		var text_y:Int = U.xml_i(default_data.x, "text_y");		
 		
-		fc.textX = text_x;				
-		fc.textY = text_y;		
-						
+		fc.textX = text_x;
+		fc.textY = text_y;
+		
+		fc.text = label;
+								
 		return fc;
 	}
 	
@@ -1098,7 +1091,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			}
 		}
 		
-		var list_tabs:Array<FlxButtonToggle> = new Array<FlxButtonToggle>();
+		var list_tabs:Array<FlxButtonX> = new Array<FlxButtonX>();
 		
 		var id:String = "";
 		
@@ -1113,7 +1106,8 @@ class FlxUI extends FlxGroupX implements IEventGetter
 				var context:String = U.xml_str(tab_node.x, "context", true, "ui");
 				label = getText(label,context);
 		
-				var tab:FlxButtonToggle = _loadButtonToggle(tab_node, tab_def);
+				var tab:FlxButtonX = _loadButton(tab_node, tab_def, true, true);				
+				tab.id = id;
 				list_tabs.push(tab);
 			}			
 		}
@@ -1133,78 +1127,124 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		
 		return fg;
 	}
-	
-	private function _loadButtonToggle(data:Fast, definition:Fast = null):FlxButtonToggle {
-	
-		var default_data:Fast = data;
-		if (definition != null) { default_data = definition;}
-		
-		var label:String = U.xml_str(data.x, "label");		
-		var context:String = U.xml_str(data.x, "context", true, "ui");
-		label = getText(label,context);
-		
-		var context:String = U.xml_str(data.x, "context", true, "ui");
-		label = getText(label,context);
-		
-		var W:Int = U.xml_i(default_data.x, "width");
-		var H:Int = U.xml_i(default_data.x, "height");	
-		var id:String = U.xml_str(data.x, "id",true);
-		var params:Array<Dynamic> = getParams(data);
-		if (id != "") { 
-			if (params == null) { 
-				params = []; 
-			}
-			params.push(id);
-		}
-		
-		var btn_def_normal:Fast = null;
-		var btn_def_toggle:Fast = null;
-		if (default_data.hasNode.normal) {
-			btn_def_normal = default_data.node.normal;			
-		}
-		if (default_data.hasNode.toggle) {
-			btn_def_toggle = default_data.node.toggle;
-		}
-		if (btn_def_toggle == null) { btn_def_toggle = btn_def_normal; }
-		if (btn_def_normal == null) { throw "ERROR! FlxUI._loadButtonToggle() - no definition specified for normal button state!"; }
-		
-		var btn_normal:FlxButtonPlusX = _loadButton(data, btn_def_normal,false);
-		var btn_toggle:FlxButtonPlusX = _loadButton(data, btn_def_toggle,false);
-		
-		var fbt:FlxButtonToggle = new FlxButtonToggle(0, 0, _onClickButtonToggle, params, btn_normal, btn_toggle, id);
-		
-		return fbt;
-	}
-	
- 	private function _loadButton(data:Fast,definition:Fast=null,setCallback:Bool=true):FlxButtonPlusX {
+			
+	private function _loadButton(data:Fast, definition:Fast = null, setCallback:Bool = true, isToggle:Bool = false):FlxButtonX {
 		var src:String = ""; 
-		var fb:FlxButtonPlusX = null;
+		var fb:FlxButtonX = null;
 				
 		var default_data:Fast = data;
 		if (definition != null) { default_data = definition;}
 		
 		var resize_ratio:Float = U.xml_f(data.x, "resize_ratio", -1);
-				
+		var isVis:Bool = U.xml_bool(data.x, "visible", true);		
+		
 		var label:String = U.xml_str(data.x, "label");
 		var context:String = U.xml_str(data.x, "context", true, "ui");
 		label = getText(label,context);
 		
 		var W:Int = U.xml_i(default_data.x, "width");
 		var H:Int = U.xml_i(default_data.x, "height");	
-		var vis_str:String = U.xml_str(data.x, "visible", true);
-		var isVis:Bool = U.xml_bool(data.x, "visible", true);		
 				
 		var params:Array<Dynamic> = getParams(data);
 		
-		if(setCallback){
-			fb = new FlxButtonPlusX(0, 0, _onClickButton, params, label, W, H, resize_ratio);
-		}else {
-			fb = new FlxButtonPlusX(0, 0, null, null, label, W, H, resize_ratio);
+		fb = new FlxButtonX(0, 0, label);			
+		fb.resize_ratio = resize_ratio;
+		
+		if (setCallback) {
+			fb.setOnUpCallback(_onClickButton, [params]);
 		}
-		fb.visible = isVis;
+		
+		/***Begin graphics loading block***/
+		
+		if (default_data.hasNode.graphic) {
+			var graphic_ids:Array<String>;
+			var slice9_ids:Array<String>;
+			
+			if (isToggle) {
+				graphic_ids = ["", "", "", "", "", ""];
+				slice9_ids= ["", "", "", "", "", ""];
+			}else {				
+				graphic_ids = ["", "", ""];
+				slice9_ids = ["", "", ""];
+			}
+			
+			for (graphicNode in default_data.nodes.graphic) {
+				var graphic_id:String = U.xml_str(graphicNode.x, "id", true);
+				var image:String = U.xml_str(graphicNode.x, "image");
+				var slice9:String = U.xml_str(graphicNode.x, "slice9");
+				var toggleState:Bool = U.xml_bool(graphicNode.x, "toggle");
+				toggleState = toggleState && isToggle;
 				
+				switch(graphic_id) {
+					case "inactive", "", "normal", "up": 
+						if (image != "") { 
+							if(!toggleState){
+								graphic_ids[0] = U.gfx(image); 
+							}else {
+								graphic_ids[3] = U.gfx(image);
+							}
+						}
+						slice9_ids[0] = slice9;
+					case "active", "highlight", "hilight", "over", "hover": 
+						if (image != "") { 
+							if(!toggleState){
+								graphic_ids[1] = U.gfx(image); 
+							}else {
+								graphic_ids[4] = U.gfx(image);
+							}
+						}
+						slice9_ids[1] = slice9;
+					case "down", "pressed", "pushed":
+						if (image != "") { 
+							if(!toggleState){
+								graphic_ids[2] = U.gfx(image); 
+							}else {
+								graphic_ids[5] = U.gfx(image);
+							}
+						}
+						slice9_ids[2] = slice9;
+					case "all":
+						if (image != "") { 
+							graphic_ids = [U.gfx(image)]; 							
+						}
+						slice9_ids = [slice9];
+				}
+
+				if (graphic_ids[0] != "") {
+					if (graphic_ids.length >= 3) {
+						if (graphic_ids[1] == "") {		//"over" is undefined, grab "up"
+							graphic_ids[1] = graphic_ids[0];
+						}
+						if (graphic_ids[2] == "") {		//"down" is undefined, grab "over"
+							graphic_ids[2] = graphic_ids[1];
+						}
+						if (graphic_ids.length >= 6) {	//toggle states
+							if (graphic_ids[3] == "") {	//"up" undefined, grab "up" (untoggled)
+								graphic_ids[3] = graphic_ids[0];
+							}
+							if (graphic_ids[4] == "") {	//"over" grabs "over"
+								graphic_ids[4] = graphic_ids[1];
+							}
+							if (graphic_ids[5] == "") {	//"down" grabs "down"
+								graphic_ids[5] = graphic_ids[2];
+							}
+						}
+					}
+				}
+			}
+			
+			//load 9-slice
+			fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, -1, isToggle);
+			
+		}else {
+			//load blank
+			fb.loadGraphicSlice9(["","",""], W, H);
+		}		
+		
+		/***End graphics loading block***/
+			
 		formatButtonText(default_data, fb);
-				
+		
 		var text_x:Int = 0;
 		var text_y:Int = 0;
 		if (data.x.get("text_x") != null) {
@@ -1219,106 +1259,15 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			text_y = U.xml_i(default_data.x, "text_y");
 		}		
 		
-		fb.textNormalX.forceCalcFrame();
-		fb.textHighlightX.forceCalcFrame();
-				
-		fb.textY = Std.int((fb.height - Math.ceil(fb.textNormalX.textHeight())) / 2) + text_y;
-		fb.textX = text_x;
-				
-		if (default_data.hasNode.graphic) {
-			var up_graphic:String = "";
-			var over_graphic:String = "";
-			var up_slice9:String = "";
-			var over_slice9:String = "";
-			var up_rect:String = "";
-			var over_rect:String = "";
-			for (graphicNode in default_data.nodes.graphic) {
-				var graphic_id:String = U.xml_str(graphicNode.x, "id", true);
-				var vis:String = U.xml_str(graphicNode.x, "visible");
-				var image:String = U.xml_str(graphicNode.x, "image");
-				var slice9:String = U.xml_str(graphicNode.x, "slice9");
-				var rect:String = U.xml_str(graphicNode.x, "rect");
-				switch(graphic_id) {
-					case "inactive", "", "normal": 
-						fb.showNormal = (vis!="false");
-						if (image != "") { 
-							up_graphic = image;
-						}
-						up_slice9 = slice9;
-						up_rect = rect;
-					case "active", "hilight", "over", "hover": 
-						fb.showHilight = (vis!="false");
-						if (image != "") { 
-							over_graphic = image;
-						}
-						over_slice9 = slice9;
-						over_rect = rect;
-					case "border": 
-						if(vis == "false"){
-							fb.borderColor = 0x00000000;
-						}
-				}
-			}
-						
-			if (up_graphic != "") {
-				if (over_graphic == "") {
-					over_graphic = up_graphic;
-				}
-				
-				//The eventual sprites we feed into loadGraphic()
-				var up:FlxSprite = null;
-				var over:FlxSprite = null;
-								
-				if (up_slice9 != ""){			//if over slice9 not defined, copy up slice9
-					if(over_slice9 == ""){
-						over_slice9 = up_slice9;
-					}
-					//load the slice9 sprite
-					up = new Flx9SliceSprite(0, 0, U.gfx(up_graphic), new Rectangle(0, 0, W, H), up_slice9);
-				}else {
-					up = U.fs(U.gfx(up_graphic));			//load the thing as-is
-				}
-				
-				if (over_slice9 != "") {		//same
-					over = new Flx9SliceSprite(0, 0, U.gfx(over_graphic), new Rectangle(0, 0, W, H), over_slice9);
-				}else {
-					over = U.fs(U.gfx(over_graphic));
-				}
-				
-				//load the resultant sprites
-				fb.loadGraphic(up, over);
-			}
-		}			
+		//label offset has already been 'centered,' this adjust from there:
+		fb.labelOffset.x += text_x;
+		fb.labelOffset.y += text_y;		
 		
-		if (default_data.hasNode.color) {
-			#if flash
-				var arrayActive:Array<Int> = new Array<Int>();
-				var arrayInactive:Array<Int> = new Array<Int>();
-			#else
-				var arrayActive:Array<Int> = new Array<Int>();
-				var arrayInactive:Array<Int> = new Array<Int>();
-			#end
-			var borderColor:Int = 0xffffffff;
-			for (colorNode in default_data.nodes.color) {
-				var color_id:String = U.xml_str(colorNode.x, "id", true);
-				var color:Int = cast(_loadColor(colorNode), Int);
-				switch(color_id) {
-					case "inactive","", "normal": 
-						arrayInactive.push(color);
-					case "active", "hilight", "over", "hover": 
-						arrayActive.push(color);
-					case "border": 
-						borderColor = color;
-				}	
-			}
-			fb.borderColor = Std.int(borderColor);
-			fb.updateActiveButtonColors(arrayActive);
-			fb.updateInactiveButtonColors(arrayInactive);
-		}
-	
+		fb.visible = isVis;
+		
 		return fb;
 	}
-	
+	 		
 	private static inline function _loadBitmapRect(source:String,rect_str:String):BitmapData {
 		var b1:BitmapData = Assets.getBitmapData(U.gfx(source));
 		var r:Rectangle = Flx9SliceSprite.getRectFromString(rect_str);
@@ -1456,10 +1405,6 @@ class FlxUI extends FlxGroupX implements IEventGetter
 						other = cast otherb;
 						otherx = other.x;		othery = other.y;
 						otherw = other.width;	otherh = other.height;
-					}else if (Std.is(otherb, FlxButtonPlusX)) {
-						var fbx:FlxButtonPlusX = cast otherb;
-						otherx = fbx.x;		othery = fbx.y;
-						otherw = fbx.width; otherh = fbx.height;
 					}else if (Std.is(otherb, FlxGroupX)) {
 						var fgx:FlxGroupX = cast otherb;
 						otherx = fgx.x;		othery = fgx.y;
@@ -1659,7 +1604,6 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		
 		var flxb:FlxBasic = getAsset(str);		
 		var other:FlxObject = null;
-		var otherb:FlxButtonPlusX = null;
 		var other_width:Float = 0;
 		var other_height:Float = 0;
 		var other_x:Float = 0;
@@ -1670,17 +1614,11 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			other_height = other.height;
 			other_x = other.x;
 			other_y = other.y;
-		}else if (Std.is(flxb, FlxButtonPlusX)) {
-			otherb = cast flxb;
-			other_width = otherb.width;
-			other_height = otherb.height;
-			other_x = otherb.x;
-			other_y = otherb.y;
 		}
 		
 		var return_val:Float = 0;
 		
-		if (other == null && otherb == null) {			
+		if (other == null) {			
 			switch(str) {
 				case "top", "up": return_val = 0;
 				case "bottom", "down": return_val = thisHeight();
@@ -1888,45 +1826,101 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		}
 		return params;
 	}	
-	
-	private function formatButtonText(data:Fast, fb:FlxButtonPlusX):Void {
+			
+	private function formatButtonText(data:Fast, button:Dynamic):Void {
 		if (data != null && data.hasNode.text) {
-			for (textNode in data.nodes.text) {
-				var use_def:String = U.xml_str(textNode.x, "use_def", true);
-				var text_def:Fast = textNode;
-				if (use_def != "") {
-					text_def = getDefinition(use_def);
-				}			
+			var textNode = data.node.text;
+			var use_def:String = U.xml_str(textNode.x, "use_def", true);
+			var text_def:Fast = textNode;
+			
+			if (use_def != "") {
+				text_def = getDefinition(use_def);
+			}			
+			
+			var text_data:Fast = textNode;
+			if (text_def != null) { text_data = text_def; };
+							
+			var case_id:String = U.xml_str(textNode.x, "id", true);
+			var the_font:String = _loadFontFace(text_data);
+			var size:Int = U.xml_i(text_data.x, "size"); if (size == 0) { size = 8;}
+			var color:Int = _loadColor(text_data);				
+							
+			var shadow:Int = U.xml_i(text_data.x, "shadow");
+			var dropShadow:Bool = U.xml_bool(text_data.x, "dropShadow");
+			var align:String = U.xml_str(text_data.x, "align", true); if (align == "") { align = null;}
+			
+			var the_label:FlxText=null;
+			var fb:FlxButtonX = null;
+			var cb:FlxCheckBox = null;
+			
+			if (Std.is(button, FlxButtonX)) {
+				fb = cast button;
+			}else if (Std.is(button, FlxCheckBox)) {
+				var cb:FlxCheckBox = cast button;
+				fb = cb.button;				
+				align = "left";			//force this for check boxes
+			}
+			
+			the_label = fb.label;
+			fb.up_color = color;
+			fb.down_color = 0;
+			fb.over_color = 0;				
+			
+			if (the_label != null) {
+				the_label.setFormat(the_font, size, color, align, shadow);
 				
-				var text_data:Fast = textNode;
-				if (text_def != null) { text_data = text_def; };
-								
-				var case_id:String = U.xml_str(textNode.x, "id", true);
-				var the_font:String = _loadFontFace(text_data);
-				var size:Int = U.xml_i(text_data.x, "size"); if (size == 0) { size = 8;}
-				var color:Int = _loadColor(text_data);				
-				var shadow:Int = U.xml_i(text_data.x, "shadow");
-				var dropShadow:Bool = U.xml_bool(text_data.x, "dropShadow");
-				var align:String = U.xml_str(text_data.x, "align", true); if (align == "") { align = null;}
+				//TODO: text.dropShadow = true;		
 				
-				var fbt:FlxTextX = fb.textNormalX;
-				var fbth:FlxTextX = fb.textHighlightX;
-				
-				switch(case_id) {
-					case "inactive", "", "normal": 
-						fbt.setFormat(the_font, size, color, align, shadow);
-						fbt.dropShadow = true;		
-						fbt.forceCalcFrame();
-					case "active", "hilight", "over", "hover": 
-						fbth.setFormat(the_font, size, color, align, shadow);
-						fbth.dropShadow = true;
-						fbth.forceCalcFrame();
+				if (Std.is(the_label, FlxTextX)) {
+					var ftx:FlxTextX = cast the_label;
+					ftx.forceCalcFrame();
 				}
-								
-				fb.textHighlight.visible = false;
-				fb.textNormal.visible = true;
+			}	
+			
+			for (textColorNode in textNode.nodes.color) {
+				var color:Int = _loadColor(textColorNode);
+				var state_id:String = U.xml_str(textColorNode.x, "id", true);
+				var toggle:Bool = U.xml_bool(textColorNode.x, "toggle");				
+				switch(state_id) {
+					case "up", "inactive", "", "up", "normal": 
+						if (!toggle) {
+							fb.up_color = color; 
+						}else {
+							fb.up_toggle_color = color;
+						}							
+					case "active", "hilight", "over", "hover": 
+						if(!toggle){
+							fb.over_color = color; 
+						}else {
+							fb.over_toggle_color = color;
+						}
+					case "down", "pressed", "pushed": 
+						if(!toggle){
+							fb.down_color = color; 
+						}else {
+							fb.down_toggle_color = color;
+						}
+				}				
+			}
+			
+			if (fb.over_color == 0) {			//if no over color, match up color
+				fb.over_color = fb.up_color;
+			}
+			if (fb.down_color == 0) {			//if no down color, match over color
+				fb.down_color = fb.over_color;
+			}
+				
+			//if toggles are undefined, match them to the normal versions
+			if (fb.up_toggle_color == 0) {			
+				fb.up_toggle_color = fb.up_color;
+			}
+			if (fb.over_toggle_color == 0) {
+				fb.over_toggle_color = fb.over_color;
+			}
+			if (fb.down_toggle_color == 0) {
+				fb.down_toggle_color = fb.down_color;
 			}
 		}
-		fb.centerLabelY();
 	}
+
 }

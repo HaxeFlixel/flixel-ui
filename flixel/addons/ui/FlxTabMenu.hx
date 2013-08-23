@@ -1,6 +1,8 @@
 package flixel.addons.ui;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.ui.FlxButton;
+import flixel.util.FlxTimer;
 
 /**
  * @author Lars Doucet
@@ -48,8 +50,8 @@ class FlxTabMenu extends FlxGroupX implements IEventGetter implements IResizable
 		distributeTabs();
 	}
 	
-	private inline function getFirstTab():FlxButtonToggle{
-		var _the_tab:FlxButtonToggle = null;
+	private inline function getFirstTab():FlxButtonX{
+		var _the_tab:FlxButtonX = null;
 		if(_tabs != null && _tabs.length > 0){
 			_the_tab = _tabs[0];
 		}
@@ -58,7 +60,7 @@ class FlxTabMenu extends FlxGroupX implements IEventGetter implements IResizable
 	
 	/***PUBLIC***/
 	
-	public function new(back_:FlxSprite,tabs_:Array<FlxButtonToggle>,stretch_tabs:Bool=false) 
+	public function new(back_:FlxSprite,tabs_:Array<FlxButtonX>,stretch_tabs:Bool=false) 
 	{
 		super();		
 		_back = back_;
@@ -69,9 +71,11 @@ class FlxTabMenu extends FlxGroupX implements IEventGetter implements IResizable
 		_tabs = tabs_;
 		_stretch_tabs = stretch_tabs;
 				
+		var i:Int = 0;
 		for (tab in _tabs) {
 			add(tab);
-			tab.Callback = onClickTab;
+			tab.setOnUpCallback(onClickTab, [tab.id]);
+			i++;
 		}
 		
 		distributeTabs();
@@ -90,8 +94,8 @@ class FlxTabMenu extends FlxGroupX implements IEventGetter implements IResizable
 		
 		for (tab in _tabs) {
 			
-			tab.x = xx;			
-			tab.y = -(tab.btn_normal.height - 2);			
+			tab.x = xx;	
+			tab.y = -(tab.height - 2);			
 			
 			if (_stretch_tabs) {
 				tab.resize(tab_width, tab.get_height());
@@ -99,7 +103,7 @@ class FlxTabMenu extends FlxGroupX implements IEventGetter implements IResizable
 				//this is to avoid small rounding errors
 				//(this guarantees we'll use up the whole space)
 			}else{
-				xx += tab.btn_normal.width;
+				xx += tab.width;
 			}
 		}
 	}
@@ -128,39 +132,29 @@ class FlxTabMenu extends FlxGroupX implements IEventGetter implements IResizable
 	
 	public function showTabInt(i:Int):Void {
 		if(_tabs != null && _tabs.length > i){
-			var _tab:FlxButtonToggle = _tabs[i];
+			var _tab:FlxButtonX = _tabs[i];
 			var id:String = _tab.id;
-			onClickTab([id]);
+			onClickTab(id);
 		}
 	}
 	
-	public function onClickTab(Params:Dynamic):Void {
-		var id:String = "";
-		if (Std.is(Params,Array)) {
-			if (Std.is(Params[0], String)) {
-				id = Params[0];
-			}
-		}
-		
+	public function onClickTab(id:String):Void {
 		if (id == "") return;
 		
-		for (tab in _tabs) {
+		for (tab in _tabs) {			
+			tab.toggled = false;
 			if (tab.id == id) {
-				if(!tab.toggle){
-					tab.toggle = true;					
-				}
-			}else {
-				tab.toggle = false;
-			}
+				tab.toggled = true;
+			}			
 		}
 		
 		_showOnlyGroup(id);
 	}
-		
+			
 	/***PRIVATE***/
 	
 	private var _back:FlxSprite;
-	private var _tabs:Array<FlxButtonToggle>;
+	private var _tabs:Array<FlxButtonX>;
 	private var _tab_groups:Array<FlxGroupX>;
 	private var _stretch_tabs:Bool = false;
 	

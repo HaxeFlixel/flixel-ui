@@ -1,7 +1,9 @@
 package flixel.addons.ui;
+import flash.display.BitmapData;
 import flixel.FlxObject;
 import flixel.util.FlxPoint;
 import flixel.FlxSprite;
+import openfl.Assets;
 
 /**
  * @author Lars Doucet
@@ -14,23 +16,26 @@ class FlxRadioGroup extends FlxGroupX
 	public var selectedLabel(get_selectedLabel, set_selectedLabel):String;
 	public var selectedIndex(get_selectedIndex, set_selectedIndex):Int;
 	
-	public function new(X:Float, Y:Float, ids_:Array<String>,labels_:Array<String>, callback_:Dynamic, y_space_:Float=25, width_:Int=100, height_:Int=20):Void {
+	public function new(X:Float, Y:Float, ids_:Array<String>,labels_:Array<String>, callback_:Dynamic, y_space_:Float=25, width_:Int=100, height_:Int=20, label_width_:Int=100):Void {
 		super();
 		_y_space = y_space_;
 		_callback = callback_;
 		_width = width_;
 		_height = height_;
+		_label_width = label_width_;
 		x = X;
 		y = Y;
 		_list_radios = new Array<FlxCheckBox>();
 		updateRadios(ids_,labels_);
 	}
 	
-	public function loadGraphics(radio:FlxSprite, dot:FlxSprite, radioHilight:FlxSprite = null):Void {
-		for(c in _list_radios) {
-			c.loadGraphic(radio, radioHilight);
-			c.loadCheckGraphic(dot);
-		}
+	public function loadGraphics(Box:Dynamic,Dot:Dynamic):Void {
+		_box_asset = Box;
+		_dot_asset = Dot;		
+		for (c in _list_radios) {			
+			c.box.loadGraphic(Box, true, false);
+			c.mark.loadGraphic(Dot);
+		}	
 		_refreshRadios();
 	}
 	
@@ -49,6 +54,7 @@ class FlxRadioGroup extends FlxGroupX
 		_labels[i] = label_;
 		var c:FlxCheckBox = _list_radios[i];
 		if (c != null) {
+			c.button.width = _label_width;
 			c.text = label_;
 		}		
 		return true;
@@ -168,10 +174,14 @@ class FlxRadioGroup extends FlxGroupX
 	
 	/***PRIVATE***/
 	
+	private var _box_asset:Dynamic;
+	private var _dot_asset:Dynamic;
+	
 	private var _labels:Array<String>;
 	private var _ids:Array<String>;
 	private var _callback:Dynamic;
 	
+	private var _label_width:Int = 100;
 	private var _width:Int = 100;
 	private var _height:Int = 20;
 	
@@ -206,8 +216,13 @@ class FlxRadioGroup extends FlxGroupX
 					yy = c.y;
 				}
 			}else {
-				c = new FlxCheckBox(Std.int(xx), Std.int(yy), _onClick, [id], label, _width, _height);
+				c = new FlxCheckBox(0, 0, _box_asset, _dot_asset, label, _label_width, _onClick, [id]);				
+				c.x = Std.int(xx);
+				c.y = Std.int(yy);
+				//c = new FlxCheckBox(Std.int(xx), Std.int(yy), _onClick, [id], label, _width, _height);
+				
 				add(c);
+				c.text = label;
 				_list_radios.push(c);
 			}
 			yy += _y_space;

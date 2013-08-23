@@ -1,260 +1,172 @@
 package flixel.addons.ui;
+import flash.display.BitmapData;
 import flash.events.MouseEvent;
+import flash.geom.Rectangle;
 import flixel.FlxCamera;
 import flixel.FlxG;
+import flixel.FlxObject;
+import flixel.text.FlxText;
 import flixel.util.FlxRect;
+import flixel.util.FlxPoint;
 import flixel.FlxSprite;
 import flixel.util.FlxMath;
+import openfl.Assets;
 
 /**
  * @author Lars Doucet
  */
 
-class FlxCheckBox extends FlxButtonPlusX
+class FlxCheckBox extends FlxGroupX
 {
-	//copy-pasted from FlxButtonPlus since we override the update loop:
-	static public inline var NORMAL:Int = 0;
-	static public inline var HIGHLIGHT:Int = 1;
-	static public inline var PRESSED:Int = 2;
+	public var box:FlxSprite;
+	public var mark:FlxSprite;
+	public var button:FlxButtonX;	
+	public var max_width:Float = -1;
 	
 	public var checked(get_checked, set_checked):Bool;	
 	
 	//Set this to false if you just want the checkbox itself to be clickable
 	public var textIsClickable:Bool = true;
+		
+	public var dirty:Bool = false;
 	
-	public function new(X:Int, Y:Int, Callback:Dynamic, Params:Array<Dynamic> = null, Label:String = null, Width:Int = 100, Height:Int = 20)
-	{
-		_externalCallback = Callback;
-		_checkRect = new FlxRect();		
-		super(X, Y, _clickCheck, Params, Label, Width, Height);
-		buttonNormal.rect.copyTo(_checkRect);
+	public var textX(get, set):Float;
+	public var textY(get, set):Float;
+	
+	public var box_space:Float = 2;
+	
+	private var _textX:Float = 0;
+	private var _textY:Float = 0;	
+	
+	public function new(X:Float = 0, Y:Float = 0, ?Box:Dynamic, ?Check:Dynamic, ?Label:String, LabelW:Int=100, ?OnClick:Dynamic, ?params:Array<Dynamic>)
+	{		
+		x = X;
+		y = Y;
+		super();
+		
+		box = new FlxSprite();
+		if (Box == null) {
+			//if null create a simple checkbox outline
+			var bd:BitmapData = new BitmapData(16, 16, false, 0xFF000000);			
+			bd.fillRect(new Rectangle(1, 1, 14, 14), 0xFFFFFFFF);
+			box.loadGraphic(bd, true, false);
+		}else {
+			box.loadGraphic(Box, true, false);
+		}
+		
+		button = new FlxButtonX(0, 0, Label, _clickCheck);
+		button.loadGraphicSlice9(["", "", ""], Std.int(box.width + 2 + LabelW), cast box.height);
+		
+		max_width = Std.int(box.width + box_space + LabelW);
+		
+		setExternalCallback(OnClick);
+		button.setOnUpCallback(_clickCheck, [params]);    //for internal use, check/uncheck box, bubbles up to _externalCallback
+				
+		mark = new FlxSprite();		
+		if (Check == null) {
+			//if null create a simple black box for the "check"
+			Check = new BitmapData(16, 16, true, 0x00000000);
+			Check.fillRect(new Rectangle(4, 4, 8, 8), 0xFF000000);
+		}		
+		
+		mark.loadGraphic(Check);				
+		
+		add(box);
+		add(mark);
+		add(button);
+		
+		anchorLabelX();
+		anchorLabelY();
+		
+		checked = false; 		
+		button.depressOnClick = false;
 	}
 	
-	public override function destroy():Void {
+	public function get_textX():Float { return _textX;}
+	public function set_textX(n:Float):Float {
+		_textX = n;
+		anchorLabelX();
+		return _textX;
+	}
+	
+	public function get_textY():Float { return _textY;}
+	public function set_textY(n:Float):Float {
+		_textY = n;
+		anchorLabelY();					
+		return _textY;
+	}	
+	
+	public function setExternalCallback(callBack:Dynamic):Void {
+		_externalCallback = callBack;
+	}
+	
+	public function anchorLabelX():Void {
+		if (button != null) {
+			button.labelOffset.x = (box.width + box_space) + _textX;
+			//button.label.offset.x = -(box.width + box_space) - _textX;			
+		}			
+	}
+	
+	public function anchorLabelY():Void {		
+		if (button != null) {			
+			button.y = box.y + (box.height - button.label.height) / 2;	
+			button.labelOffset.y = _textY;
+		}
+	}
+	
+	public override function destroy():Void 
+	{
 		super.destroy();
 		_externalCallback = null;
-		if (_checkMark != null) {
-			_checkMark.destroy();
+		if (mark != null) {
+			mark.destroy();
+			mark= null;
 		}
-		_checkRect = null;
-		_checkMark = null;
+		if (box != null) {
+			box.destroy();
+			box = null;
+		}
+		if (button != null) {
+			button.destroy();
+			button = null;
+		}
 	}
 	
-	public override function set_text(value:String):String
+	public var text(get, set):String;
+	public function get_text():String { return button.label.text;}
+	public function set_text(value:String):String
 	{
-		super.set_text(value);
-		_updateRect();
+		button.label.text = value;
+		dirty = true;
 		return value;
 	}
-	
-	public override function loadGraphic(normal:FlxSprite, highlight:FlxSprite):Void {
-		super.loadGraphic(normal, highlight);		
-		lineUpTextFields();
-	}
-	
-	public function loadCheckGraphic(normal:FlxSprite):Void
-	{
-		if (_checkMark == null) {
-			_checkMark = new FlxSprite();
-		}
-		_checkMark.pixels = normal.pixels;
-	}
-	
-	public function lineUpTextFields():Void {
-		
-		if (textNormal != null) {
 			
-			textNormal.x = Std.int(buttonNormal.x + buttonNormal.width + 3);
-			textNormal.y = Std.int(buttonNormal.y + (buttonNormal.height - textNormalX.textHeight())/2);
-			
-			textNormal.x += _textX;
-			textNormal.y += _textY;
-			
-			if (textHighlight != null) {
-				textHighlight.x = textNormal.x;
-				textHighlight.y = textNormal.y;
-			}
-		}						
-				
-		_updateRect();
-	}
+	public override function update():Void{
+		super.update();
 		
-	public override function draw():Void {
-		super.draw();
-		if(_checked){
-			_checkMark.draw();
-		}
-	}
-	
-	public override function set_x(newX:Float):Float
-	{
-		x = newX;
-		
-		if(buttonNormal != null){
-			buttonNormal.x = x;
-		}
-		if(buttonHighlight != null){
-			buttonHighlight.x = x;
-		}
-		
-		if (_checkMark != null) {
-			_checkMark.x = buttonNormal.x;
-		}
-		
-		lineUpTextFields();
-		return newX;
-	}
-	
-	public override function set_y(newY:Float):Float
-	{
-		y = newY;
-		
-		if(buttonNormal != null){
-			buttonNormal.y = y;
-		}
-		if(buttonHighlight != null){
-			buttonHighlight.y = y;
-		}
-				
-		if (_checkMark != null) {
-			_checkMark.y = buttonNormal.y;
-		}
-				
-		lineUpTextFields();
-		return newY;
-	}
-	
-	/**
-	 * Center this button (on the X axis) Uses FlxG.width / 2 - button width / 2 to achieve this.<br />
-	 * Doesn't take into consideration scrolling
-	 */
-	public override function screenCenter():Void
-	{
-		buttonNormal.x = (FlxG.width / 2) - (width / 2);
-		buttonHighlight.x = (FlxG.width / 2) - (width / 2);
-				
-		if (_checkMark != null) {
-			_checkMark.x = buttonNormal.x;
-			_checkMark.y = buttonNormal.y;
-		}
-						
-		lineUpTextFields();
-	}
-	
-	/**
-	 * Override the basic button logic so we can use a custom bounding rectangle
-	 */
-	override function updateButton():Void
-	{
-		if (!textIsClickable) {
-			super.updateButton();
-		}
-		
-		var prevStatus:Int = _status;
-		
-		if (FlxG.mouse.visible)
-		{
-			if (buttonNormal.cameras == null)
-			{
-				buttonNormal.cameras = FlxG.cameras.list;
-			}
-			
-			var c:FlxCamera;
-			var i:Int = 0;
-			var l:Int = buttonNormal.cameras.length;
-			var offAll:Bool = true;
-			
-			while(i < l)
-			{
-				c = buttonNormal.cameras[i++];
-				
-				if (FlxMath.mouseInFlxRect(false, _checkRect))
-				{
-					offAll = false;
-					
-					if (FlxG.mouse.justPressed)
-					{
-						_status = PRESSED;
-					}
-					
-					if (_status == NORMAL)
-					{
-						_status = HIGHLIGHT;
-					}
-				}
-			}
-			
-			if (offAll)
-			{
-				_status = NORMAL;
-			}
-		}
-		
-		if (_status != prevStatus)
-		{
-			if (_status == NORMAL)
-			{
-				buttonNormal.visible = true;
-				buttonHighlight.visible = false;
-				
-				if (textNormal != null)
-				{
-					textNormal.visible = true;
-					textHighlight.visible = false;
-				}
-				
-				if (_leaveCallback != null)
-				{
-					Reflect.callMethod(null, _leaveCallback, _leaveCallbackParams);
-				}
-			}
-			else if (_status == HIGHLIGHT)
-			{
-				buttonNormal.visible = false;
-				buttonHighlight.visible = true;
-				
-				if (textNormal != null)
-				{
-					textNormal.visible = false;
-					textHighlight.visible = true;
-				}
-				
-				if (_enterCallback != null)
-				{
-					//enterCallback.apply(null, enterCallbackParams);
-					Reflect.callMethod(null, _enterCallback, _enterCallbackParams);
-				}
+		if (dirty) {			
+			if (button.labelX != null) {
+				anchorLabelX();
+				anchorLabelY();
+				button.mouse_width = button.labelX.textWidth() + button.labelOffset.x;
+				dirty = false;
 			}
 		}
 	}
-	
+		
 	/*****GETTER/SETTER***/
 	
 	public function get_checked():Bool { return _checked; }
-	public function set_checked(b:Bool):Bool { _checked = b; return b; }
+	public function set_checked(b:Bool):Bool { _checked = b; mark.visible = b; return b; }
 	
 	/*****PRIVATE******/
-	private var _checkMark:FlxSprite;
+	
 	private var _checked:Bool;	
 	private var _externalCallback:Dynamic;
-	private var _checkRect:FlxRect;
-	
-	private function _updateRect():Void {
-		//make the clickable region be the checkbox + the text area
-		if (buttonNormal == null) {
-			return;					//safety check
-		}
-		buttonNormal.rect.copyTo(_checkRect);
-		_checkRect.width = textNormal.x + textNormalX.textWidth() - buttonNormal.x;
-		var miny:Float = textNormal.y < buttonNormal.y ? textNormal.y : buttonNormal.y;
-		var maxy_t:Float = textNormal.y + textNormalX.textHeight();
-		var maxy_b:Float = buttonNormal.y + buttonNormal.height;
-		var maxy:Float = maxy_t > maxy_b ? maxy_t : maxy_b;
-		_checkRect.height = maxy - miny;		
-	}
-		
-	private function _clickCheck(Params:Dynamic = null):Void {
-		_checked = !_checked;
+			
+	private function _clickCheck(Params:Dynamic = null):Void 
+	{
+		checked = !checked;
 		if (_externalCallback == null) {
 			return;
 		}
@@ -264,7 +176,7 @@ class FlxCheckBox extends FlxButtonPlusX
 			arr = cast(Params, Array<Dynamic>);
 		}else {
 			arr = new Array<Dynamic>();
-			arr.push(Params);			
+			arr.push(Params);						
 		}
 				
 		if (_checked) {

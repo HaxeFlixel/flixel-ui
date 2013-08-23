@@ -8,11 +8,11 @@ import flixel.FlxSprite;
 
 class FlxButtonToggle extends FlxGroupX implements IResizable
 {
-	public var btn_normal(get_btn_normal, null):FlxButtonPlusX;
-	public var btn_toggle(get_btn_toggle, null):FlxButtonPlusX;
+	public var btn_normal(get_btn_normal, null):FlxButtonX;
+	public var btn_toggle(get_btn_toggle, null):FlxButtonX;
 	
-		public function get_btn_normal():FlxButtonPlusX { return _btn_normal;}
-		public function get_btn_toggle():FlxButtonPlusX { return _btn_toggle;}
+		public function get_btn_normal():FlxButtonX { return _btn_normal;}
+		public function get_btn_toggle():FlxButtonX { return _btn_toggle;}
 	
 		public var Callback(null, set_Callback):Dynamic;
 		
@@ -20,15 +20,15 @@ class FlxButtonToggle extends FlxGroupX implements IResizable
 	
 		public var toggle(get_toggle, set_toggle):Bool;
 		
-	public function new(X:Float,Y:Float, Callback:Dynamic, Params:Array<Dynamic>=null, btn_normal_:FlxButtonPlusX, btn_toggle_:FlxButtonPlusX, id_:String="") 
+	public function new(X:Float,Y:Float, Callback:Dynamic, Params:Array<Dynamic>=null, btn_normal_:FlxButtonX, btn_toggle_:FlxButtonX, id_:String="") 
 	{
 		super();
 		_callback = Callback;
 		_params = Params;
 		_btn_normal = btn_normal_;
 		_btn_toggle = btn_toggle_;
-		_btn_normal.setOnClickCallback(_onClickNormal, Params);
-		_btn_toggle.setOnClickCallback(_onClickToggle, Params);
+		_btn_normal.setOnUpCallback(_onClickNormal, Params);
+		_btn_toggle.setOnUpCallback(_onClickToggle, Params);
 		add(_btn_normal);
 		add(_btn_toggle);		
 		instant_update = true;
@@ -100,8 +100,8 @@ class FlxButtonToggle extends FlxGroupX implements IResizable
 	public function get_toggle():Bool { return _toggle; }
 	
 	/***PRIVATE***/
-	private var _btn_normal:FlxButtonPlusX;
-	private var _btn_toggle:FlxButtonPlusX;
+	private var _btn_normal:FlxButtonX;
+	private var _btn_toggle:FlxButtonX;
 	
 	private var _callback:Dynamic;
 	private var _params:Array<Dynamic>;
