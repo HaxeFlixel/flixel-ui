@@ -126,12 +126,16 @@ As you can see, all image source entries assume two things:
 ###Types of tags
 There are several basic types of xml tags in a Flixel-UI layout file.
 
+**Widget**, **\<definition>**, **\<group>**, **\<align>**, **\<layout>**, **\<failure>**, and **\<mode>**.
+
+Let's go over these one by one.
+
 --
 
 ####1. Widget
 This is any of the many Flixel-UI widgets, such as **\<sprite\>**, **\<button\>**, **\<checkbox\>**, etc. We'll go into more detail on each one below, but all widget tags have a few things in common:
 
-*Widget Attributes:*
+*Attributes:*
 * **id** - string, optional, should be unique. Lets you reference this widget throughout the layout, and also lets you fetch it by name with FlxUI's getAsset("some_id") function.
 * **x/y** - integer, specifies position. If no anchor tag exists as a child node, the position is absolute. If an anchor tag exists, the position is relative to the anchor.
 * **use_def** - string, optional, references a \<definition\> tag by id to use for this widget.
@@ -139,7 +143,7 @@ This is any of the many Flixel-UI widgets, such as **\<sprite\>**, **\<button\>*
 
 --
 
-*Widget child nodes:*
+*Child nodes:*
 * **\<locale id="xx-YY">** - optional, lets you specify a locale (like "en-US" or "nb-NO") for [fireTongue](https://github.com/larsiusprime/firetongue) integration. This lets you specify changes based on the current locale:
 Example:
 
@@ -173,7 +177,8 @@ Groups are stacked in the order you define them, with those at the top of the fi
 A group tag takes one attribute - id. Just define your groups somewhere in the order you want them to stack, then add widgets to them by setting the group attribute to the ids you want.
 
 ####4. \<align>
-Dynamically aligns, centers, and/or spaces objects relative to one another. This deserves its own section below.
+Dynamically aligns, centers, and/or spaces objects relative to one another. 
+This is complex enough to deserve its own section below.
 
 ####5. \<layout>
 Creates a child FlxUI object inside your master FlxUI, and childs all the widgets inside to it. This is especially useful if you want to create multiple layouts for, say, different devices and screen sizes. Combined with **failure** tags, this will let you automatically calculate the best layout depending on screen size.
@@ -198,7 +203,16 @@ Legal values for attributes:
 * property - **"width"** and **"height"**
 * compare - **< , > , <= , >= , = , ==** (= and == are synonymous in this context)
 
-####7. Mode
+After your FlxUI has loaded, you can fetch your individual layouts using getAsset(), and then check these public properties, which give you the result of the failure checks:
+
+* **failed:Bool** - has this FlxUI "failed" according to the specified rules?
+* **failed_by:Float** - if so, by how much?
+
+Sometimes multiple layouts have "failed" according to your rules, and you want to pick the one that failed by the least. If the failure condition was "some_thing's width is greater than 100 pixels", than if some_thing.width = 176, failed_by is 76.
+
+To *respond* to failure conditions, you need to write your own code. In the RPG Interface demo, there are two battle layouts, one that is more appropriate for 4:3 resolutions, and another that works better in 16:9. The custom FlxStateX for that state will check failure conditions on load, and set the mode depending on which layout works best. Speaking of modes...
+
+####7. \<mode>
 Specifies UI "modes" that you can switch between. Basically just a glorified way of quickly hiding and showing specific assets. For instance, in Defender's Quest we had four states for our save slots - empty, play, new_game+ (New Game+ eligible), and play+ (New Game+ started). This would determine what buttons were visible ("New Game", "Play", "Play+", "Import", "Export"). 
 
 The "empty" and "play" modes might look like this:
@@ -270,14 +284,14 @@ Attributes:
 
 **\<9slicesprite> or \<chrome>**
 
-A 9-slice sprite can be scaled in a more pleasing way than just stretching it directly. It divides the object up into a user-defined grid of 9 cells, (4 corners, 4 edges, 1 interior), and then repositions and scales those individually to create a better result. Works best for stuff like chrome and buttons.
+A 9-slice sprite can be scaled in a more pleasing way than just stretching it directly. It divides the object up into a user-defined grid of 9 cells, (4 corners, 4 edges, 1 interior), and then repositions and scales those individually to construct a resized image. Works best for stuff like chrome and buttons.
 
 Attributes:
 * x/y, use_def, group
 * src
 * width/height
 * slice9 - string, two points that define the slice9 grid, format "x1,y1,x2,y2". For example, "6,6,12,12" works well for the 12x12 chrome images in the demo project.
-* tile - bool, optional (assumes false if not exist). Setting to true causes object to use tiling rather than scaling when stretching edge and interior 9-slice cells.
+* tile - bool, optional (assumes false if not exist). If true, uses tiling rather than scaling for stretching 9-slice cells.
 
 ###3. Button (FlxButtonX)
 **\<button>**
