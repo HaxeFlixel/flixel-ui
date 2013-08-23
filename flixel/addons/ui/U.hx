@@ -566,7 +566,7 @@ class U
 				case "normal", "regular", "none", "":suffix = "";
 				case "bold", "b":suffix = "b";
 				case "italic", "i": suffix = "i";
-				case "bold-italic", "bolditalic", "italic-bold", "italicbold", "ibold", "boldi", "z":suffix = "z";
+				case "bold-italic", "bolditalic", "italic-bold", "italicbold", "ibold", "boldi", "ib", "bi", "z":suffix = "z";
 			}
 			return "assets/fonts/" + str + suffix;
 		}

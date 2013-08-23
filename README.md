@@ -183,7 +183,7 @@ This is complex enough to deserve its own section below.
 ####5. \<layout>
 Creates a child FlxUI object inside your master FlxUI, and childs all the widgets inside to it. This is especially useful if you want to create multiple layouts for, say, different devices and screen sizes. Combined with **failure** tags, this will let you automatically calculate the best layout depending on screen size.
 
-A layout has only one attribute, id, and then its child nodes. Think of a <layout> as its own sub-section of your xml file. It can have its own versions of anything you can put in the regular file since it is a full-fledged FlxUI - ie, definitions, groups, widgets, modes, presumably even other layout tags (haven't tested this). 
+A layout has only one attribute, id, and then its child nodes. Think of a \<layout> as its own sub-section of your xml file. It can have its own versions of anything you can put in the regular file since it is a full-fledged FlxUI - ie, definitions, groups, widgets, modes, presumably even other layout tags (haven't tested this). 
 
 Note that in a layout, scope comes into play when referencing ids. Definitions and object references will first look in the scope of the layout (ie, that FlxUI object), and if none is found, will try to find them in the parent FlxUI. 
 
@@ -252,7 +252,7 @@ The "empty" and "play" modes might look like this:
 </mode>
 ````
 
-The only tags available in a **\<mode>** element are <hide> and <show>, which each only take id as an attribute. They just toggle the "visible" property on and off. 
+The only tags available in a **\<mode>** element are \<hide> and \<show>, which each only take id as an attribute. They just toggle the "visible" property on and off. 
 
 ##List of Widgets
 
@@ -291,7 +291,7 @@ Attributes:
 * src
 * width/height
 * slice9 - string, two points that define the slice9 grid, format "x1,y1,x2,y2". For example, "6,6,12,12" works well for the 12x12 chrome images in the demo project.
-* tile - bool, optional (assumes false if not exist). If true, uses tiling rather than scaling for stretching 9-slice cells.
+* tile - bool, optional (assumes false if not exist). If true, uses tiling rather than scaling for stretching 9-slice cells. Boolean true == "true", not "True" or "TRUE", or "T".
 
 ###3. Button (FlxButtonX)
 **\<button>**
@@ -323,7 +323,7 @@ A **\<param>** tag takes two attributes: **type** and **value**.
 </button>
 ````
 
-You can add as many <param> tags as you want. When you click this button, it will by default call FlxUI's internal button callback:
+You can add as many <param> tags as you want. When you click this button, it will by default call FlxUI's internal private button callback:
 
 ````
 _onClickButton(params:Array<Dynamic>=null):Void
@@ -334,7 +334,7 @@ This, in turn, will call getEvent() on whatever IEventGetter "owns" this FlxUI o
 ````
 getEvent(id:String,sender:Dynamic,data:Dynamic):Void
 ````
-The sender will always be this FlxUI instance. On a FlxButton click, the other parameters will be:
+The "sender" parameter will always be this FlxUI instance. On a FlxButton click, the other parameters will be:
 
 * **event id**: "click_button"
 * **data**: an **Array\<Dynamic>** containing all the parameters you've defined.
@@ -343,7 +343,9 @@ Some other interactive widgets can take parameters, and they work in basically t
 
 #####3.2 Button Graphics
 
-Graphics for buttons can be kinda complex. You can put in multiple graphic tags, one for each button state you want to specify, or just one with the id "all" that combines all the states into one vertically stacked image. 
+Graphics for buttons can be kinda complex. You can put in multiple graphic tags, one for each button state you want to specify, or just one with the id "all" that combines all the states into one vertically stacked image, and asks the FlxButton to sort the individual frames out itself.
+
+The system can sometimes infer what the frame size should be based on the image and width/height are not set, but it helps to be explicit with width/height if they are statically sized and you're not using 9-slice scaling.
 
 Static, individual frames:
 ````
@@ -370,29 +372,150 @@ Static, individual frames:
 <definition>
 ````
 
-I'm not 100% sure what will happen if you do individual frames and omit one, but I think I set it up to copy one of the other ones in some kind of "smart" way. It's best to be explicit about what you want rather than have the system guess.
+I'm not 100% sure what will happen if you do individual frames and omit one, but I think I set it up to copy one of the other ones in some kind of "smart" way. Again, it's always best to be explicit about what you want rather than be ambiguous and have the system guess.
 
+#####3.3 Button Text
+To specify what the text in a button looks like, you create a \<text> child node.
+You can specify all the properties right here, or use a definition. There's a few special considerations for <text> nodes inside of a button.
 
+The main "color" attribute (hexadecimal format, "0xffffff") is the main label color
+
+If you want to specify colors for other states, you add \<color> tags inside the \<text> tag for each state:
+````
+<button x="200" y="505" id="some_button" use_def="text_button" label="Click Me">
+	<text use_def="vera10" color="0xffffff">
+		<color id="over" value="0xffff00"/>
+	</text>
+</button>	
+````
 
 
 ###4. Button, Toggle (FlxButtonX)
 **\<button_toggle>**
 
+Toggle buttons are made from the same class as regular buttons, FlxButtonX.
+
+Toggle buttons are different in that they have 6 states, 3 for up/over/down when toggled, and 3 for up/over/down when not toggled. By default, a freshly loaded toggle button's "toggle" value is false.
+
+Toggle buttons need more graphics than a regular button. To do this, you need to provide graphic tags for both the regular and untoggled states. The toggled \<graphic> tags are the same, they just need an additional toggle="true" attribute:
+
+````
+<definition id="tab_button_toggle" width="50" height="20" text_x="-2" text_y="0">			
+	<text use_def="sans10c" color="0xcccccc">
+		<color id="over" value="0xccaa00"/>
+		<color id="up" toggle="true" value="0xffffff"/>
+		<color id="over" toggle="true" value="0xffff00"/>
+	</text>
+		
+	<graphic id="up" image="ui/buttons/tab_grey_back" slice9="6,6,12,12"/>
+	<graphic id="over" image="ui/buttons/tab_grey_back_over" slice9="6,6,12,12"/>
+	<graphic id="down" image="ui/buttons/tab_grey_back_over" slice9="6,6,12,12"/>
+		
+	<graphic id="up" toggle="true" image="ui/buttons/tab_grey" slice9="6,6,12,12"/>
+	<graphic id="over" toggle="true" image="ui/buttons/tab_grey_over" slice9="6,6,12,12"/>				
+	<graphic id="down" toggle="true" image="ui/buttons/tab_grey_over" slice9="6,6,12,12"/>				
+</definition>
+````
+
+Of course, if you create a single asset with 6 images stacked vertically, you can save yourself some room:
+````
+<definition id="button_toggle" width="50" height="20">		
+	<text use_def="sans10c" color="0xffffff">
+		<color id="over" value="0xffff00"/>
+	</text>
+	
+	<graphic id="all" image="ui/buttons/button_blue_toggle" slice9="6,6,12,12"/>		
+</definition>
+````
+
+Note that you can create a vertical stack of 9-slice assets, or regular statically-sized assets, the system can use either one. 
+
 ###5. Check box (FlxCheckBox)
 **\<checkbox>**
+
+A Check Box is a FlxGroup which contains three objects: a "box" image, a "check" image, and a label.
+
+Attributes:
+* x/y, use_def, group
+* check_src - source image for box (not 9-sliceable)
+* box_src - source image for check mark (not 9-sliceable)
+* text_x/text_y - label offsets
+* label - text to show
+
+Child tags:
+* \<text> - same as \<button>
+* \<param> - same as \<button>
+
+Event:
+* id - "click_checkbox"
+* params - as defined by user, but with this at the end: "checked:true" or "checked:false"
 
 ###6. Text (FlxTextX)
 **\<text>**
 
+A regular text field. 
+
+Attributes:
+* x/y, use_def, group
+* font - string, something like "vera" or "verdana"
+* size - integer, size of font
+* style - string, "regular", "bold", "italic", or "bold-italic"
+
+The system will look for a font file in your assets/fonts/ directory, formatted like this:
+
+|Filename|Family|Style|
+|---|---|---|
+vera.ttf|Vera|Regular
+verab.ttf|Vera|Bold
+verai.ttf|Vera|Italic
+veraz.ttf|Vera|Bold-Italic
+
+So far just .ttf fonts are supported, and you MUST name this according to this scheme for now. 
+
+FlxUI does not yet support FlxBitmapFonts, but we'll be adding it soon.
+
 ###7. Text, input (FlxInputText)
 **\<text>**
+
+This has not been thoroughly tested, but it exists.
 
 ###8. Radio button group (FlxRadioGroup)
 **\<radio_group>**
 
+Radio groups are a set of buttons where only one can be clicked at a time. We implement these as a FlxGroup of FlxCheckBox'es, and then internal logic makes only one clickable at a time. 
+
+Attributes:
+* x/y, use_def, group
+* radio_src - image src for radio button back (ie, checkbox "box")
+* dot_src - image src for radio dot (ie, checkbox "check mark")
+* \<param> - same as \<button>, 
+* \<radio> - two attributes, id (string) and label (string)
+
+You construct a radio group by providing as many \<radio> tags as you want radio buttons. Give each of them an id and a label.
+
+Child Nodes:
+
+Event:
+* id - "click_radio_group"
+* params - as defined by user
+
 ###9. Tabbed menu (FlxTabMenu)
 **\<tab_menu>**
 
+Tab menus are the most complex FlxUI widget. FlxTabMenu extends FlxUI and is thus a full-fledged FlxUI in and of itself, just like the \<layout> tag.
+
+This provides a menu with various tabbed buttons on top. When you click on one tab, it will show the content for that tab and hide the rest. 
+
+Attributes:
+* x/y, use_def, group
+* width/height
+* back_def - id for a 9-slice chrome definition (MUST be 9-sliceable!)
+* slice9
+
+Child Nodes:
+* \<tab> - attributes are "id" and "label", much like in \<radio_group>
+* \<group> - attributes are only "id"
+ * Put regular FlxUI content tags here, within the \<group>\</group> node.
 
 ##Dynamic position & size
 
