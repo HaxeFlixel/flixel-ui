@@ -460,6 +460,9 @@ Attributes:
 * font - string, something like "vera" or "verdana"
 * size - integer, size of font
 * style - string, "regular", "bold", "italic", or "bold-italic"
+* color - hex string, ie, "0xffffff" is white
+* shadow - shadow color (not working yet maybe?)
+* align - "left", "center", or "right". Haven't tested "justify"
 
 The system will look for a font file in your assets/fonts/ directory, formatted like this:
 
@@ -591,7 +594,28 @@ Acceptable property values for reference formula, used alone or in a stretch:
 --
 ###3. Alignment Tags
 
+This is still very experimental and I don't have a live example in the RPG Interface demo yet. 
+
+An \<align> tag lets you automatically align and space various objects together.
+
+````
+<align axis="horizontal" spacing="2" resize="true">
+	<bounds left="options.left" right="options.right"/>
+	<objects value="spell_0,spell_1,spell_2,spell_3,spell_4,spell_5"/>
+</align>
+		
+````
+
+Attributes:
+* axis - "horizontal" or "vertical"
+* spacing - number
+* resize - bool, optional, "true" or "false" (if not exist, assumes false)
+
+Child tags:
+* \<bounds> - string, reference formula, specify left & right for horizontal, or top & bottom for vertical
+* \<objects> - string, comma separated list of object id's
 ...
 
 ##Localization (FireTongue)
-...
+
+I'll finish this bit later.
