@@ -326,8 +326,8 @@ class FlxButtonPlusX extends FlxButtonPlus implements IResizable
 	 */
 	public function reset(X:Float, Y:Float)
 	{
-		set_textX(X);
-		set_textY(Y);
+		set_x(X);
+		set_y(Y);
 	}
 	
 	/**
