@@ -213,6 +213,8 @@ class FlxButtonX extends FlxButton implements IResizable
 		_slice9_assets = assets;
 		_slice9_strings = slice9;
 		
+		var key:String = null;
+		
 		var arr_bmpData:Array<BitmapData> = [];		
 		var arr_flx9:Array<Flx9SliceSprite> = [];
 				
@@ -284,8 +286,7 @@ class FlxButtonX extends FlxButton implements IResizable
 					for (i in 1...assets.length) {
 						if (assets[i] != "") {
 							arr_flx9[i] = new Flx9SliceSprite(0, 0, assets[i], _flashRect2, slice9[i],false,false,"",resize_ratio);
-							arr_bmpData[i] = arr_flx9[i].pixels;
-							
+							arr_bmpData[i] = arr_flx9[i].pixels;							
 						}						
 					}
 					
@@ -295,12 +296,18 @@ class FlxButtonX extends FlxButton implements IResizable
 				
 					
 				}else {			//load as static buttons						
+					key = "";
 					for(i in 0...assets.length){					
 						arr_bmpData[i] = Assets.getBitmapData(assets[i]);
+						key += assets[i];
+						if (i < assets.length - 1) {
+							key += ",";
+						}
 					}					
 				}
 			}else {
 				arr_bmpData[0] = new BitmapData(W, H * 3, true, 0x00000000);
+				key = "Blank_" + W + "x" + (H * 3);
 				_no_graphic = true;
 			}
 		}
@@ -308,7 +315,7 @@ class FlxButtonX extends FlxButton implements IResizable
 		var normalPixels:BitmapData = assembleButtonFrames(arr_bmpData[0], arr_bmpData[1], arr_bmpData[2]);
 			
 		if(!has_toggle){
-			loadGraphic(normalPixels, true, false, W, H);
+			loadGraphic(normalPixels, true, false, W, H, false, key);
 		}else {
  			var togglePixels:BitmapData = assembleButtonFrames(arr_bmpData[3], arr_bmpData[4], arr_bmpData[5]);
 			var combinedPixels:BitmapData = combineToggleBitmaps(normalPixels, togglePixels);
