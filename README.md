@@ -548,7 +548,7 @@ Acceptable values for x-flush/y-flush:
 * "bottom"
 * "center"
 
-**Note to non-native speakers of English:** "flush" is a carpentry term, so if the left side of one object is parallel to and touching another object's side with no air between them, the objects are "flush." This has nothing to do with toilets :)
+**Note to non-native speakers of English:** "flush" is a carpentry term, so if one side of one object is parallel to and touching another object's side with no air between them, the objects are "flush." This has nothing to do with toilets :)
 
 --
 ###2. Size Tags
