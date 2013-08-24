@@ -144,11 +144,40 @@ class FlxButtonX extends FlxButton implements IResizable
 	}
 	
 	/**
+	 * Provide a list of assets, load states from each one
+	 * @param	assets
+	 */
+	
+	public function loadGraphicsMultiple(assets:Array<String>):Void {
+		var key:String = "";
+				
+		if (assets.length <= 3) {
+			while (assets.length < 3) { assets.push(null); }
+			if (assets[1] == null) { assets[1] = assets[0]; }
+			if (assets[2] == null) { assets[2] = assets[1]; }
+			key = assets.join(",");			
+			var pixels = assembleButtonFrames(Assets.getBitmapData(assets[0]), Assets.getBitmapData(assets[1]), Assets.getBitmapData(assets[2]));
+			loadGraphicsUpOverDown(pixels, false, key);
+		}else if (assets.length <= 6) {
+			while (assets.length < 6) { assets.push(null); }
+			if (assets[4] == null) { assets[4] = assets[3]; }
+			if (assets[5] == null) { assets[5] = assets[4]; }
+			key = assets.join(",");
+			var pixels_normal = assembleButtonFrames(Assets.getBitmapData(assets[0]), Assets.getBitmapData(assets[1]), Assets.getBitmapData(assets[2]));
+			var pixels_toggle = assembleButtonFrames(Assets.getBitmapData(assets[3]), Assets.getBitmapData(assets[4]), Assets.getBitmapData(assets[5]));
+			var pixels = combineToggleBitmaps(pixels_normal, pixels_toggle);
+			loadGraphicsUpOverDown(pixels, false, key);
+			pixels_normal.dispose();
+			pixels_toggle.dispose();
+		}
+	}
+	
+	/**
 	 * Provide one combined asset, load all 3 state frames from it and infer the width/height
 	 * @param	asset
 	 */
 	
-	public function loadGraphicsUpOverDown(asset:Dynamic,for_toggle:Bool=false):Void {
+	public function loadGraphicsUpOverDown(asset:Dynamic,for_toggle:Bool=false, ?key:String):Void {
 		_slice9_assets = null;
 		_slice9_strings = null;
 		resize_ratio = -1;
@@ -156,6 +185,7 @@ class FlxButtonX extends FlxButton implements IResizable
 		if (for_toggle) {
 			has_toggle = true;	//this makes it assume it's 6 images tall
 		}
+		
 		
 		var upB:BitmapData = null;
 		var overB:BitmapData = null;
@@ -186,9 +216,9 @@ class FlxButtonX extends FlxButton implements IResizable
 			normalPixels.dispose(); normalPixels = null;
 			togglePixels.dispose(); togglePixels = null;
 			
-			loadGraphic(combinedPixels, true, false, upB.width, upB.height);
+			loadGraphic(combinedPixels, true, false, upB.width, upB.height, false, key);
 		}else {			
-			loadGraphic(normalPixels, true, false, upB.width, upB.height);
+			loadGraphic(normalPixels, true, false, upB.width, upB.height, false, key);
 		}
 		
 		
@@ -303,7 +333,9 @@ class FlxButtonX extends FlxButton implements IResizable
 						if (i < assets.length - 1) {
 							key += ",";
 						}
-					}					
+					}	
+					W = arr_bmpData[0].width;
+					H = arr_bmpData[0].height;
 				}
 			}else {
 				arr_bmpData[0] = new BitmapData(W, H * 3, true, 0x00000000);

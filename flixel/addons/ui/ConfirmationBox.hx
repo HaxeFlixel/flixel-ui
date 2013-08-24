@@ -1,4 +1,5 @@
 package flixel.addons.ui;
+import flixel.ui.FlxButton;
 
 /**
  * ...
@@ -204,22 +205,35 @@ class ConfirmationBox extends BasicPopUp
 		title = fixword(title);
 		text = fixword(text);
 		
-		yes_btn = new FlxButtonPlusX(35, 147, pressButton,["yes"]);
-		yes_btn.loadGraphic(new FlxSprite(0, 0, U.gfx("button_confirmation_up", "ui", "buttons")), new FlxSprite(0, 0, U.gfx("button_confirmation_over", "ui", "buttons")));
-		yes_btn.setSimpleLabel(STR_YES);
-		//yes_btn.text = STR_YES;
-		//fb.textNormalX.setFormat(the_font, size, color, align, shadow);
-		//fb.textNormalX.dropShadow = true;
+		yes_btn = new FlxButtonX(35, 147, STR_YES);
+		yes_btn.setOnUpCallback(pressButton, ["yes"]);
+		yes_btn.loadGraphicsMultiple([U.gfx("button_confirmation_up", "ui", "buttons"), U.gfx("button_confirmation_over", "ui", "buttons")]);
+				
+			/*yes_btn = new FlxButtonPlusX(35, 147, pressButton,["yes"]);
+			yes_btn.loadGraphic(new FlxSprite(0, 0, U.gfx("button_confirmation_up", "ui", "buttons")), new FlxSprite(0, 0, U.gfx("button_confirmation_over", "ui", "buttons")));
+			yes_btn.setSimpleLabel(STR_YES);*/
 		
-		no_btn = new FlxButtonPlusX(118, 147, pressButton,["no"]);
-		no_btn.loadGraphic(new FlxSprite(0, 0, U.gfx("button_confirmation_red_up", "ui", "buttons")), new FlxSprite(0, 0, U.gfx("button_confirmation_red_over", "ui", "buttons")));
-		no_btn.setSimpleLabel(STR_NO);
-		//no_btn.text = STR_NO;
-
-		cancel_btn = new FlxButtonPlusX(200, 147, pressButton,["cancel"]);
-		cancel_btn.loadGraphic(new FlxSprite(0, 0, U.gfx("button_confirmation_red_up", "ui", "buttons")), new FlxSprite(0, 0, U.gfx("button_confirmation_red_over", "ui", "buttons")));
-		cancel_btn.setSimpleLabel(STR_CANCEL);
-		//cancel_btn.text = STR_CANCEL;
+			//yes_btn.text = STR_YES;
+			//fb.textNormalX.setFormat(the_font, size, color, align, shadow);
+			//fb.textNormalX.dropShadow = true;
+		
+		no_btn = new FlxButtonX(118, 147, STR_NO);
+		no_btn.setOnUpCallback(pressButton, ["no"]);
+		no_btn.loadGraphicsMultiple([U.gfx("button_confirmation_red_up", "ui", "buttons"), U.gfx("button_confirmation_red_over", "ui", "buttons")]);
+			
+			/*no_btn = new FlxButtonPlusX(118, 147, pressButton,["no"]);
+			no_btn.loadGraphic(new FlxSprite(0, 0, U.gfx("button_confirmation_red_up", "ui", "buttons")), new FlxSprite(0, 0, U.gfx("button_confirmation_red_over", "ui", "buttons")));
+			no_btn.setSimpleLabel(STR_NO);*/
+			//no_btn.text = STR_NO;
+	
+		cancel_btn = new FlxButtonX(200, 147, STR_CANCEL);
+		cancel_btn.setOnUpCallback(pressButton, ["cancel"]);
+		cancel_btn.loadGraphicsMultiple([U.gfx("button_confirmation_red_up", "ui", "buttons"), U.gfx("button_confirmation_red_over", "ui", "buttons")]);
+			
+			/*cancel_btn = new FlxButtonPlusX(200, 147, pressButton,["cancel"]);
+			cancel_btn.loadGraphic(new FlxSprite(0, 0, U.gfx("button_confirmation_red_up", "ui", "buttons")), new FlxSprite(0, 0, U.gfx("button_confirmation_red_over", "ui", "buttons")));
+			cancel_btn.setSimpleLabel(STR_CANCEL);*/
+			//cancel_btn.text = STR_CANCEL;
 		
 		titleBox = new FlxTextX(0, 10, 350, title);
 		titleBox.setFormat(U.font("verdana"), 18, 0xffffff, "center");

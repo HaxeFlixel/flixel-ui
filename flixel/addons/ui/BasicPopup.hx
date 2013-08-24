@@ -22,9 +22,9 @@ class BasicPopUp extends FlxGroupX
 	public var STR_ARE_YOU_SURE:String;
 	//
 	
-	var yes_btn:FlxButtonPlusX;
-	var no_btn:FlxButtonPlusX;
-	var cancel_btn:FlxButtonPlusX;
+	var yes_btn:FlxButtonX;
+	var no_btn:FlxButtonX;
+	var cancel_btn:FlxButtonX;
 	
 	var titleBox:FlxTextX;
 	var descriptionBox:FlxTextX;
@@ -156,9 +156,9 @@ class BasicPopUp extends FlxGroupX
 			doSmallText(false);
 		}
 		
-		yes_btn.text = yes_str;
-		no_btn.text = no_str;
-		cancel_btn.text = cancel_str;
+		yes_btn.label.text = yes_str;
+		no_btn.label.text = no_str;
+		cancel_btn.label.text = cancel_str;
 		titleBox.text = title;
 		
 		if (bigBox == true) {
