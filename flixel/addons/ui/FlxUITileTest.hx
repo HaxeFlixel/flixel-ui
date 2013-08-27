@@ -7,7 +7,7 @@ import flash.geom.Point;
  * @author 
  */
 
-class FlxTileTest extends FlxSpriteX implements IResizable
+class FlxUITileTest extends FlxUISprite implements IResizable
 {
 	private var _tilesWide:Int=2;
 	private var _tilesTall:Int=2;

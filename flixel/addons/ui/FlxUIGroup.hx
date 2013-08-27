@@ -10,12 +10,12 @@ import flixel.addons.ui.FlxButtonPlus;
 #end
 
 /**
- * A cheap extension of FlxGroupX that lets you move all the children around
+ * A cheap extension of FlxUIGroup that lets you move all the children around
  * without having to call reset()
  * @author Lars Doucet
  */
 
-class FlxGroupX extends FlxGroup implements IDestroyable
+class FlxUIGroup extends FlxGroup implements IDestroyable
 {	
 	/***PUBLIC VARS***/
 		
@@ -73,8 +73,8 @@ class FlxGroupX extends FlxGroup implements IDestroyable
 				if (Std.is(fb, FlxObject)) {
 					var fs:FlxSprite = cast(fb, FlxSprite);
 					fs.alpha = _alpha;
-				}else if (Std.is(fb, FlxGroupX)) {
-					var fg:FlxGroupX = cast(fb, FlxGroupX);
+				}else if (Std.is(fb, FlxUIGroup)) {
+					var fg:FlxUIGroup = cast(fb, FlxUIGroup);
 					fg.alpha = _alpha;
 				}
 			}return _alpha;
@@ -120,8 +120,8 @@ class FlxGroupX extends FlxGroup implements IDestroyable
 			if (ww > width) width = ww;
 			if (hh > height) height = hh;
 			
-		}else if (Std.is(fb, FlxGroupX)) {
-			/*var fg:FlxGroupX = cast(fb, FlxGroupX);
+		}else if (Std.is(fb, FlxUIGroup)) {
+			/*var fg:FlxUIGroup = cast(fb, FlxUIGroup);
 			var ww:Float = fg.x + fg.width;
 			var hh:Float = fg.y + fg.height;
 			if (ww > width) width = ww;
@@ -151,8 +151,8 @@ class FlxGroupX extends FlxGroup implements IDestroyable
 				var fo:FlxObject = cast(fb, FlxObject);
 				fo.x = Math.floor(fo.x);
 				fo.y = Math.floor(fo.y);
-			}else if (Std.is(fb, FlxGroupX)) {
-				var fg:FlxGroupX = cast(fb, FlxGroupX);
+			}else if (Std.is(fb, FlxUIGroup)) {
+				var fg:FlxUIGroup = cast(fb, FlxUIGroup);
 				fg.x = Math.floor(fg.x);
 				fg.y = Math.floor(fg.y);
 			}
@@ -165,8 +165,8 @@ class FlxGroupX extends FlxGroup implements IDestroyable
 			if (Std.is(fb, FlxSprite)) {
 				var fo:FlxSprite = cast(fb, FlxSprite);
 				fo.color = col;
-			}else if (Std.is(fb, FlxGroupX)) {
-				var fg:FlxGroupX = cast(fb, FlxGroupX);
+			}else if (Std.is(fb, FlxUIGroup)) {
+				var fg:FlxUIGroup = cast(fb, FlxUIGroup);
 				fg.set_color(col);
 			}
 		}
@@ -222,8 +222,8 @@ class FlxGroupX extends FlxGroup implements IDestroyable
 						if (ww > best_w) { best_w = ww; }
 						if (hh > best_h) { best_h = hh; }
 					}
-				}else if (Std.is(fb, FlxGroupX)) {
-					var fg:FlxGroupX = cast(fb, FlxGroupX);
+				}else if (Std.is(fb, FlxUIGroup)) {
+					var fg:FlxUIGroup = cast(fb, FlxUIGroup);
 					fg.instant_update = instant_update;
 					fg.x += _delta_x;
 					fg.y += _delta_y;

@@ -9,7 +9,7 @@ import flixel.FlxSprite;
  * @author Lars Doucet
  */
 
-class FlxSpriteX extends FlxSprite implements IDestroyable
+class FlxUISprite extends FlxSprite implements IDestroyable
 {
 	//simple string ID, handy for identification, etc
 	public var str_id:String;			

@@ -18,7 +18,7 @@ import flixel.ui.FlxButton;
 class ConfirmationBox extends BasicPopUp
 {
 	private var textEntry:FlxTextEdit;
-	private var radioChoices:FlxRadioGroup;
+	private var radioChoices:FlxUIRadioGroup;
 		
 	public function new(title:String="<confirm>",text:String="<are_you_sure>",Callback:String->Void=null)
 	{
@@ -35,7 +35,7 @@ class ConfirmationBox extends BasicPopUp
 		
 		show(title, text, Callback, yes, no, cancel, yes_str, no_str, cancel_str);
 		if (radioChoices == null) {
-			radioChoices = new FlxRadioGroup(hitBox2.x + (hitBox2.width-200)/2, hitBox2.y + 70, arr, null, 20, 200);
+			radioChoices = new FlxUIRadioGroup(hitBox2.x + (hitBox2.width-200)/2, hitBox2.y + 70, arr, null, 20, 200);
 			radioChoices.selectedIndex = 0;
 			add(radioChoices);
 		}else {

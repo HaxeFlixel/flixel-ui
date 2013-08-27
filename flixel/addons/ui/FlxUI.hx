@@ -32,7 +32,7 @@ import flixel.addons.ui.IResizable;
  * @author Lars Doucet
  */
 
-class FlxUI extends FlxGroupX implements IEventGetter
+class FlxUI extends FlxUIGroup implements IEventGetter
 {
 	
 	//If this is true, the first few frames after initialization ignore all input so you can't auto-click anything
@@ -65,8 +65,8 @@ class FlxUI extends FlxGroupX implements IEventGetter
 	 */
 	private function _tongueSet(list:Array<FlxBasic>,tongue:IFireTongue):Void {		
 		for (fb in list) {
-			if (Std.is(fb, FlxGroupX)) {
-				var g:FlxGroupX = cast(fb, FlxGroupX);
+			if (Std.is(fb, FlxUIGroup)) {
+				var g:FlxUIGroup = cast(fb, FlxUIGroup);
 				_tongueSet(g.members, tongue);
 			}else if (Std.is(fb, FlxUI)) {
 				var fu:FlxUI = cast(fb, FlxUI);
@@ -242,7 +242,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 	 */
 	
 	public function load(data:Fast):Void {
-		_group_index = new Map<String,FlxGroupX>();
+		_group_index = new Map<String,FlxUIGroup>();
 		_asset_index = new Map<String,FlxBasic>();
 		_definition_index = new Map<String,Fast>();
 		_mode_index = new Map<String,Fast>();
@@ -291,9 +291,9 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			if(data.hasNode.group){
 				for (group_data in data.nodes.group) {
 					
-					//Create FlxGroupX's for each group we define
+					//Create FlxUIGroup's for each group we define
 					var id:String = group_data.att.id;
-					var group:FlxGroupX = new FlxGroupX();					
+					var group:FlxUIGroup = new FlxUIGroup();					
 					group.str_id = id;
 					_group_index.set(id, group);
 					add(group);
@@ -312,8 +312,8 @@ class FlxUI extends FlxGroupX implements IEventGetter
 				//Useful debugging info, make sure things go in the right group:
 				FlxG.log.add("Member list...");
 				for (fb in members) {
-					if (Std.is(fb, FlxGroupX)) {
-						var g:FlxGroupX = cast(fb, FlxGroupX);
+					if (Std.is(fb, FlxUIGroup)) {
+						var g:FlxUIGroup = cast(fb, FlxUIGroup);
 						FlxG.log.add("-->Group(" + g.str_id + "), length="+g.members.length);						
 						for (fbb in g.members) {
 							FlxG.log.add("---->Member(" + fbb + ")");
@@ -334,7 +334,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 					type.toLowerCase();
 					var obj:Fast = new Fast(node);
 					var group_id:String="";
-					var group:FlxGroupX = null;		
+					var group:FlxUIGroup = null;		
 									
 					var thing_id:String = U.xml_str(obj.x, "id", true);
 										
@@ -437,8 +437,8 @@ class FlxUI extends FlxGroupX implements IEventGetter
 	
 	/******UTILITY FUNCTIONS**********/
 	
-	public function getGroup(key:String, recursive:Bool=true):FlxGroupX{
-		var group:FlxGroupX = _group_index.get(key);
+	public function getGroup(key:String, recursive:Bool=true):FlxUIGroup{
+		var group:FlxUIGroup = _group_index.get(key);
 		if (group == null && recursive && _superIndexUI != null) {
 			return _superIndexUI.getGroup(key, recursive);
 		}
@@ -497,8 +497,8 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		if(Std.is(thing,FlxObject)){
 			var obj:FlxObject = cast(thing, FlxObject);
 			obj.x += X; obj.y += Y;
-		}else if (Std.is(thing, FlxGroupX)) {
-			var group:FlxGroupX = cast(thing, FlxGroupX);
+		}else if (Std.is(thing, FlxUIGroup)) {
+			var group:FlxUIGroup = cast(thing, FlxUIGroup);
 			group.instant_update = true;
 			group.x += Std.int(X); group.y += Std.int(Y);
 		}
@@ -523,7 +523,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 	
 	/***PRIVATE***/
 		
-	private var _group_index:Map<String,FlxGroupX>;
+	private var _group_index:Map<String,FlxUIGroup>;
 	private var _asset_index:Map<String,FlxBasic>;
 	private var _definition_index:Map<String,Fast>;
 	private var _mode_index:Map<String,Fast>;
@@ -546,7 +546,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		//Slow, unoptimized, searches through everything
 		if(_group_index != null){
 			for (key in _group_index.keys()) {
-				var group:FlxGroupX = _group_index.get(key);
+				var group:FlxUIGroup = _group_index.get(key);
 				if (group.members != null) {
 					var i:Int = 0;
 					for (member in group.members) {
@@ -902,8 +902,8 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		if (Std.is(fb, FlxObject)) {
 			var fo:FlxObject = cast fb;
 			fbx = fo.x; fby = fo.y;
-		}else if (Std.is(fb, FlxGroupX)) {
-			var fg:FlxGroupX = cast fb;
+		}else if (Std.is(fb, FlxUIGroup)) {
+			var fg:FlxUIGroup = cast fb;
 			fbx = fg.x; fby = fg.y;
 		}
 		
@@ -911,7 +911,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		_loadPosition(data,fb);			//reposition
 	}
 	
-	private function _loadTileTest(data:Fast, definition:Fast = null):FlxTileTest {
+	private function _loadTileTest(data:Fast, definition:Fast = null):FlxUITileTest {
 		var the_data:Fast = data;
 		if (definition != null) { the_data = definition; }
 		
@@ -944,7 +944,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		if (tileWidth < 2) { tileWidth = 2; }
 		if (tileHeight < 2) { tileHeight = 2; }
 		
-		var ftt:FlxTileTest = new FlxTileTest(0, 0, tileWidth, tileHeight, tiles_w, tiles_h);
+		var ftt:FlxUITileTest = new FlxUITileTest(0, 0, tileWidth, tileHeight, tiles_w, tiles_h);
 		return ftt;
 	}
 	
@@ -976,7 +976,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			ftu.forceCalcFrame();
 			ft = ftu;
 		}else {
-			var fti:FlxInputTextX = new FlxInputTextX(0, 0, W, text);
+			var fti:FlxUIInputText = new FlxUIInputText(0, 0, W, text);
 			fti.setFormat(the_font, size, color, align, shadow,shadow!=0);			
 			fti.forceCalcFrame();
 			ft = fti;
@@ -984,8 +984,8 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		return ft;
 	}
 	
-	private function _loadRadioGroup(data:Fast, definition:Fast = null):FlxRadioGroup {
-		var frg:FlxRadioGroup = null;
+	private function _loadRadioGroup(data:Fast, definition:Fast = null):FlxUIRadioGroup {
+		var frg:FlxUIRadioGroup = null;
 		
 		var default_data:Fast = data;
 		if (definition != null) { default_data = definition; }
@@ -1027,9 +1027,9 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		}
 		
 		//if radio_src or dot_src are == "", then leave radio_asset/dot_asset == null, 
-		//and FlxRadioGroup will default to defaults defined in FlxUIAssets 
+		//and FlxUIRadioGroup will default to defaults defined in FlxUIAssets 
 		
-		frg = new FlxRadioGroup(0, 0, ids, labels, _onClickRadioGroup, y_space, W, H, labelW);
+		frg = new FlxUIRadioGroup(0, 0, ids, labels, _onClickRadioGroup, y_space, W, H, labelW);
 						
 		if (radio_asset != "") {
 			frg.loadGraphics(radio_asset,dot_asset);
@@ -1039,8 +1039,8 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var text_y:Int = U.xml_i(default_data.x, "text_y");		
 		
 		for (fo in frg.members) {
-			if (Std.is(fo, FlxCheckBox)){
-				var fc:FlxCheckBox = cast(fo, FlxCheckBox);
+			if (Std.is(fo, FlxUICheckBox)){
+				var fc:FlxUICheckBox = cast(fo, FlxUICheckBox);
 				formatButtonText(default_data, fc);
 				fc.textX = text_x;				
 				fc.textY = text_y;
@@ -1050,9 +1050,9 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		return frg;
 	}
 	
-	private function _loadCheckBox(data:Fast, definition:Fast = null):FlxCheckBox {
+	private function _loadCheckBox(data:Fast, definition:Fast = null):FlxUICheckBox {
 		var src:String = "";
-		var fc:FlxCheckBox = null;
+		var fc:FlxUICheckBox = null;
 		
 		var default_data:Fast = data;
 		if (definition != null) { default_data = definition; }
@@ -1078,10 +1078,10 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			box_asset = U.gfx(box_src);		
 		}
 		if(check_src != ""){
-			check_src = U.gfx(check_src);		
+			check_asset = U.gfx(check_src);		
 		}
 		
-		fc = new FlxCheckBox(0, 0, box_asset, check_asset, label, labelW, _onClickCheckBox, params);
+		fc = new FlxUICheckBox(0, 0, box_asset, check_asset, label, labelW, _onClickCheckBox, params);
 		formatButtonText(default_data, fc);
 		
 		var text_x:Int = U.xml_i(default_data.x, "text_x");
@@ -1106,7 +1106,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		return _ui;
 	}
 	
-	private function _loadTabMenu(data:Fast, definition:Fast = null):FlxTabMenu{
+	private function _loadTabMenu(data:Fast, definition:Fast = null):FlxUITabMenu{
 		var default_data:Fast = data;
 		if (definition != null) { default_data = definition;}
 		
@@ -1116,7 +1116,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			back_def = default_data;
 		}
 		
-		var back:Flx9SliceSprite = _load9SliceSprite(data, back_def, "tab_menu");
+		var back:FlxUI9SliceSprite = _load9SliceSprite(data, back_def, "tab_menu");
 		
 		var tab_def:Fast = null;
 		
@@ -1179,7 +1179,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			}
 		}
 		
-		var fg:FlxTabMenu = new FlxTabMenu(back,list_tabs,stretch_tabs);		
+		var fg:FlxUITabMenu = new FlxUITabMenu(back,list_tabs,stretch_tabs);		
 		
 		if (data.hasNode.group) {
 			for (group_node in data.nodes.group) {
@@ -1352,15 +1352,15 @@ class FlxUI extends FlxGroupX implements IEventGetter
 	 		
 	private static inline function _loadBitmapRect(source:String,rect_str:String):BitmapData {
 		var b1:BitmapData = Assets.getBitmapData(U.gfx(source));
-		var r:Rectangle = Flx9SliceSprite.getRectFromString(rect_str);
+		var r:Rectangle = FlxUI9SliceSprite.getRectFromString(rect_str);
 		var b2:BitmapData = new BitmapData(Std.int(r.width), Std.int(r.height), true, 0x00ffffff);					
 		b2.copyPixels(b1, r, new Point(0, 0));
 		return b2;
 	}
 	
-	private function _load9SliceSprite(data:Fast,definition:Fast=null,load_code:String=""):Flx9SliceSprite{
+	private function _load9SliceSprite(data:Fast,definition:Fast=null,load_code:String=""):FlxUI9SliceSprite{
 		var src:String = ""; 
-		var f9s:Flx9SliceSprite = null;
+		var f9s:FlxUI9SliceSprite = null;
 				
 		var the_data:Fast = data;
 		if (definition != null) { the_data = definition;}
@@ -1399,17 +1399,17 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var smooth:Bool = U.xml_bool(the_data.x, "smooth", false);
 				
 		if (slice9 != "") {
-			f9s = new Flx9SliceSprite(0, 0, src, rc, slice9, tile, smooth,"",resize_ratio);
+			f9s = new FlxUI9SliceSprite(0, 0, src, rc, slice9, tile, smooth,"",resize_ratio);
 		}else {
-			f9s = new Flx9SliceSprite(0, 0, src, rc,"",tile, smooth,"",resize_ratio);
+			f9s = new FlxUI9SliceSprite(0, 0, src, rc,"",tile, smooth,"",resize_ratio);
 		}
 		
 		return f9s;
 	}
 	
-	private function _loadSprite(data:Fast,definition:Fast=null):FlxSpriteX{
+	private function _loadSprite(data:Fast,definition:Fast=null):FlxUISprite{
 		var src:String = ""; 
-		var fs:FlxSpriteX = null;
+		var fs:FlxUISprite = null;
 		
 		var the_data:Fast = data;
 		if (definition != null) { the_data = definition;}
@@ -1420,7 +1420,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			          max_width:Float, max_height:Float } = calcMaxMinSize(data);				
 				
 		if(src != ""){
-			fs = new FlxSpriteX(0, 0, src);		
+			fs = new FlxUISprite(0, 0, src);		
 		}else {
 			var W:Int = U.xml_i(the_data.x, "width");
 			var H:Int = U.xml_i(the_data.x, "height");
@@ -1431,7 +1431,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			else if (H > bounds.max_height) { H = cast bounds.max_height;}			
 			
 			var C:Int = U.parseHex(U.xml_str(the_data.x, "color"),true);
-			fs = new FlxSpriteX(0, 0);
+			fs = new FlxUISprite(0, 0);
 			fs.makeGraphic(W, H, C);
 		}
 		
@@ -1491,8 +1491,8 @@ class FlxUI extends FlxGroupX implements IEventGetter
 						other = cast otherb;
 						otherx = other.x;		othery = other.y;
 						otherw = other.width;	otherh = other.height;
-					}else if (Std.is(otherb, FlxGroupX)) {
-						var fgx:FlxGroupX = cast otherb;
+					}else if (Std.is(otherb, FlxUIGroup)) {
+						var fgx:FlxUIGroup = cast otherb;
 						otherx = fgx.x;		othery = fgx.y;
 						otherw = fgx.width; otherh = fgx.height;
 					}else {
@@ -1937,15 +1937,15 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			
 			var the_label:FlxText=null;
 			var fb:FlxUIButton = null;
-			var cb:FlxCheckBox = null;
+			var cb:FlxUICheckBox = null;
 			
 			if (Std.is(button, FlxUIButton)) {
 				fb = cast button;
 				if (align == "" || align == null) {
 					align = "center";
 				}
-			}else if (Std.is(button, FlxCheckBox)) {
-				var cb:FlxCheckBox = cast button;
+			}else if (Std.is(button, FlxUICheckBox)) {
+				var cb:FlxUICheckBox = cast button;
 				fb = cb.button;				
 				align = "left";			//force this for check boxes
 			}

@@ -5,11 +5,6 @@
 	<assets path="assets/images" rename="flixel/flixel-ui/img" if="desktop"/>
 	<assets path="assets/images" rename="flixel/flixel-ui/img" if="mobile"/>
 	
-	<assets path="assets/fonts" rename="flixel/flixel-ui/fonts" if="flash"/>
-	<assets path="assets/fonts" rename="flixel/flixel-ui/fonts" if="html5"/>
-	<assets path="assets/fonts" rename="flixel/flixel-ui/fonts" if="desktop"/>
-	<assets path="assets/fonts" rename="flixel/flixel-ui/fonts" if="mobile"/>	
-	
 	<assets path="assets/xml" rename="flixel/flixel-ui/xml" if="flash"/>	
 	<assets path="assets/xml" rename="flixel/flixel-ui/xml" if="html5"/>	
 	<assets path="assets/xml" rename="flixel/flixel-ui/xml" if="desktop"/>	

@@ -12,12 +12,12 @@ import flixel.FlxObject;
 import flixel.util.FlxPoint;
 import flixel.util.FlxRect;
 import flixel.FlxSprite;
-import flixel.addons.ui.FlxGroupX;
+import flixel.addons.ui.FlxUIGroup;
 /**
 * ...
 * @author 
 */
-class TabGroup extends FlxGroupX
+class TabGroup extends FlxUIGroup
 {
 	private var curr_index:Int = 0;
 	private var curr_sub_index:Int = 0;
@@ -47,8 +47,8 @@ class TabGroup extends FlxGroupX
 			var o:FlxBasic = members[0];
 			
 			remove(o, true);
-			if (Std.is(o,FlxGroupX)) {
-				var fgx:FlxGroupX = cast( o , FlxGroupX);
+			if (Std.is(o,FlxUIGroup)) {
+				var fgx:FlxUIGroup = cast( o , FlxUIGroup);
 				if (fgx.str_id == "tab_temp_group") {
 					var j:Int = fgx.members.length - 1;
 					while (j >= 0) {
@@ -104,7 +104,7 @@ class TabGroup extends FlxGroupX
 		
 	public function addArray(a:Array<Dynamic>, doSort:Bool = true, asGroup:Bool = false, overTab:Bool = false) {
 		if (asGroup) {
-			var g:FlxGroupX = new FlxGroupX();
+			var g:FlxUIGroup = new FlxUIGroup();
 			//g.overTab = overTab; // TODO - ADD OVERTAB PROPERTY.
 			g.str_id = "tab_temp_group";
 			if (doSort) {
@@ -386,15 +386,15 @@ class TabGroup extends FlxGroupX
 			
 			
 			if (Std.is(a ,FlxGroup) && !isLegalMultiType(a)) {
-				if (!Std.is(a ,FlxRadioGroup)) {
+				if (!Std.is(a ,FlxUIRadioGroup)) {
 					if(cast(a, FlxGroup).members[0] != null) {
 						a = cast(a, FlxGroup).members[0];
 					}
 				}
 			}
 			
-			if (Std.is(b , FlxGroupX) && !isLegalMultiType(b)) {
-				if (!Std.is(b ,FlxRadioGroup)) {
+			if (Std.is(b , FlxUIGroup) && !isLegalMultiType(b)) {
+				if (!Std.is(b ,FlxUIRadioGroup)) {
 					if(cast(b, FlxGroup).members[0] != null){
 						b = cast(b, FlxGroup).members[0];
 					}
@@ -408,8 +408,8 @@ class TabGroup extends FlxGroupX
 			//if (Std.is(a , FlxObject))
 				//_a = cast(a, FlxObject);
 			//else
-			//if (Std.is(a, FlxGroupX))
-				//_a = cast(a, FlxGroupX);
+			//if (Std.is(a, FlxUIGroup))
+				//_a = cast(a, FlxUIGroup);
 			//else 
 			//if (Std.is(a, FlxButtonPlusX))
 				//_a = cast(a , FlxButtonPlusX);
@@ -417,8 +417,8 @@ class TabGroup extends FlxGroupX
 			//if (Std.is(b, FlxObject))
 				//_b = cast(b, FlxObject);
 			//else 
-			//if (Std.is(b, FlxGroupX))
-				//_b = cast(b, FlxGroupX);
+			//if (Std.is(b, FlxUIGroup))
+				//_b = cast(b, FlxUIGroup);
 			//else
 			//if (Std.is(b, FlxButtonPlusX))
 				//_b = cast(b, FlxButtonPlusX);

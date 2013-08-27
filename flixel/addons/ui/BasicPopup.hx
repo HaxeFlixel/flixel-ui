@@ -1,7 +1,7 @@
 package flixel.addons.ui;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.addons.ui.FlxGroupX;
+import flixel.addons.ui.FlxUIGroup;
 import flixel.addons.ui.FlxTextX;
 import flixel.addons.ui.U;
 
@@ -10,7 +10,7 @@ import flixel.addons.ui.U;
  * @author TiagoLr (~~~ ProG4mr ~~~)
  */
 
-class BasicPopUp extends FlxGroupX
+class BasicPopUp extends FlxUIGroup
 {
 	// Change these variables to modify the popup options text.
 	public var STR_YES:String;

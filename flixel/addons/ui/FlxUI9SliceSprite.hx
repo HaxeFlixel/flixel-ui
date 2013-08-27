@@ -13,7 +13,7 @@ import flixel.FlxSprite;
  * @author Lars Doucet
  */
 
-class Flx9SliceSprite extends FlxSprite implements IResizable
+class FlxUI9SliceSprite extends FlxSprite implements IResizable
 {
 	
 	private static var bitmapsCreated:Int = 0; // for debug

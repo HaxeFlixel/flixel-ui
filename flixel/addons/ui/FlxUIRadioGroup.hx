@@ -9,7 +9,7 @@ import openfl.Assets;
  * @author Lars Doucet
  */
 
-class FlxRadioGroup extends FlxGroupX
+class FlxUIRadioGroup extends FlxUIGroup
 {
 	public var clickable(get_clickable, set_clickable):Bool;
 	public var selectedId(get_selectedId, set_selectedId):String;	
@@ -25,7 +25,7 @@ class FlxRadioGroup extends FlxGroupX
 		_label_width = label_width_;
 		x = X;
 		y = Y;
-		_list_radios = new Array<FlxCheckBox>();
+		_list_radios = new Array<FlxUICheckBox>();
 		updateRadios(ids_,labels_);
 	}
 	
@@ -61,7 +61,7 @@ class FlxRadioGroup extends FlxGroupX
 	public function updateLabel(i:Int, label_:String):Bool{
 		if (i >= _list_radios.length) return false;
 		_labels[i] = label_;
-		var c:FlxCheckBox = _list_radios[i];
+		var c:FlxUICheckBox = _list_radios[i];
 		if (c != null) {
 			c.button.width = _label_width;
 			c.text = label_;
@@ -198,7 +198,7 @@ class FlxRadioGroup extends FlxGroupX
 	private var _selected:Int = 0;
 	
 	private var _clickable:Bool = true;
-	private var _list_radios:Array<FlxCheckBox>;
+	private var _list_radios:Array<FlxUICheckBox>;
 	
 	/**
 	 * Create the radio elements if necessary, and/or just refresh them
@@ -215,7 +215,7 @@ class FlxRadioGroup extends FlxGroupX
 			}else {
 				label = "<" + id + ">";	//"soft" error, indicates undefined label
 			}
-			var c:FlxCheckBox;
+			var c:FlxUICheckBox;
 			if (_list_radios.length > i) {
 				c = _list_radios[i];
 				c.visible = true;
@@ -225,10 +225,10 @@ class FlxRadioGroup extends FlxGroupX
 					yy = c.y;
 				}
 			}else {
-				c = new FlxCheckBox(0, 0, _box_asset, _dot_asset, label, _label_width, _onClick, [id]);				
+				c = new FlxUICheckBox(0, 0, _box_asset, _dot_asset, label, _label_width, _onClick, [id]);				
 				c.x = Std.int(xx);
 				c.y = Std.int(yy);
-				//c = new FlxCheckBox(Std.int(xx), Std.int(yy), _onClick, [id], label, _width, _height);
+				//c = new FlxUICheckBox(Std.int(xx), Std.int(yy), _onClick, [id], label, _width, _height);
 				
 				add(c);
 				c.text = label;

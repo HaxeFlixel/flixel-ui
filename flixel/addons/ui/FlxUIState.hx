@@ -18,14 +18,14 @@ import flixel.text.FlxText;
  * 2) Automatically creates a FlxUI objects from a single string id
  * 
  * Usage:
-	 * Create a class that extends FlxStateX, override create, and 
+	 * Create a class that extends FlxUIState, override create, and 
 	 * before you call super.create(), set _xml_id to the string id
 	 * of the corresponding UI xml file (leave off the extension).
  * 
  * @author Lars Doucet
  */
 
-class FlxStateX extends FlxState implements IEventGetter
+class FlxUIState extends FlxState implements IEventGetter
 {
 	public var destroyed:Bool;
 	private var _xml_id:String = "";	//the xml to load
@@ -49,7 +49,7 @@ class FlxStateX extends FlxState implements IEventGetter
 	
 	public override function create():Void {
 		if (_xml_id == "") {
-			throw "FlxStateX has no xml id defined!";
+			throw "FlxUIState has no xml id defined!";
 		}
 		
 		if (static_tongue != null) {

@@ -18,7 +18,7 @@ import openfl.Assets;
  * @author Lars Doucet
  */
 
-class FlxCheckBox extends FlxGroupX
+class FlxUICheckBox extends FlxUIGroup
 {
 	public var box:FlxSprite;
 	public var mark:FlxSprite;

@@ -8,7 +8,7 @@ import flixel.util.FlxTimer;
  * @author Lars Doucet
  */
 
-class FlxTabMenu extends FlxGroupX implements IEventGetter implements IResizable
+class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResizable
 {
 
 	/***Event Handling***/
@@ -80,7 +80,7 @@ class FlxTabMenu extends FlxGroupX implements IEventGetter implements IResizable
 		
 		distributeTabs();
 				
-		_tab_groups = new Array<FlxGroupX>();
+		_tab_groups = new Array<FlxUIGroup>();
 	}
 	
 	private function distributeTabs():Void {
@@ -117,7 +117,7 @@ class FlxTabMenu extends FlxGroupX implements IEventGetter implements IResizable
 		_tab_groups = null;
 	}
 
-	public function addGroup(g:FlxGroupX):Void {
+	public function addGroup(g:FlxUIGroup):Void {
 		if (g == this) {
 			return;			//DO NOT ADD A GROUP TO ITSELF
 		}
@@ -155,7 +155,7 @@ class FlxTabMenu extends FlxGroupX implements IEventGetter implements IResizable
 	
 	private var _back:FlxSprite;
 	private var _tabs:Array<FlxUIButton>;
-	private var _tab_groups:Array<FlxGroupX>;
+	private var _tab_groups:Array<FlxUIGroup>;
 	private var _stretch_tabs:Bool = false;
 	
 	private function _showOnlyGroup(id:String):Void {

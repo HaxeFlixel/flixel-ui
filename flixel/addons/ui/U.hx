@@ -576,8 +576,8 @@ class U
 			return "assets/fonts/" + str + suffix;
 		}
 	
-	public static inline function fsx(data:Dynamic):FlxSpriteX {
-		return new FlxSpriteX(0, 0, data);
+	public static inline function fsx(data:Dynamic):FlxUISprite {
+		return new FlxUISprite(0, 0, data);
 	}
 	
 	public static inline function fs(data:Dynamic):FlxSprite {

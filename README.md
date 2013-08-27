@@ -49,7 +49,13 @@ _**NOTE:** The system is not currently set up to allow for easily loading UI wid
 
 ###Graphic assets for Widgets
 
-Flixel-UI doesn't ship with any default assets yet, I'm working on that. If you want to use the default skins, make sure you get them from the [test project](https://github.com/HaxeFlixel/flixel-demos/tree/master/User%20Interface/RPG%20Interface) in [flixel-demos](https://github.com/HaxeFlixel/flixel-demos).
+#####Default Assets
+
+Flixel-UI has a default set of assets (see [FlxUIAssets](https://github.com/HaxeFlixel/flixel-ui/blob/master/flixel/addons/ui/FlxUIAssets.hx) and the [assets folder](https://github.com/HaxeFlixel/flixel-ui/tree/master/assets)) for basic skinning. If you provide incomplete data and/or definitions for your widgets, FlxUI will automatically attempt to fall back on the default assets. 
+
+#####Demo Assets
+
+If you want to use the demo assets, make sure you get them from the [demo project](https://github.com/HaxeFlixel/flixel-demos/tree/master/User%20Interface/RPG%20Interface) in [flixel-demos](https://github.com/HaxeFlixel/flixel-demos).
 
 Install Flixel-demos:
 ````
@@ -60,9 +66,13 @@ Then inside flixel-demos navigate to the _User Interface / RPG Interface /_ dire
 
 The default skins won't show up automatically - you'll have to feed them into your xml specifications like any other asset. You can follow the example in the RPG Interface demo, or keep reading here for basic documentation.
 
+#####Custom Assets
+
+If you want to provide your own assets, you should put them in your project's "assets" folder, using the same structure you see in the demo project.
+
 ##FlxUI public functions
 
-most commonly used public functions:
+Most commonly used public functions in class FlxUI:
 
 ````
 //Initiate from XML Fast object:
@@ -90,7 +100,7 @@ less commonly used public functions:
 //These implement the IEventGetter interface for lightweight events
 getEvent(id:String, sender:Dynamic, data:Dynamic):Void
 getRequest(id:String, sender:Dynamic, data:Dynamic):Dynamic
-//Both empty - to be defined by the user in extended classes
+//Both are empty - to be defined by the user in extended classes
 
 //Get, Remove, and Replace assets:
 removeAsset(key:String,destroy:Bool=true):FlxBasic

@@ -161,7 +161,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		var key:String = null;
 		
 		var arr_bmpData:Array<BitmapData> = [];		
-		var arr_flx9:Array<Flx9SliceSprite> = [];
+		var arr_flx9:Array<FlxUI9SliceSprite> = [];
 		
 		if (W == 0) {
 			W = 80;
@@ -207,7 +207,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 					
 					//Scale each 9slicesprite
 					for (i in 0...arr_bmpData.length) {
-						arr_flx9[i] = new Flx9SliceSprite(0, 0, arr_bmpData[i], _flashRect2, slice9[0],false,false,assets[0]+":"+i,resize_ratio);
+						arr_flx9[i] = new FlxUI9SliceSprite(0, 0, arr_bmpData[i], _flashRect2, slice9[0],false,false,assets[0]+":"+i,resize_ratio);
 					}
 			
 					//grab the pixel data:
@@ -243,12 +243,12 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 						slice9.push("");
 					}
 					
-					arr_flx9[0] = new Flx9SliceSprite(0, 0, assets[0],_flashRect2, slice9[0],false,false,"",resize_ratio);
+					arr_flx9[0] = new FlxUI9SliceSprite(0, 0, assets[0],_flashRect2, slice9[0],false,false,"",resize_ratio);
 					arr_bmpData[0] = arr_flx9[0].pixels;
 					
 					for (i in 1...assets.length) {
 						if (assets[i] != "") {
-							arr_flx9[i] = new Flx9SliceSprite(0, 0, assets[i], _flashRect2, slice9[i],false,false,"",resize_ratio);
+							arr_flx9[i] = new FlxUI9SliceSprite(0, 0, assets[i], _flashRect2, slice9[i],false,false,"",resize_ratio);
 							arr_bmpData[i] = arr_flx9[i].pixels;							
 						}						
 					}

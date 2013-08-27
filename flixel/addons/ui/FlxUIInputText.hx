@@ -4,7 +4,7 @@ package flixel.addons.ui;
  * @author Lars Doucet
  */
 
-class FlxInputTextX extends FlxInputText implements IResizable
+class FlxUIInputText extends FlxInputText implements IResizable
 {
 	public function new(X:Float, Y:Float, Width:Int = 200, Text:String = null, size:Int = 8, TextColor:Int = 0xFF000000, BackgroundColor:Int = 0xFFFFFFFF, EmbeddedFont:Bool = true, isStatic:Bool = false) {
 		super(X, Y, Width, Text, size, TextColor, BackgroundColor, EmbeddedFont, isStatic);
