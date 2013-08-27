@@ -157,20 +157,25 @@ class U
 	public static inline function xml_gfx(data:Xml, att:String, test:Bool=true):String {
 		var str:String = "";				
 		if (data.get(att) != null) { 
-			str = U.gfx(data.get(att)); 	
-			if (test) {
-				try{
-					var testbmp:BitmapData = Assets.getBitmapData(str);
-					if (testbmp == null) {
-						throw ("couldn't load bmp \""+att+"\"");
+			str = data.get(att); 	
+			if (str == "" || str == null) {
+				str = "";
+			}else{
+				str = U.gfx(str);
+				if (test) {
+					try{
+						var testbmp:BitmapData = Assets.getBitmapData(str);
+						if (testbmp == null) {
+							throw ("couldn't load bmp \""+att+"\"");
+						}
+						testbmp = null;					
+					}catch (msg:String) {
+						#if debug
+						trace("***ERROR*** U.xml_gfx() : " + msg);
+						#end
 					}
-					testbmp = null;					
-				}catch (msg:String) {
-					#if debug
-					trace("***ERROR*** U.xml_gfx() : " + msg);
-					#end
-				}
-			}			
+				}			
+			}
 		}
 		return str;
 	}

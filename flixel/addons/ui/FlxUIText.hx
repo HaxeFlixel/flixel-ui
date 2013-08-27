@@ -12,9 +12,8 @@ import flixel.text.FlxText;
  * @author Lars Doucet
  */
 
-class FlxTextX extends FlxText implements IResizable
+class FlxUIText extends FlxText implements IResizable
 {
-
 	public var dropShadow(get, set):Bool;	
 	private var _dropShadow:Bool = false;
 	public var bold(default, set):Bool;

@@ -5,11 +5,13 @@ import flash.geom.Rectangle;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
+import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.util.FlxRect;
 import flixel.util.FlxPoint;
 import flixel.FlxSprite;
 import flixel.util.FlxMath;
+import flixel.util.FlxTimer;
 import openfl.Assets;
 
 /**
@@ -20,7 +22,7 @@ class FlxCheckBox extends FlxGroupX
 {
 	public var box:FlxSprite;
 	public var mark:FlxSprite;
-	public var button:FlxButtonX;	
+	public var button:FlxUIButton;	
 	public var max_width:Float = -1;
 	
 	public var checked(get_checked, set_checked):Bool;	
@@ -47,14 +49,18 @@ class FlxCheckBox extends FlxGroupX
 		box = new FlxSprite();
 		if (Box == null) {
 			//if null create a simple checkbox outline
-			var bd:BitmapData = new BitmapData(16, 16, false, 0xFF000000);			
-			bd.fillRect(new Rectangle(1, 1, 14, 14), 0xFFFFFFFF);
-			box.loadGraphic(bd, true, false);
-		}else {
-			box.loadGraphic(Box, true, false);
+			Box = FlxUIAssets.IMG_CHECK_BOX;
 		}
 		
-		button = new FlxButtonX(0, 0, Label, _clickCheck);
+		box.loadGraphic(Box, true, false);
+		
+		button = new FlxUIButton(0, 0, Label, _clickCheck);
+		
+		//set default checkbox label format
+		button.label.setFormat(null, 8, 0xffffff, "left", 1, true);
+		
+		//TODO:
+		//the +2 is a magic number, possibly should be a user-set parameter
 		button.loadGraphicSlice9(["", "", ""], Std.int(box.width + 2 + LabelW), cast box.height);
 		
 		max_width = Std.int(box.width + box_space + LabelW);
@@ -64,9 +70,8 @@ class FlxCheckBox extends FlxGroupX
 				
 		mark = new FlxSprite();		
 		if (Check == null) {
-			//if null create a simple black box for the "check"
-			Check = new BitmapData(16, 16, true, 0x00000000);
-			Check.fillRect(new Rectangle(4, 4, 8, 8), 0xFF000000);
+			//if null load from default assets:
+			Check = FlxUIAssets.IMG_CHECK_MARK;
 		}		
 		
 		mark.loadGraphic(Check);				
@@ -78,8 +83,15 @@ class FlxCheckBox extends FlxGroupX
 		anchorLabelX();
 		anchorLabelY();
 		
+		//FlxTimer.start(0.001, anchorTime);
+		
 		checked = false; 		
 		button.depressOnClick = false;
+	}
+	
+	private function anchorTime(f:FlxTimer):Void {
+		trace("ANCHOR TIME");
+		anchorLabelY();
 	}
 	
 	public function get_textX():Float { return _textX;}
@@ -102,15 +114,14 @@ class FlxCheckBox extends FlxGroupX
 	
 	public function anchorLabelX():Void {
 		if (button != null) {
-			button.labelOffset.x = (box.width + box_space) + _textX;
-			//button.label.offset.x = -(box.width + box_space) - _textX;			
+			button.labelOffset.x = (box.width + box_space) + _textX;		
 		}			
 	}
 	
-	public function anchorLabelY():Void {		
+	public function anchorLabelY():Void{
 		if (button != null) {			
-			button.y = box.y + (box.height - button.label.height) / 2;	
-			button.labelOffset.y = _textY;
+			button.y = box.y + (box.height - button.height) / 2;
+			button.labelOffset.y = (button.height-button.label.textHeight())/2 + _textY;
 		}
 	}
 	
@@ -145,10 +156,10 @@ class FlxCheckBox extends FlxGroupX
 		super.update();
 		
 		if (dirty) {			
-			if (button.labelX != null) {
+			if (button.label != null) {
 				anchorLabelX();
 				anchorLabelY();
-				button.mouse_width = button.labelX.textWidth() + button.labelOffset.x;
+				button.mouse_width = button.label.textWidth() + button.labelOffset.x;
 				dirty = false;
 			}
 		}

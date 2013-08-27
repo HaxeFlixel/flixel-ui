@@ -1,66 +1,34 @@
 package flixel.addons.ui;
-import flash.events.Event;
-import flixel.FlxG;
-import flixel.FlxSprite;
-import flixel.text.FlxText;
-import flixel.ui.FlxButton;
 import flash.display.BitmapData;
+import flash.events.Event;
+import flixel.addons.ui.IResizable;
+import flixel.FlxSprite;
+import flixel.ui.FlxButton;
+import flixel.ui.FlxTypedButton;
 import flixel.util.FlxPoint;
 import openfl.Assets;
 
-class FlxButtonX extends FlxButton implements IResizable
+/**
+ * ...
+ * @author 
+ */
+class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResizable
 {
 	public var id:String; 
 	public var resize_ratio:Float = -1;
-	public var labelX(get, set):FlxTextX;
 	
-	public var up_color:Int = 0;
-	public var over_color:Int = 0;
-	public var down_color:Int = 0;
-	
-	public var up_toggle_color:Int = 0;
-	public var over_toggle_color:Int = 0;
-	public var down_toggle_color:Int = 0;
-	
+	//set these to adjust the bounding box for the sake of clickability
+	//if -1 they are ignored
 	public var mouse_width:Float = -1;
 	public var mouse_height:Float = -1;
 	
 	public var depressOnClick:Bool = true;
 	
 	public var has_toggle:Bool = false;
-	public var toggled:Bool = false;
-	
-	private var _new_color:Int = 0;
-	private var _no_graphic:Bool = false;
-	
-	//if you're doing 9-slice resizing:
-	private var _slice9_strings:Array<String>;	//the 9-slice scaling rules for the original assets
-	private var _slice9_assets:Array<String>;	//the asset id's of the original 9-slice scale assets
-	
+	public var toggled:Bool = false;	
+
 	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Dynamic) {
-		super(X, Y, null, OnClick);
-		if (Label != null) {
-			//create a FlxTextX label
-			labelOffset = new FlxPoint( -1, 3);
-			labelX = new FlxTextX(X + labelOffset.x, Y + labelOffset.y, 80, Label);
-			labelX.setFormat(null, 8, 0x333333, "center");
-		}
-	}	
-	
-	public function get_labelX():FlxTextX {
-		if (label != null && Std.is(label, FlxTextX)) {
-			return cast label;
-		}
-		return null;
-	}
-	
-	public function set_labelX(ftx:FlxTextX):FlxTextX {
-		if (label != null) {
-			label.destroy();
-			label = null;
-		}
-		label = ftx;
-		return ftx;
+		super(X, Y, Label, OnClick);
 	}
 	
 	/**For IResizable:**/
@@ -69,6 +37,9 @@ class FlxButtonX extends FlxButton implements IResizable
 	public function get_height():Float { return height; }
 	
 	public function resize(W:Float, H:Float):Void {
+		if (W == 0) { W = 80; }
+		if (H == 0) { H = 20; }
+		
 		if(_slice9_assets != null){		
 			loadGraphicSlice9(_slice9_assets, cast W, cast H, _slice9_strings);
 		}else {
@@ -82,67 +53,12 @@ class FlxButtonX extends FlxButton implements IResizable
 				loadGraphicsUpOverDown(upB);
 			}
 		}
-		label.width = W;
 	}
 		
 	public function forceCalcFrame():Void {
 		calcFrame();
 	}
-	
-	public override function update():Void {
-		super.update();
-		if (label == null) {
-			return;
-		}
-		label.alpha = 1;
-		switch (status)
-		{
-			case FlxButton.HIGHLIGHT:
-				if (!toggled) {					
-					if (_new_color != over_color) {
-						_new_color = over_color;
-					}
-				}else{
-					if (_new_color != over_toggle_color) {
-						_new_color = over_toggle_color;
-					}
-				}
-			case FlxButton.PRESSED:
-				if (frame == FlxButton.PRESSED) {
-					if (!depressOnClick) {
-						label.y--;			//undo the depress movement
-					}
-				}else {
-					if (depressOnClick) {	
-						label.y++;			//b/c FlxButton switches on frame,not status
-					}
-				}
-				if(!toggled){
-					if (_new_color != down_color) {
-						_new_color = down_color;
-					}
-				}else {
-					if (_new_color != down_toggle_color) {
-						_new_color = down_toggle_color;
-					}
-				}
-			default:
-				if(!toggled){
-					if (_new_color != up_color) {
-						_new_color = up_color;
-					}
-				}else {
-					if (_new_color != up_toggle_color) {
-						_new_color = up_toggle_color;
-					}
-				}
-		}
-		if (_new_color != 0) {
-			label.color = _new_color;
-			_new_color = 0;
-		}		
-	}
-	
+		
 	/**
 	 * Provide a list of assets, load states from each one
 	 * @param	assets
@@ -184,8 +100,7 @@ class FlxButtonX extends FlxButton implements IResizable
 		
 		if (for_toggle) {
 			has_toggle = true;	//this makes it assume it's 6 images tall
-		}
-		
+		}		
 		
 		var upB:BitmapData = null;
 		var overB:BitmapData = null;
@@ -247,7 +162,25 @@ class FlxButtonX extends FlxButton implements IResizable
 		
 		var arr_bmpData:Array<BitmapData> = [];		
 		var arr_flx9:Array<Flx9SliceSprite> = [];
-				
+		
+		if (W == 0) {
+			W = 80;
+		}
+		if (H == 0) {
+			H = 20;
+		}
+		
+		if (assets == null) {
+			//default asset
+			if(!isToggle){
+				assets = [FlxUIAssets.IMG_BUTTON];
+				slice9 = [FlxUIAssets.SLICE9_BUTTON];
+			}else {
+				assets = [FlxUIAssets.IMG_BUTTON_TOGGLE];
+				slice9 = [FlxUIAssets.SLICE9_BUTTON_TOGGLE];
+			}
+		}
+		
 		if (!has_toggle && assets.length <= 3) {
 			//3 states - assume normal button
 			arr_bmpData = [null, null, null];
@@ -338,6 +271,8 @@ class FlxButtonX extends FlxButton implements IResizable
 					H = arr_bmpData[0].height;
 				}
 			}else {
+				if (W == 0) { W = 80; }
+				if (H == 0) { H = 20; }
 				arr_bmpData[0] = new BitmapData(W, H * 3, true, 0x00000000);
 				key = "Blank_" + W + "x" + (H * 3);
 				_no_graphic = true;
@@ -352,10 +287,6 @@ class FlxButtonX extends FlxButton implements IResizable
  			var togglePixels:BitmapData = assembleButtonFrames(arr_bmpData[3], arr_bmpData[4], arr_bmpData[5]);
 			var combinedPixels:BitmapData = combineToggleBitmaps(normalPixels, togglePixels);
 						
-			/*if (assets.length == 6) {
-				FlxG.bmpLog.add(combinedPixels);
-			}*/
-			
 			//cleanup
 			normalPixels.dispose(); normalPixels = null;
 			togglePixels.dispose(); togglePixels = null;
@@ -402,6 +333,13 @@ class FlxButtonX extends FlxButton implements IResizable
 		pixels.copyPixels(all_frames, _flashRect, _flashPointZero);
 		return pixels;
 	}
+	
+	/**
+	 * Combines two stacked button images for a toggle button
+	 * @param	normal
+	 * @param	toggle
+	 * @return
+	 */
 	
 	public function combineToggleBitmaps(normal:BitmapData,toggle:BitmapData):BitmapData {
 		var combined:BitmapData = new BitmapData(normal.width, normal.height + toggle.height);
@@ -450,6 +388,14 @@ class FlxButtonX extends FlxButton implements IResizable
 		
 		return pixels;
 	}
+	
+	/**
+	 * Overriden to allow the user to manually specify where the clickable regions are
+	 * @param	point
+	 * @param	InScreenSpace
+	 * @param	?Camera
+	 * @return
+	 */
 	
 	override public function overlapsPoint(point:FlxPoint, InScreenSpace:Bool = false, ?Camera:FlxCamera):Bool
 	{
@@ -505,7 +451,14 @@ class FlxButtonX extends FlxButton implements IResizable
 			frame = status;
 		}
 	}
-		
+
+	/*********PRIVATE************/
+	
+	private var _no_graphic:Bool = false;
+	
+	//if you're doing 9-slice resizing:
+	private var _slice9_strings:Array<String>;	//the 9-slice scaling rules for the original assets
+	private var _slice9_assets:Array<String>;	//the asset id's of the original 9-slice scale assets
 	
 	private override function onMouseUp(event:Event):Void
 	{
@@ -515,5 +468,4 @@ class FlxButtonX extends FlxButton implements IResizable
 		toggled = !toggled;
 		super.onMouseUp(event);
 	}
-
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<data>
+	
+	<definition id="sans10" font="vera" size="10" style="bold" color="0xffffff" shadow="1" align="left"/>
+	<definition id="sans12" font="vera" size="12" style="bold" color="0xffffff" shadow="1" align="left"/>
+	<definition id="sans16" font="vera" size="16" style="bold" color="0xffffff" shadow="1" align="left"/>
+		
+</data>

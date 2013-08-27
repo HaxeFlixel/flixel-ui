@@ -44,7 +44,7 @@ class Flx9SliceSprite extends FlxSprite implements IResizable
 	 * @param   ratio	Resize ratio to force, if desired (W/H)
 	 */
 	
-	public function new(X:Float, Y:Float, Graphic:Dynamic, rc:Rectangle, slice9:String="", tile:Bool=false, smooth:Bool=false, id:String="",ratio:Float=-1) 
+	public function new(X:Float, Y:Float, Graphic:Dynamic, Rect:Rectangle, slice9:String="", tile:Bool=false, smooth:Bool=false, id:String="",ratio:Float=-1) 
 	{
 		super(X, Y, null);
 		
@@ -53,6 +53,10 @@ class Flx9SliceSprite extends FlxSprite implements IResizable
 		_smooth = smooth;
 				
 		_asset_id = "";
+		
+		if (Graphic == null) {
+			Graphic = FlxUIAssets.IMG_CHROME;
+		}
 		
 		if(Std.is(Graphic,String)){
 			_asset_id = Graphic;
@@ -64,7 +68,7 @@ class Flx9SliceSprite extends FlxSprite implements IResizable
 		
 		_resize_ratio = ratio;
 				
-		resize(rc.width, rc.height);
+		resize(Rect.width, Rect.height);
 	}
 	
 	public var resize_ratio(get, set):Float;

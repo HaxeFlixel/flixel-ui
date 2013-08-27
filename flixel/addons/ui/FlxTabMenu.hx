@@ -50,8 +50,8 @@ class FlxTabMenu extends FlxGroupX implements IEventGetter implements IResizable
 		distributeTabs();
 	}
 	
-	private inline function getFirstTab():FlxButtonX{
-		var _the_tab:FlxButtonX = null;
+	private inline function getFirstTab():FlxUIButton{
+		var _the_tab:FlxUIButton = null;
 		if(_tabs != null && _tabs.length > 0){
 			_the_tab = _tabs[0];
 		}
@@ -60,7 +60,7 @@ class FlxTabMenu extends FlxGroupX implements IEventGetter implements IResizable
 	
 	/***PUBLIC***/
 	
-	public function new(back_:FlxSprite,tabs_:Array<FlxButtonX>,stretch_tabs:Bool=false) 
+	public function new(back_:FlxSprite,tabs_:Array<FlxUIButton>,stretch_tabs:Bool=false) 
 	{
 		super();		
 		_back = back_;
@@ -132,7 +132,7 @@ class FlxTabMenu extends FlxGroupX implements IEventGetter implements IResizable
 	
 	public function showTabInt(i:Int):Void {
 		if(_tabs != null && _tabs.length > i){
-			var _tab:FlxButtonX = _tabs[i];
+			var _tab:FlxUIButton = _tabs[i];
 			var id:String = _tab.id;
 			onClickTab(id);
 		}
@@ -154,7 +154,7 @@ class FlxTabMenu extends FlxGroupX implements IEventGetter implements IResizable
 	/***PRIVATE***/
 	
 	private var _back:FlxSprite;
-	private var _tabs:Array<FlxButtonX>;
+	private var _tabs:Array<FlxUIButton>;
 	private var _tab_groups:Array<FlxGroupX>;
 	private var _stretch_tabs:Bool = false;
 	

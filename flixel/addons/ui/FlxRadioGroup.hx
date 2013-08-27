@@ -30,11 +30,20 @@ class FlxRadioGroup extends FlxGroupX
 	}
 	
 	public function loadGraphics(Box:Dynamic,Dot:Dynamic):Void {
-		_box_asset = Box;
-		_dot_asset = Dot;		
+		if(Box != null){
+			_box_asset = Box;
+		}else {
+			_box_asset = FlxUIAssets.IMG_RADIO;
+		}
+		if(Dot != null){
+			_dot_asset = Dot;
+		}else {
+			_dot_asset = FlxUIAssets.IMG_RADIO_DOT;
+		}
+		
 		for (c in _list_radios) {			
-			c.box.loadGraphic(Box, true, false);
-			c.mark.loadGraphic(Dot);
+			c.box.loadGraphic(_box_asset, true, false);
+			c.mark.loadGraphic(_dot_asset);
 		}	
 		_refreshRadios();
 	}

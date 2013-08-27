@@ -58,6 +58,8 @@ class FlxUI extends FlxGroupX implements IEventGetter
 	private static var _flashPoint:Point;
 	private static var _flashPointZero:Point;
 	
+	private static var _assets_init:Bool = false;
+	
 	/**Make sure to recursively propogate the tongue pointer 
 	 * down to all my members
 	 */
@@ -88,6 +90,11 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		
 	public function new(data:Fast=null,ptr:IEventGetter=null,superIndex_:FlxUI=null,tongue_:IFireTongue=null) 
 	{
+		if (_assets_init == false) {
+			FlxUIAssets.init();
+			_assets_init = true;
+		}
+		
 		//to help with drawing
 		if(_flashRect == null){
 			_flashRect = new Rectangle();
@@ -243,6 +250,25 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		if (data != null) {
 			
 			_data = data;
+			
+			//See if there's anything to include
+			if (data.hasNode.include) {
+				for (inc_data in data.nodes.include) {
+					var inc_id:String = inc_data.att.id;
+					var inc_xml:Fast = U.xml(inc_id);
+					if(inc_xml != null){
+						for (def_data in inc_xml.nodes.definition) {
+							//add a prefix to avoid collisions:
+							var def_id:String = "include:"+def_data.att.id;
+							_definition_index.set(def_id, def_data);
+							
+							//DON'T recursively search for further includes. 
+							//Search 1 level deep only!
+							//Ignore everything else in the include file
+						}
+					}
+				}
+			}
 			
 			//First, load all our definitions
 			if (data.hasNode.definition) {
@@ -448,7 +474,14 @@ class FlxUI extends FlxGroupX implements IEventGetter
 	public function getDefinition(key:String,recursive:Bool=true):Fast{
 		var definition:Fast = _definition_index.get(key);
 		if (definition == null && recursive && _superIndexUI != null) {
-			return _superIndexUI.getDefinition(key, recursive);
+			definition = _superIndexUI.getDefinition(key, recursive);			
+		}
+		if (definition == null) {	//still null? check the globals:
+			if (key.indexOf("include:") == -1) {	
+				//check if this definition exists with the prefix "include:"
+				//but stop short of recursively churning on "include:include:etc"
+				definition = getDefinition("include:" + key, recursive);
+			}
 		}
 		return definition;
 	}
@@ -937,14 +970,14 @@ class FlxUI extends FlxGroupX implements IEventGetter
 				
 		var ft:FlxText;
 		if(input == false){
-			var ftx:FlxTextX = new FlxTextX(0, 0, W, text);
-			ftx.setFormat(the_font, size, color, align, shadow);
-			ftx.dropShadow = drop_shadow;
-			ftx.forceCalcFrame();
-			ft = ftx;
+			var ftu:FlxUIText = new FlxUIText(0, 0, W, text);
+			ftu.setFormat(the_font, size, color, align, shadow,shadow!=0);
+			ftu.dropShadow = drop_shadow;
+			ftu.forceCalcFrame();
+			ft = ftu;
 		}else {
 			var fti:FlxInputTextX = new FlxInputTextX(0, 0, W, text);
-			fti.setFormat(the_font, size, color, align, shadow);			
+			fti.setFormat(the_font, size, color, align, shadow,shadow!=0);			
 			fti.forceCalcFrame();
 			ft = fti;
 		}		
@@ -983,15 +1016,18 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		
 		var params:Array<Dynamic> = getParams(data);
 		
-		var radio_asset:String = U.gfx(radio_src);		
+		var radio_asset:String = null;
+		if (radio_src != "") {
+			radio_asset = U.gfx(radio_src);		
+		}
 			
 		var dot_asset:Dynamic=null;
 		if (dot_src != "") {
 			dot_asset = U.gfx(dot_src);
-		}else {
-			dot_asset = new FlxSprite(0, 0);
-			dot_asset.makeGraphic(4, 4, 0x000000); //4x4 black square by default
 		}
+		
+		//if radio_src or dot_src are == "", then leave radio_asset/dot_asset == null, 
+		//and FlxRadioGroup will default to defaults defined in FlxUIAssets 
 		
 		frg = new FlxRadioGroup(0, 0, ids, labels, _onClickRadioGroup, y_space, W, H, labelW);
 						
@@ -1028,9 +1064,6 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var context:String = U.xml_str(data.x, "context", true, "ui");
 		label = getText(label,context);
 			
-		//var W:Int = U.xml_i(default_data.x, "box_width", 16);
-		//var H:Int = U.xml_i(default_data.x, "box_height", 16);
-		
 		var labelW:Int = U.xml_i(default_data.x, "label_width", 100);
 		
 		var check_src:String = U.xml_str(default_data.x, "check_src", true);
@@ -1038,8 +1071,15 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		
 		var params:Array<Dynamic> = getParams(data);
 				
-		var box_asset:String = U.gfx(box_src);		
-		var check_asset:String = U.gfx(check_src);		
+		var box_asset:String = null; 
+		var check_asset:String = null;  
+		
+		if(box_src != ""){
+			box_asset = U.gfx(box_src);		
+		}
+		if(check_src != ""){
+			check_src = U.gfx(check_src);		
+		}
 		
 		fc = new FlxCheckBox(0, 0, box_asset, check_asset, label, labelW, _onClickCheckBox, params);
 		formatButtonText(default_data, fc);
@@ -1076,7 +1116,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			back_def = default_data;
 		}
 		
-		var back:Flx9SliceSprite = _load9SliceSprite(data, back_def);
+		var back:Flx9SliceSprite = _load9SliceSprite(data, back_def, "tab_menu");
 		
 		var tab_def:Fast = null;
 		
@@ -1091,12 +1131,11 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			}
 		}
 		
-		var list_tabs:Array<FlxButtonX> = new Array<FlxButtonX>();
+		var list_tabs:Array<FlxUIButton> = new Array<FlxUIButton>();
 		
 		var id:String = "";
 		
-		if (data.hasNode.tab) {
-			
+		if (data.hasNode.tab) {			
 			for (tab_node in data.nodes.tab) {
 				id = U.xml_str(tab_node.x, "id", true);
 				var label:String = U.xml_str(tab_node.x, "label");
@@ -1106,10 +1145,38 @@ class FlxUI extends FlxGroupX implements IEventGetter
 				var context:String = U.xml_str(tab_node.x, "context", true, "ui");
 				label = getText(label,context);
 		
-				var tab:FlxButtonX = _loadButton(tab_node, tab_def, true, true);				
+				var tab:FlxUIButton = _loadButton(tab_node, tab_def, true, true, "tab_menu");				
 				tab.id = id;
 				list_tabs.push(tab);
 			}			
+		}
+		
+		if (list_tabs.length > 0) {
+			if (tab_def == null || !tab_def.hasNode.text) {
+				for (t in list_tabs) {
+					t.label.color = 0xFFFFFF;
+					t.label.shadow = 0;
+					t.label.useShadow = true;
+				}
+			}
+			
+			if (tab_def == null || !tab_def.has.width) {	//no tab definition!
+				var W:Float = cast Std.int(back.width / list_tabs.length);	//calculate width
+				if (W*list_tabs.length < back.width) {						//if rounding error
+					var diff:Int = cast (back.width - (W * list_tabs.length));	//distribute extra among first few buttons
+					for (i in 0...list_tabs.length-1) {
+						var Wi:Float = W;
+						if (i < diff) {
+							Wi++;
+						}
+						list_tabs[i].resize(Wi, list_tabs[i].height);
+					}
+				}else {
+					for (t in list_tabs) {
+						t.resize(W, t.height);
+					}
+				}
+			}
 		}
 		
 		var fg:FlxTabMenu = new FlxTabMenu(back,list_tabs,stretch_tabs);		
@@ -1128,9 +1195,9 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		return fg;
 	}
 			
-	private function _loadButton(data:Fast, definition:Fast = null, setCallback:Bool = true, isToggle:Bool = false):FlxButtonX {
+	private function _loadButton(data:Fast, definition:Fast = null, setCallback:Bool = true, isToggle:Bool = false, load_code:String=""):FlxUIButton {
 		var src:String = ""; 
-		var fb:FlxButtonX = null;
+		var fb:FlxUIButton = null;
 				
 		var default_data:Fast = data;
 		if (definition != null) { default_data = definition;}
@@ -1147,7 +1214,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 				
 		var params:Array<Dynamic> = getParams(data);
 		
-		fb = new FlxButtonX(0, 0, label);			
+		fb = new FlxUIButton(0, 0, label);			
 		fb.resize_ratio = resize_ratio;
 		
 		if (setCallback) {
@@ -1157,88 +1224,103 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		/***Begin graphics loading block***/
 		
 		if (default_data.hasNode.graphic) {
-			var graphic_ids:Array<String>;
-			var slice9_ids:Array<String>;
 			
-			if (isToggle) {
-				graphic_ids = ["", "", "", "", "", ""];
-				slice9_ids= ["", "", "", "", "", ""];
-			}else {				
-				graphic_ids = ["", "", ""];
-				slice9_ids = ["", "", ""];
-			}
+			var blank:Bool = U.xml_bool(default_data.node.graphic.x, "blank");
 			
-			for (graphicNode in default_data.nodes.graphic) {
-				var graphic_id:String = U.xml_str(graphicNode.x, "id", true);
-				var image:String = U.xml_str(graphicNode.x, "image");
-				var slice9:String = U.xml_str(graphicNode.x, "slice9");
-				var toggleState:Bool = U.xml_bool(graphicNode.x, "toggle");
-				toggleState = toggleState && isToggle;
+			if (blank) {
+				//load blank
+				fb.loadGraphicSlice9(["","",""], W, H);
+			}else{
+			
+				var graphic_ids:Array<String>;
+				var slice9_ids:Array<String>;
 				
-				switch(graphic_id) {
-					case "inactive", "", "normal", "up": 
-						if (image != "") { 
-							if(!toggleState){
-								graphic_ids[0] = U.gfx(image); 
-							}else {
-								graphic_ids[3] = U.gfx(image);
-							}
-						}
-						slice9_ids[0] = slice9;
-					case "active", "highlight", "hilight", "over", "hover": 
-						if (image != "") { 
-							if(!toggleState){
-								graphic_ids[1] = U.gfx(image); 
-							}else {
-								graphic_ids[4] = U.gfx(image);
-							}
-						}
-						slice9_ids[1] = slice9;
-					case "down", "pressed", "pushed":
-						if (image != "") { 
-							if(!toggleState){
-								graphic_ids[2] = U.gfx(image); 
-							}else {
-								graphic_ids[5] = U.gfx(image);
-							}
-						}
-						slice9_ids[2] = slice9;
-					case "all":
-						if (image != "") { 
-							graphic_ids = [U.gfx(image)]; 							
-						}
-						slice9_ids = [slice9];
+				if (isToggle) {
+					graphic_ids = ["", "", "", "", "", ""];
+					slice9_ids= ["", "", "", "", "", ""];
+				}else {				
+					graphic_ids = ["", "", ""];
+					slice9_ids = ["", "", ""];
 				}
-
-				if (graphic_ids[0] != "") {
-					if (graphic_ids.length >= 3) {
-						if (graphic_ids[1] == "") {		//"over" is undefined, grab "up"
-							graphic_ids[1] = graphic_ids[0];
-						}
-						if (graphic_ids[2] == "") {		//"down" is undefined, grab "over"
-							graphic_ids[2] = graphic_ids[1];
-						}
-						if (graphic_ids.length >= 6) {	//toggle states
-							if (graphic_ids[3] == "") {	//"up" undefined, grab "up" (untoggled)
-								graphic_ids[3] = graphic_ids[0];
+				
+				for (graphicNode in default_data.nodes.graphic) {
+					var graphic_id:String = U.xml_str(graphicNode.x, "id", true);
+					var image:String = U.xml_str(graphicNode.x, "image");
+					var slice9:String = U.xml_str(graphicNode.x, "slice9");
+					var toggleState:Bool = U.xml_bool(graphicNode.x, "toggle");
+					toggleState = toggleState && isToggle;
+					
+					switch(graphic_id) {
+						case "inactive", "", "normal", "up": 
+							if (image != "") { 
+								if(!toggleState){
+									graphic_ids[0] = U.gfx(image); 
+								}else {
+									graphic_ids[3] = U.gfx(image);
+								}
 							}
-							if (graphic_ids[4] == "") {	//"over" grabs "over"
-								graphic_ids[4] = graphic_ids[1];
+							slice9_ids[0] = slice9;
+						case "active", "highlight", "hilight", "over", "hover": 
+							if (image != "") { 
+								if(!toggleState){
+									graphic_ids[1] = U.gfx(image); 
+								}else {
+									graphic_ids[4] = U.gfx(image);
+								}
 							}
-							if (graphic_ids[5] == "") {	//"down" grabs "down"
-								graphic_ids[5] = graphic_ids[2];
+							slice9_ids[1] = slice9;
+						case "down", "pressed", "pushed":
+							if (image != "") { 
+								if(!toggleState){
+									graphic_ids[2] = U.gfx(image); 
+								}else {
+									graphic_ids[5] = U.gfx(image);
+								}
+							}
+							slice9_ids[2] = slice9;
+						case "all":
+							if (image != "") { 
+								graphic_ids = [U.gfx(image)]; 							
+							}
+							slice9_ids = [slice9];
+					}
+	
+					if (graphic_ids[0] != "") {
+						if (graphic_ids.length >= 3) {
+							if (graphic_ids[1] == "") {		//"over" is undefined, grab "up"
+								graphic_ids[1] = graphic_ids[0];
+							}
+							if (graphic_ids[2] == "") {		//"down" is undefined, grab "over"
+								graphic_ids[2] = graphic_ids[1];
+							}
+							if (graphic_ids.length >= 6) {	//toggle states
+								if (graphic_ids[3] == "") {	//"up" undefined, grab "up" (untoggled)
+									graphic_ids[3] = graphic_ids[0];
+								}
+								if (graphic_ids[4] == "") {	//"over" grabs "over"
+									graphic_ids[4] = graphic_ids[1];
+								}
+								if (graphic_ids[5] == "") {	//"down" grabs "down"
+									graphic_ids[5] = graphic_ids[2];
+								}
 							}
 						}
 					}
 				}
+				
+				//load 9-slice
+				fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, -1, isToggle);
 			}
-			
-			//load 9-slice
-			fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, -1, isToggle);
-			
-		}else {
-			//load blank
-			fb.loadGraphicSlice9(["","",""], W, H);
+		}else {			
+			if(load_code == "tab_menu"){
+				//load default tab menu graphics
+				var graphic_ids:Array<String> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
+				var slice9_ids:Array<String> = [FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB];
+				fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, -1, isToggle);
+			}else{
+				//load default graphics			
+				fb.loadGraphicSlice9(null, W, H, null, -1, isToggle);
+			}
 		}		
 		
 		/***End graphics loading block***/
@@ -1276,7 +1358,7 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		return b2;
 	}
 	
-	private function _load9SliceSprite(data:Fast,definition:Fast=null):Flx9SliceSprite{
+	private function _load9SliceSprite(data:Fast,definition:Fast=null,load_code:String=""):Flx9SliceSprite{
 		var src:String = ""; 
 		var f9s:Flx9SliceSprite = null;
 				
@@ -1287,11 +1369,17 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		
 		var bounds: { min_width:Float, min_height:Float, 
 			          max_width:Float, max_height:Float } = calcMaxMinSize(data);				
-		
+							  
 		src = U.xml_gfx(the_data.x, "src");
-				
+		if (src == "") { src = null; }
+		
+		if(src == null){
+			if (load_code == "tab_menu") {
+				src = FlxUIAssets.IMG_CHROME_FLAT;
+			}
+		}
+		
 		var rc:Rectangle;
-		var slice9:String = "";
 		var rect_w:Int = U.xml_i(data.x, "width");
 		var rect_h:Int = U.xml_i(data.x, "height");
 		
@@ -1309,13 +1397,11 @@ class FlxUI extends FlxGroupX implements IEventGetter
 		var slice9:String = U.xml_str(the_data.x, "slice9");
 		var tile:Bool = U.xml_bool(the_data.x, "tile", false);
 		var smooth:Bool = U.xml_bool(the_data.x, "smooth", false);
-		
-		if (src != "") {
-			if (slice9 != "") {
-				f9s = new Flx9SliceSprite(0, 0, src, rc, slice9, tile, smooth,"",resize_ratio);
-			}else {
-				f9s = new Flx9SliceSprite(0, 0, src, rc,"",tile, smooth,"",resize_ratio);
-			}
+				
+		if (slice9 != "") {
+			f9s = new Flx9SliceSprite(0, 0, src, rc, slice9, tile, smooth,"",resize_ratio);
+		}else {
+			f9s = new Flx9SliceSprite(0, 0, src, rc,"",tile, smooth,"",resize_ratio);
 		}
 		
 		return f9s;
@@ -1850,11 +1936,14 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			var align:String = U.xml_str(text_data.x, "align", true); if (align == "") { align = null;}
 			
 			var the_label:FlxText=null;
-			var fb:FlxButtonX = null;
+			var fb:FlxUIButton = null;
 			var cb:FlxCheckBox = null;
 			
-			if (Std.is(button, FlxButtonX)) {
+			if (Std.is(button, FlxUIButton)) {
 				fb = cast button;
+				if (align == "" || align == null) {
+					align = "center";
+				}
 			}else if (Std.is(button, FlxCheckBox)) {
 				var cb:FlxCheckBox = cast button;
 				fb = cb.button;				
@@ -1867,13 +1956,13 @@ class FlxUI extends FlxGroupX implements IEventGetter
 			fb.over_color = 0;				
 			
 			if (the_label != null) {
-				the_label.setFormat(the_font, size, color, align, shadow);
+				the_label.setFormat(the_font, size, color, align, shadow,shadow!=0);
 				
 				//TODO: text.dropShadow = true;		
 				
-				if (Std.is(the_label, FlxTextX)) {
-					var ftx:FlxTextX = cast the_label;
-					ftx.forceCalcFrame();
+				if (Std.is(the_label, FlxUIText)) {
+					var ftu:FlxUIText = cast the_label;
+					ftu.forceCalcFrame();
 				}
 			}	
 			
