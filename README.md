@@ -83,7 +83,7 @@ load(data:Fast):Void
 getAsset(key:String,recursive:Bool=true):FlxBasic
 
 //Get some group:
-getGroup(key:String,recursive:Bool=true):FlxGroupX
+getGroup(key:String,recursive:Bool=true):FlxUIGroup
 
 //Get a text object:
 getFlxText(key:String,recursive:Bool=true):FlxText
@@ -136,7 +136,7 @@ As you can see, all image source entries assume two things:
 ###Types of tags
 There are several basic types of xml tags in a Flixel-UI layout file.
 
-**Widget**, **\<definition>**, **\<group>**, **\<align>**, **\<layout>**, **\<failure>**, and **\<mode>**.
+**Widget**, **\<definition>**, **\<include>**, **\<group>**, **\<align>**, **\<layout>**, **\<failure>**, and **\<mode>**.
 
 Let's go over these one by one.
 
@@ -179,25 +179,38 @@ This lets you offload a lot of re-usable details into a separate tag with a uniq
 
 If you provide details in the widget tag and also use a definition, it will override *some* of the information in the definition... I still need to stabilize how this works. Look at the RPG Interface demo for more details.
 
-####3. \<group>
-Creates a FlxGroup that you can assign widgets to. Note that you do NOT add things to a group by making widget tags as child xml nodes to the \<group\> tag, but by setting the "group" attribute in a widget tag to the group's id.
+####3.\<include>
+Include tags let you reference definitions stored in another xml file. This is a convenience feature to cut down on file bloat, and aid organization:
+
+This invocation will include all the definitions found in "some_other_file.xml":
+````
+<include id="some_other_file"/>
+````
+
+*Only* definition tags will be included. It also adds a bit of scoping to your project - in the case that an included definition has the same id as one defined locally, the local definition will be used. Only in the case that FlxUI can't find your definition locally will it check for included ones. 
+
+This recursion is only one level deep. If you put \<include> tags in your included file, they'll be ignored. 
+
+
+####4. \<group>
+Creates a FlxGroup (specifically a FlxUIGroup) that you can assign widgets to. Note that you do NOT add things to a group by making widget tags as child xml nodes to the \<group\> tag, but by setting the "group" attribute in a widget tag to the group's id.
 
 Groups are stacked in the order you define them, with those at the top of the file created first, and thus stacked "underneath" those that come later. 
 
 A group tag takes one attribute - id. Just define your groups somewhere in the order you want them to stack, then add widgets to them by setting the group attribute to the ids you want.
 
-####4. \<align>
+####5. \<align>
 Dynamically aligns, centers, and/or spaces objects relative to one another. 
 This is complex enough to deserve its own section below.
 
-####5. \<layout>
+####6. \<layout>
 Creates a child FlxUI object inside your master FlxUI, and childs all the widgets inside to it. This is especially useful if you want to create multiple layouts for, say, different devices and screen sizes. Combined with **failure** tags, this will let you automatically calculate the best layout depending on screen size.
 
 A layout has only one attribute, id, and then its child nodes. Think of a \<layout> as its own sub-section of your xml file. It can have its own versions of anything you can put in the regular file since it is a full-fledged FlxUI - ie, definitions, groups, widgets, modes, presumably even other layout tags (haven't tested this). 
 
 Note that in a layout, scope comes into play when referencing ids. Definitions and object references will first look in the scope of the layout (ie, that FlxUI object), and if none is found, will try to find them in the parent FlxUI. 
 
-####6. \<failure>
+####7. \<failure>
 Specifies "failure" conditions for a certain layout, so FlxUI can determine which of multiple layouts to choose from in the event that one works better than another. Useful for simultaneously targeting, say, PC's with variable resolutions and mobile devices.
 
 Here's an example:
@@ -222,7 +235,7 @@ Sometimes multiple layouts have "failed" according to your rules, and you want t
 
 To *respond* to failure conditions, you need to write your own code. In the RPG Interface demo, there are two battle layouts, one that is more appropriate for 4:3 resolutions, and another that works better in 16:9. The custom FlxStateX for that state will check failure conditions on load, and set the mode depending on which layout works best. Speaking of modes...
 
-####7. \<mode>
+####8. \<mode>
 Specifies UI "modes" that you can switch between. Basically just a glorified way of quickly hiding and showing specific assets. For instance, in Defender's Quest we had four states for our save slots - empty, play, new_game+ (New Game+ eligible), and play+ (New Game+ started). This would determine what buttons were visible ("New Game", "Play", "Play+", "Import", "Export"). 
 
 The "empty" and "play" modes might look like this:
@@ -266,19 +279,19 @@ The only tags available in a **\<mode>** element are \<hide> and \<show>, which 
 
 ##List of Widgets
 
-* **Image, vanilla** (FlxSpriteX) - \<sprite>
-* **9-slice sprite/chrome** (Flx9SliceSprite) - \<9slicesprite> or \<chrome>
-* **Button, vanilla** (FlxButtonX) - \<button>
-* **Button, toggle** (FlxButtonX) - \<button_toggle>
-* **Check box** (FlxCheckBox) - \<checkbox>
-* **Text, vanilla** (FlxTextX) - \<text>
-* **Text, input** (FlxInputText) - \<text>
-* **Radio button group** (FlxRadioGroup) - \<radio_group>
-* **Tabbed menu** (FlxTabMenu) - \<tab_menu>
+* **Image, vanilla** (FlxUISprite) - \<sprite>
+* **9-slice sprite/chrome** (FlxUI9SliceSprite) - \<9slicesprite> or \<chrome>
+* **Button, vanilla** (FlxUIButton) - \<button>
+* **Button, toggle** (FlxUIButton) - \<button_toggle>
+* **Check box** (FlxUICheckBox) - \<checkbox>
+* **Text, vanilla** (FlxUIText) - \<text>
+* **Text, input** (FlxUIInputText) - \<text>
+* **Radio button group** (FlxUIRadioGroup) - \<radio_group>
+* **Tabbed menu** (FlxUITabMenu) - \<tab_menu>
 
 Lets go over these one by one.
 
-###1. Image (FlxSpriteX)
+###1. Image (FlxUISprite)
 
 **\<sprite>**
 
@@ -290,7 +303,7 @@ Attributes:
 * use_def (definition id)
 * group (group id)
 
-###2. 9-slice sprite/chrome (Flx9SliceSprite)
+###2. 9-slice sprite/chrome (FlxUI9SliceSprite)
 
 **\<9slicesprite> or \<chrome>**
 
@@ -303,7 +316,7 @@ Attributes:
 * slice9 - string, two points that define the slice9 grid, format "x1,y1,x2,y2". For example, "6,6,12,12" works well for the 12x12 chrome images in the demo project.
 * tile - bool, optional (assumes false if not exist). If true, uses tiling rather than scaling for stretching 9-slice cells. Boolean true == "true", not "True" or "TRUE", or "T".
 
-###3. Button (FlxButtonX)
+###3. Button (FlxUIButton)
 **\<button>**
 
 Just a regular clicky button, optionally with a label.
@@ -344,7 +357,7 @@ This, in turn, will call getEvent() on whatever IEventGetter "owns" this FlxUI o
 ````
 getEvent(id:String,sender:Dynamic,data:Dynamic):Void
 ````
-The "sender" parameter will always be this FlxUI instance. On a FlxButton click, the other parameters will be:
+The "sender" parameter will always be this FlxUI instance. On a FlxUIButton click, the other parameters will be:
 
 * **event id**: "click_button"
 * **data**: an **Array\<Dynamic>** containing all the parameters you've defined.
@@ -353,7 +366,7 @@ Some other interactive widgets can take parameters, and they work in basically t
 
 #####3.2 Button Graphics
 
-Graphics for buttons can be kinda complex. You can put in multiple graphic tags, one for each button state you want to specify, or just one with the id "all" that combines all the states into one vertically stacked image, and asks the FlxButton to sort the individual frames out itself.
+Graphics for buttons can be kinda complex. You can put in multiple graphic tags, one for each button state you want to specify, or just one with the id "all" that combines all the states into one vertically stacked image, and asks the FlxUIButton to sort the individual frames out itself.
 
 The system can sometimes infer what the frame size should be based on the image and width/height are not set, but it helps to be explicit with width/height if they are statically sized and you're not using 9-slice scaling.
 
@@ -400,10 +413,10 @@ If you want to specify colors for other states, you add \<color> tags inside the
 ````
 
 
-###4. Button, Toggle (FlxButtonX)
+###4. Button, Toggle (FlxUIButton) 
 **\<button_toggle>**
 
-Toggle buttons are made from the same class as regular buttons, FlxButtonX.
+Toggle buttons are made from the same class as regular buttons, FlxUIButton.
 
 Toggle buttons are different in that they have 6 states, 3 for up/over/down when toggled, and 3 for up/over/down when not toggled. By default, a freshly loaded toggle button's "toggle" value is false.
 
@@ -440,10 +453,10 @@ Of course, if you create a single asset with 6 images stacked vertically, you ca
 
 Note that you can create a vertical stack of 9-slice assets, or regular statically-sized assets, the system can use either one. 
 
-###5. Check box (FlxCheckBox)
+###5. Check box (FlxUICheckBox)
 **\<checkbox>**
 
-A Check Box is a FlxGroup which contains three objects: a "box" image, a "check" image, and a label.
+A Check Box is a FlxUIGroup which contains three objects: a "box" image, a "check" image, and a label.
 
 Attributes:
 * x/y, use_def, group
@@ -460,7 +473,7 @@ Event:
 * id - "click_checkbox"
 * params - as defined by user, but with this at the end: "checked:true" or "checked:false"
 
-###6. Text (FlxTextX)
+###6. Text (FlxUIText)
 **\<text>**
 
 A regular text field. 
@@ -483,19 +496,19 @@ verab.ttf|Vera|Bold
 verai.ttf|Vera|Italic
 veraz.ttf|Vera|Bold-Italic
 
-So far just .ttf fonts are supported, and you MUST name this according to this scheme for now. 
+So far just .ttf fonts are supported, and you MUST name them according to this scheme (for now at least).
 
 FlxUI does not yet support FlxBitmapFonts, but we'll be adding it soon.
 
-###7. Text, input (FlxInputText)
+###7. Text, input (FlxUIInputText)
 **\<text>**
 
 This has not been thoroughly tested, but it exists.
 
-###8. Radio button group (FlxRadioGroup)
+###8. Radio button group (FlxUIRadioGroup)
 **\<radio_group>**
 
-Radio groups are a set of buttons where only one can be clicked at a time. We implement these as a FlxGroup of FlxCheckBox'es, and then internal logic makes only one clickable at a time. 
+Radio groups are a set of buttons where only one can be clicked at a time. We implement these as a FlxUIGroup of FlxUICheckBox'es, and then internal logic makes only one clickable at a time. 
 
 Attributes:
 * x/y, use_def, group
@@ -512,10 +525,10 @@ Event:
 * id - "click_radio_group"
 * params - as defined by user
 
-###9. Tabbed menu (FlxTabMenu)
+###9. Tabbed menu (FlxUITabMenu)
 **\<tab_menu>**
 
-Tab menus are the most complex FlxUI widget. FlxTabMenu extends FlxUI and is thus a full-fledged FlxUI in and of itself, just like the \<layout> tag.
+Tab menus are the most complex FlxUI widget. FlxUITabMenu extends FlxUI and is thus a full-fledged FlxUI in and of itself, just like the \<layout> tag.
 
 This provides a menu with various tabbed buttons on top. When you click on one tab, it will show the content for that tab and hide the rest. 
 
@@ -599,7 +612,7 @@ Acceptable property values for reference formula, used alone or in a stretch:
 * **arithmetic formula** (ie, "some_id.some_value+10") - do some math
  * You can tack on **one** operator and **one** _numeric_ operand to any of the above.
  * Legal operators = (+, -, *, \, ^)
- * Don't try to get too crazy here. If you need to do some super duper math, just add some code in your FlxState, call getAsset("some_id") to grab your assets, and do the craziness yourself.
+ * Don't try to get too crazy here. If you need to do some super duper math, just add some code in your FlxUIState, call getAsset("some_id") to grab your assets, and do the craziness yourself.
 
 --
 ###3. Alignment Tags
@@ -627,5 +640,86 @@ Child tags:
 ...
 
 ##Localization (FireTongue)
+First, Firetongue has some [documentation](https://github.com/larsiusprime/firetongue) on its Github page. Read that. 
 
-I'll finish this bit later.
+In your local project, follow these steps:
+
+**1. Create a FireTongue wrapper class**
+
+ It just needs to:
+ 1. Extend **firetongue.FireTongue**
+ 2. Implement **flixel.addons.ui.IFireTongue** 
+ 3. Source is below, "FireTongueEx" [1]
+
+**2. Create a FireTongue instance somewhere**
+
+Add this variable declaration in Main, for instance:
+````
+public static var tongue:FireTongueEx;
+````
+Note that it's implementing FireTongueEx, not FireTongue. (This way it implements IFireTongue, which FlxUI needs).
+
+**3. Initialize your FireTongue instance**
+
+Add this initialization block anywhere in your early setup code (either in Main or in the create() block of your first FlxUIState, for instance):
+````
+if (Main.tongue == null) {
+	Main.tongue = new FireTongueEx();
+	Main.tongue.init("en-US");
+	FlxUIState.static_tongue = Main.tongue;
+}
+````
+Setting **FlxUIState.static_tongue** will make every FlxUIState instance use this FireTongue instance without any additional setup. If you don't want to use a static reference, you can just do this on a per-state basis:
+
+````
+//In the create() function of some FlxUIState object:
+_tongue = someFireTongueInstance;	
+````
+
+**4. Start using FireTongue flags**
+
+Once a FlxUIState is hooked up to a FireTongue instance, it will automatically attempt to translate any raw text information as if it were a FireTongue flag -- see FireTongue's [documentation](https://github.com/larsiusprime/firetongue).
+
+Here's an example, where the word "Back" is translated via the localization flag "$MISC_BACK":
+````
+<button center_x="true" x="0" y="535" id="start" label="$MISC_BACK">		
+	<param type="string" value="back"/>
+</button>
+````
+In English (en-US) this will be "Back," in Norwegian (nb-NO) this will be "Tilbake."
+
+...
+
+[1] Here's the source code snippet for FireTongueEx.hx:
+````
+import firetongue.FireTongue;
+import flixel.addons.ui.IFireTongue;
+
+/**
+ * This is a simple wrapper class to solve a dilemma:
+ * 
+ * I don't want flixel-ui to depend on firetongue
+ * I don't want firetongue to depend on flixel-ui
+ * 
+ * I can solve this by using an interface, IFireTongue, in flixel-ui
+ * However, that interface has to go in one namespace or the other and if I put
+ * it in firetongue, then there's a dependency. And vice-versa.
+ * 
+ * This is solved by making a simple wrapper class in the actual project
+ * code that includes both libraries. 
+ * 
+ * The wrapper extends FireTongue, and implements IFireTongue
+ * 
+ * The actual extended class does nothing, it just falls through to FireTongue.
+ * 
+ * @author 
+ */
+class FireTongueEx extends FireTongue implements IFireTongue
+{
+	public function new() 
+	{
+		super();
+	}	
+}
+````
+
