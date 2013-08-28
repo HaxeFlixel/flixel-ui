@@ -49,7 +49,7 @@ FlxUI is basically a giant glorified FlxGroup, so using this method will set you
 
 You can also create FlxUI widgets directly with Haxe code rather than using the XML setup. 
 
-To see this in action, look at the [demo project](https://github.com/HaxeFlixel/flixel-demos/tree/master/User%20Interface/RPG%20Interface), specifically [State_CodeTest](https://github.com/HaxeFlixel/flixel-demos/blob/master/User%20Interface/RPG%20Interface/source/State_CodeTest)  (in the compiled demo, just click "Code Test" to see it in action.)
+To see this in action, look at the [demo project](https://github.com/HaxeFlixel/flixel-demos/tree/master/User%20Interface/RPG%20Interface), specifically [State_CodeTest](https://github.com/HaxeFlixel/flixel-demos/blob/master/User%20Interface/RPG%20Interface/source/State_CodeTest.hx)  (in the compiled demo, just click "Code Test" to see it in action.)
 
 ###Graphic assets for Widgets
 
