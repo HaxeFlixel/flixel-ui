@@ -149,7 +149,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	 * @param	slice9 an array of slice9 strings, ie:"6,6,11,11" that specifies upper-left and bottom-right slice9 pixel points
 	 */
 	
-	public function loadGraphicSlice9(assets:Array<String>,W:Int,H:Int,slice9:Array<String>=null,Resize_Ratio:Float=-1,isToggle:Bool=false):Void{
+	public function loadGraphicSlice9(assets:Array<String>=null,W:Int=80,H:Int=20,slice9:Array<String>=null,Resize_Ratio:Float=-1,isToggle:Bool=false):Void{
 	
 		has_toggle = isToggle;
 		

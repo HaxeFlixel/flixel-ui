@@ -26,7 +26,8 @@ class FlxUIRadioGroup extends FlxUIGroup
 		x = X;
 		y = Y;
 		_list_radios = new Array<FlxUICheckBox>();
-		updateRadios(ids_,labels_);
+		updateRadios(ids_, labels_);
+		loadGraphics(null, null);
 	}
 	
 	public function loadGraphics(Box:Dynamic,Dot:Dynamic):Void {

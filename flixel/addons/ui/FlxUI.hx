@@ -970,7 +970,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				
 		var ft:FlxText;
 		if(input == false){
-			var ftu:FlxUIText = new FlxUIText(0, 0, W, text);
+			var ftu:FlxUIText = new FlxUIText(0, 0, W, text, size);
 			ftu.setFormat(the_font, size, color, align, shadow,shadow!=0);
 			ftu.dropShadow = drop_shadow;
 			ftu.forceCalcFrame();
@@ -1031,7 +1031,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		frg = new FlxUIRadioGroup(0, 0, ids, labels, _onClickRadioGroup, y_space, W, H, labelW);
 						
-		if (radio_asset != "") {
+		if (radio_asset != "" && radio_asset != null) {
 			frg.loadGraphics(radio_asset,dot_asset);
 		}
 		
@@ -1161,21 +1161,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 			
 			if (tab_def == null || !tab_def.has.width) {	//no tab definition!
-				var W:Float = cast Std.int(back.width / list_tabs.length);	//calculate width
-				if (W*list_tabs.length < back.width) {						//if rounding error
-					var diff:Int = cast (back.width - (W * list_tabs.length));	//distribute extra among first few buttons
-					for (i in 0...list_tabs.length-1) {
-						var Wi:Float = W;
-						if (i < diff) {
-							Wi++;
-						}
-						list_tabs[i].resize(Wi, list_tabs[i].height);
-					}
-				}else {
-					for (t in list_tabs) {
-						t.resize(W, t.height);
-					}
-				}
+				stretch_tabs = true;
+				//make sure to stretch the default tab graphics
 			}
 		}
 		
@@ -1190,7 +1177,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}		
 		
-		fg.showTabInt(0);
+		//fg.selected_tab = 0;
 		
 		return fg;
 	}
@@ -1398,11 +1385,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var tile:Bool = U.xml_bool(the_data.x, "tile", false);
 		var smooth:Bool = U.xml_bool(the_data.x, "smooth", false);
 				
-		if (slice9 != "") {
-			f9s = new FlxUI9SliceSprite(0, 0, src, rc, slice9, tile, smooth,"",resize_ratio);
-		}else {
-			f9s = new FlxUI9SliceSprite(0, 0, src, rc,"",tile, smooth,"",resize_ratio);
-		}
+		f9s = new FlxUI9SliceSprite(0, 0, src, rc, slice9, tile, smooth,"",resize_ratio);
 		
 		return f9s;
 	}

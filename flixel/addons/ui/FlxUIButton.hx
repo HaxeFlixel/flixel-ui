@@ -33,11 +33,11 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements IResizable
 	public var down_toggle_color:Int = 0;
 	
 	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Dynamic) {
-		super(X, Y, null, OnClick);
+		super(X, Y, null, OnClick);		
 		if (Label != null) {
 			//create a FlxUIText label
 			labelOffset = new FlxPoint( -1, 3);
-			label = new FlxUIText(X + labelOffset.x, Y + labelOffset.y, 80, Label);
+			label = new FlxUIText(X + labelOffset.x, Y + labelOffset.y, 80, Label, 8);
 			label.setFormat(null, 8, 0x333333, "center");
 		}
 	}	

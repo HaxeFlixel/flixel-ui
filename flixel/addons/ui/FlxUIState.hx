@@ -48,19 +48,17 @@ class FlxUIState extends FlxState implements IEventGetter
 	}
 	
 	public override function create():Void {
-		if (_xml_id == "") {
-			throw "FlxUIState has no xml id defined!";
-		}
-		
 		if (static_tongue != null) {
 			_tongue = static_tongue;
 		}
 		
-		_ui = new FlxUI(null,this,null,_tongue);
-		add(_ui);
+		if(_xml_id != "" && _xml_id != null){
+			_ui = new FlxUI(null,this,null,_tongue);
+			add(_ui);
 		
-		var data:Fast = U.xml(_xml_id);
-		_ui.load(data);
+			var data:Fast = U.xml(_xml_id);
+			_ui.load(data);
+		}
 		
 		useMouse = true;
 	}
@@ -91,10 +89,13 @@ class FlxUIState extends FlxState implements IEventGetter
 	
 	public override function destroy():Void {
 		destroyed = true;
+
+		if(_ui != null){
+			_ui.destroy();
+			remove(_ui, true);
+			_ui = null;
+		}
 		
-		_ui.destroy();
-		remove(_ui, true);
-		_ui = null;
 		super.destroy();
 	}
 		

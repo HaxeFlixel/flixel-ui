@@ -42,8 +42,8 @@ class FlxUICheckBox extends FlxUIGroup
 	
 	public function new(X:Float = 0, Y:Float = 0, ?Box:Dynamic, ?Check:Dynamic, ?Label:String, LabelW:Int=100, ?OnClick:Dynamic, ?params:Array<Dynamic>)
 	{		
-		x = X;
-		y = Y;
+		x = 0;
+		y = 0;
 		super();
 		
 		box = new FlxSprite();
@@ -87,6 +87,9 @@ class FlxUICheckBox extends FlxUIGroup
 		
 		checked = false; 		
 		button.depressOnClick = false;
+		
+		x = X;
+		y = Y;
 	}
 	
 	private function anchorTime(f:FlxTimer):Void {

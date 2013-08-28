@@ -19,9 +19,9 @@ class FlxUIText extends FlxText implements IResizable
 	public var bold(default, set):Bool;
 	//public var outline(default, set):Bool;
 	
-	public function new(X:Float, Y:Float, Width:Int, Text:String = null, EmbeddedFont:Bool = true)	
+	public function new(X:Float, Y:Float, Width:Int, Text:String = null, size:Int=8, EmbeddedFont:Bool = true, IsStatic:Bool=false)	
 	{
-		super(X, Y, Width, Text, EmbeddedFont);
+		super(X, Y, Width, Text, size, EmbeddedFont, IsStatic);
 	}
 	
 	public function resize(w:Float, h:Float):Void {
