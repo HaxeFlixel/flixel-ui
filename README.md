@@ -663,7 +663,7 @@ Add this variable declaration in Main, for instance:
 ````
 public static var tongue:FireTongueEx;
 ````
-Note that it's implementing FireTongueEx, not FireTongue. (This way it implements IFireTongue, which FlxUI needs).
+Note that it's type is FireTongueEx, not FireTongue. (This way the instance implements IFireTongue, which FlxUI needs).
 
 **3. Initialize your FireTongue instance**
 
