@@ -51,7 +51,7 @@ You can also create FlxUI widgets directly with Haxe code rather than using the 
 
 To see this in action, look at the [demo project](https://github.com/HaxeFlixel/flixel-demos/tree/master/User%20Interface/RPG%20Interface), specifically [State_CodeTest](https://github.com/HaxeFlixel/flixel-demos/blob/master/User%20Interface/RPG%20Interface/source/State_CodeTest.hx)  (in the compiled demo, just click "Code Test" to see it in action.)
 
-You can compare this to [State_DefaultTest](https://github.com/HaxeFlixel/flixel-demos/blob/master/User%20Interface/RPG%20Interface/source/State_DefaultTest.hx), which creates virtually the same UI output, but uses (this xml layout)[https://github.com/HaxeFlixel/flixel-demos/blob/master/User%20Interface/RPG%20Interface/assets/xml/state_default.xml] to achieve those results.
+You can compare this to [State_DefaultTest](https://github.com/HaxeFlixel/flixel-demos/blob/master/User%20Interface/RPG%20Interface/source/State_DefaultTest.hx), which creates virtually the same UI output, but uses [this xml layout](https://github.com/HaxeFlixel/flixel-demos/blob/master/User%20Interface/RPG%20Interface/assets/xml/state_default.xml) to achieve those results.
 
 ###Graphic assets for Widgets
 
