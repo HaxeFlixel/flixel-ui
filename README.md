@@ -45,7 +45,11 @@ Provided you've set up your XML layout correctly, flixel-ui will fetch that xml 
 
 FlxUI is basically a giant glorified FlxGroup, so using this method will set you up with one UI container and all of your UI widgets inside it.
 
-_**NOTE:** The system is not currently set up to allow for easily loading UI widgets outside of this context, but I plan on adding that soon._
+###Manually creating widgets
+
+You can also create FlxUI widgets directly with Haxe code rather than using the XML setup. 
+
+To see this in action, look at the [demo project](https://github.com/HaxeFlixel/flixel-demos/tree/master/User%20Interface/RPG%20Interface), specifically [State_CodeTest](https://github.com/HaxeFlixel/flixel-demos/blob/master/User%20Interface/RPG%20Interface/source/State_CodeTest)  (in the compiled demo, just click "Code Test" to see it in action.)
 
 ###Graphic assets for Widgets
 
