@@ -29,8 +29,7 @@ class FlxUIText extends FlxText implements IResizable
 		height = h;
 		calcFrame();
 	}
-	
-	
+		
 	//For IResizable:
 	public function get_width():Float {
 		return width;

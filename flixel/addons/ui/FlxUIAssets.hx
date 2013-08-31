@@ -23,7 +23,8 @@ class FlxUIAssets
 	inline static public var SLICE9_TAB:String = "6,6,11,11";
 		
 	// xml (default definitions)
-	inline static public var XML_DEFAULT:String = "flixel/flixel-ui/xml/defaults.xml";
+	inline static public var XML_DEFAULTS_ID:String = "flixel/flixel-ui/xml/defaults";
+	inline static public var XML_DEFAULT_POPUP_ID:String = "flixel/flixel-ui/xml/default_popup";
 	
 	static public function init():Void
 	{

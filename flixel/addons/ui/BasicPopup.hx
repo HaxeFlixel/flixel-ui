@@ -2,7 +2,7 @@ package flixel.addons.ui;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.ui.FlxUIGroup;
-import flixel.addons.ui.FlxTextX;
+import flixel.addons.ui.FlxUIText;
 import flixel.addons.ui.U;
 
 /**
@@ -22,12 +22,12 @@ class BasicPopUp extends FlxUIGroup
 	public var STR_ARE_YOU_SURE:String;
 	//
 	
-	var yes_btn:FlxButtonX;
-	var no_btn:FlxButtonX;
-	var cancel_btn:FlxButtonX;
+	var yes_btn:FlxUIButton;
+	var no_btn:FlxUIButton;
+	var cancel_btn:FlxUIButton;
 	
-	var titleBox:FlxTextX;
-	var descriptionBox:FlxTextX;
+	var titleBox:FlxUIText;
+	var descriptionBox:FlxUIText;
 	
 	var darkness:FlxSprite;
 	var hitBox:FlxSprite;

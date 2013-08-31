@@ -20,7 +20,7 @@ import openfl.Assets;
  * state just by adjusting a few public variables
  */
 
-class FlxUIButton extends FlxUITypedButton<FlxUIText> implements IResizable
+class FlxUIButton extends FlxUITypedButton<FlxUIText> implements IResizable implements ILabeled
 {
 	//Change these to something besides 0 to make the label use that color
 	//when that state is active
@@ -41,6 +41,11 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements IResizable
 			label.setFormat(null, 8, 0x333333, "center");
 		}
 	}	
+	
+	/**For ILabeled:**/
+	
+	public function set_label(t:FlxUIText):FlxUIText { label = t; return label;}
+	public function get_label():FlxUIText { return label;}
 		
 	/**For IResizable:**/
 		

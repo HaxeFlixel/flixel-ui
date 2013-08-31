@@ -303,7 +303,7 @@ class TabGroup extends FlxUIGroup
 			
 			try { onup = Reflect.getProperty(btn, "_onUp"); } catch (e:Error) { };
 			if (onup != null) {	
-				if (Std.is(btn , FlxButtonX) && cast(btn, FlxButtonX).id == "invis") {	
+				if (Std.is(btn , FlxUIButton) && cast(btn, FlxUIButton).id == "invis") {	
 					// TODO - implement mouse snap.
 					//FlxG.snapVMouseToLoc(btn.x + btn.width/2, btn.y + btn.height/2); 
 				}else {

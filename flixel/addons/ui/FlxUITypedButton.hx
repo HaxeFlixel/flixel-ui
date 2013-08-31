@@ -3,6 +3,7 @@ import flash.display.BitmapData;
 import flash.events.Event;
 import flixel.addons.ui.IResizable;
 import flixel.FlxSprite;
+import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.ui.FlxTypedButton;
 import flixel.util.FlxPoint;
@@ -35,7 +36,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	public function get_width():Float { return width; }
 	public function get_height():Float { return height; }
-	
+		
 	public function resize(W:Float, H:Float):Void {
 		if (W == 0) { W = 80; }
 		if (H == 0) { H = 20; }
@@ -51,6 +52,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 					upB = new BitmapData(cast W, cast (H * 6), true, 0x00000000);
 				}
 				loadGraphicsUpOverDown(upB);
+			}else {
+				//default assets
+				loadGraphicSlice9(null, cast W, cast H, null);
 			}
 		}
 	}

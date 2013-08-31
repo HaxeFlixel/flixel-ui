@@ -47,23 +47,23 @@ class U
 	/**
 	 * If a string is a number that ends with a % sign, it will return a normalized percent float (0-100% = 0.0-1.0)
 	 * @param  str a percentage value, such as "5%" or "236.214%"
-	 * @return a normalized float, or null if not valid input
+	 * @return a normalized float, or NaN if not valid input
 	 */
 	
-	public static function perc_to_float(str:String):{percent:Float,error:Bool}{
+	public static function perc_to_float(str:String):Float{			
 		if (str.lastIndexOf("%") == str.length - 1) {
-			str = str.substr(0, str.length - 1);	//trim the % off
-			var r:EReg = ~/[0-9]+(?:\.[0-9]*)?/;		//make sure it's just numbers & at most 1 decimal
+			str = str.substr(0, str.length - 1);			//trim the % off
+			var r:EReg = ~/([0-9]+)?(\.)?([0-9]*)?/;		//make sure it's just numbers & at most 1 decimal
 			if (r.match(str)) {
 				var match: { pos:Int, len:Int } = r.matchedPos();
 				if (match.pos == 0 && match.len == str.length) {
 					var perc_float:Float = Std.parseFloat(str);
 					perc_float /= 100;
-					return { percent:perc_float, error:false };
+					return perc_float;
 				}
 			}
 		}
-		return {percent:0,error:true};
+		return Math.NaN;
 	}
 	
 	public static function arrayContains(arr:Array<Dynamic>, thing:Dynamic):Bool {
@@ -76,12 +76,12 @@ class U
 	}
 	
 	public static function isStrNum(str:String):Bool {
-		var r:EReg = ~/[0-9]+(?:\.[0-9]*)?/;
+		var r:EReg = ~/-?([0-9]+)?(\.)?([0-9]*)?/;
 			if (r.match(str)) {
-			var p: { pos:Int, len:Int } = r.matchedPos();
-			if (p.pos == 0 && p.len == str.length) {
-				return true;
-			}
+				var p: { pos:Int, len:Int } = r.matchedPos();
+				if (p.pos == 0 && p.len == str.length) {
+					return true;
+				}
 		}
 		return false;
 	}
@@ -494,8 +494,11 @@ class U
 		return xml(id);
 	}
 	
-	public static function xml(str:String, extension:String = "xml",getFast:Bool=true):Dynamic{
-		var str:String = Assets.getText("assets/xml/"+str+"."+extension);
+	public static function xml(str:String, extension:String = "xml",getFast:Bool=true,dir="assets/xml/"):Dynamic{
+		var str:String = Assets.getText(dir + str + "." + extension);		
+		if (str == null) {
+			return null;
+		}
 		var the_xml:Xml = Xml.parse(str);
 		if(getFast){
 			var fast:Fast = new Fast(the_xml.firstElement());

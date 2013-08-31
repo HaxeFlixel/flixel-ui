@@ -17,7 +17,7 @@ import flixel.ui.FlxButton;
 */
 class ConfirmationBox extends BasicPopUp
 {
-	private var textEntry:FlxTextEdit;
+	private var textEntry:FlxInputText;
 	private var radioChoices:FlxUIRadioGroup;
 		
 	public function new(title:String="<confirm>",text:String="<are_you_sure>",Callback:String->Void=null)
@@ -76,8 +76,9 @@ class ConfirmationBox extends BasicPopUp
 		
 		show(title, text, Callback, yes, no, cancel, yes_str, no_str, cancel_str);
 		
-		if (textEntry == null) {
-			textEntry = new FlxTextEdit(hitBox2.x + 20, hitBox2.y + 90, Std.int(hitBox2.width - 40), null, true, onTextEdit, false);
+		//TODO: FlxInputText
+		/*if (textEntry == null) {
+			textEntry = new FlxInputText(hitBox2.x + 20, hitBox2.y + 90, Std.int(hitBox2.width - 40), null, true, onTextEdit, false);
 			textEntry.setFormat(U.font("verdana"), 20, 0x000000, "center");
 			textEntry.bold = true;
 			textEntry.setMaxChars(20);				
@@ -91,7 +92,8 @@ class ConfirmationBox extends BasicPopUp
 		
 		textEntry.active = true;
 		textEntry.visible = true;
-		textEntry.text = default_txt;
+		textEntry.text = default_txt;*/
+		
 		//textEntry.
 	}
 		
@@ -205,7 +207,7 @@ class ConfirmationBox extends BasicPopUp
 		title = fixword(title);
 		text = fixword(text);
 		
-		yes_btn = new FlxButtonX(35, 147, STR_YES);
+		yes_btn = new FlxUIButton(35, 147, STR_YES);
 		yes_btn.setOnUpCallback(pressButton, ["yes"]);
 		yes_btn.loadGraphicsMultiple([U.gfx("button_confirmation_up", "ui", "buttons"), U.gfx("button_confirmation_over", "ui", "buttons")]);
 				
@@ -217,7 +219,7 @@ class ConfirmationBox extends BasicPopUp
 			//fb.textNormalX.setFormat(the_font, size, color, align, shadow);
 			//fb.textNormalX.dropShadow = true;
 		
-		no_btn = new FlxButtonX(118, 147, STR_NO);
+		no_btn = new FlxUIButton(118, 147, STR_NO);
 		no_btn.setOnUpCallback(pressButton, ["no"]);
 		no_btn.loadGraphicsMultiple([U.gfx("button_confirmation_red_up", "ui", "buttons"), U.gfx("button_confirmation_red_over", "ui", "buttons")]);
 			
@@ -226,7 +228,7 @@ class ConfirmationBox extends BasicPopUp
 			no_btn.setSimpleLabel(STR_NO);*/
 			//no_btn.text = STR_NO;
 	
-		cancel_btn = new FlxButtonX(200, 147, STR_CANCEL);
+		cancel_btn = new FlxUIButton(200, 147, STR_CANCEL);
 		cancel_btn.setOnUpCallback(pressButton, ["cancel"]);
 		cancel_btn.loadGraphicsMultiple([U.gfx("button_confirmation_red_up", "ui", "buttons"), U.gfx("button_confirmation_red_over", "ui", "buttons")]);
 			
@@ -235,14 +237,14 @@ class ConfirmationBox extends BasicPopUp
 			cancel_btn.setSimpleLabel(STR_CANCEL);*/
 			//cancel_btn.text = STR_CANCEL;
 		
-		titleBox = new FlxTextX(0, 10, 350, title);
+		titleBox = new FlxUIText(0, 10, 350, title);
 		titleBox.setFormat(U.font("verdana"), 18, 0xffffff, "center");
 		titleBox.bold = true;
 		//titleBox.aa = false;
 		titleBox.shadow = 1;
 		titleBox.dropShadow = true;
 		
-		descriptionBox = new FlxTextX(25, 35, 315, text);
+		descriptionBox = new FlxUIText(25, 35, 315, text);
 		descriptionBox.setFormat(U.font("verdana"), 14,0x000000,"center");
 		descriptionBox.bold = true;
 		

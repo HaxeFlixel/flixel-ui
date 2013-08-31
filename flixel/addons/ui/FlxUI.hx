@@ -50,6 +50,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return _ptr_tongue;
 	}	
 	
+	//Set this 
+	public var getTextFallback:String->String->Bool->String = null;
+	
 	private var _ptr_tongue:IFireTongue;
 	private var _data:Fast;
 		
@@ -354,7 +357,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						}else {
 							add(thing);			
 						}		
-						
+												
 						_loadPosition(obj, thing);	//Position the thing if possible						
 						
 						if (thing_id != "") {
@@ -378,6 +381,17 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			for (node in data.x.elements()) 
 			{
 				_postLoadThing(node.nodeName.toLowerCase(), new Fast(node));					
+			}			
+		}
+		
+		if (data.hasNode.mode) {
+			for (mode_node in data.nodes.mode) {
+				var is_default:Bool = U.xml_bool(mode_node.x, "is_default");
+				if (is_default) {
+					var mode_id:String = U.xml_str(mode_node.x, "id", true);
+					setMode(mode_id);
+					break;
+				}
 			}
 		}
 			
@@ -390,10 +404,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 			U.clearArraySoft(_failure_checks);
 			_failure_checks = null;
-		}		
+		}				
 		
 		_onFinishLoad();
 	}
+	
+	public var currMode(get, set):String;
+	public function get_currMode():String { return _curr_mode; }
+	public function set_currMode(m:String):String { setMode(m); return _curr_mode;}
 	
 	/**
 	 * Set a mode for this UI. This lets you show/hide stuff basically. 
@@ -403,25 +421,39 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	public function setMode(mode_id:String,target_id:String=""):Void {
 		var mode:Fast = getMode(mode_id);
+		_curr_mode = mode_id;
 		var id:String = "";
 		var thing:FlxBasic;
 		if(target_id == ""){			
 			if (mode != null) {
 				if (mode.hasNode.show) {
 					for (show_node in mode.nodes.show) {
-						id = show_node.att.id;
-						thing = getAsset(id);
-						if (thing != null) {
-							thing.visible = true;
-						}
+						id = U.xml_str(show_node.x, "id", true);
+						showThing(id, true);						
 					}
 				}
 				if (mode.hasNode.hide) {
 					for (hide_node in mode.nodes.hide) {
-						id = hide_node.att.id;
+						id = U.xml_str(hide_node.x, "id", true);
+						showThing(id, false);	
+					}
+				}
+				if (mode.hasNode.align) {
+					for (align_node in mode.nodes.align) {
+						_alignThing(align_node);
+					}
+				}
+				if (mode.hasNode.change) {
+					for (change_node in mode.nodes.change) {
+						_changeThing(change_node);
+					}
+				}
+				if (mode.hasNode.position) {
+					for (position_node in mode.nodes.position) {
+						id = U.xml_str(position_node.x, "id", true);
 						thing = getAsset(id);
-						if (thing != null) {
-							thing.visible = false;
+						if(thing != null){
+							_loadPosition(position_node, thing);
 						}
 					}
 				}
@@ -431,6 +463,23 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			if (target != null && Std.is(target, FlxUI)) {
 				var targetUI:FlxUI = cast(target, FlxUI);
 				targetUI.setMode(mode_id, "");
+			}
+		}
+	}
+	
+	private function showThing(id:String, b:Bool = true):Void{
+		if (id.indexOf(",") != -1) {		
+			var ids:Array<String> = id.split(",");		//if commas, it's a list
+			for(each_id in ids){
+				var thing = getAsset(each_id);
+				if (thing != null) {
+					thing.visible = b;
+				}
+			}
+		}else {
+			var thing = getAsset(id);			//else, it's just one asset
+			if (thing != null) { 
+				thing.visible = b;
 			}
 		}
 	}
@@ -522,11 +571,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	/***PRIVATE***/
-		
+	
 	private var _group_index:Map<String,FlxUIGroup>;
 	private var _asset_index:Map<String,FlxBasic>;
 	private var _definition_index:Map<String,Fast>;
 	private var _mode_index:Map<String,Fast>;
+	
+	private var _curr_mode:String = "";
+	
 	private var _ptr:IEventGetter;	
 
 	private var _superIndexUI:FlxUI;
@@ -657,6 +709,65 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return null;
 	}
 	
+	//Handy helpers for making x/y/w/h loading dynamic:
+	private inline function _loadX(data:Fast, default_:Float = 0):Float {
+		return _loadWidth(data, default_, "x");
+	}
+	
+	private inline function _loadY(data:Fast, default_:Float = 0):Float {
+		return _loadHeight(data, default_, "y");
+	}
+	
+	private function _loadWidth(data:Fast,default_:Float=10,str:String="width"):Float {
+		var ws:String = U.xml_str(data.x, str, true, Std.string(default_));
+		return _getDataSize("w", ws, default_);
+	}
+	
+	private function _loadHeight(data:Fast,default_:Float=10,str:String="height"):Float {
+		var hs:String = U.xml_str(data.x, str, true, Std.string(default_));
+		return _getDataSize("h", hs, default_);
+	}
+		
+	
+	private function _changeThing(data:Fast):Void {
+		var id:String = U.xml_str(data.x, "id", true);
+		var thing:FlxBasic = getAsset(id);
+		if (thing == null) {
+			return;
+		}
+				
+		var new_width:Float = -1;
+		var new_height:Float = -1;
+		
+		for (attribute in data.x.attributes()) {
+			switch(attribute) {
+				case "text": if (Std.is(thing, FlxUIText)) {
+								var text = U.xml_str(data.x, "text");
+								var t:FlxUIText = cast thing;
+								t.text = getText(text,"ui");
+							 }
+				case "label": var label = U.xml_str(data.x, "label");
+							  label = getText(label, "ui");
+							  if (Std.is(thing, ILabeled)) {
+								  var b:ILabeled = cast thing;
+								  b.get_label().text = label;
+							  }
+				case "width": new_width = _loadWidth(data);
+				case "height": new_height = _loadHeight(data);
+			}
+		}
+		if (Std.is(thing, IResizable)) {
+			var ir:IResizable = cast thing;
+			if (new_width != -1 || new_height != -1) {
+				if (new_width == -1) { new_width = ir.get_width(); }
+				if (new_height == -1) { new_height = ir.get_height(); }
+				ir.resize(new_width, new_height);
+			}
+		}
+	}
+	
+	
+	
 	private function _alignThing(data:Fast):Void {
 		var datastr:String = data.x.toString();
 		if (data.hasNode.objects) {			
@@ -726,8 +837,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		//calculate total size of everything
 		for (id in objects) {
-			var flxb:FlxBasic = getAsset(id);			
-			
+			var flxb:FlxBasic = getAsset(id);						
 			
 			//use reflection to deal with groups & crap
 			//TODO:
@@ -792,24 +902,26 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var prop_f:Float = 0;
 		var val_f:Float = 0;
 				
-		var p: { percent:Float, error:Bool } = U.perc_to_float(value);
+		var p:Float = U.perc_to_float(value);
 		
-		if (p.error) {
+		switch(property) {
+			case "w", "width": prop_f = fo.width; 
+			case "h", "height": prop_f = fo.height; 
+		}
+				
+		if (Math.isNaN(p)) {
 			if (U.isStrNum(value)) {
 				val_f = Std.parseFloat(value);
 			}else {
 				return false;
 			}
+		}else {
+			switch(property) {
+				case "w", "width": val_f = p * thisWidth(); 
+				case "h", "height": val_f = p * thisHeight();
+			}
 		}
-		
-		switch(property) {
-			case "w", "width": prop_f = fo.width; 
-							   if (!p.error) { val_f = p.percent * thisWidth(); }
-							   
-			case "h", "height": prop_f = fo.height; 
-							   if (!p.error) { val_f = p.percent * thisHeight();}
-		}
-		
+				
 		var return_val:Bool = false;
 		
 		switch(compare) {
@@ -876,7 +988,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		if (type == "align") {
 			_alignThing(data);
-		}
+		}		
 		
 		if (fb == null) {
 			return;
@@ -917,8 +1029,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var tiles_w:Int = U.xml_i(data.x, "tiles_w", 2);
 		var tiles_h:Int = U.xml_i(data.x, "tiles_h", 2);
-		var w:Float = U.xml_f(data.x, "width");
-		var h:Float = U.xml_f(data.x, "height");
+		var w:Float = _loadWidth(data);
+		var h:Float = _loadHeight(data);
+			//var w:Float = U.xml_f(data.x, "width");
+			//var h:Float = U.xml_f(data.x, "height");
 		
 		var bounds: { min_width:Float, min_height:Float, 
 			          max_width:Float, max_height:Float } = calcMaxMinSize(data);				
@@ -955,9 +1069,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var text:String = U.xml_str(data.x, "text");
 		var context:String = U.xml_str(data.x, "context", true, "ui");
 		text = getText(text,context);
-				
-		var W:Int = U.xml_i(data.x, "width"); if (W == 0) { W = 100; }
 		
+		var W:Int = cast _loadWidth(data, 100);
+				
 		var the_font:String = _loadFontFace(the_data);
 		
 		var input:Bool = U.xml_bool(the_data.x, "input");
@@ -996,10 +1110,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var labels:Array<String> = new Array<String>();
 		var ids:Array<String> = new Array<String>();
 		
-		var W:Int = U.xml_i(default_data.x, "radio_width", 11);
-		var H:Int = U.xml_i(default_data.x, "radio_height", 11);
+		var W:Int = cast _loadWidth(default_data, 11, "radio_width");
+		var H:Int = cast _loadHeight(default_data, 11, "radio_height");
+			//var W:Int = U.xml_i(default_data.x, "radio_width", 11);
+			//var H:Int = U.xml_i(default_data.x, "radio_height", 11);
 		
-		var labelW:Int = U.xml_i(default_data.x, "label_width", 100);
+		var labelW:Int = cast _loadWidth(default_data, 100, "label_width");
+			//var labelW:Int = U.xml_i(default_data.x, "label_width", 100);
 		
 		for (radioNode in data.nodes.radio) {
 			var id:String = U.xml_str(radioNode.x, "id", true);
@@ -1064,7 +1181,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var context:String = U.xml_str(data.x, "context", true, "ui");
 		label = getText(label,context);
 			
-		var labelW:Int = U.xml_i(default_data.x, "label_width", 100);
+		var labelW:Int = cast _loadWidth(default_data, 100, "label_width");
+			//var labelW:Int = U.xml_i(default_data.x, "label_width", 100);
 		
 		var check_src:String = U.xml_str(default_data.x, "check_src", true);
 		var box_src:String = U.xml_str(default_data.x, "box_src", true);
@@ -1196,8 +1314,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var context:String = U.xml_str(data.x, "context", true, "ui");
 		label = getText(label,context);
 		
-		var W:Int = U.xml_i(default_data.x, "width");
-		var H:Int = U.xml_i(default_data.x, "height");	
+		var W:Int = cast _loadWidth(default_data, 0, "width");
+		var H:Int = cast _loadHeight(default_data, 0, "height");
+			//var W:Int = U.xml_i(default_data.x, "width");
+			//var H:Int = U.xml_i(default_data.x, "height");	
 				
 		var params:Array<Dynamic> = getParams(data);
 		
@@ -1367,9 +1487,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		var rc:Rectangle;
-		var rect_w:Int = U.xml_i(data.x, "width");
-		var rect_h:Int = U.xml_i(data.x, "height");
-		
+		var rect_w:Int = cast _loadWidth(data);
+		var rect_h:Int = cast _loadHeight(data);
+				
 		if (rect_w < bounds.min_width) { rect_w = cast bounds.min_width; }
 		else if (rect_w > bounds.max_width) { rect_w = cast bounds.max_width; }
 		
@@ -1405,8 +1525,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if(src != ""){
 			fs = new FlxUISprite(0, 0, src);		
 		}else {
-			var W:Int = U.xml_i(the_data.x, "width");
-			var H:Int = U.xml_i(the_data.x, "height");
+			var W:Int = cast _loadWidth(the_data);
+			var H:Int = cast _loadHeight(the_data);
+			
+				//var W:Int = U.xml_i(the_data.x, "width");
+				//var H:Int = U.xml_i(the_data.x, "height");
 			
 			if (W < bounds.min_width) { W = cast bounds.min_width; }
 			else if (W > bounds.max_width) { W = cast bounds.max_width; }
@@ -1442,15 +1565,18 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			case "": return 0;
 			case "left": return 0;
 			case "right": return thisWidth();
+			case "center":
+						 if (axis == "x") { return thisWidth() / 2; }
+					else if (axis == "y") { return thisHeight() / 2; }
 			case "top", "up": return 0;
 			case "bottom", "down": return thisHeight();
 			default:
-				var perc: { percent:Float, error:Bool } = U.perc_to_float(str);
-				if (!perc.error) {
+				var perc:Float = U.perc_to_float(str);
+				if (!Math.isNaN(perc)) {			//it's a percentage
 					if (axis == "x") {
-						return perc.percent * thisWidth();
+						return perc * thisWidth();
 					}else if (axis == "y") {
-						return perc.percent * thisHeight();
+						return perc * thisHeight();
 					}
 				}else {
 					var r:EReg = ~/[\w]+\.[\w]+/;
@@ -1575,17 +1701,20 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	/**********************/
 	
-	private function _getDataSize(target:String, str:String,default_:Float=0):Float {
-		var result: { percent:Float, error:Bool } = U.perc_to_float(str);
-		var percf:Float = result.percent;
-		if(!result.error){
+	private function _getDataSize(target:String, str:String, default_:Float = 0):Float {		
+		
+		if (U.isStrNum(str)) {								//Most likely: is it just a number?
+			return Std.parseFloat(str);						//If so, parse and return
+		}
+		
+		var percf:Float = U.perc_to_float(str);			//Next likely: is it a %?
+		if(!Math.isNaN(percf)){				
 			switch(target) {
-				case "w", "width":	return thisWidth() * percf;
-					
+				case "w", "width":	return thisWidth() * percf;		//return % of screen size
 				case "h", "height": return thisHeight() * percf;
 			}
-		}else {
-			if (str.indexOf("stretch:") == 0) {
+		}else {												//Next likely: is it a stretch command?
+			if (str.indexOf("stretch:") == 0) {				
 				str = StringTools.replace(str, "stretch:", "");
 				var arr:Array<String> = str.split(",");
 				var stretch_0:Float = _getStretch(0, target, arr[0]);
@@ -1595,13 +1724,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}else {
 					return default_;
 				}
-			}else if (str.indexOf("asset:") == 0) {
+			}else if (str.indexOf("asset:") == 0) {			//Next likely: is it an asset property?
 				str = StringTools.replace(str, "asset:", "");
 				var assetValue:Float = _getStretch(1, target, str);
 				return assetValue;				
-			}else if(U.isStrNum(str)){
-				return Std.parseFloat(str);
-			}else {
+			}else {											//Next: is it a formula?
 				var r:EReg = ~/[\w]+\.[\w]+/;
 				if (r.match(str)) {
 					var assetValue:Float = _getStretch(1, target, str);
@@ -1609,6 +1736,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}					
 			}
 		}
+		
 		return default_;
 	}
 	
@@ -1737,8 +1865,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	private function _loadPosition(data:Fast, thing:Dynamic):Void {
-		var X:Float = U.xml_f(data.x, "x");				//position offset from 0,0
-		var Y:Float = U.xml_f(data.x, "y");
+		var X:Float = _loadX(data);				//position offset from 0,0
+		var Y:Float = _loadY(data);
+			//var X:Float = U.xml_f(data.x, "x");				//position offset from 0,0
+			//var Y:Float = U.xml_f(data.x, "y");
+			
 		var ctrX:Bool = U.xml_bool(data.x, "center_x");	//if true, centers on the screen
 		var ctrY:Bool = U.xml_bool(data.x, "center_y");
 				
@@ -1867,9 +1998,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private function getText(flag:String, context:String = "data", safe:Bool = true):String {
 		if(_ptr_tongue != null){
 			return _ptr_tongue.get(flag, context, safe);
+		}else if(getTextFallback != null){			
+			return getTextFallback(flag, context, safe);
 		}
 		return flag;
 	}
+	
 	
 	/**
 	 * Parses params out of xml and loads them in the correct type

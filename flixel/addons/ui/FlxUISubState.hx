@@ -1,5 +1,6 @@
 package flixel.addons.ui;
 import flixel.FlxCamera;
+import flixel.FlxSubState;
 import haxe.xml.Fast;
 import flash.display.BitmapData;
 import flash.Lib;
@@ -25,17 +26,13 @@ import flixel.text.FlxText;
  * @author Lars Doucet
  */
 
-class FlxUIState extends FlxState implements IEventGetter
+class FlxUISubState extends FlxSubState implements IEventGetter
 {
 	public var destroyed:Bool;
 	private var _xml_id:String = "";	//the xml to load
 	private var _ui:FlxUI;
 	private var _tongue:IFireTongue;
-	
-	public static var static_tongue:IFireTongue=null;	
-	//if this is not null, each state will grab this auto-magically
-	//otherwise it's up to you to set _tongue before the UI stuff loads.
-	
+		
 	//set this to true to make it automatically reload the UI when the window size changes
 	public var reload_ui_on_resize:Bool = false;	
 	
@@ -50,8 +47,8 @@ class FlxUIState extends FlxState implements IEventGetter
 	}
 	
 	public override function create():Void {
-		if (static_tongue != null) {
-			_tongue = static_tongue;
+		if (FlxUIState.static_tongue != null) {
+			_tongue = FlxUIState.static_tongue;
 		}
 		
 		if(_xml_id != "" && _xml_id != null){
@@ -62,7 +59,7 @@ class FlxUIState extends FlxState implements IEventGetter
 		
 			var data:Fast = U.xml(_xml_id);
 			if (data == null) {
-				data = U.xml(_xml_id, ".xml", true, "");	//try without default directory prepend
+				data = U.xml(_xml_id, "xml", true, "");	//try without default directory prepend
 			}
 			
 			if (data == null) {
@@ -74,7 +71,7 @@ class FlxUIState extends FlxState implements IEventGetter
 		
 		useMouse = true;
 	}
-		
+	
 	public override function onResize(Width:Int,Height:Int):Void {
 		FlxG.resizeGame(Width, Height);	
 		_reload_countdown = 5;

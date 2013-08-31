@@ -18,7 +18,7 @@ import openfl.Assets;
  * @author Lars Doucet
  */
 
-class FlxUICheckBox extends FlxUIGroup
+class FlxUICheckBox extends FlxUIGroup implements ILabeled
 {
 	public var box:FlxSprite;
 	public var mark:FlxSprite;
@@ -91,6 +91,13 @@ class FlxUICheckBox extends FlxUIGroup
 		x = X;
 		y = Y;
 	}
+	
+	/**For ILabeled:**/
+	
+	public function set_label(t:FlxUIText):FlxUIText { if (button == null) { return null;} button.label = t; return button.label; }
+	public function get_label():FlxUIText { if (button == null) { return null;} return button.label; }
+	
+	/**/
 	
 	private function anchorTime(f:FlxTimer):Void {
 		trace("ANCHOR TIME");
