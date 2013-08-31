@@ -504,6 +504,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return null;
 	}
 	
+	public function hasAsset(key:String, recursive:Bool = true):Bool {
+		if (_asset_index.exists(key)) {
+			return true;
+		}
+		if (recursive && _superIndexUI != null) {
+			return _superIndexUI.hasAsset(key, recursive);
+		}
+		return false;
+	}
+	
 	public function getAsset(key:String, recursive:Bool=true):FlxBasic{
 		var asset:FlxBasic = _asset_index.get(key);
 		if (asset == null && recursive && _superIndexUI != null) {
@@ -1995,7 +2005,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	/**********UTILITY FUNCTIONS************/
 	
-	private function getText(flag:String, context:String = "data", safe:Bool = true):String {
+	public function getText(flag:String, context:String = "data", safe:Bool = true):String {
 		if(_ptr_tongue != null){
 			return _ptr_tongue.get(flag, context, safe);
 		}else if(getTextFallback != null){			

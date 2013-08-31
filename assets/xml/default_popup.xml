@@ -18,12 +18,12 @@
 	</button>
 	
 	<button id="btn1" label="$POPUP_NO">
-		<anchor y="3btn0.top" y-flush="top"/>
+		<anchor y="btn0.top" y-flush="top"/>
 		<param type="int" value="1"/>
 	</button>
 		
 	<button id="btn2" label="$POPUP_CANCEL">
-		<anchor y="3btn0.top" y-flush="top"/>		
+		<anchor y="btn0.top" y-flush="top"/>		
 		<param type="int" value="2"/>
 	</button>
 	
