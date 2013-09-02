@@ -57,7 +57,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 		button = new FlxUIButton(0, 0, Label, _clickCheck);
 		
 		//set default checkbox label format
-		button.label.setFormat(null, 8, 0xffffff, "left", 1, true);
+		button.label.setFormat(null, 8, 0xffffff, "left", FlxText.OUTLINE);
 		
 		//TODO:
 		//the +2 is a magic number, possibly should be a user-set parameter

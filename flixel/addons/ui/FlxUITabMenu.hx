@@ -165,6 +165,9 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 			}else{
 				xx += tab.width;
 			}
+			
+			//FlxG.bmpLog.add(tab.cachedGraphics.bitmap);
+						
 		}
 	}
 	

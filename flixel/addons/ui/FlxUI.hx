@@ -1089,19 +1089,19 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var align:String = U.xml_str(the_data.x, "align"); if (align == "") { align = null;}
 		var size:Int = U.xml_i(the_data.x, "size"); if (size == 0) { size = 8;}
 		var color:Int = _loadColor(the_data);
-		var shadow:Int = U.xml_i(the_data.x, "shadow");
-		var drop_shadow:Bool = U.xml_str(the_data.x, "drop_shadow", true) == "true";
-				
+		
+		var border:Array<Int> = _loadBorder(the_data);
+		
 		var ft:FlxText;
 		if(input == false){
 			var ftu:FlxUIText = new FlxUIText(0, 0, W, text, size);
-			ftu.setFormat(the_font, size, color, align, shadow,shadow!=0);
-			ftu.dropShadow = drop_shadow;
+			ftu.setFormat(the_font, size, color, align, border[0], border[1], border[2]);
+			//ftu.dropShadow = drop_shadow;
 			ftu.forceCalcFrame();
 			ft = ftu;
 		}else {
 			var fti:FlxUIInputText = new FlxUIInputText(0, 0, W, text);
-			fti.setFormat(the_font, size, color, align, shadow,shadow!=0);			
+			fti.setFormat(the_font, size, color, align, border[0], border[1], border[2]);			
 			fti.forceCalcFrame();
 			ft = fti;
 		}		
@@ -1349,8 +1349,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				fb.loadGraphicSlice9(["","",""], W, H);
 			}else{
 			
-				var graphic_ids:Array<String>;
-				var slice9_ids:Array<String>;
+				var graphic_ids:Array<String>=null;
+				var slice9_ids:Array<String>=null;
+				var frames:Array<Int>=null;
 				
 				if (isToggle) {
 					graphic_ids = ["", "", "", "", "", ""];
@@ -1360,6 +1361,19 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					slice9_ids = ["", "", ""];
 				}
 				
+				//dimensions of source 9slice image (optional)
+				var src_w:Int = U.xml_i(default_data.node.graphic.x, "src_w", 0);
+				var src_h:Int = U.xml_i(default_data.node.graphic.x, "src_h", 0);
+				
+				//custom frame indeces array (optional)
+				var frame_str:String = U.xml_str(default_data.node.graphic.x, "frames",true);
+				if (frame_str != "") {
+					var arr = frame_str.split(",");					
+					for (numstr in arr) {
+						frames.push(Std.parseInt(numstr));
+					}
+				}
+					
 				for (graphicNode in default_data.nodes.graphic) {
 					var graphic_id:String = U.xml_str(graphicNode.x, "id", true);
 					var image:String = U.xml_str(graphicNode.x, "image");
@@ -1426,14 +1440,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 				
 				//load 9-slice
-				fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, -1, isToggle);
+				fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, -1, isToggle, src_w, src_h, frames);
 			}
 		}else {			
 			if(load_code == "tab_menu"){
 				//load default tab menu graphics
 				var graphic_ids:Array<String> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
 				var slice9_ids:Array<String> = [FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB];
-				fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, -1, isToggle);
+				fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, -1, isToggle);				
 			}else{
 				//load default graphics			
 				fb.loadGraphicSlice9(null, W, H, null, -1, isToggle);
@@ -1512,9 +1526,17 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var rc:Rectangle = new Rectangle(0, 0, rect_w, rect_h);
 		var slice9:String = U.xml_str(the_data.x, "slice9");
-		var tile:Bool = U.xml_bool(the_data.x, "tile", false);
+		var tileStr:String = U.xml_str(the_data.x, "tile", true,"");
+		
 		var smooth:Bool = U.xml_bool(the_data.x, "smooth", false);
-				
+		
+		var tile:Int = FlxUI9SliceSprite.TILE_NONE;
+		switch(tileStr) {
+			case "true", "both", "all", "hv", "vh": tile = FlxUI9SliceSprite.TILE_BOTH;
+			case "h", "horizontal": tile = FlxUI9SliceSprite.TILE_H;
+			case "v", "vertical": tile = FlxUI9SliceSprite.TILE_V;
+		}
+		
 		f9s = new FlxUI9SliceSprite(0, 0, src, rc, slice9, tile, smooth,"",resize_ratio);
 		
 		return f9s;
@@ -1950,9 +1972,45 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		_delta(thing, X, Y);
 	}	
 	
-	private function _loadColor(data:Fast,_default:Int=0xffffffff):Int {
-		var colorStr:String = U.xml_str(data.x, "color");
-		if (colorStr == "" && data.x.nodeName == "color") { 
+	private function _loadBorder(the_data:Fast):Array<Int>
+	{
+		var border_str:String = U.xml_str(the_data.x, "border", "");
+		var border_style:Int = FlxText.NONE;
+		var border_color:Int = _loadColor(the_data, "border_color", 0);
+		var border_size:Int = U.xml_i(the_data.x, "border_size", 1);
+		
+		switch(border_str) {
+			case "shadow": border_style = FlxText.SHADOW;
+			case "outline": border_style = FlxText.OUTLINE;
+			case "outline_fast": border_style = FlxText.OUTLINE_FAST;
+			case "":
+				//no "border" value, check for shortcuts:
+				//try "outline"
+				border_str = U.xml_str(the_data.x, "shadow", true, "");
+				if (border_str != "") {
+					border_style = FlxText.SHADOW;
+					border_color = U.parseHex(border_str, false, true);					
+				}else{
+					border_str = U.xml_str(the_data.x, "outline", true, "");
+					if (border_str != "") {
+						border_style = FlxText.OUTLINE;
+						border_color = U.parseHex(border_str, false, true);
+					}else{
+						border_str = U.xml_str(the_data.x, "outline_fast", "");
+						if (border_str != "") {
+							border_style = FlxText.OUTLINE_FAST;
+							border_color = U.parseHex(border_str, false, true);
+						}
+					}						
+				}	
+		}	
+		
+		return [border_style, border_color, border_size];
+	}
+	
+	private function _loadColor(data:Fast,colorName:String="color",_default:Int=0xffffffff):Int {
+		var colorStr:String = U.xml_str(data.x, colorName);
+		if (colorStr == "" && data.x.nodeName == colorName) { 
 			colorStr = U.xml_str(data.x, "value"); 
 		}
 		var color:Int = _default;		
@@ -2057,9 +2115,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			var the_font:String = _loadFontFace(text_data);
 			var size:Int = U.xml_i(text_data.x, "size"); if (size == 0) { size = 8;}
 			var color:Int = _loadColor(text_data);				
-							
-			var shadow:Int = U.xml_i(text_data.x, "shadow");
-			var dropShadow:Bool = U.xml_bool(text_data.x, "dropShadow");
+			
+			var border:Array<Int> = _loadBorder(text_data);
+									
+			//var dropShadow:Bool = U.xml_bool(text_data.x, "dropShadow");
 			var align:String = U.xml_str(text_data.x, "align", true); if (align == "") { align = null;}
 			
 			var the_label:FlxText=null;
@@ -2083,7 +2142,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			fb.over_color = 0;				
 			
 			if (the_label != null) {
-				the_label.setFormat(the_font, size, color, align, shadow,shadow!=0);
+				the_label.setFormat(the_font, size, color, align, border[0], border[1], border[2]);				
 				
 				//TODO: text.dropShadow = true;		
 				
@@ -2091,6 +2150,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					var ftu:FlxUIText = cast the_label;
 					ftu.forceCalcFrame();
 				}
+				
+				fb.autoCenterLabel();
 			}	
 			
 			for (textColorNode in textNode.nodes.color) {

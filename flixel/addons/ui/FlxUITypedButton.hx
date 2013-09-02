@@ -2,6 +2,7 @@ package flixel.addons.ui;
 import flash.display.BitmapData;
 import flash.events.Event;
 import flixel.addons.ui.IResizable;
+import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
@@ -27,7 +28,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	public var has_toggle:Bool = false;
 	public var toggled:Bool = false;	
-
+	
 	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Dynamic) {
 		super(X, Y, Label, OnClick);
 	}
@@ -38,11 +39,22 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public function get_height():Float { return height; }
 		
 	public function resize(W:Float, H:Float):Void {
+		var old_offx:Float = 0;
+		var old_offy:Float = 0;
+		if (label != null) {
+			//calculate offset delta from center position
+			old_offx = labelOffset.x;				//store old raw offset
+			old_offy = labelOffset.y;
+			autoCenterLabel();						//reset to center position
+			old_offx = (old_offx - labelOffset.x);	//get difference
+			old_offy = (old_offy - labelOffset.y);
+		}
+		
 		if (W == 0) { W = 80; }
 		if (H == 0) { H = 20; }
 		
 		if(_slice9_assets != null){		
-			loadGraphicSlice9(_slice9_assets, cast W, cast H, _slice9_strings);
+			loadGraphicSlice9(_slice9_assets, cast W, cast H, _slice9_strings,resize_ratio,has_toggle);
 		}else {
 			if (_no_graphic) {
 				var upB:BitmapData;
@@ -57,6 +69,10 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 				loadGraphicSlice9(null, cast W, cast H, null);
 			}
 		}
+		
+		autoCenterLabel();			//center based on new dimensions
+		labelOffset.x += old_offx;	//add delta from center offset
+		labelOffset.y += old_offy;
 	}
 		
 	public function forceCalcFrame():Void {
@@ -94,10 +110,12 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	/**
 	 * Provide one combined asset, load all 3 state frames from it and infer the width/height
-	 * @param	asset
+	 * @param	asset graphic to load
+	 * @param   for_toggle whether this is for a toggle button or not
+	 * @param   key string key for caching (optional)
 	 */
 	
-	public function loadGraphicsUpOverDown(asset:Dynamic,for_toggle:Bool=false, ?key:String):Void {
+	public function loadGraphicsUpOverDown(asset:Dynamic, for_toggle:Bool=false, ?key:String):Void {
 		_slice9_assets = null;
 		_slice9_strings = null;
 		resize_ratio = -1;
@@ -138,10 +156,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			loadGraphic(combinedPixels, true, false, upB.width, upB.height, false, key);
 		}else {			
 			loadGraphic(normalPixels, true, false, upB.width, upB.height, false, key);
-		}
-		
-		
-	}
+		}		
+	}	
 	
 	/**Graphics chopping functions**/
 	
@@ -151,9 +167,14 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	 * @param	W width of button frame
 	 * @param	H height of button frame
 	 * @param	slice9 an array of slice9 strings, ie:"6,6,11,11" that specifies upper-left and bottom-right slice9 pixel points
+	 * @param	Resize_Ratio ratio to force during resizing (W/H). -1 means ignore
+	 * @param	isToggle whether this is for a toggle button or not
+	 * @param 	src_w width of source button frame (optional, inferred if not defined)
+	 * @param 	src_h height of source button frame (optional, inferred if not defined)
+	 * @param	frame_indeces array of which image frames go with which button frames (optional)
 	 */
 	
-	public function loadGraphicSlice9(assets:Array<String>=null,W:Int=80,H:Int=20,slice9:Array<String>=null,Resize_Ratio:Float=-1,isToggle:Bool=false):Void{
+	public function loadGraphicSlice9(assets:Array<String>=null,W:Int=80,H:Int=20,slice9:Array<String>=null,Resize_Ratio:Float=-1,isToggle:Bool=false,src_w:Int=0,src_h:Int=0,frame_indeces:Array<Int>=null):Void{
 	
 		has_toggle = isToggle;
 		
@@ -166,6 +187,32 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		
 		var arr_bmpData:Array<BitmapData> = [];		
 		var arr_flx9:Array<FlxUI9SliceSprite> = [];
+		
+		//Validate frame_indeces array
+		if (frame_indeces == null) {
+			//if it doesn't exist, create default setup
+			if (has_toggle) { frame_indeces = [0, 1, 2, 3, 4, 5];}
+					   else { frame_indeces = [0, 1, 2];}
+		}else {
+			var max_index:Int = 2;
+			if (has_toggle) { max_index = 5;}
+			
+			//if it's less than 3 (or 6 for toggle), add missing entries
+			//and use the default frame index to fill the gap 
+			//(ie, [a,b] --> [a,b,2])
+			while (frame_indeces.length < max_index + 1) {
+				frame_indeces.push(frame_indeces.length - 1);
+			}			
+			
+			//make sure indeces are all within bounds
+			for (i in 0...frame_indeces.length) {
+				if (frame_indeces[i] > 5) { 
+					frame_indeces[i] = 5; 
+				}else if (frame_indeces[i] < 0) {
+					frame_indeces[i] = 0;
+				}
+			}
+		}
 		
 		if (W == 0) {
 			W = 80;
@@ -204,14 +251,14 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			
 			if(all.height > H){								//looks like a multi-frame graphic
 				for (i in 0...arr_bmpData.length) {
-					arr_bmpData[i] = grabButtonFrame(all, i, has_toggle);		//get each button frame					
+					arr_bmpData[i] = grabButtonFrame(all, i, has_toggle, src_w, src_h);		//get each button frame					
 				}									
 				
 				if (slice9 != null && slice9[0] != "") {		//9slicesprites					
 					
 					//Scale each 9slicesprite
 					for (i in 0...arr_bmpData.length) {
-						arr_flx9[i] = new FlxUI9SliceSprite(0, 0, arr_bmpData[i], _flashRect2, slice9[0],false,false,assets[0]+":"+i,resize_ratio);
+						arr_flx9[i] = new FlxUI9SliceSprite(0, 0, arr_bmpData[i], _flashRect2, slice9[0],FlxUI9SliceSprite.TILE_NONE,false,assets[0]+":"+i,resize_ratio);
 					}
 			
 					//grab the pixel data:
@@ -247,12 +294,12 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 						slice9.push("");
 					}
 					
-					arr_flx9[0] = new FlxUI9SliceSprite(0, 0, assets[0],_flashRect2, slice9[0],false,false,"",resize_ratio);
+					arr_flx9[0] = new FlxUI9SliceSprite(0, 0, assets[0],_flashRect2, slice9[0],FlxUI9SliceSprite.TILE_NONE,false,"",resize_ratio);
 					arr_bmpData[0] = arr_flx9[0].pixels;
 					
 					for (i in 1...assets.length) {
 						if (assets[i] != "") {
-							arr_flx9[i] = new FlxUI9SliceSprite(0, 0, assets[i], _flashRect2, slice9[i],false,false,"",resize_ratio);
+							arr_flx9[i] = new FlxUI9SliceSprite(0, 0, assets[i], _flashRect2, slice9[i],FlxUI9SliceSprite.TILE_NONE,false,"",resize_ratio);
 							arr_bmpData[i] = arr_flx9[i].pixels;							
 						}						
 					}
@@ -283,23 +330,28 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			}
 		}
 		
-		var normalPixels:BitmapData = assembleButtonFrames(arr_bmpData[0], arr_bmpData[1], arr_bmpData[2]);
-			
+		var normalPixels:BitmapData = assembleButtonFrames(arr_bmpData[frame_indeces[0]], 
+														   arr_bmpData[frame_indeces[1]], 
+														   arr_bmpData[frame_indeces[2]]);
+														   
 		if(!has_toggle){
 			loadGraphic(normalPixels, true, false, W, H, false, key);
 		}else {
- 			var togglePixels:BitmapData = assembleButtonFrames(arr_bmpData[3], arr_bmpData[4], arr_bmpData[5]);
+ 			var togglePixels:BitmapData = assembleButtonFrames(arr_bmpData[frame_indeces[3]], 
+															   arr_bmpData[frame_indeces[4]], 
+															   arr_bmpData[frame_indeces[5]]);
+															   
 			var combinedPixels:BitmapData = combineToggleBitmaps(normalPixels, togglePixels);
 						
 			//cleanup
 			normalPixels.dispose(); normalPixels = null;
 			togglePixels.dispose(); togglePixels = null;
-
+			
 			loadGraphic(combinedPixels, true, false, W, H);
 		}
 		
 		//cleanup
-		for (i in 0...arr_bmpData.length) {
+		for (i in 0...arr_flx9.length) {
 			if (arr_flx9[i] != null) {
 				arr_flx9[i].destroy();
 				arr_flx9[i] = null;
@@ -309,26 +361,60 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		while (arr_bmpData.length > 0) { arr_bmpData.pop(); } arr_bmpData = null;
 	}
 	
+	/**
+	 * Sets labelOffset to center the label horizontally and vertically
+	 */
+	
+	public function autoCenterLabel():Void {
+		if (label != null) {
+			if (labelOffset == null) {
+				labelOffset = new FlxPoint();
+			}
+			
+			labelOffset.x = (width - label.width);
+				
+			if (Std.is(label, FlxUIText)) {
+				var tlabel:FlxUIText = cast label;
+				//labelOffset.y = (height - tlabel.textHeight()) / 2;	
+				labelOffset.y = (height - tlabel.height) / 2;	
+				//only use textHeight() for FlxText, presumably
+				//if they're using centered text, you want the full
+				//FlxText object width
+			}else {
+				labelOffset.y = (height - label.height);
+			}
+		}
+	}
 	
 	
 	/***UTILITY FUNCTIONS***/
+	
+	
 	
 	/**
 	 * Give me a sprite with three vertically stacked button frames and the 
 	 * frame index you want and I'll slice it off for you
 	 * @param	all_frames
 	 * @param	button_state
+	 * @param	for_toggle
+	 * @param	src_w
+	 * @param	src_h
 	 * @return
 	 */
 	
-	public function grabButtonFrame(all_frames:BitmapData, button_state:Int, for_toggle:Bool=false):BitmapData{
-		var h:Int;
-		if (!for_toggle) {
-			h = cast all_frames.height / 3;
-		}else {
-			h = cast all_frames.height / 6;
+	public function grabButtonFrame(all_frames:BitmapData, button_state:Int, for_toggle:Bool=false, src_w:Int=0, src_h:Int=0):BitmapData{
+		var h:Int = src_h;
+		if(h == 0){
+			if (!for_toggle) {
+				h = cast all_frames.height / 3;
+			}else {
+				h = cast all_frames.height / 6;
+			}
 		}
-		var w:Int = cast all_frames.width;
+		var w:Int = src_w;
+		if (w == 0) {
+			w = cast all_frames.width;
+		}
 		var pixels:BitmapData = new BitmapData(w,h);
 		_flashRect.x = 0;
 		_flashRect.y = button_state * h;
@@ -453,12 +539,14 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			frame = 3 + status;
 		}else {
 			frame = status;
-		}
+		}		
 	}
 
 	/*********PRIVATE************/
 	
 	private var _no_graphic:Bool = false;
+	
+	
 	
 	//if you're doing 9-slice resizing:
 	private var _slice9_strings:Array<String>;	//the 9-slice scaling rules for the original assets

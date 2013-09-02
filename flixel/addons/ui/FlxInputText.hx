@@ -3,6 +3,7 @@ import flash.display.BitmapData;
 import flash.events.KeyboardEvent;
 import flash.geom.Rectangle;
 import flash.text.TextField;
+import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxTimer;
 import flixel.util.FlxPoint;
@@ -104,19 +105,19 @@ class FlxInputText extends FlxText
 	public var caretColor:Int;
 	
 	/**
-	 * A FlxSprite representing the borders.
+	 * A FlxSprite representing the fieldBorders.
 	 */
-	private var borderSprite:FlxSprite;
+	private var fieldBorderSprite:FlxSprite;
 	
 	/**
 	 * The thickness of the borders. 0 to disable.
 	 */
-	private var _borderThickness:Int = 1;
+	private var _fieldBorderThickness:Int = 1;
 	
 	/**
 	 * The color of the borders.
 	 */
-	private var _borderColor:Int = 0xFF000000;
+	private var _fieldBorderColor:Int = 0xFF000000;
 	
 	/**
 	 * Creates a new <code>FlxText</code> object at the specified position.
@@ -146,7 +147,7 @@ class FlxInputText extends FlxText
 		caretIndex = 0;
 		
 		hasFocus = false;
-		borderSprite = new FlxSprite(X, Y);
+		fieldBorderSprite = new FlxSprite(X, Y);
 		
 		lines = 1;
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
@@ -159,7 +160,7 @@ class FlxInputText extends FlxText
 	 */
 	override public function draw():Void 
 	{
-		drawSprite(borderSprite);
+		drawSprite(fieldBorderSprite);
 		
 		super.draw();
 		
@@ -329,13 +330,13 @@ class FlxInputText extends FlxText
 	{
 		super.calcFrame();
 		
-		if (borderSprite != null && borderThickness > 0) {
-			borderSprite.makeGraphic(cast (width + borderThickness * 2), cast (height + borderThickness * 2), borderColor);
-			borderSprite.x = x - borderThickness;
-			borderSprite.y = y - borderThickness;
+		if (fieldBorderSprite != null && fieldBorderThickness > 0) {
+			fieldBorderSprite.makeGraphic(cast (width + fieldBorderThickness * 2), cast (height + fieldBorderThickness * 2), fieldBorderColor);
+			fieldBorderSprite.x = x - fieldBorderThickness;
+			fieldBorderSprite.y = y - fieldBorderThickness;
 		}
-		else if (borderThickness == 0) 
-			borderSprite.visible = false;
+		else if (fieldBorderThickness == 0) 
+			fieldBorderSprite.visible = false;
 			// Draw background
 		if (background) 
 		{
@@ -607,39 +608,39 @@ class FlxInputText extends FlxText
 		return _filterMode;
 	}
 	
-	public var borderColor(get, set):Int;
+	public var fieldBorderColor(get, set):Int;
 	
 	/**
-	 * The color of the borders
+	 * The color of the fieldBorders
 	 * @param	newColor		The new color 
 	 */
-	public function set_borderColor(newColor:Int):Int
+	public function set_fieldBorderColor(newColor:Int):Int
 	{
-		_borderColor = newColor;
+		_fieldBorderColor = newColor;
 		calcFrame();
-		return _borderColor;
+		return _fieldBorderColor;
 	}
 	
-	public function get_borderColor():Int
+	public function get_fieldBorderColor():Int
 	{
-		return _borderColor;
+		return _fieldBorderColor;
 	}
 		
-	public var borderThickness(get, set):Int;
+	public var fieldBorderThickness(get, set):Int;
 	
 	/**
-	 * The thickness of the borders
+	 * The thickness of the fieldBorders
 	 * @param	newThickness		The new thickness 
 	 */
-	public function set_borderThickness(newThickness:Int):Int
+	public function set_fieldBorderThickness(newThickness:Int):Int
 	{
-		_borderThickness = newThickness;
+		_fieldBorderThickness = newThickness;
 		calcFrame();
-		return _borderThickness;
+		return _fieldBorderThickness;
 	}
 	
-	public function get_borderThickness():Int
+	public function get_fieldBorderThickness():Int
 	{
-		return _borderThickness;
+		return _fieldBorderThickness;
 	}
 }

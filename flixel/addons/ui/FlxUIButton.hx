@@ -6,6 +6,7 @@ import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flash.display.BitmapData;
 import flixel.util.FlxPoint;
+import flixel.util.FlxTimer;
 import openfl.Assets;
 
 /**
@@ -36,10 +37,11 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements IResizable impl
 		super(X, Y, null, OnClick);		
 		if (Label != null) {
 			//create a FlxUIText label
-			labelOffset = new FlxPoint( -1, 3);
-			label = new FlxUIText(X + labelOffset.x, Y + labelOffset.y, 80, Label, 8);
+			//labelOffset = new FlxPoint(-1, 3);
+			label = new FlxUIText(0, 0, 80, Label, 8);
 			label.setFormat(null, 8, 0x333333, "center");
 		}
+		autoCenterLabel();
 	}	
 	
 	/**For ILabeled:**/
@@ -51,7 +53,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements IResizable impl
 		
 	public override function resize(W:Float, H:Float):Void {
 		super.resize(W, H);
-		label.width = W;
+		label.width = W;		
 	}
 		
 	public override function update():Void {

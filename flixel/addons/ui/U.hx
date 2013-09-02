@@ -316,15 +316,26 @@ class U
 	/**
 	 * Parses hex string to equivalent integer, with safety checks
 	 * @param	hex_str string in format 0xRRGGBB or 0xAARRGGBB
+	 * @param	cast32Bit add an alpha channel if none is given
+	 * @param	safe don't throw errors, just return -1
+	 * @param 	default_color what to return if safe is true and it fails
 	 * @return integer value
 	 */
 	
-	public static inline function parseHex(str:String,cast32Bit:Bool=false):Int {
+	public static inline function parseHex(str:String,cast32Bit:Bool=false,safe:Bool=false,default_color:Int=0x000000):Int {
 		if (str.indexOf("0x") != 0) {	//if it doesn't start with "0x"
-			throw "U.parseHex() string(" + str + ") does not start with \"0x\"!";
+			if(!safe){
+				throw "U.parseHex() string(" + str + ") does not start with \"0x\"!";
+			}else {
+				return default_color;
+			}
 		}
 		if (str.length != 8 && str.length != 10) {
-			throw "U.parseHex() string(" + str + ") must be 8(0xRRGGBB) or 10(0xAARRGGBB) characters long!";
+			if(!safe){
+				throw "U.parseHex() string(" + str + ") must be 8(0xRRGGBB) or 10(0xAARRGGBB) characters long!";
+			}else {
+				return default_color;
+			}
 		}
 		str = str.substr(2, str.length - 2);		//chop off the "0x"
 		if (cast32Bit && str.length == 6) {			//add an alpha channel if none is given and we're casting
