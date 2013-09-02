@@ -1108,6 +1108,40 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return ft;
 	}
 	
+	private function _consolidateData(data:Fast, definition:Fast):Fast {
+		if (definition == null) {
+			return data;			//no definition? Return the original data
+		}else {			
+			//If there's data and a definition, try to consolidate them
+			//Start with the definition data, copy in the local changes
+			
+			var new_data:Xml = U.copyXml(definition.x);	//Get copy of definition Xml
+			
+			for (att in data.x.attributes()) {			//Loop over each attribute in local data
+				var val:String = data.att.resolve(att);
+				new_data.set(att, val);			//Copy it in
+			}
+			
+			//Make sure the id is the object's id, not the definition's
+			new_data.nodeName = data.name;
+			if(data.has.id){
+				new_data.set("id", data.att.id);
+			}else {
+				new_data.set("id", "");
+			}
+			
+			//TODO: copy in nodes from local to definition
+						
+			for (element in data.x.elements()) {		//Loop over each node in local data
+				var nodeName = element.nodeName;		
+				new_data.insertChild(U.copyXml(element), 0);	//Add the node
+				//new_data.x.addChild(U.copyXml(element));	//Add the node				
+			}
+			return new Fast(new_data);
+		}
+		return data;
+	}
+	
 	private function _loadRadioGroup(data:Fast, definition:Fast = null):FlxUIRadioGroup {
 		var frg:FlxUIRadioGroup = null;
 		
@@ -1313,23 +1347,23 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private function _loadButton(data:Fast, definition:Fast = null, setCallback:Bool = true, isToggle:Bool = false, load_code:String=""):FlxUIButton {
 		var src:String = ""; 
 		var fb:FlxUIButton = null;
-				
-		var default_data:Fast = data;
-		if (definition != null) { default_data = definition;}
 		
-		var resize_ratio:Float = U.xml_f(data.x, "resize_ratio", -1);
-		var isVis:Bool = U.xml_bool(data.x, "visible", true);		
+		var info:Fast = _consolidateData(data, definition);
 		
-		var label:String = U.xml_str(data.x, "label");
-		var context:String = U.xml_str(data.x, "context", true, "ui");
+		/*var default_data:Fast = data;
+		if (definition != null) { default_data = definition;}*/
+		
+		var resize_ratio:Float = U.xml_f(info.x, "resize_ratio", -1);
+		var isVis:Bool = U.xml_bool(info.x, "visible", true);		
+		
+		var label:String = U.xml_str(info.x, "label");
+		var context:String = U.xml_str(info.x, "context", true, "ui");
 		label = getText(label,context);
 		
-		var W:Int = cast _loadWidth(default_data, 0, "width");
-		var H:Int = cast _loadHeight(default_data, 0, "height");
-			//var W:Int = U.xml_i(default_data.x, "width");
-			//var H:Int = U.xml_i(default_data.x, "height");	
+		var W:Int = cast _loadWidth(info, 0, "width");
+		var H:Int = cast _loadHeight(info, 0, "height");
 				
-		var params:Array<Dynamic> = getParams(data);
+		var params:Array<Dynamic> = getParams(info);
 		
 		fb = new FlxUIButton(0, 0, label);			
 		fb.resize_ratio = resize_ratio;
@@ -1340,9 +1374,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		/***Begin graphics loading block***/
 		
-		if (default_data.hasNode.graphic) {
+		if (info.hasNode.graphic) {
 			
-			var blank:Bool = U.xml_bool(default_data.node.graphic.x, "blank");
+			var blank:Bool = U.xml_bool(info.node.graphic.x, "blank");
 			
 			if (blank) {
 				//load blank
@@ -1362,11 +1396,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 				
 				//dimensions of source 9slice image (optional)
-				var src_w:Int = U.xml_i(default_data.node.graphic.x, "src_w", 0);
-				var src_h:Int = U.xml_i(default_data.node.graphic.x, "src_h", 0);
+				var src_w:Int = U.xml_i(info.node.graphic.x, "src_w", 0);
+				var src_h:Int = U.xml_i(info.node.graphic.x, "src_h", 0);
 				
 				//custom frame indeces array (optional)
-				var frame_str:String = U.xml_str(default_data.node.graphic.x, "frames",true);
+				var frame_str:String = U.xml_str(info.node.graphic.x, "frames",true);
 				if (frame_str != "") {
 					var arr = frame_str.split(",");					
 					for (numstr in arr) {
@@ -1374,7 +1408,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 				}
 					
-				for (graphicNode in default_data.nodes.graphic) {
+				for (graphicNode in info.nodes.graphic) {
 					var graphic_id:String = U.xml_str(graphicNode.x, "id", true);
 					var image:String = U.xml_str(graphicNode.x, "image");
 					var slice9:String = U.xml_str(graphicNode.x, "slice9");
@@ -1456,20 +1490,20 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		/***End graphics loading block***/
 			
-		formatButtonText(default_data, fb);
+		formatButtonText(info, fb);
 		
 		var text_x:Int = 0;
 		var text_y:Int = 0;
-		if (data.x.get("text_x") != null) {
-			text_x = U.xml_i(data.x, "text_x");			
+		if (info.x.get("text_x") != null) {
+			text_x = U.xml_i(info.x, "text_x");			
 		}else {
-			text_x = U.xml_i(default_data.x, "text_x");
+			text_x = U.xml_i(info.x, "text_x");
 		}
 			
-		if (data.x.get("text_y") != null) {
-			text_y = U.xml_i(data.x, "text_y");			
+		if (info.x.get("text_y") != null) {
+			text_y = U.xml_i(info.x, "text_y");			
 		}else {
-			text_y = U.xml_i(default_data.x, "text_y");
+			text_y = U.xml_i(info.x, "text_y");
 		}		
 		
 		//label offset has already been 'centered,' this adjust from there:
@@ -2102,24 +2136,28 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (data != null && data.hasNode.text) {
 			var textNode = data.node.text;
 			var use_def:String = U.xml_str(textNode.x, "use_def", true);
-			var text_def:Fast = textNode;
+			var text_def:Fast = null;
 			
 			if (use_def != "") {
 				text_def = getDefinition(use_def);
 			}			
 			
-			var text_data:Fast = textNode;
-			if (text_def != null) { text_data = text_def; };
-							
-			var case_id:String = U.xml_str(textNode.x, "id", true);
-			var the_font:String = _loadFontFace(text_data);
-			var size:Int = U.xml_i(text_data.x, "size"); if (size == 0) { size = 8;}
-			var color:Int = _loadColor(text_data);				
+			var info:Fast = _consolidateData(textNode, text_def);
 			
-			var border:Array<Int> = _loadBorder(text_data);
+			trace("FormatButtonText()");
+			trace("data = " + textNode.x.toString());
+			trace("def = " + text_def.x.toString());
+			trace("info = " + info.x.toString());
+						
+			var case_id:String = U.xml_str(info.x, "id", true);
+			var the_font:String = _loadFontFace(info);
+			var size:Int = U.xml_i(info.x, "size"); if (size == 0) { size = 8;}
+			var color:Int = _loadColor(info);				
+			
+			var border:Array<Int> = _loadBorder(info);
 									
 			//var dropShadow:Bool = U.xml_bool(text_data.x, "dropShadow");
-			var align:String = U.xml_str(text_data.x, "align", true); if (align == "") { align = null;}
+			var align:String = U.xml_str(info.x, "align", true); if (align == "") { align = null;}
 			
 			var the_label:FlxText=null;
 			var fb:FlxUIButton = null;
@@ -2154,7 +2192,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				fb.autoCenterLabel();
 			}	
 			
-			for (textColorNode in textNode.nodes.color) {
+			for (textColorNode in info.nodes.color) {
 				var color:Int = _loadColor(textColorNode);
 				var state_id:String = U.xml_str(textColorNode.x, "id", true);
 				var toggle:Bool = U.xml_bool(textColorNode.x, "toggle");				
