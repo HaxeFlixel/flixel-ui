@@ -102,8 +102,7 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 					
 					//default style:
 					fb.label.color = 0xffffff;
-					fb.label.shadow = 0;
-					fb.label.useShadow = true;
+					fb.label.setBorderStyle(FlxText.OUTLINE);
 					
 					fb.id = tdata.id;
 					

@@ -1090,18 +1090,18 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var size:Int = U.xml_i(the_data.x, "size"); if (size == 0) { size = 8;}
 		var color:Int = _loadColor(the_data);
 		
-		var border:Array<Int> = _loadBorder(the_data);
+		var border:Array<Dynamic> = _loadBorder(the_data);
 		
 		var ft:FlxText;
 		if(input == false){
 			var ftu:FlxUIText = new FlxUIText(0, 0, W, text, size);
-			ftu.setFormat(the_font, size, color, align, border[0], border[1], border[2]);
+			ftu.setFormat(the_font, size, color, align, border[0], border[1], border[2], border[3]);
 			//ftu.dropShadow = drop_shadow;
 			ftu.forceCalcFrame();
 			ft = ftu;
 		}else {
 			var fti:FlxUIInputText = new FlxUIInputText(0, 0, W, text);
-			fti.setFormat(the_font, size, color, align, border[0], border[1], border[2]);			
+			fti.setFormat(the_font, size, color, align, border[0], border[1], border[2], border[3]);			
 			fti.forceCalcFrame();
 			ft = fti;
 		}		
@@ -1316,9 +1316,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (list_tabs.length > 0) {
 			if (tab_def == null || !tab_def.hasNode.text) {
 				for (t in list_tabs) {
-					t.label.color = 0xFFFFFF;
-					t.label.shadow = 0;
-					t.label.useShadow = true;
+					t.label.color = 0xFFFFFF;					
+					t.label.setBorderStyle(FlxText.OUTLINE);
 				}
 			}
 			
@@ -2006,12 +2005,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		_delta(thing, X, Y);
 	}	
 	
-	private function _loadBorder(the_data:Fast):Array<Int>
+	private function _loadBorder(the_data:Fast):Array<Dynamic>
 	{
 		var border_str:String = U.xml_str(the_data.x, "border", "");
 		var border_style:Int = FlxText.NONE;
 		var border_color:Int = _loadColor(the_data, "border_color", 0);
 		var border_size:Int = U.xml_i(the_data.x, "border_size", 1);
+		var border_quality:Float = U.xml_f(the_data.x, "border_quality", 0);
 		
 		switch(border_str) {
 			case "shadow": border_style = FlxText.SHADOW;
@@ -2039,7 +2039,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}	
 		}	
 		
-		return [border_style, border_color, border_size];
+		return [border_style, border_color, border_size, border_quality];
 	}
 	
 	private function _loadColor(data:Fast,colorName:String="color",_default:Int=0xffffffff):Int {
@@ -2143,18 +2143,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}			
 			
 			var info:Fast = _consolidateData(textNode, text_def);
-			
-			trace("FormatButtonText()");
-			trace("data = " + textNode.x.toString());
-			trace("def = " + text_def.x.toString());
-			trace("info = " + info.x.toString());
 						
 			var case_id:String = U.xml_str(info.x, "id", true);
 			var the_font:String = _loadFontFace(info);
 			var size:Int = U.xml_i(info.x, "size"); if (size == 0) { size = 8;}
 			var color:Int = _loadColor(info);				
 			
-			var border:Array<Int> = _loadBorder(info);
+			var border:Array<Dynamic> = _loadBorder(info);
 									
 			//var dropShadow:Bool = U.xml_bool(text_data.x, "dropShadow");
 			var align:String = U.xml_str(info.x, "align", true); if (align == "") { align = null;}
@@ -2180,7 +2175,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			fb.over_color = 0;				
 			
 			if (the_label != null) {
-				the_label.setFormat(the_font, size, color, align, border[0], border[1], border[2]);				
+				the_label.setFormat(the_font, size, color, align, border[0], border[1], border[2], border[3]);				
 				
 				//TODO: text.dropShadow = true;		
 				

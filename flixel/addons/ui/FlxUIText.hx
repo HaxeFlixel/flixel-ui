@@ -17,7 +17,6 @@ class FlxUIText extends FlxText implements IResizable
 	public var dropShadow(get, set):Bool;	
 	private var _dropShadow:Bool = false;
 	public var bold(default, set):Bool;
-	//public var outline(default, set):Bool;
 	
 	public function new(X:Float, Y:Float, Width:Int, Text:String = null, size:Int=8, EmbeddedFont:Bool = true, IsStatic:Bool=false)	
 	{
@@ -66,21 +65,7 @@ class FlxUIText extends FlxText implements IResizable
 		
 		return _dropShadow;
 	}	
-	
-	private override function set_outline(Color:Int) {
-		if (Color != 0) {
-			//TODO: re-enable when filters are added back
-			//addFilter(new GlowFilter(Color, 1, 2, 2, 1, 1, false, false));
-		}else {
-			//removeAllFilters();
-		}
-		_regen = true;
-		useOutline = true;
-		super.set_outline(Color);
-		calcFrame();
-		return Color;
-	}
-	
+		
 	function set_bold(b:Bool):Bool
 	{
 		var format:TextFormat = _format;

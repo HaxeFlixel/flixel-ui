@@ -65,16 +65,23 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements IResizable impl
 			return;
 		}
 		label.alpha = 1;
+		
+		var old_color:Int = 0xff000000 + label.color;
+		var new_color:Int = 0;
+		var change_color:Bool = false;
+		
 		switch (status)
 		{
 			case FlxButton.HIGHLIGHT:
 				if (!toggled) {					
-					if (_new_color != over_color) {
-						_new_color = over_color;
+					if (old_color != over_color) {
+						new_color = over_color;
+						change_color = true;
 					}
 				}else{
-					if (_new_color != over_toggle_color) {
-						_new_color = over_toggle_color;
+					if (old_color != over_toggle_color) {
+						new_color = over_toggle_color;						
+						change_color = true;
 					}
 				}
 			case FlxButton.PRESSED:
@@ -88,35 +95,37 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements IResizable impl
 					}
 				}
 				if(!toggled){
-					if (_new_color != down_color) {
-						_new_color = down_color;
+					if (old_color != down_color) {
+						new_color = down_color;
+						change_color = true;
 					}
 				}else {
-					if (_new_color != down_toggle_color) {
-						_new_color = down_toggle_color;
+					if (old_color != down_toggle_color) {
+						new_color = down_toggle_color;						
+						change_color = true;
 					}
 				}
 			default:
 				if(!toggled){
-					if (_new_color != up_color) {
-						_new_color = up_color;
+					if (old_color != up_color) {
+						new_color = up_color;
+						change_color = true;
 					}
 				}else {
-					if (_new_color != up_toggle_color) {
-						_new_color = up_toggle_color;
+					if (old_color != up_toggle_color) {
+						new_color = up_toggle_color;
+						change_color = true;
 					}
 				}
 		}
-		if (_new_color != 0) {
-			label.color = _new_color;
-			_new_color = 0;
+		
+		if (change_color) {
+			label.color = new_color;
 		}		
 	}			
 	
 	/***********PRIVATE**************/
-	
-	private var _new_color:Int = 0;	
-	
+		
 	/**
 	 * Updates the size of the text field to match the button.
 	 */
