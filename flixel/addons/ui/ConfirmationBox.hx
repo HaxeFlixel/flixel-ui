@@ -1,4 +1,5 @@
 package flixel.addons.ui;
+import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 
 /**
@@ -241,7 +242,7 @@ class ConfirmationBox extends BasicPopUp
 		titleBox.setFormat(U.font("verdana"), 18, 0xffffff, "center");
 		titleBox.bold = true;
 		//titleBox.aa = false;
-		titleBox.shadow = 1;
+		titleBox.setBorderStyle(FlxText.SHADOW);
 		titleBox.dropShadow = true;
 		
 		descriptionBox = new FlxUIText(25, 35, 315, text);

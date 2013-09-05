@@ -1095,13 +1095,21 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var ft:FlxText;
 		if(input == false){
 			var ftu:FlxUIText = new FlxUIText(0, 0, W, text, size);
-			ftu.setFormat(the_font, size, color, align, border[0], border[1], border[2], border[3]);
+			ftu.setFormat(the_font, size, color, align);
+			ftu.borderStyle = border[0];
+			ftu.borderColor = border[1];
+			ftu.borderSize = border[2];
+			ftu.borderQuality = border[3];
 			//ftu.dropShadow = drop_shadow;
 			ftu.forceCalcFrame();
 			ft = ftu;
 		}else {
 			var fti:FlxUIInputText = new FlxUIInputText(0, 0, W, text);
-			fti.setFormat(the_font, size, color, align, border[0], border[1], border[2], border[3]);			
+			fti.setFormat(the_font, size, color, align);			
+			fti.borderStyle = border[0];
+			fti.borderColor = border[1];
+			fti.borderSize = border[2];
+			fti.borderQuality = border[3];			
 			fti.forceCalcFrame();
 			ft = fti;
 		}		
@@ -2175,7 +2183,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			fb.over_color = 0;				
 			
 			if (the_label != null) {
-				the_label.setFormat(the_font, size, color, align, border[0], border[1], border[2], border[3]);				
+				the_label.setFormat(the_font, size, color, align);				
+				the_label.borderStyle = border[0];
+				the_label.borderColor = border[1];
+				the_label.borderSize = border[2];
+				the_label.borderQuality = border[3];
 				
 				//TODO: text.dropShadow = true;		
 				
