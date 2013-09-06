@@ -674,6 +674,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		switch(type) {
+			case "region": return _loadRegion(data, definition);
 			case "chrome", "9slicesprite": return _load9SliceSprite(data, definition);
 			case "tile_test": return _loadTileTest(data, definition);
 			case "sprite": return _loadSprite(data,definition);
@@ -718,7 +719,23 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var hs:String = U.xml_str(data.x, str, true, Std.string(default_));
 		return _getDataSize("h", hs, default_);
 	}
-		
+	
+	private function _loadCompass(data:Fast,str:String="resize_point"):FlxPoint {
+		var cs:String = U.xml_str(data.x, str, true, "nw");
+		var fp:FlxPoint = new FlxPoint();
+		switch(cs) {
+			case "nw", "ul": fp.x = 0;   fp.y = 0;
+			case "n", "u":   fp.x = 0.5; fp.y = 0;
+			case "ne", "ur": fp.x = 1;   fp.y = 0;
+			case "e", "r":   fp.x = 1;   fp.y = 0.5;
+			case "se", "lr": fp.x = 1;   fp.y = 1;
+			case "s":        fp.x = 0.5; fp.y = 1;
+			case "sw", "ll": fp.x = 0;   fp.y = 1;
+			case "w":        fp.x = 0.5; fp.y = 0;	
+			case "m","c","mid","center":fp.x = 0.5; fp.y = 0.5;	 
+		}
+		return fp;		
+	}
 	
 	private function _changeThing(data:Fast):Void {
 		var id:String = U.xml_str(data.x, "id", true);
@@ -795,7 +812,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						throw new Error("FlxUI._alignThing(): missing bound!");
 						return;
 					}
-					
+										
 					_doAlign(objects, axis, spacing, resize, bounds);
 				
 				}else {
@@ -975,6 +992,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var id:String = U.xml_str(data.x, "id", true);
 		var thing:IFlxUIWidget = getAsset(id);
+		
+		if (id == "wave_bar" || id=="battlefield") {
+			trace("BOINK");
+		}
 		
 		#if debug
 		trace("FlxUI._postLoadThing(" + type + ") id=" + id);
@@ -1236,16 +1257,38 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return fc;
 	}
 	
-	private function _loadLayout(data:Fast, definition:Fast = null):FlxUI{
+	private function _loadTest(data:Fast):Bool {
+		if (data.hasNode.load_if) {
+			for(node in data.nodes.load_if){
+				var aspect_ratio:Float = U.xml_f(node.x, "aspect_ratio", -1);
+				if (aspect_ratio != -1) {
+					var tolerance:Float = U.xml_f(node.x, "tolerance", 0.1);
+					var screen_ratio:Float = cast(FlxG.width, Float) / cast(FlxG.height, Float);
+					var diff:Float = Math.abs(screen_ratio - aspect_ratio);
+					if (diff > tolerance) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
+	private function _loadLayout(data:Fast, definition:Fast = null):FlxUI {
 		var default_data:Fast = data;
 		if (definition != null) { default_data = definition;}
 		var info:Fast = _consolidateData(data, definition);		
 		
-		var id:String = U.xml_str(data.x, "id", true);
-		var _ui:FlxUI = new FlxUI(info, this, this,_ptr_tongue);
-		_ui.id = id;
+		if(_loadTest(info)){
 		
-		return _ui;
+			var id:String = U.xml_str(data.x, "id", true);
+			var _ui:FlxUI = new FlxUI(info, this, this,_ptr_tongue);
+			_ui.id = id;
+		
+			return _ui;
+		}
+		
+		return null;
 	}
 	
 	private function _loadTabMenu(data:Fast, definition:Fast = null):FlxUITabMenu{
@@ -1305,15 +1348,17 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				stretch_tabs = true;
 				//make sure to stretch the default tab graphics
 			}
-		}
-		
+		}		
 		
 		var fg:FlxUITabMenu = new FlxUITabMenu(back,list_tabs,stretch_tabs);		
 		
 		if (data.hasNode.group) {
 			for (group_node in data.nodes.group) {
 				id = U.xml_str(group_node.x, "id", true);
-				var _ui:FlxUI = new FlxUI(group_node, fg, this,_ptr_tongue);
+				var _ui:FlxUI = new FlxUI(group_node, fg, this, _ptr_tongue);
+				if(list_tabs != null && list_tabs.length > 0){
+					_ui.y += list_tabs[0].height;
+				}
 				_ui.id = id;
 				fg.addGroup(_ui);
 			}
@@ -1335,6 +1380,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (definition != null) { default_data = definition;}*/
 		
 		var resize_ratio:Float = U.xml_f(info.x, "resize_ratio", -1);
+		var resize_point:FlxPoint = _loadCompass(info, "resize_point");
 		var isVis:Bool = U.xml_bool(info.x, "visible", true);		
 		
 		var label:String = U.xml_str(info.x, "label");
@@ -1364,6 +1410,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			fb = new FlxUISpriteButton(0, 0, sprite);
 		}
 		fb.resize_ratio = resize_ratio;
+		fb.resize_point = resize_point;
 		
 		if (setCallback) {
 			fb.setOnUpCallback(_onClickButton, [params]);
@@ -1524,6 +1571,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return b2;
 	}
 	
+	private function _loadRegion(data:Fast, definition:Fast = null):FlxUIRegion {
+		var info:Fast = _consolidateData(data, definition);
+		var w:Int = cast _loadWidth(info);
+		var h:Int = cast _loadHeight(info);
+		return new FlxUIRegion(0, 0, w, h);
+	}
+	
 	private function _load9SliceSprite(data:Fast,definition:Fast=null,load_code:String=""):FlxUI9SliceSprite{
 		var src:String = ""; 
 		var f9s:FlxUI9SliceSprite = null;
@@ -1532,6 +1586,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (definition != null) { the_data = definition;}
 		
 		var resize_ratio:Float = U.xml_f(data.x, "resize_ratio", -1);
+		var resize_point:FlxPoint = _loadCompass(data, "resize_point");
 		
 		var bounds: { min_width:Float, min_height:Float, 
 			          max_width:Float, max_height:Float } = calcMaxMinSize(data);				
@@ -1566,7 +1621,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var tile:Int = _loadTileRule(the_data);
 				
-		f9s = new FlxUI9SliceSprite(0, 0, src, rc, slice9, tile, smooth,"",resize_ratio);
+		f9s = new FlxUI9SliceSprite(0, 0, src, rc, slice9, tile, smooth,"",resize_ratio,resize_point);
 		
 		return f9s;
 	}
@@ -1908,9 +1963,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		return return_val;
 	}
-	
-	private function _loadPosition(data:Fast, thing:Dynamic):Void {
-		var X:Float = _loadX(data);				//position offset from 0,0
+		
+	private function _loadPosition(data:Fast, thing:IFlxUIWidget):Void {
+		var X:Float = _loadX(data);			//position offset from 0,0
 		var Y:Float = _loadY(data);
 			
 		var ctrX:Bool = U.xml_bool(data.x, "center_x");	//if true, centers on the screen
@@ -1950,7 +2005,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				case "center": anchor_y = anchor_y - thing.height / 2;
 			}
 			
-			_delta(thing, anchor_x, anchor_y);
+			thing.x = anchor_x;
+			thing.y = anchor_y;
+			//_delta(thing, anchor_x, anchor_y);
 		}
 		
 		//Try to center the object on the screen:

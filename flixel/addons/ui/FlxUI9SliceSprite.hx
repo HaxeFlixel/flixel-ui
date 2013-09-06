@@ -10,6 +10,7 @@ import flash.display.Sprite;
 import flash.geom.Rectangle;
 import flash.display.BitmapData;
 import flixel.FlxG;
+import flixel.util.FlxPoint;
 import openfl.Assets;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -35,8 +36,6 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	
 	private var _raw_pixels:BitmapData;
 	
-	private var _resize_ratio:Float = -1; 	//resize ratio to force when resizing, == (W/H)
-	
 	//for internal static use
 	private static var _staticPoint:Point = new Point();
 	private static var _staticRect:Rectangle = new Rectangle();
@@ -59,15 +58,16 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	 * @param	smooth	When stretching, whether to smooth middle pieces (default false)
 	 * @param 	id	if Graphic is a BitmapData, manually specify its original source id, if any
 	 * @param   ratio	Resize ratio to force, if desired (W/H)
+	 * @param
 	 */
 	
-	public function new(X:Float, Y:Float, Graphic:Dynamic, Rect:Rectangle, slice9:String="", tile:Int=TILE_NONE, smooth:Bool=false, id:String="",ratio:Float=-1) 
+	public function new(X:Float, Y:Float, Graphic:Dynamic, Rect:Rectangle, Slice9:String="", Tile:Int=TILE_NONE, Smooth:Bool=false, Id:String="",Ratio:Float=-1,Resize_point=null) 
 	{
 		super(X, Y, null);
 		
-		_slice9 = slice9;
-		_tile = tile;
-		_smooth = smooth;
+		_slice9 = Slice9;
+		_tile = Tile;
+		_smooth = Smooth;
 				
 		_asset_id = "";
 		
@@ -79,29 +79,44 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 			_asset_id = Graphic;
 			_raw_pixels = null;
 		}else if (Std.is(Graphic, BitmapData)) {
-			_asset_id = id;							
+			_asset_id = Id;							
 			_raw_pixels = cast Graphic;
 		}
 		
-		_resize_ratio = ratio;
-				
+		resize_ratio = Ratio;
+		if (Resize_point != null) {
+			resize_point = Resize_point;
+		}
+		
 		resize(Rect.width, Rect.height);
 	}
 	
-	public var resize_ratio(get, set):Float;
-	public function get_resize_ratio():Float { return _resize_ratio;}
-	public function set_resize_ratio(r:Float):Float { _resize_ratio = r; return r;}
+	public var resize_ratio(default, set):Float;
+	public function set_resize_ratio(r:Float):Float { resize_ratio = r; return r;}
 
+	public var resize_point(default, set):FlxPoint;
+	public function set_resize_point(r:FlxPoint):FlxPoint { 
+		if (resize_point == null) { 
+			resize_point = new FlxPoint(); 
+		}
+		resize_point.x = r.x;
+		resize_point.y = r.y;
+		return resize_point; 
+	}
+	
 	//For IResizable
 	public function get_width():Float { return width; }
 	public function get_height():Float { return height; }
 	
 	public function resize(w:Float, h:Float):Void {		
 		
-		if(_resize_ratio > 0){
+		var old_width:Float = width;
+		var old_height:Float = height;
+		
+		if(resize_ratio > 0){
 			var effective_ratio:Float = (w / h);
-			if (Math.abs(effective_ratio - _resize_ratio) > 0.0001) {
-				h = w * (1 / _resize_ratio);
+			if (Math.abs(effective_ratio - resize_ratio) > 0.0001) {
+				h = w * (1 / resize_ratio);
 			}
 		}
 		
@@ -133,6 +148,16 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 		var key:String = _asset_id + "_" + _slice9 + "_" + iw + "x" + ih + "_"+_tile+"_"+_smooth;
 		
 		loadGraphic(_bmpCanvas, false, false, _bmpCanvas.width, _bmpCanvas.height, false, key);
+		
+		var diff_w:Float = width - old_width;
+		var diff_h:Float = height - old_height;
+		
+		if(resize_point != null){
+			var delta_x:Float = diff_w * resize_point.x;
+			var delta_y:Float = diff_h * resize_point.y;
+			x -= delta_x;
+			y -= delta_y;
+		}
 	}
 	
 	public static inline function getRectFromString(str:String):Rectangle{

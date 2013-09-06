@@ -18,6 +18,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 {
 	public var id:String; 
 	public var resize_ratio:Float = -1;
+	public var resize_point:FlxPoint = null;
 	public var tile:Int = FlxUI9SliceSprite.TILE_NONE;
 	
 	//set these to adjust the bounding box for the sake of clickability
@@ -50,6 +51,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public function get_height():Float { return height; }
 		
 	public function resize(W:Float, H:Float):Void {
+		var old_width:Float = width;
+		var old_height:Float = height;
+		
 		var old_offx:Float = 0;
 		var old_offy:Float = 0;
 		if (label != null) {
@@ -84,6 +88,16 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		autoCenterLabel();			//center based on new dimensions
 		labelOffset.x += old_offx;	//add delta from center offset
 		labelOffset.y += old_offy;
+		
+		var diff_w:Float = width - old_width;
+		var diff_h:Float = height - old_height;
+		
+		if(resize_point != null){
+			var delta_x:Float = diff_w * resize_point.x;
+			var delta_y:Float = diff_h * resize_point.y;
+			x -= delta_x;
+			y -= delta_y;
+		}
 	}
 	
 		
@@ -280,7 +294,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 					
 					//Scale each 9slicesprite
 					for (i in 0...arr_bmpData.length) {
-						arr_flx9[i] = new FlxUI9SliceSprite(0, 0, arr_bmpData[i], _flashRect2, slice9[0], tile, false, assets[0]+":"+i ,resize_ratio);
+						arr_flx9[i] = new FlxUI9SliceSprite(0, 0, arr_bmpData[i], _flashRect2, slice9[0], tile, false, assets[0] + ":" + i , resize_ratio);
+						arr_flx9[i].resize_point = resize_point;
 					}
 			
 					//grab the pixel data:

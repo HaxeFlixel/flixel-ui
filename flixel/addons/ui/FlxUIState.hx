@@ -124,7 +124,7 @@ class FlxUIState extends FlxState implements IEventGetter
 		return null;
 	}
 	
-	private function reloadUI():Void {		
+	private function reloadUI():Void {
 		if (_ui != null) {
 			remove(_ui, true);
 			_ui.destroy();

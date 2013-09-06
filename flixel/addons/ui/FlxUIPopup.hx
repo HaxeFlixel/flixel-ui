@@ -5,9 +5,36 @@ package flixel.addons.ui;
  * @author 
  */
 class FlxUIPopup extends FlxUISubState implements IFlxUIWidget 
-{
+{	
+	public var id:String;
 	
+	/**STUBS TO MAKE THE INTERFACE HAPPY:**/
 	
+	public var x(default, set):Float=0;
+	public var y(default, set):Float=0;
+	
+	public function set_x(X:Float):Float { return x; }
+	public function set_y(Y:Float):Float { return y; }	
+	
+	public var alpha(default, set):Float=1;
+	
+	public function set_alpha(f:Float):Float {
+		alpha = f;
+		return f;
+	}
+	
+	public var width(default, set):Float;
+	public var height(default, set):Float;
+	
+	public function set_width(W:Float):Float { return width; }
+	public function set_height(H:Float):Float { return height; }
+	
+	/**************************************/
+	
+	public function reset(X:Float, Y:Float):Void {
+		
+	}
+		
 	public override function create():Void {		
 		if(_xml_id == ""){
 			_xml_id = FlxUIAssets.XML_DEFAULT_POPUP_ID;

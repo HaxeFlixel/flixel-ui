@@ -352,6 +352,17 @@ class U
 		return return_val;
 	}
 	
+	public static inline function randomColor(is32Bit:Bool=false):Int {
+		var r:Int = cast (Math.random() * 0xff);
+		var g:Int = cast (Math.random() * 0xff);
+		var b:Int = cast (Math.random() * 0xff);
+		var rgb:Int = rgb2hex(r, g, b);
+		if (is32Bit) {
+			rgb = 0xff000000 | rgb;
+		}
+		return rgb;
+	}
+	
 	/**
 	 * Parses an individual hexadecimal string character to the equivalent decimal integer value
 	 * @param	hex_char hexadecimal character (1-length string)
