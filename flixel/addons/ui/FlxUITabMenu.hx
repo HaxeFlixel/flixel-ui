@@ -146,8 +146,8 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 				
 		for (tab in _tabs) {
 			
-			tab.x = xx;	
-			tab.y = 0;// -(tab.height - 2);			
+			tab.x = x + xx;	
+			tab.y = y + 0;			
 			
 			if (_stretch_tabs) {
 				if(diff_size > 0){
@@ -165,6 +165,12 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 				xx += tab.width;
 			}
 		}
+		
+		if (_tabs != null && _tabs.length > 0 && _tabs[0] != null) {
+			_back.y = _tabs[0].y + _tabs[0].height - 2;
+		}
+		
+		calcBounds();
 	}
 	
 	public override function destroy():Void {

@@ -44,7 +44,7 @@ class TabGroup extends FlxUIGroup
 	public function purgeAll() {
 		var i:Int = members.length - 1;
 		while (i >= 0) {
-			var o:FlxBasic = members[0];
+			var o = members[0];
 			
 			remove(o, true);
 			if (Std.is(o,FlxUIGroup)) {
@@ -52,7 +52,7 @@ class TabGroup extends FlxUIGroup
 				if (fgx.id == "tab_temp_group") {
 					var j:Int = fgx.members.length - 1;
 					while (j >= 0) {
-						var oo:FlxBasic = fgx.members[j];
+						var oo = fgx.members[j];
 						fgx.remove(oo, true); 
 						j--;
 					}
@@ -79,7 +79,7 @@ class TabGroup extends FlxUIGroup
 		super.destroy();
 	}
 		
-	public function addNoSort(o:FlxObject) {
+	public function addNoSort(o:IFlxSprite) {
 		for (oo in members) {
 			if (o == oo) {
 				return;	//can't add an object more than once
@@ -118,7 +118,7 @@ class TabGroup extends FlxUIGroup
 				add(g);
 				return;
 			}else {
-				addNoSort(cast(g,FlxObject));
+				addNoSort(cast(g,IFlxSprite));
 				return;
 			}
 		}
@@ -138,7 +138,7 @@ class TabGroup extends FlxUIGroup
 		}
 	}
 		
-	public override function add(o:FlxBasic):FlxBasic {
+	public override function add(o:IFlxSprite):IFlxSprite{
 		
 		for (oo in members) {
 			if (o == oo) {
