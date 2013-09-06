@@ -18,9 +18,8 @@ import flixel.FlxSprite;
  * @author Lars Doucet
  */
 
-class FlxUI9SliceSprite extends FlxSprite implements IResizable
+class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFlxUIWidget 
 {
-	
 	private static var bitmapsCreated:Int = 0; // for debug
 
 	private static var _canvas:Sprite;	//drives the 9-slice drawing
@@ -48,7 +47,7 @@ class FlxUI9SliceSprite extends FlxSprite implements IResizable
 	public static inline var TILE_NONE:Int = 0x00;
 	public static inline var TILE_BOTH:Int = 0x11;
 	public static inline var TILE_H:Int = 0x10;
-	public static inline var TILE_V:Int = 0x01;	
+	public static inline var TILE_V:Int = 0x01;
 	
 	/** 
 	 * @param	X	X position of final sprite
@@ -62,7 +61,7 @@ class FlxUI9SliceSprite extends FlxSprite implements IResizable
 	 * @param   ratio	Resize ratio to force, if desired (W/H)
 	 */
 	
-	public function new(X:Float, Y:Float, Graphic:Dynamic, Rect:Rectangle, slice9:String="", tile:Int=TILE_H|TILE_V, smooth:Bool=false, id:String="",ratio:Float=-1) 
+	public function new(X:Float, Y:Float, Graphic:Dynamic, Rect:Rectangle, slice9:String="", tile:Int=TILE_NONE, smooth:Bool=false, id:String="",ratio:Float=-1) 
 	{
 		super(X, Y, null);
 		
@@ -80,7 +79,7 @@ class FlxUI9SliceSprite extends FlxSprite implements IResizable
 			_asset_id = Graphic;
 			_raw_pixels = null;
 		}else if (Std.is(Graphic, BitmapData)) {
-			_asset_id = id;
+			_asset_id = id;							
 			_raw_pixels = cast Graphic;
 		}
 		

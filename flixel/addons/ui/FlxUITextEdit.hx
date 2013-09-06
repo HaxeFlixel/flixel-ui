@@ -14,7 +14,7 @@ import flixel.addons.ui.U;
  * ...
  * @author TiagoLr (~~~ ProG4mr ~~~)
  */
-class FlxUITextEdit extends FlxGroup
+class FlxUITextEdit extends FlxGroup 
 {
 	private var _text:FlxTextX;
 	public var text(get_text, set_text):String;

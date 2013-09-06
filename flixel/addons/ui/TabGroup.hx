@@ -49,7 +49,7 @@ class TabGroup extends FlxUIGroup
 			remove(o, true);
 			if (Std.is(o,FlxUIGroup)) {
 				var fgx:FlxUIGroup = cast( o , FlxUIGroup);
-				if (fgx.str_id == "tab_temp_group") {
+				if (fgx.id == "tab_temp_group") {
 					var j:Int = fgx.members.length - 1;
 					while (j >= 0) {
 						var oo:FlxBasic = fgx.members[j];
@@ -106,7 +106,7 @@ class TabGroup extends FlxUIGroup
 		if (asGroup) {
 			var g:FlxUIGroup = new FlxUIGroup();
 			//g.overTab = overTab; // TODO - ADD OVERTAB PROPERTY.
-			g.str_id = "tab_temp_group";
+			g.id = "tab_temp_group";
 			if (doSort) {
 				a.sort(sortXY);
 			}

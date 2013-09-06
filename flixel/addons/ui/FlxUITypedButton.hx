@@ -14,10 +14,11 @@ import openfl.Assets;
  * ...
  * @author 
  */
-class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResizable
+class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResizable implements IFlxUIWidget 
 {
 	public var id:String; 
 	public var resize_ratio:Float = -1;
+	public var tile:Int = FlxUI9SliceSprite.TILE_NONE;
 	
 	//set these to adjust the bounding box for the sake of clickability
 	//if -1 they are ignored
@@ -29,6 +30,16 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public var has_toggle:Bool = false;
 	public var toggled:Bool = false;	
 	
+	//Change these to something besides 0 to make the label use that color
+	//when that state is active
+	public var up_color:Int = 0;
+	public var over_color:Int = 0;
+	public var down_color:Int = 0;
+	
+	public var up_toggle_color:Int = 0;
+	public var over_toggle_color:Int = 0;
+	public var down_toggle_color:Int = 0;
+		
 	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Dynamic) {
 		super(X, Y, Label, OnClick);
 	}
@@ -54,7 +65,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		if (H == 0) { H = 20; }
 		
 		if(_slice9_assets != null){		
-			loadGraphicSlice9(_slice9_assets, cast W, cast H, _slice9_strings,resize_ratio,has_toggle);
+			loadGraphicSlice9(_slice9_assets, cast W, cast H, _slice9_strings,tile,resize_ratio,has_toggle);
 		}else {
 			if (_no_graphic) {
 				var upB:BitmapData;
@@ -66,7 +77,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 				loadGraphicsUpOverDown(upB);
 			}else {
 				//default assets
-				loadGraphicSlice9(null, cast W, cast H, null);
+				loadGraphicSlice9(null, cast W, cast H, null,tile);
 			}
 		}
 		
@@ -74,6 +85,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		labelOffset.x += old_offx;	//add delta from center offset
 		labelOffset.y += old_offy;
 	}
+	
 		
 	public function forceCalcFrame():Void {
 		calcFrame();
@@ -167,6 +179,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	 * @param	W width of button frame
 	 * @param	H height of button frame
 	 * @param	slice9 an array of slice9 strings, ie:"6,6,11,11" that specifies upper-left and bottom-right slice9 pixel points
+	 * @param	tile	Whether to tile the middle pieces or stretch them (default is false --> stretch)
 	 * @param	Resize_Ratio ratio to force during resizing (W/H). -1 means ignore
 	 * @param	isToggle whether this is for a toggle button or not
 	 * @param 	src_w width of source button frame (optional, inferred if not defined)
@@ -174,8 +187,17 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	 * @param	frame_indeces array of which image frames go with which button frames (optional)
 	 */
 	
-	public function loadGraphicSlice9(assets:Array<String>=null,W:Int=80,H:Int=20,slice9:Array<String>=null,Resize_Ratio:Float=-1,isToggle:Bool=false,src_w:Int=0,src_h:Int=0,frame_indeces:Array<Int>=null):Void{
+	public function loadGraphicSlice9(assets:Array<String>=null,W:Int=80,H:Int=20,slice9:Array<String>=null,Tile:Int=FlxUI9SliceSprite.TILE_NONE,Resize_Ratio:Float=-1,isToggle:Bool=false,src_w:Int=-1,src_h:Int=-1,frame_indeces:Array<Int>=null):Void{
 	
+		if (src_w != -1) {
+			_src_w = src_w;
+		}
+		if (src_h != -1) {
+			_src_h = src_h;
+		}
+		
+		tile = Tile;
+		
 		has_toggle = isToggle;
 		
 		resize_ratio = Resize_Ratio;	
@@ -251,14 +273,14 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			
 			if(all.height > H){								//looks like a multi-frame graphic
 				for (i in 0...arr_bmpData.length) {
-					arr_bmpData[i] = grabButtonFrame(all, i, has_toggle, src_w, src_h);		//get each button frame					
+					arr_bmpData[i] = grabButtonFrame(all, i, has_toggle,_src_w, _src_h);		//get each button frame					
 				}									
 				
 				if (slice9 != null && slice9[0] != "") {		//9slicesprites					
 					
 					//Scale each 9slicesprite
 					for (i in 0...arr_bmpData.length) {
-						arr_flx9[i] = new FlxUI9SliceSprite(0, 0, arr_bmpData[i], _flashRect2, slice9[0],FlxUI9SliceSprite.TILE_NONE,false,assets[0]+":"+i,resize_ratio);
+						arr_flx9[i] = new FlxUI9SliceSprite(0, 0, arr_bmpData[i], _flashRect2, slice9[0], tile, false, assets[0]+":"+i ,resize_ratio);
 					}
 			
 					//grab the pixel data:
@@ -294,12 +316,12 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 						slice9.push("");
 					}
 					
-					arr_flx9[0] = new FlxUI9SliceSprite(0, 0, assets[0],_flashRect2, slice9[0],FlxUI9SliceSprite.TILE_NONE,false,"",resize_ratio);
+					arr_flx9[0] = new FlxUI9SliceSprite(0, 0, assets[0],_flashRect2, slice9[0], tile, false,"",resize_ratio);
 					arr_bmpData[0] = arr_flx9[0].pixels;
 					
 					for (i in 1...assets.length) {
 						if (assets[i] != "") {
-							arr_flx9[i] = new FlxUI9SliceSprite(0, 0, assets[i], _flashRect2, slice9[i],FlxUI9SliceSprite.TILE_NONE,false,"",resize_ratio);
+							arr_flx9[i] = new FlxUI9SliceSprite(0, 0, assets[i], _flashRect2, slice9[i], tile, false,"",resize_ratio);
 							arr_bmpData[i] = arr_flx9[i].pixels;							
 						}						
 					}
@@ -381,7 +403,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 				//if they're using centered text, you want the full
 				//FlxText object width
 			}else {
-				labelOffset.y = (height - label.height);
+				labelOffset.x = (width - label.width) / 2;
+				labelOffset.y = (height - label.height)/2;
 			}
 		}
 	}
@@ -541,11 +564,83 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			frame = status;
 		}		
 	}
+	
+	
+	
+	public override function update():Void {
+		
+		/**Adds more control for coloring text in each state**/
+		
+		super.update();
+		if (label == null) {
+			return;
+		}
+		label.alpha = 1;
+		
+		var old_color:Int = 0xff000000 + label.color;
+		var new_color:Int = 0;
+		var change_color:Bool = false;
+		
+		switch (status)
+		{
+			case FlxButton.HIGHLIGHT:
+				if (!toggled) {					
+					if (old_color != over_color) {
+						new_color = over_color;
+						change_color = true;
+					}
+				}else{
+					if (old_color != over_toggle_color) {
+						new_color = over_toggle_color;						
+						change_color = true;
+					}
+				}
+			case FlxButton.PRESSED:
+				if (frame == FlxButton.PRESSED) {
+					if (!depressOnClick) {
+						label.y--;			//undo the depress movement
+					}
+				}else {
+					if (depressOnClick) {	
+						label.y++;			//b/c FlxButton switches on frame,not status
+					}
+				}
+				if(!toggled){
+					if (old_color != down_color) {
+						new_color = down_color;
+						change_color = true;
+					}
+				}else {
+					if (old_color != down_toggle_color) {
+						new_color = down_toggle_color;						
+						change_color = true;
+					}
+				}
+			default:
+				if(!toggled){
+					if (old_color != up_color) {
+						new_color = up_color;
+						change_color = true;
+					}
+				}else {
+					if (old_color != up_toggle_color) {
+						new_color = up_toggle_color;
+						change_color = true;
+					}
+				}
+		}
+		
+		if (change_color) {
+			label.color = new_color;
+		}		
+	}			
 
 	/*********PRIVATE************/
 	
 	private var _no_graphic:Bool = false;
 	
+	private var _src_w:Int = 0;	//frame size of the source image. If 0, make an inferred guess.
+	private var _src_h:Int = 0;
 	
 	
 	//if you're doing 9-slice resizing:

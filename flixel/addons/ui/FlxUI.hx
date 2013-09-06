@@ -33,7 +33,7 @@ import flixel.addons.ui.IResizable;
  */
 
 class FlxUI extends FlxUIGroup implements IEventGetter
-{
+{	
 	
 	//If this is true, the first few frames after initialization ignore all input so you can't auto-click anything
 	public var do_safe_input_delay:Bool = true;
@@ -297,7 +297,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					//Create FlxUIGroup's for each group we define
 					var id:String = group_data.att.id;
 					var group:FlxUIGroup = new FlxUIGroup();					
-					group.str_id = id;
+					group.id = id;
 					_group_index.set(id, group);
 					add(group);
 					
@@ -317,7 +317,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				for (fb in members) {
 					if (Std.is(fb, FlxUIGroup)) {
 						var g:FlxUIGroup = cast(fb, FlxUIGroup);
-						FlxG.log.add("-->Group(" + g.str_id + "), length="+g.members.length);						
+						FlxG.log.add("-->Group(" + g.id + "), length="+g.members.length);						
 						for (fbb in g.members) {
 							FlxG.log.add("---->Member(" + fbb + ")");
 						}
@@ -697,7 +697,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			case "sprite": return _loadSprite(data,definition);
 			case "text": return _loadText(data, definition);
 			case "button": return _loadButton(data, definition);
-			
 			case "button_toggle": return _loadButton(data, definition,true,true);
 						
 			case "tab_menu": return _loadTabMenu(data, definition);
@@ -845,14 +844,37 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			pos_prop = "y"; 
 		}
 		
+		var flxb:FlxBasic;
+		var flxs:FlxSprite; 
+		var flxg:FlxUIGroup; 
+			
 		//calculate total size of everything
 		for (id in objects) {
 			var flxb:FlxBasic = getAsset(id);						
 			
 			//use reflection to deal with groups & crap
 			//TODO:
-			//could be optimized if everything was guaranteed to have those properties
-			total_size += Reflect.getProperty(flxb, size_prop);
+			//could be optimized if everything was guaranteed to just have width/height
+			
+			var theval:Float = 0;
+			
+			if (Std.is(flxb, FlxSprite)) {
+				flxs = cast flxb;
+				switch(size_prop) {
+					case "width": theval = flxs.width;
+					case "height": theval = flxs.height;
+				}
+				//total_size += flxs.
+			}else if (Std.is(flxb, FlxUIGroup)) {
+				flxg = cast flxb;
+				switch(size_prop) {
+					case "width": theval = flxg.width;
+					case "height": theval = flxg.height;
+				}
+			}
+			
+			total_size += theval;
+			//total_size += Reflect.getProperty(flxb, size_prop);
 		}
 		
 		if (resize == false) {	//not resizing, so space evenly
@@ -884,7 +906,23 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 			}
 			last_pos = pos + object_size + space_size;
-			Reflect.setProperty(flxb, pos_prop, pos);		//set x or y to the correct location
+			
+			//TODO: could be optimized with interfaces
+			if (Std.is(flxb, FlxSprite)) {
+				flxs = cast flxb;
+				switch(pos_prop) {
+					case "x": flxs.x = pos;
+					case "y": flxs.y = pos;
+				}
+			}else if (Std.is(flxb, FlxUIGroup)) {
+				flxg = cast flxb;
+				switch(pos_prop) {
+					case "x": flxg.x = pos;
+					case "y": flxg.y = pos;
+				}
+			}
+			
+			//Reflect.setProperty(flxb, pos_prop, pos);		//set x or y to the correct location
 			i++;
 		}		
 	}
@@ -1268,10 +1306,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private function _loadLayout(data:Fast, definition:Fast = null):FlxUI{
 		var default_data:Fast = data;
 		if (definition != null) { default_data = definition;}
-				
+		var info:Fast = _consolidateData(data, definition);		
+		
 		var id:String = U.xml_str(data.x, "id", true);
-		var _ui:FlxUI = new FlxUI(data, this, this,_ptr_tongue);
-		_ui.str_id = id;
+		var _ui:FlxUI = new FlxUI(info, this, this,_ptr_tongue);
+		_ui.id = id;
 		
 		return _ui;
 	}
@@ -1315,7 +1354,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var context:String = U.xml_str(tab_node.x, "context", true, "ui");
 				label = getText(label,context);
 		
-				var tab:FlxUIButton = _loadButton(tab_node, tab_def, true, true, "tab_menu");				
+				var tab:FlxUIButton = cast _loadButton(tab_node, tab_def, true, true, "tab_menu");				
 				tab.id = id;
 				list_tabs.push(tab);
 			}			
@@ -1341,7 +1380,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			for (group_node in data.nodes.group) {
 				id = U.xml_str(group_node.x, "id", true);
 				var _ui:FlxUI = new FlxUI(group_node, fg, this,_ptr_tongue);
-				_ui.str_id = id;
+				_ui.id = id;
 				fg.addGroup(_ui);
 			}
 		}		
@@ -1351,9 +1390,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return fg;
 	}
 			
-	private function _loadButton(data:Fast, definition:Fast = null, setCallback:Bool = true, isToggle:Bool = false, load_code:String=""):FlxUIButton {
+	private function _loadButton(data:Fast, definition:Fast = null, setCallback:Bool = true, isToggle:Bool = false, load_code:String=""):IFlxUIWidget{
 		var src:String = ""; 
-		var fb:FlxUIButton = null;
+		var fb:Dynamic;
+		fb = null;
 		
 		var info:Fast = _consolidateData(data, definition);
 		
@@ -1364,6 +1404,18 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var isVis:Bool = U.xml_bool(info.x, "visible", true);		
 		
 		var label:String = U.xml_str(info.x, "label");
+		
+		var sprite:FlxUISprite = null;
+		//TODO:
+			//currently you can only have a text label OR a sprite icon
+			//once this issue: (https://github.com/HaxeFlixel/flixel/issues/614) is resolved
+			//we can have both, but for now we enforce one or the other
+		if (label == "") {		
+			if (info.hasNode.sprite) {
+				sprite = cast _loadThing("sprite",info.node.sprite);				
+			}
+		}
+		
 		var context:String = U.xml_str(info.x, "context", true, "ui");
 		label = getText(label,context);
 		
@@ -1372,7 +1424,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				
 		var params:Array<Dynamic> = getParams(info);
 		
-		fb = new FlxUIButton(0, 0, label);			
+		if(sprite == null){
+			fb = new FlxUIButton(0, 0, label);			
+		}else {
+			fb = new FlxUISpriteButton(0, 0, sprite);
+		}
 		fb.resize_ratio = resize_ratio;
 		
 		if (setCallback) {
@@ -1387,7 +1443,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 			if (blank) {
 				//load blank
-				fb.loadGraphicSlice9(["","",""], W, H);
+				fb.loadGraphicSlice9(["","",""], W, H, null, FlxUI9SliceSprite.TILE_NONE, resize_ratio);
 			}else{
 			
 				var graphic_ids:Array<String>=null;
@@ -1405,6 +1461,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				//dimensions of source 9slice image (optional)
 				var src_w:Int = U.xml_i(info.node.graphic.x, "src_w", 0);
 				var src_h:Int = U.xml_i(info.node.graphic.x, "src_h", 0);
+				var tile:Int = _loadTileRule(info.node.graphic);					
 				
 				//custom frame indeces array (optional)
 				var frame_str:String = U.xml_str(info.node.graphic.x, "frames",true);
@@ -1419,6 +1476,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					var graphic_id:String = U.xml_str(graphicNode.x, "id", true);
 					var image:String = U.xml_str(graphicNode.x, "image");
 					var slice9:String = U.xml_str(graphicNode.x, "slice9");
+					tile = _loadTileRule(graphicNode);
+					
 					var toggleState:Bool = U.xml_bool(graphicNode.x, "toggle");
 					toggleState = toggleState && isToggle;
 					
@@ -1481,37 +1540,38 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 				
 				//load 9-slice
-				fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, -1, isToggle, src_w, src_h, frames);
+				fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, tile, resize_ratio, isToggle, src_w, src_h, frames);
 			}
 		}else {			
 			if(load_code == "tab_menu"){
 				//load default tab menu graphics
 				var graphic_ids:Array<String> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
 				var slice9_ids:Array<String> = [FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB];
-				fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, -1, isToggle);				
+				fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);				
 			}else{
 				//load default graphics			
-				fb.loadGraphicSlice9(null, W, H, null, -1, isToggle);
+				fb.loadGraphicSlice9(null, W, H, null, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);
 			}
 		}		
 		
 		/***End graphics loading block***/
 			
-		formatButtonText(info, fb);
+		if(sprite == null){
+			formatButtonText(info, fb);
+		}
 		
 		var text_x:Int = 0;
 		var text_y:Int = 0;
 		if (info.x.get("text_x") != null) {
 			text_x = U.xml_i(info.x, "text_x");			
-		}else {
-			text_x = U.xml_i(info.x, "text_x");
+		}else if (info.x.get("label_x") != null) {
+			text_x = U.xml_i(info.x, "label_x");
 		}
-			
 		if (info.x.get("text_y") != null) {
 			text_y = U.xml_i(info.x, "text_y");			
-		}else {
-			text_y = U.xml_i(info.x, "text_y");
-		}		
+		}else if (info.x.get("label_y") != null) {
+			text_y = U.xml_i(info.x, "label_y");
+		}
 		
 		//label offset has already been 'centered,' this adjust from there:
 		fb.labelOffset.x += text_x;
@@ -1567,20 +1627,25 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var rc:Rectangle = new Rectangle(0, 0, rect_w, rect_h);
 		var slice9:String = U.xml_str(the_data.x, "slice9");
-		var tileStr:String = U.xml_str(the_data.x, "tile", true,"");
 		
 		var smooth:Bool = U.xml_bool(the_data.x, "smooth", false);
 		
+		var tile:Int = _loadTileRule(the_data);
+				
+		f9s = new FlxUI9SliceSprite(0, 0, src, rc, slice9, tile, smooth,"",resize_ratio);
+		
+		return f9s;
+	}
+	
+	private inline function _loadTileRule(data:Fast):Int {
+		var tileStr:String = U.xml_str(data.x, "tile", true,"");
 		var tile:Int = FlxUI9SliceSprite.TILE_NONE;
 		switch(tileStr) {
 			case "true", "both", "all", "hv", "vh": tile = FlxUI9SliceSprite.TILE_BOTH;
 			case "h", "horizontal": tile = FlxUI9SliceSprite.TILE_H;
 			case "v", "vertical": tile = FlxUI9SliceSprite.TILE_V;
 		}
-		
-		f9s = new FlxUI9SliceSprite(0, 0, src, rc, slice9, tile, smooth,"",resize_ratio);
-		
-		return f9s;
+		return tile;
 	}
 	
 	private function _loadSprite(data:Fast,definition:Fast=null):FlxUISprite{
@@ -1601,15 +1666,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			var W:Int = cast _loadWidth(the_data);
 			var H:Int = cast _loadHeight(the_data);
 			
-				//var W:Int = U.xml_i(the_data.x, "width");
-				//var H:Int = U.xml_i(the_data.x, "height");
-			
 			if (W < bounds.min_width) { W = cast bounds.min_width; }
 			else if (W > bounds.max_width) { W = cast bounds.max_width; }
 			if (H < bounds.min_height) { H = cast bounds.max_height; }
 			else if (H > bounds.max_height) { H = cast bounds.max_height;}			
-			
-			var C:Int = U.parseHex(U.xml_str(the_data.x, "color"),true);
+
+			var cstr:String = U.xml_str(the_data.x, "color");
+			var C:Int = 0;			
+			if (cstr != "") {
+				C = U.parseHex(cstr, true);			
+			}
 			fs = new FlxUISprite(0, 0);
 			fs.makeGraphic(W, H, C);
 		}

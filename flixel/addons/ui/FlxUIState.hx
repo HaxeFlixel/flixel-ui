@@ -77,7 +77,7 @@ class FlxUIState extends FlxState implements IEventGetter
 		
 	public override function onResize(Width:Int,Height:Int):Void {
 		FlxG.resizeGame(Width, Height);	
-		_reload_countdown = 5;
+		_reload_countdown = 1;
 		_reload = true;
 	}	
 	

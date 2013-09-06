@@ -20,7 +20,7 @@ class FlxUIGroup extends FlxGroup implements IDestroyable
 	/***PUBLIC VARS***/
 		
 	//a handy string handler id for this thing
-	public var str_id:String;
+	public var id:String;
 	
 	/***PUBLIC GETTER/SETTERS***/
 	
@@ -49,7 +49,7 @@ class FlxUIGroup extends FlxGroup implements IDestroyable
 	
 		public function get_x():Float { return _anchor_x; }
 		public function get_y():Float { return _anchor_y; }
-	
+				
 		public function set_x(f:Float):Float { 
 			_delta_x += (f - _anchor_x);
 			_anchor_x = f;
@@ -109,8 +109,7 @@ class FlxUIGroup extends FlxGroup implements IDestroyable
 	}
 	
 	public override function add(fb:FlxBasic):FlxBasic {	
-		
-	
+			
 		
 		var obj:FlxBasic = super.add(fb);
 		if (Std.is(fb, FlxObject)) {

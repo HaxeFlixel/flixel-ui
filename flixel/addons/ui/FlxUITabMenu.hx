@@ -244,7 +244,7 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 	
 	private function _showOnlyGroup(id:String):Void {
 		for (group in _tab_groups) {
-			if (group.str_id == id) {
+			if (group.id == id) {
 				group.visible = group.active = true;
 			}else {
 				group.visible = group.active = false;

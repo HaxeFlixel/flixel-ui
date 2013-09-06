@@ -9,10 +9,10 @@ import flixel.FlxSprite;
  * @author Lars Doucet
  */
 
-class FlxUISprite extends FlxSprite implements IDestroyable
+class FlxUISprite extends FlxSprite implements IDestroyable implements IFlxUIWidget 
 {
 	//simple string ID, handy for identification, etc
-	public var str_id:String;			
+	public var id:String;			
 	
 	//pointer to the thing that "owns" it
 	public var ptr_owner:Dynamic = null;

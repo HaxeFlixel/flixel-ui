@@ -4,7 +4,7 @@ package flixel.addons.ui;
  * ...
  * @author 
  */
-class FlxUIPopup extends FlxUISubState
+class FlxUIPopup extends FlxUISubState implements IFlxUIWidget 
 {
 	
 	
