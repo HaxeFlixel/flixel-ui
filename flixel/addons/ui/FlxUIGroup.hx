@@ -15,7 +15,7 @@ import flixel.addons.ui.FlxButtonPlus;
  * @author Lars Doucet
  */
 
-class FlxUIGroup extends FlxGroup implements IDestroyable
+class FlxUIGroup extends FlxGroup implements IDestroyable implements IFlxUIWidget
 {	
 	/***PUBLIC VARS***/
 		
@@ -25,8 +25,8 @@ class FlxUIGroup extends FlxGroup implements IDestroyable
 	/***PUBLIC GETTER/SETTERS***/
 	
 	//just getters, based on total size of contents, kinda buggy
-	public var width(default, null):Float=0;
-	public var height(default, null):Float=0;
+	public var width(default, set):Float=0;
+	public var height(default, set):Float=0;
 	
 	//whether to update x,y instantly or on next update() call
 	//set this to true to remove one-frame "flicker" on setup
@@ -35,22 +35,22 @@ class FlxUIGroup extends FlxGroup implements IDestroyable
 	//ostensibly this will set the alpha of all the objects in the 
 	//group. Probably should switch this so it just precomposites the
 	//whole deal and then alphas the composited result
-	public var alpha(get_alpha, set_alpha):Float;
+	public var alpha(default, set):Float=1;
 	
 	public var velocity:FlxPoint;
-		
+	
+	public var autoBounds:Bool = true;
+	
 	//move all of the contents around - it saves the last anchor point,
 	//so it works "automagically"
 	
-	public var x(get_x, set_x):Float;
-	public var y(get_y, set_y):Float;
+	public var x(default, set):Float=0;
+	public var y(default, set):Float=0;
 	
 		/***GETTER SETTER FUNCTIONS***/
-	
-		public function get_x():Float { return _anchor_x; }
-		public function get_y():Float { return _anchor_y; }
 				
 		public function set_x(f:Float):Float { 
+			x = f;
 			_delta_x += (f - _anchor_x);
 			_anchor_x = f;
 			if (instant_update) { updateDirty();}
@@ -58,26 +58,36 @@ class FlxUIGroup extends FlxGroup implements IDestroyable
 		}
 	
 		public function set_y(f:Float):Float {
+			y = f;
 			_delta_y += (f - _anchor_y);
 			_anchor_y = f;
 			if (instant_update) { updateDirty();}
 			return _anchor_y;
 		}
 		
-		public function get_alpha():Float { return _alpha; }
+		public function set_width(f:Float):Float {
+			width = f;
+			return width;
+		}
+		
+		public function set_height(f:Float):Float {
+			height = f;
+			return height;
+		}
+		
 		public function set_alpha(a:Float):Float { 
 			if (a < 0) a = 0;
 			if (a > 1) a = 1;
-			_alpha = a; 		
+			alpha = a; 		
 			for (fb in members) {
 				if (Std.is(fb, FlxObject)) {
 					var fs:FlxSprite = cast(fb, FlxSprite);
-					fs.alpha = _alpha;
+					fs.alpha = alpha;
 				}else if (Std.is(fb, FlxUIGroup)) {
 					var fg:FlxUIGroup = cast(fb, FlxUIGroup);
-					fg.alpha = _alpha;
+					fg.alpha = alpha;
 				}
-			}return _alpha;
+			}return alpha;
 		}
 	
 	/***PUBLIC FUNCTIONS***/
@@ -86,16 +96,12 @@ class FlxUIGroup extends FlxGroup implements IDestroyable
 	{
 		super();
 	}	
-	
-	/*#if (cpp || neko)	
-		public function makeAtlas(id:String,ww:Int,hh:Int):Void {
-			//__atlas = new Atlas(id, ww, hh);
-		}
-	#end*/
 		
 	public override function remove(Object:FlxBasic,Splice:Bool=false):FlxBasic {
 		var obj:FlxBasic = super.remove(Object, Splice);
-		updateSize();
+		if (autoBounds) {
+			calcBounds();
+		}
 		return obj;
 	}
 	
@@ -108,35 +114,30 @@ class FlxUIGroup extends FlxGroup implements IDestroyable
 		return false;
 	}
 	
-	public override function add(fb:FlxBasic):FlxBasic {	
-			
-		
+	/*public override function add(fb:FlxBasic):FlxBasic {					
 		var obj:FlxBasic = super.add(fb);
-		if (Std.is(fb, FlxObject)) {
-			var fo:FlxObject = cast(fb, FlxObject);
-			var ww:Float = fo.x + fo.width;
-			var hh:Float = fo.y + fo.height;
-			if (ww > width) width = ww;
-			if (hh > height) height = hh;
-			
-		}else if (Std.is(fb, FlxUIGroup)) {
-			/*var fg:FlxUIGroup = cast(fb, FlxUIGroup);
-			var ww:Float = fg.x + fg.width;
-			var hh:Float = fg.y + fg.height;
-			if (ww > width) width = ww;
-			if (hh > height) height = hh;*/
-		}
-			
-		#if (cpp || neko)
-			if (__atlas != null) {
-				if (obj != null) {
-					/*if(Std.is(obj,FlxGroup)){
-						obj.atlas = __atlas;
-					}*/
-				}
-			}
-		#end
+		if (autoBounds) {
+			calcBounds();
+		}		
 		return obj;
+	}*/
+	
+	public inline function calcBounds():Void {
+		var left:Float = Math.NEGATIVE_INFINITY;
+		var right:Float = Math.POSITIVE_INFINITY;
+		var top:Float = Math.NEGATIVE_INFINITY;
+		var bottom:Float = Math.POSITIVE_INFINITY;
+		for (fb in members) {
+			if (Std.is(fb, IFlxUIWidget)) {
+				var flui:IFlxUIWidget = cast fb;
+				if (flui.x < left) { left = flui.x; }
+				if (flui.x + flui.width > right) { right = flui.x + flui.width; }
+				if (flui.y < top) { top = flui.y; }
+				if (flui.y + flui.height > bottom) { bottom = flui.y + flui.height;}
+			}
+		}
+		width = (right - left);
+		height = (bottom - top);
 	}
 	
 	/**
@@ -189,12 +190,6 @@ class FlxUIGroup extends FlxGroup implements IDestroyable
 	//the basic anchor point for the FlxGroup, think of it as it's x/y location
 	private var _anchor_x:Float = 0;
 	private var _anchor_y:Float = 0;
-	
-	private var _alpha:Float = 0;
-		
-	#if (cpp || neko)
-		private var __atlas:FlxAtlas;
-	#end
 	
 	//offset from the anchor position - if not 0, will force a repositioning of 
 	//all its children
@@ -261,28 +256,5 @@ class FlxUIGroup extends FlxGroup implements IDestroyable
 		set_x(X);
 		set_y(Y);
 	}
-	
-	//Recalculate the bound size of the group's contents:
-	private inline function updateSize():Void {
-		var fb:FlxBasic;
-		var ww:Float = 0;
-		var hh:Float = 0;
-		var best_w:Float = 0;
-		var best_h:Float = 0;
-		for (fb in members) {
-			if (Std.is(fb, FlxObject)) {
-				var fo:FlxObject = cast(fb, FlxObject);
-				if(fo.visible){
-					ww = fo.x + fo.width;
-					hh = fo.y + fo.height;
-					if (ww > best_w) { best_w = ww; }
-					if (hh > best_h) { best_h = hh; }
-				}
-			}
-		}
-		width = best_w;
-		height = best_h;
-	}
-	
-	
+		
 }

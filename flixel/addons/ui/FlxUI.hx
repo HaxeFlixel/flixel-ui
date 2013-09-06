@@ -11,7 +11,6 @@ import flixel.FlxBasic;
 import flixel.ui.FlxButton;
 import flixel.FlxG;
 import flixel.group.FlxGroup;
-import flixel.FlxBasic;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -149,10 +148,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @return	the asset, or null if destroy=true
 	 */
 	
-	public function removeAsset(key:String,destroy:Bool=true):FlxBasic{
-		var asset:FlxBasic = getAsset(key, false);
+	public function removeAsset(key:String,destroy:Bool=true):IFlxUIWidget{
+		var asset = getAsset(key, false);
 		if (asset != null) {
-			replaceInGroup(asset, null, true);
+			replaceInGroup(cast asset, null, true);
 			_asset_index.remove(key);
 		}
 		if (destroy) {
@@ -170,9 +169,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @return	the old asset, or null if destroy_old=true
 	 */
 	
-	public function replaceAsset(key:String, replace:FlxBasic, center_x:Bool=true, center_y:Bool=true, destroy_old:Bool=true):FlxBasic{
+	public function replaceAsset(key:String, replace:IFlxUIWidget, center_x:Bool=true, center_y:Bool=true, destroy_old:Bool=true):IFlxUIWidget{
 		//get original asset
-		var original:FlxBasic = getAsset(key, false);
+		var original = getAsset(key, false);
 		
 		if(original != null){
 			//set replacement in its location
@@ -193,7 +192,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 			
 			//switch original for replacement in whatever group it was in
-			replaceInGroup(original, replace);
+			replaceInGroup(cast original, cast replace);
 			
 			//remove the original asset index key
 			_asset_index.remove(key);
@@ -246,7 +245,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	public function load(data:Fast):Void {
 		_group_index = new Map<String,FlxUIGroup>();
-		_asset_index = new Map<String,FlxBasic>();
+		_asset_index = new Map<String,IFlxUIWidget>();
 		_definition_index = new Map<String,Fast>();
 		_mode_index = new Map<String,Fast>();
 		
@@ -348,14 +347,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 					
 					//Make the thing
-					var thing:FlxBasic = _loadThing(type,obj);
+					var thing = _loadThing(type,obj);
 					
 					if (thing != null) {
 
 						if (group != null) {
-							group.add(thing);
+							group.add(cast thing);
 						}else {
-							add(thing);			
+							add(cast thing);			
 						}		
 												
 						_loadPosition(obj, thing);	//Position the thing if possible						
@@ -423,7 +422,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var mode:Fast = getMode(mode_id);
 		_curr_mode = mode_id;
 		var id:String = "";
-		var thing:FlxBasic;
+		var thing;
 		if(target_id == ""){			
 			if (mode != null) {
 				if (mode.hasNode.show) {
@@ -459,7 +458,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 			}
 		}else {
-			var target:FlxBasic = getAsset(target_id);
+			var target = getAsset(target_id);
 			if (target != null && Std.is(target, FlxUI)) {
 				var targetUI:FlxUI = cast(target, FlxUI);
 				targetUI.setMode(mode_id, "");
@@ -495,7 +494,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	public function getFlxText(key:String, recursive:Bool = true):FlxText {
-		var asset:FlxBasic = getAsset(key, recursive);
+		var asset = getAsset(key, recursive);
 		if (asset != null) {
 			if (Std.is(asset, FlxText)) {
 				return cast(asset, FlxText);
@@ -514,8 +513,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return false;
 	}
 	
-	public function getAsset(key:String, recursive:Bool=true):FlxBasic{
-		var asset:FlxBasic = _asset_index.get(key);
+	public function getAsset(key:String, recursive:Bool=true):IFlxUIWidget{
+		var asset:IFlxUIWidget = _asset_index.get(key);
 		if (asset == null && recursive && _superIndexUI != null) {
 			return _superIndexUI.getAsset(key, recursive);
 		}
@@ -583,7 +582,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	/***PRIVATE***/
 	
 	private var _group_index:Map<String,FlxUIGroup>;
-	private var _asset_index:Map<String,FlxBasic>;
+	private var _asset_index:Map<String,IFlxUIWidget>;
 	private var _definition_index:Map<String,Fast>;
 	private var _mode_index:Map<String,Fast>;
 	
@@ -602,7 +601,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @param	replace	the replacement object
 	 * @param	splice if replace is null, whether to splice the entry
 	 */
-
 	 
 	private function replaceInGroup(original:FlxBasic,replace:FlxBasic,splice:Bool=false){
 		//Slow, unoptimized, searches through everything
@@ -649,7 +647,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	/************LOADING FUNCTIONS**************/
 	
-	private function _loadThing(type:String, data:Fast):Dynamic {
+	private function _loadThing(type:String, data:Fast):IFlxUIWidget{
 		var use_def:String = U.xml_str(data.x, "use_def", true);		
 		var definition:Fast = null;
 		if (use_def != "") {
@@ -740,7 +738,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _changeThing(data:Fast):Void {
 		var id:String = U.xml_str(data.x, "id", true);
-		var thing:FlxBasic = getAsset(id);
+		var thing = getAsset(id);
 		if (thing == null) {
 			return;
 		}
@@ -844,37 +842,18 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			pos_prop = "y"; 
 		}
 		
-		var flxb:FlxBasic;
-		var flxs:FlxSprite; 
-		var flxg:FlxUIGroup; 
-			
 		//calculate total size of everything
 		for (id in objects) {
-			var flxb:FlxBasic = getAsset(id);						
-			
-			//use reflection to deal with groups & crap
-			//TODO:
-			//could be optimized if everything was guaranteed to just have width/height
+			var widget:IFlxUIWidget = getAsset(id);						
 			
 			var theval:Float = 0;
 			
-			if (Std.is(flxb, FlxSprite)) {
-				flxs = cast flxb;
-				switch(size_prop) {
-					case "width": theval = flxs.width;
-					case "height": theval = flxs.height;
-				}
-				//total_size += flxs.
-			}else if (Std.is(flxb, FlxUIGroup)) {
-				flxg = cast flxb;
-				switch(size_prop) {
-					case "width": theval = flxg.width;
-					case "height": theval = flxg.height;
-				}
+			switch(size_prop) {
+				case "width": theval = widget.width;
+				case "height": theval = widget.height;
 			}
-			
+						
 			total_size += theval;
-			//total_size += Reflect.getProperty(flxb, size_prop);
 		}
 		
 		if (resize == false) {	//not resizing, so space evenly
@@ -889,40 +868,31 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var i:Int = 0;
 		var last_pos:Float = bounds.x;
 		for (id in objects) {
-			var flxb:FlxBasic = getAsset(id);
+			var widget:IFlxUIWidget = getAsset(id);
 			var pos:Float = last_pos;
 			if (!resize) {
-				//if we're not resizing, just get the object's size
-				object_size = Reflect.getProperty(flxb, size_prop);
+				switch(size_prop) {
+					case "width": object_size = widget.width;
+					case "height": object_size = widget.height;
+				}
 			}else {
 				//if we are resizing, resize it to the target size now
-				if (Std.is(flxb, flixel.addons.ui.IResizable)) {
-					var flxb_r:IResizable = cast flxb;
+				if (Std.is(widget, flixel.addons.ui.IResizable)) {
+					var widgetr:IResizable = cast widget;
 					if(axis == "vertical"){
-						flxb_r.resize(flxb_r.get_width(), object_size);
+						widgetr.resize(widgetr.get_width(), object_size);
 					}else if (axis == "horizontal") {
-						flxb_r.resize(object_size, flxb_r.get_height());
+						widgetr.resize(object_size, widgetr.get_height());
 					}
 				}
 			}
 			last_pos = pos + object_size + space_size;
 			
-			//TODO: could be optimized with interfaces
-			if (Std.is(flxb, FlxSprite)) {
-				flxs = cast flxb;
-				switch(pos_prop) {
-					case "x": flxs.x = pos;
-					case "y": flxs.y = pos;
-				}
-			}else if (Std.is(flxb, FlxUIGroup)) {
-				flxg = cast flxb;
-				switch(pos_prop) {
-					case "x": flxg.x = pos;
-					case "y": flxg.y = pos;
-				}
+			switch(pos_prop) {
+				case "x": widget.x = pos;
+				case "y": widget.y = pos;
 			}
 			
-			//Reflect.setProperty(flxb, pos_prop, pos);		//set x or y to the correct location
 			i++;
 		}		
 	}
@@ -933,28 +903,20 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var compare:String = U.xml_str(data.x, "compare", true);
 		var value:String = U.xml_str(data.x, "value", true);
 		
-		var thing:FlxBasic = getAsset(target);
+		var thing:IFlxUIWidget = getAsset(target);
 		
 		if (thing == null) {
 			return false;
 		}
-		
-		var fo:FlxObject = null;
-		
-		if (Std.is(thing, FlxObject) == false) {
-			return false;
-		}else {
-			fo = cast thing;
-		}
-		
+				
 		var prop_f:Float = 0;
 		var val_f:Float = 0;
 				
 		var p:Float = U.perc_to_float(value);
 		
 		switch(property) {
-			case "w", "width": prop_f = fo.width; 
-			case "h", "height": prop_f = fo.height; 
+			case "w", "width": prop_f = thing.width; 
+			case "h", "height": prop_f = thing.height; 
 		}
 				
 		if (Math.isNaN(p)) {
@@ -1028,7 +990,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private function _postLoadThing(type:String, data:Fast):Void {
 		
 		var id:String = U.xml_str(data.x, "id", true);
-		var fb:FlxBasic = getAsset(id);
+		var thing:IFlxUIWidget = getAsset(id);
 		
 		#if debug
 		trace("FlxUI._postLoadThing(" + type + ") id=" + id);
@@ -1038,7 +1000,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			_alignThing(data);
 		}		
 		
-		if (fb == null) {
+		if (thing == null) {
 			return;
 		}
 		
@@ -1048,27 +1010,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			definition = getDefinition(use_def);
 		}		
 		
-		if (Std.is(fb, IResizable)) {
+		if (Std.is(thing, IResizable)) {
 			var bounds: { min_width:Float, min_height:Float, 
 			              max_width:Float, max_height:Float } = calcMaxMinSize(data);				
 			
-			_resizeThing(cast(fb, IResizable), bounds);		
+			_resizeThing(cast(thing, IResizable), bounds);		
 			
 		}						
-		
-		var fbx:Float=0;
-		var fby:Float=0;
 				
-		if (Std.is(fb, FlxObject)) {
-			var fo:FlxObject = cast fb;
-			fbx = fo.x; fby = fo.y;
-		}else if (Std.is(fb, FlxUIGroup)) {
-			var fg:FlxUIGroup = cast fb;
-			fbx = fg.x; fby = fg.y;
-		}
-		
-		_delta(fb, -fbx, -fby);			//reset position to 0,0
-		_loadPosition(data,fb);			//reposition
+		_delta(thing, -thing.x, -thing.y);	//reset position to 0,0
+		_loadPosition(data, thing);			//reposition
 	}
 	
 	private function _loadTileTest(data:Fast, definition:Fast = null):FlxUITileTest {
@@ -1110,7 +1061,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return ftt;
 	}
 	
-	private function _loadText(data:Fast,definition:Fast=null):FlxText{
+	private function _loadText(data:Fast,definition:Fast=null):IFlxUIWidget{
 		var the_data:Fast = data;
 		if (definition != null) { the_data = definition;}
 		
@@ -1130,7 +1081,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var border:Array<Dynamic> = _loadBorder(the_data);
 		
-		var ft:FlxText;
+		var ft:IFlxUIWidget;
 		if(input == false){
 			var ftu:FlxUIText = new FlxUIText(0, 0, W, text, size);
 			ftu.setFormat(the_font, size, color, align);
@@ -1699,7 +1650,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return Std.int(ptrUI.height);*/
 	}
 		
-	private function _getAnchorPos(thing:FlxBasic, axis:String, str:String):Float {
+	private function _getAnchorPos(thing:IFlxUIWidget, axis:String, str:String):Float {
 		switch(str) {
 			case "": return 0;
 			case "left": return 0;
@@ -1729,39 +1680,23 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						}
 					}
 					
-					var otherb:FlxBasic = getAsset(str);
-					var other:FlxObject;
-					var otherx:Float;
-					var othery:Float;
-					var otherw:Float;
-					var otherh:Float;
-					if (Std.is(otherb, FlxObject)) {
-						other = cast otherb;
-						otherx = other.x;		othery = other.y;
-						otherw = other.width;	otherh = other.height;
-					}else if (Std.is(otherb, FlxUIGroup)) {
-						var fgx:FlxUIGroup = cast otherb;
-						otherx = fgx.x;		othery = fgx.y;
-						otherw = fgx.width; otherh = fgx.height;
-					}else {
-						return 0;
-					}
-					
-					if (thing != null) {
+					var other:IFlxUIWidget = getAsset(str);
+										
+					if (thing != null && other != null) {
 						if (axis == "x") { 
 							switch(property) {
-								case "left": return otherx;
-								case "right": return otherx + otherw;
-								case "center": return otherx + otherw / 2;
-								default:return otherx; 
+								case "left": return other.x;
+								case "right": return other.x + other.width;
+								case "center": return other.x + other.width / 2;
+								default:return other.x; 
 							}
 						}
 						else if (axis == "y") { 
 							switch(property) {
-								case "top": return othery;
-								case "bottom": return othery + otherh;
-								case "center": return othery + otherh / 2;
-								default:return othery;
+								case "top": return other.y;
+								case "bottom": return other.y + other.height;
+								case "center": return other.y + other.height / 2;
+								default:return other.y;
 							}
 						}
 					}
@@ -1938,12 +1873,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			prop = arr[1];			
 		}
 		
-		var flxb:FlxBasic = getAsset(str);		
+		var flxb = getAsset(str);		
 		var other:FlxObject = null;
 		var other_width:Float = 0;
 		var other_height:Float = 0;
 		var other_x:Float = 0;
 		var other_y:Float = 0;
+		
 		if (Std.is(flxb, FlxObject)) {
 			other = cast flxb;			
 			other_width = other.width;
@@ -2056,20 +1992,20 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				
 		//Then, try to center it on another object:
 		if (center_on != "") {
-			var other:FlxBasic = getAsset(center_on);
-			if (other != null && Std.is(other, FlxBasic)) {
+			var other = getAsset(center_on);
+			if (other != null && Std.is(other, IFlxUIWidget)) {
 				U.center(cast(other, FlxObject), cast(thing, FlxObject));
 			}
 		}else {
 			if (center_on_x != "") {
-				var other:FlxBasic = getAsset(center_on);
-				if (other != null && Std.is(other, FlxBasic)) {
+				var other = getAsset(center_on);
+				if (other != null && Std.is(other, IFlxUIWidget)) {
 					U.center(cast(other, FlxObject), cast(thing, FlxObject), true, false);
 				}
 			}
 			if (center_on_y != "") {
-				var other:FlxBasic = getAsset(center_on);
-				if (other != null && Std.is(other, FlxBasic)) {
+				var other = getAsset(center_on);
+				if (other != null && Std.is(other, IFlxUIWidget)) {
 					U.center(cast(other, FlxObject), cast(thing, FlxObject), false, true);
 				}
 			}

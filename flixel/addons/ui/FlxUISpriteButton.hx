@@ -19,7 +19,7 @@ import openfl.Assets;
  * Furthermore, you have the ability to
  */
 
-class FlxUISpriteButton extends FlxUITypedButton<FlxSprite> implements IFlxUIWidget 
+class FlxUISpriteButton extends FlxUITypedButton<FlxSprite>
 {
 	public function new(X:Float = 0, Y:Float = 0, ?Asset:FlxSprite, ?OnClick:Dynamic) {
 		super(X, Y, null, OnClick);		

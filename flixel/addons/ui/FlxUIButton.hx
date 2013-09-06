@@ -42,9 +42,6 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled
 		/**For IResizable:**/
 	
 	public override function resize(W:Float, H:Float):Void {
-		if (width == 32 && height == 32) {
-			trace("BOINK");
-		}
 		super.resize(W, H);
 		label.width = W;		
 	}

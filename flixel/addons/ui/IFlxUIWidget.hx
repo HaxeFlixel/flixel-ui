@@ -1,15 +1,14 @@
 package flixel.addons.ui;
+import flixel.FlxSprite.IFlxSprite;
 
 /**
  * ...
  * @author Lars Doucet
  */
 
-interface IFlxUIWidget{
+interface IFlxUIWidget extends IFlxSprite{
 
 	 public var id:String;
-	 public var x(default, set):Float;
-	 public var y(default, set):Float;
 	 public var width(default, set):Float;
 	 public var height(default, set):Float;
 }

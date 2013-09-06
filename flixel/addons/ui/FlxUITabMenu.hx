@@ -143,11 +143,11 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 				diff_size = (_back.width - tot_size);
 			}
 		}
-		
+				
 		for (tab in _tabs) {
 			
 			tab.x = xx;	
-			tab.y = -(tab.height - 2);			
+			tab.y = 0;// -(tab.height - 2);			
 			
 			if (_stretch_tabs) {
 				if(diff_size > 0){
@@ -164,9 +164,6 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 			}else{
 				xx += tab.width;
 			}
-			
-			//FlxG.bmpLog.add(tab.cachedGraphics.bitmap);
-						
 		}
 	}
 	
