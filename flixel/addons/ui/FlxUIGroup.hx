@@ -29,44 +29,12 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 	public var width(default, set):Float=0;
 	public var height(default, set):Float=0;
 	
-	//whether to update x,y instantly or on next update() call
-	//set this to true to remove one-frame "flicker" on setup
-	public var instant_update:Bool = false;	
-		
-	//ostensibly this will set the alpha of all the objects in the 
-	//group. Probably should switch this so it just precomposites the
-	//whole deal and then alphas the composited result
-	/*public var alpha(default, set):Float=1;
-	*/
-	
 	public var velocity:FlxPoint;
 	
 	public var autoBounds:Bool = true;
 	
-	//move all of the contents around - it saves the last anchor point,
-	//so it works "automagically"
-	
-	/*public var x(default, set):Float=0;
-	public var y(default, set):Float=0;*/
-	
-		/***GETTER SETTER FUNCTIONS***/
-				
-		/*public function set_x(f:Float):Float { 
-			x = f;
-			_delta_x += (f - _anchor_x);
-			_anchor_x = f;
-			if (instant_update) { updateDirty();}
-			return _anchor_x;
-		}
-	
-		public function set_y(f:Float):Float {
-			y = f;
-			_delta_y += (f - _anchor_y);
-			_anchor_y = f;
-			if (instant_update) { updateDirty();}
-			return _anchor_y;
-		}*/
-		
+		/***GETTER SETTER FUNCTIONS***/				
+
 		public function set_width(f:Float):Float {
 			width = f;
 			return width;
@@ -77,21 +45,6 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 			return height;
 		}
 		
-		/*public function set_alpha(a:Float):Float { 
-			if (a < 0) a = 0;
-			if (a > 1) a = 1;
-			alpha = a; 		
-			for (fb in members) {
-				if (Std.is(fb, FlxObject)) {
-					var fs:FlxSprite = cast(fb, FlxSprite);
-					fs.alpha = alpha;
-				}else if (Std.is(fb, FlxUIGroup)) {
-					var fg:FlxUIGroup = cast(fb, FlxUIGroup);
-					fg.alpha = alpha;
-				}
-			}return alpha;
-		}*/
-	
 	/***PUBLIC FUNCTIONS***/
 	
 	public function new() 
@@ -183,89 +136,12 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 		}
 	}
 	
-	/*public override function update():Void {
+	public override function update():Void {
 		if (velocity != null)
 		{
-			var temp:Bool = instant_update;
-			instant_update = false;
-			set_x(x + velocity.x);
-			set_y(y + velocity.y);
-			instant_update = temp;
+			x += velocity.x;
+			y += velocity.y;
 		}
-		updateDirty();
 		super.update();
-	}*/
-	
-	/********PRIVATE**********/
-	
-	//the basic anchor point for the FlxGroup, think of it as it's x/y location
-	private var _anchor_x:Float = 0;
-	private var _anchor_y:Float = 0;
-	
-	//offset from the anchor position - if not 0, will force a repositioning of 
-	//all its children
-	private var _delta_x:Float = 0;
-	private var _delta_y:Float = 0;
-	
-	//Reposition everything as necessary, also recalculate bounds
-	//TODO: Bounds calculating is kind of iffy, might also be disabled
-	/*private inline function updateDirty():Void {
-		if (_delta_x != 0 || _delta_y != 0) {
-			var best_w:Float = 0;
-			var best_h:Float = 0;
-			var ww:Float = 0;
-			var hh:Float = 0;
-			var fb:FlxBasic;
-			for (fb in members) {
-				if (Std.is(fb, FlxObject)) {
-					var fo:FlxObject = cast(fb, FlxObject);
-					fo.x += _delta_x;
-					fo.y += _delta_y;
-					if(fo.visible){
-						ww = fo.x + fo.width;
-						hh = fo.y + fo.height;
-						if (ww > best_w) { best_w = ww; }
-						if (hh > best_h) { best_h = hh; }
-					}
-				}else if (Std.is(fb, FlxUIGroup)) {
-					var fg:FlxUIGroup = cast(fb, FlxUIGroup);
-					fg.instant_update = instant_update;
-					fg.x += _delta_x;
-					fg.y += _delta_y;
-					if(fg.visible){
-						ww = fg.x + fg.width;
-						hh = fg.y + fg.height;
-						if (ww > best_w) { best_w = ww; }
-						if (hh > best_h) { best_h = hh; }
-					}
-				}else if (Std.is(fb, FlxButtonPlus)) {
-					var fbp:FlxButtonPlus = cast(fb, FlxButtonPlus);
-					fbp.x += Std.int(_delta_x);
-					fbp.y += Std.int(_delta_y);
-					if (fbp.visible) {
-						ww = fbp.x + fbp.width;
-						hh = fbp.y + fbp.height;
-						if (ww > best_w) { best_w = ww; }
-						if (hh > best_h) { best_h = hh; }
-					}
-				}
-			}
-			_delta_x = 0;
-			_delta_y = 0;
-			width = best_w;
-			height = best_h;
-		}
-	}*/
-	
-	/**
-	 * Helper to change the position of this group of objects.
-	 * @param	x
-	 * @param	y
-	 */
-	/*public override function reset(X:Float, Y:Float)
-	{
-		set_x(X);
-		set_y(Y);
-	}*/
-		
+	}	
 }

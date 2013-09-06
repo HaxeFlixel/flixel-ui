@@ -549,7 +549,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private static inline function _delta(thing:IFlxUIWidget, X:Float=0, Y:Float=0):Void {				
 		if (Std.is(thing, FlxUIGroup)) {
 			var group:FlxUIGroup = cast(thing, FlxUIGroup);
-			group.instant_update = true;
 		}
 		
 		thing.x += X;
