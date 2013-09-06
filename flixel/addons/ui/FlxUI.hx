@@ -814,6 +814,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 										
 					_doAlign(objects, axis, spacing, resize, bounds);
+					
+					if(data.hasNode.anchor || data.has.x || data.has.y){
+						for (object in objects) {
+							var thing:IFlxUIWidget = getAsset(object);
+							_loadPosition(data,thing);
+						}
+					}
 				
 				}else {
 					throw new Error("FlxUI._alignThing(): <bounds> node not found!");
@@ -2005,8 +2012,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				case "center": anchor_y = anchor_y - thing.height / 2;
 			}
 			
-			thing.x = anchor_x;
-			thing.y = anchor_y;
+			if(anchor_x_str != ""){
+				thing.x = anchor_x;
+			}
+			if(anchor_y_str != ""){
+				thing.y = anchor_y;
+			}
 			//_delta(thing, anchor_x, anchor_y);
 		}
 		
