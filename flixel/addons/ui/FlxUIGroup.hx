@@ -109,17 +109,10 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 	 */
 	
 	public function floorAll():Void {
-		var fb:FlxBasic;
-		for (fb in members) {
-			if (Std.is(fb, FlxObject)) {
-				var fo:FlxObject = cast(fb, FlxObject);
-				fo.x = Math.floor(fo.x);
-				fo.y = Math.floor(fo.y);
-			}else if (Std.is(fb, FlxUIGroup)) {
-				var fg:FlxUIGroup = cast(fb, FlxUIGroup);
-				fg.x = Math.floor(fg.x);
-				fg.y = Math.floor(fg.y);
-			}
+		var fs:IFlxSprite;
+		for (fs in members) {
+			fs.x = Math.floor(fs.x);
+			fs.y = Math.floor(fs.y);			
 		}
 	}
 	

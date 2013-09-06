@@ -10,8 +10,8 @@ package flixel.addons.ui;
  interface IResizable{
 
 	function resize(w:Float, h:Float) : Void;
-	function get_width():Float;
-	function get_height():Float;
+	public var width(default, set):Float;
+	public var height(default, set):Float;
 	
 }
 

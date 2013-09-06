@@ -151,7 +151,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	public function removeAsset(key:String,destroy:Bool=true):IFlxUIWidget{
 		var asset = getAsset(key, false);
 		if (asset != null) {
-			replaceInGroup(cast asset, null, true);
+			replaceInGroup(asset, null, true);
 			_asset_index.remove(key);
 		}
 		if (destroy) {
@@ -187,7 +187,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 			
 			//switch original for replacement in whatever group it was in
-			replaceInGroup(cast original, cast replace);
+			replaceInGroup(original, replace);
 			
 			//remove the original asset index key
 			_asset_index.remove(key);
@@ -347,9 +347,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					if (thing != null) {
 
 						if (group != null) {
-							group.add(cast thing);
+							group.add(thing);
 						}else {
-							add(cast thing);			
+							add(thing);			
 						}		
 												
 						_loadPosition(obj, thing);	//Position the thing if possible						
@@ -547,10 +547,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 */
 	
 	private static inline function _delta(thing:IFlxUIWidget, X:Float=0, Y:Float=0):Void {				
-		if (Std.is(thing, FlxUIGroup)) {
-			var group:FlxUIGroup = cast(thing, FlxUIGroup);
-		}
-		
 		thing.x += X;
 		thing.y += Y;		
 	}
@@ -561,15 +557,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @param	amt
 	 */
 		
-	private static inline function _center(thing:Dynamic,X:Bool=true,Y:Bool=true):Dynamic{
-		var return_thing:Dynamic = thing;
-		if(Std.is(thing,FlxObject)){
-			var obj:FlxObject = cast(thing, FlxObject);
-			if (X) { obj.x = (FlxG.width - obj.width) / 2; }
-			if (Y) { obj.y = (FlxG.height - obj.height) / 2;}
-			return_thing = obj;
-		}
-		return return_thing;
+	private static inline function _center(thing:IFlxUIWidget,X:Bool=true,Y:Bool=true):IFlxUIWidget{
+		if (X) { thing.x = (FlxG.width - thing.width) / 2; }
+		if (Y) { thing.y = (FlxG.height - thing.height) / 2;}
+		return thing;
 	}
 	
 	/***PRIVATE***/
@@ -759,8 +750,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (Std.is(thing, IResizable)) {
 			var ir:IResizable = cast thing;
 			if (new_width != -1 || new_height != -1) {
-				if (new_width == -1) { new_width = ir.get_width(); }
-				if (new_height == -1) { new_height = ir.get_height(); }
+				if (new_width == -1) { new_width = ir.width; }
+				if (new_height == -1) { new_height = ir.height; }
 				ir.resize(new_width, new_height);
 			}
 		}
@@ -873,9 +864,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				if (Std.is(widget, flixel.addons.ui.IResizable)) {
 					var widgetr:IResizable = cast widget;
 					if(axis == "vertical"){
-						widgetr.resize(widgetr.get_width(), object_size);
+						widgetr.resize(widgetr.width, object_size);
 					}else if (axis == "horizontal") {
-						widgetr.resize(object_size, widgetr.get_height());
+						widgetr.resize(object_size, widgetr.height);
 					}
 				}
 			}
@@ -956,8 +947,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private function _resizeThing(fo_r:IResizable, bounds:{ min_width:Float, min_height:Float,
 														 max_width:Float, max_height:Float}):Void {
 		var do_resize:Bool = false;
-		var ww:Float = fo_r.get_width();
-		var hh:Float = fo_r.get_height();
+		var ww:Float = fo_r.width;
+		var hh:Float = fo_r.height;
 		
 		if (ww < bounds.min_width) {
 			do_resize = true; 
@@ -1010,7 +1001,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			_resizeThing(cast(thing, IResizable), bounds);		
 			
 		}						
-				
+		
 		_delta(thing, -thing.x, -thing.y);	//reset position to 0,0
 		_loadPosition(data, thing);			//reposition
 	}
