@@ -351,8 +351,10 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 
 		var mat:Matrix = new Matrix();
 		mat.identity();
-			
-		bitmapFillRect(g, dst, section, tile, smooth);
+
+		if(dst.width > 0 && dst.height > 0){
+			bitmapFillRect(g, dst, section, tile, smooth);
+		}
 	}
 	
 	private static function bitmapFillRect(g:BitmapData, dst:Rectangle, section:BitmapData, tile:Int=TILE_NONE, smooth_:Bool=false):Void {

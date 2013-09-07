@@ -84,17 +84,19 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 			var top:Float = Math.POSITIVE_INFINITY;
 			var bottom:Float = Math.NEGATIVE_INFINITY;
 			for (fb in members) {
-				if (Std.is(fb, IFlxUIWidget)) {
-					var flui:IFlxUIWidget = cast fb;
-					if (flui.x < left) { left = flui.x; }
-					if (flui.x + flui.width > right) { right = flui.x + flui.width; }
-					if (flui.y < top) { top = flui.y; }
-					if (flui.y + flui.height > bottom) { bottom = flui.y + flui.height;}
-				}else {
-					if (fb.x < left)   { left = fb.x; }
-					if (fb.x > right)  { right = fb.x; }
-					if (fb.y < top)    { top = fb.y; }
-					if (fb.y > bottom) { bottom = fb.y;} 
+				if(fb != null){
+					if (Std.is(fb, IFlxUIWidget)) {
+						var flui:IFlxUIWidget = cast fb;
+						if (flui.x < left) { left = flui.x; }
+						if (flui.x + flui.width > right) { right = flui.x + flui.width; }
+						if (flui.y < top) { top = flui.y; }
+						if (flui.y + flui.height > bottom) { bottom = flui.y + flui.height;}
+					}else {
+						if (fb.x < left)   { left = fb.x; }
+						if (fb.x > right)  { right = fb.x; }
+						if (fb.y < top)    { top = fb.y; }
+						if (fb.y > bottom) { bottom = fb.y;} 
+					}
 				}
 			}
 			width = (right - left);

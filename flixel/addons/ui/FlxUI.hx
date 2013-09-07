@@ -795,6 +795,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				if (data.hasNode.bounds) {
 					var bound_range:Float = -1;
 					
+					var reg:String = U.xml_str(data.node.bounds.x, "left");
+					
 					if (axis == "horizontal") {
 						bounds.x = _getDataSize("w", U.xml_str(data.node.bounds.x, "left"), -1);
 						bounds.y = _getDataSize("w", U.xml_str(data.node.bounds.x, "right"), -1);					
@@ -805,11 +807,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				
 					if (bounds.x != -1 && bounds.y != -1) {
 						if(bounds.y <= bounds.x){
-							throw new Error("FlxUI._alignThing(): bounds max must be > bounds min!");
+							//throw new Error("FlxUI._alignThing(): bounds max must be > bounds min!");
 							return;
 						}
 					}else {
-						throw new Error("FlxUI._alignThing(): missing bound!");
+						//throw new Error("FlxUI._alignThing(): missing bound!");
 						return;
 					}
 										
