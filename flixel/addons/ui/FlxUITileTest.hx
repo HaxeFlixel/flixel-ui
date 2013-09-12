@@ -9,6 +9,14 @@ import flash.geom.Point;
 
 class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIWidget 
 {
+	public var widthInTiles(get,null):Int;
+	public var heightInTiles(get,null):Int;
+	public var tileWidth(default, null):Int;
+	public var tileHeight(default, null):Int;
+	
+	public function get_widthInTiles():Int { return _tilesWide; }
+	public function get_heightInTiles():Int { return _tilesTall; }
+	
 	private var _tilesWide:Int=2;
 	private var _tilesTall:Int=2;
 	private var _color1:Int=0;
@@ -16,9 +24,12 @@ class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIW
 	
 	public var floorToEven:Bool = true;
 	
-	public function new(X:Float,Y:Float,tileWidth:Int,tileHeight:Int,tilesWide:Int,tilesTall:Int,color1:Int=0xff808080,color2:Int=0xffc4c4c4) 
+	public function new(X:Float,Y:Float,TileWidth:Int,TileHeight:Int,tilesWide:Int,tilesTall:Int,color1:Int=0xff808080,color2:Int=0xffc4c4c4) 
 	{
 		super(X, Y);
+		
+		tileWidth = TileWidth;
+		tileHeight = TileHeight;
 		
 		_tilesWide = tilesWide;
 		_tilesTall = tilesTall;
@@ -27,7 +38,7 @@ class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIW
 		
 		makeTiles(tileWidth,tileHeight,_tilesWide,_tilesTall,_color1,_color2);
 	}
-	
+		
 	//For IResizable
 	public function get_width():Float { return width; }
 	public function get_height():Float { return height; }
@@ -59,8 +70,8 @@ class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIW
 	}
 	
 	public function resize(w:Float, h:Float):Void {		
-		var tileWidth:Int = Std.int(w / _tilesWide);
-		var tileHeight:Int = Std.int(h / _tilesTall);
+		tileWidth = Std.int(w / _tilesWide);
+		tileHeight = Std.int(h / _tilesTall);
 		
 		if (tileWidth < tileHeight) { tileHeight = tileWidth; }		
 		else if (tileHeight < tileWidth) { tileWidth = tileHeight; }
