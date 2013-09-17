@@ -1,4 +1,5 @@
 package flixel.addons.ui;
+import flixel.util.FlxPoint;
 
 /**
  * ...
@@ -10,6 +11,25 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	
 	/**STUBS TO MAKE THE INTERFACE HAPPY:**/
 	
+
+	public var immovable(default, set):Bool;
+	public function set_immovable(Immovable:Bool):Bool { return immovable; }
+
+	public var angle(default, set):Float;
+	public function set_angle(Angle:Float):Float { return angle; }
+
+	public var facing(default, set):Int;
+	public function set_facing(Facing:Int):Int { return facing; }
+	
+	public var offset:IFlxPoint;
+	public var origin:IFlxPoint;
+	public var scale:IFlxPoint;
+	public var velocity:IFlxPoint;
+	public var maxVelocity:IFlxPoint;
+	public var acceleration:IFlxPoint;
+	public var drag:IFlxPoint;
+	public var scrollFactor:IFlxPoint;
+
 	public var x(default, set):Float=0;
 	public var y(default, set):Float=0;
 	
