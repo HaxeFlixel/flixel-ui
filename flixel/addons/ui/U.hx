@@ -405,7 +405,7 @@ class U
 		}
 		return sum;
 	}
-	
+		
 	/**
 	 * Parses hex pixel value into a 3-length array of [r,g,b] ints
 	 * @param	hex
@@ -1145,4 +1145,5 @@ class U
 			
 			return s;
 		}
+		
 }

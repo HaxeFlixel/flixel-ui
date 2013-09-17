@@ -166,6 +166,30 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	/**
+	 * Adds an asset to this UI, and optionally puts it in a group
+	 * @param	asset	the IFlxUIWidget asset you want to add
+	 * @param	key		unique key for this asset. If it already exists, this fails.
+	 * @param	group_id string id of group inside this FlxUI you want to add it to.
+	 * @param	recursive whether to recursively search through sub-ui's
+	 */
+	
+	public function addAsset(asset:IFlxUIWidget, key:String, group_id:String = "", recursive:Bool=false):Bool{
+		if (_asset_index.exists(key)) {
+			return false;
+		}
+
+		var g:FlxUIGroup = getGroup(group_id,recursive);
+		if (g != null) {
+			g.add(asset);
+		}else {
+			add(asset);
+		}
+		
+		_asset_index.set(key,asset);
+		return true;
+	}
+	
+	/**
 	 * Replaces an asset, both in terms of location & group position
 	 * @param	key the string id of the original
 	 * @param	replace the replacement object
@@ -424,12 +448,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var thing;
 		if(target_id == ""){			
 			if (mode != null) {
+			
+				#if debug
+					trace("mode = " + mode.x);
 				
-				trace("mode = " + mode.x);
-				
-				for (el in mode.elements) {
-					trace("el = " + el.x);
-				}
+					for (el in mode.elements) {
+						trace("el = " + el.x);
+					}
+				#end
 				
 				var xml:Xml;
 				for (node in mode.elements) {
@@ -1046,12 +1072,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var id:String = U.xml_str(data.x, "id", true);
 		var thing:IFlxUIWidget = getAsset(id);
 		
-		if (id == "wave_bar" || id=="battlefield") {
-			trace("BOINK");
-		}
-		
 		#if debug
-		trace("FlxUI._postLoadThing(" + type + ") id=" + id);
+			trace("FlxUI._postLoadThing(" + type + ") id=" + id);
 		#end
 		
 		if (type == "align") {
@@ -1312,7 +1334,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadTest(data:Fast):Bool {
 		if (data.hasNode.load_if) {
-			for(node in data.nodes.load_if){
+			for (node in data.nodes.load_if) {
 				var aspect_ratio:Float = U.xml_f(node.x, "aspect_ratio", -1);
 				if (aspect_ratio != -1) {
 					var tolerance:Float = U.xml_f(node.x, "tolerance", 0.1);
@@ -1321,6 +1343,32 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					if (diff > tolerance) {
 						return false;
 					}
+				}
+				
+				var haxeDef:String = U.xml_str(node.x, "haxedef", true, "");
+				var haxeVal:Bool = U.xml_bool(node.x, "value", true);
+				
+				if (haxeDef != "") {
+					var defValue:Bool = false;
+					switch(haxeDef) {
+						case "3ds": 
+							#if NINTENDO_3DS
+								defValue = true;
+							#end			
+						case "wiiu":
+							#if NINTENDO_WIIU
+								defValue = true;
+							#end
+						case "vita":
+							#if PS_VITA
+								defValue = true;
+							#end
+						case "ps4":
+							#if PS_4
+								defValue = true;
+							#end							
+					}
+					return defValue == haxeVal;
 				}
 			}
 		}

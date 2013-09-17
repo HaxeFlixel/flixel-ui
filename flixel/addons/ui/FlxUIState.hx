@@ -47,6 +47,7 @@ class FlxUIState extends FlxState implements IEventGetter
 	public function new() 
 	{
 		super();
+		FlxG.console.addCommand("resizeScreen", this, resizeScreen);
 	}
 	
 	public override function create():Void {
@@ -73,6 +74,15 @@ class FlxUIState extends FlxState implements IEventGetter
 		}
 		
 		useMouse = true;
+	}
+	
+	
+	
+	public function resizeScreen(width:Float=800, height:Float=600):Void {
+		#if sys
+			Lib.resizeFrame(width, height);
+			onResize(cast width,cast height);
+		#end
 	}
 		
 	public override function onResize(Width:Int,Height:Int):Void {
