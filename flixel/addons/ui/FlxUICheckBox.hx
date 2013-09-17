@@ -57,7 +57,13 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 		button = new FlxUIButton(0, 0, Label, _clickCheck);
 		
 		//set default checkbox label format
-		button.label.setFormat(null, 8, 0xffffff, "left", FlxText.OUTLINE);
+		button.label.setFormat(null, 8, 0xffffff, "left", FlxText.BORDER_OUTLINE);
+		button.up_color = 0xffffff;
+		button.down_color = 0xffffff;
+		button.over_color = 0xffffff;
+		button.up_toggle_color = 0xffffff;
+		button.down_toggle_color = 0xffffff;
+		button.over_toggle_color = 0xffffff;
 		
 		//TODO:
 		//the +2 is a magic number, possibly should be a user-set parameter
@@ -195,6 +201,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 		var arr:Array<Dynamic>;
 		if (Std.is(Params, Array)) {
 			arr = cast(Params, Array<Dynamic>);
+			arr = U.copy_shallow_arr(arr);
 		}else {
 			arr = new Array<Dynamic>();
 			arr.push(Params);						

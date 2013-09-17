@@ -250,6 +250,10 @@ class FlxUIRadioGroup extends FlxUIGroup
 			if (id == _ids[i]) {
 				_selected = i;
 				c.checked = true;
+				var check:String = params_[1];
+				if (check.indexOf("checked:") != -1) {
+					params_[1] = "checked:true";
+				}
 			}
 			i++;
 		}

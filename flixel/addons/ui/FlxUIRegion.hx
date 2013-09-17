@@ -16,7 +16,6 @@ class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizabl
 		#if debug
 			color = U.randomColor(true);
 			alpha = 0.5;
-			visible = false;
 		#else
 			visible = false;	//you never see this thing in release mode			
 		#end		
