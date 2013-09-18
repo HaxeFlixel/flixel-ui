@@ -89,8 +89,6 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 		_back = back_;
 		add(_back);
 		
-		var offset_y:Float = 0;
-		
 		if (tabs_ == null) {
 			if (tab_ids_and_labels_ != null) {
 				tabs_ = new Array<FlxUIButton>();
@@ -100,8 +98,14 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 					//set label and id
 					var fb:FlxUIButton = new FlxUIButton(0, 0, tdata.label);
 					
-					//default style:
-					fb.label.color = 0xffffff;
+					//default style:					
+					fb.up_color = 0xffffff;
+					fb.down_color = 0xffffff;
+					fb.over_color = 0xffffff;
+					fb.up_toggle_color = 0xffffff;
+					fb.down_toggle_color = 0xffffff;
+					fb.over_toggle_color = 0xffffff;
+					
 					fb.label.setBorderStyle(FlxText.OUTLINE);
 					
 					fb.id = tdata.id;
@@ -144,6 +148,8 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 			}
 		}
 				
+		_tabs.sort(sortTabs);
+		
 		for (tab in _tabs) {
 			
 			tab.x = x + xx;	
@@ -164,13 +170,22 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 			}else{
 				xx += tab.width;
 			}
-		}
+		}		
 		
 		if (_tabs != null && _tabs.length > 0 && _tabs[0] != null) {
 			_back.y = _tabs[0].y + _tabs[0].height - 2;
 		}
 		
 		calcBounds();
+	}
+	
+	private function sortTabs(a:FlxUIButton, b:FlxUIButton):Int {
+		if (a.id < b.id) {
+			return -1;
+		}else if (a.id > b.id) {
+			return 1;
+		}
+		return -1;
 	}
 	
 	public override function destroy():Void {
@@ -186,8 +201,9 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 		if (g == this) {
 			return;			//DO NOT ADD A GROUP TO ITSELF
 		}
-		
-		if(!hasThis(g)){	//ONLY ADD IF IT DOESN'T EXIST
+				
+		if (!hasThis(g)) {	//ONLY ADD IF IT DOESN'T EXIST
+			g.y = (_back.y - y);
 			add(g);
 			_tab_groups.push(g);
 		}

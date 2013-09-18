@@ -737,19 +737,25 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}
 		
+		var info:Fast = consolidateData(data, definition);
+		
 		switch(type) {
-			case "region": return _loadRegion(data, definition);
-			case "chrome", "9slicesprite": return _load9SliceSprite(data, definition);
-			case "tile_test": return _loadTileTest(data, definition);
-			case "sprite": return _loadSprite(data,definition);
-			case "text": return _loadText(data, definition);
-			case "button": return _loadButton(data, definition);
-			case "button_toggle": return _loadButton(data, definition,true,true);
+			case "region": return _loadRegion(info);
+			case "chrome", "nineslicesprite", "nine_slice_sprite", "nineslice", "nine_slice": return _load9SliceSprite(info);
+			case "tile_test": return _loadTileTest(info);
+			case "sprite": return _loadSprite(info);
+			case "text": return _loadText(info);
+			case "button": return _loadButton(info);
+			case "button_toggle": return _loadButton(info,true,true);
 						
-			case "tab_menu": return _loadTabMenu(data, definition);
-			case "checkbox": return _loadCheckBox(data, definition);
-			case "radio_group": return _loadRadioGroup(data, definition);
-			case "layout", "ui": return _loadLayout(data, definition);
+			case "tab_menu": return _loadTabMenu(info);
+			
+			/*case "dropdown_menu", "dropdown",
+			     "pulldown", "pulldown_menu": return _loadDropDownMenu(info);*/
+			
+			case "checkbox": return _loadCheckBox(info);
+			case "radio_group": return _loadRadioGroup(info);
+			case "layout", "ui": return _loadLayout(info);
 			case "failure": if (_failure_checks == null) { _failure_checks = new Array<Fast>(); }
 							_failure_checks.push(data);
 							return null;
@@ -760,7 +766,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 			default: 
 				//If I don't know how to load this thing, I will request it from my pointer:			
-				var dataObject = { data:data, definition:definition};
+				var dataObject = info;
 				var result = _ptr.getRequest("ui_get:" + type, this, dataObject);
 				return result;
 		}
@@ -1102,9 +1108,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		_loadPosition(data, thing);			//reposition
 	}
 	
-	private function _loadTileTest(data:Fast, definition:Fast = null):FlxUITileTest {
-		var the_data:Fast = data;
-		if (definition != null) { the_data = definition; }
+	private function _loadTileTest(data:Fast):FlxUITileTest {
 		
 		var tiles_w:Int = U.xml_i(data.x, "tiles_w", 2);
 		var tiles_h:Int = U.xml_i(data.x, "tiles_h", 2);
@@ -1139,9 +1143,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return ftt;
 	}
 	
-	private function _loadText(data:Fast,definition:Fast=null):IFlxUIWidget{
-		var the_data:Fast = data;
-		if (definition != null) { the_data = definition;}
+	private function _loadText(data:Fast):IFlxUIWidget{
 		
 		var text:String = U.xml_str(data.x, "text");
 		var context:String = U.xml_str(data.x, "context", true, "ui");
@@ -1149,15 +1151,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var W:Int = cast _loadWidth(data, 100);
 				
-		var the_font:String = _loadFontFace(the_data);
+		var the_font:String = _loadFontFace(data);
 		
-		var input:Bool = U.xml_bool(the_data.x, "input");
+		var input:Bool = U.xml_bool(data.x, "input");
 		
-		var align:String = U.xml_str(the_data.x, "align"); if (align == "") { align = null;}
-		var size:Int = U.xml_i(the_data.x, "size"); if (size == 0) { size = 8;}
-		var color:Int = _loadColor(the_data);
+		var align:String = U.xml_str(data.x, "align"); if (align == "") { align = null;}
+		var size:Int = U.xml_i(data.x, "size"); if (size == 0) { size = 8;}
+		var color:Int = _loadColor(data);
 		
-		var border:Array<Dynamic> = _loadBorder(the_data);
+		var border:Array<Dynamic> = _loadBorder(data);
 		
 		var ft:IFlxUIWidget;
 		if(input == false){
@@ -1184,6 +1186,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	public static function consolidateData(data:Fast, definition:Fast):Fast {
+		if (data == null && definition != null) {
+			return definition;		//no data? Return the definition;
+		}
 		if (definition == null) {
 			return data;			//no definition? Return the original data
 		}else {			
@@ -1217,25 +1222,19 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return data;
 	}
 	
-	private function _loadRadioGroup(data:Fast, definition:Fast = null):FlxUIRadioGroup {
+	private function _loadRadioGroup(data:Fast):FlxUIRadioGroup {
 		var frg:FlxUIRadioGroup = null;
-		
-		var default_data:Fast = data;
-		if (definition != null) { default_data = definition; }
-		
-		var dot_src:String = U.xml_str(default_data.x, "dot_src", true);
-		var radio_src:String = U.xml_str(default_data.x, "radio_src", true);
+				
+		var dot_src:String = U.xml_str(data.x, "dot_src", true);
+		var radio_src:String = U.xml_str(data.x, "radio_src", true);
 		
 		var labels:Array<String> = new Array<String>();
 		var ids:Array<String> = new Array<String>();
 		
-		var W:Int = cast _loadWidth(default_data, 11, "radio_width");
-		var H:Int = cast _loadHeight(default_data, 11, "radio_height");
-			//var W:Int = U.xml_i(default_data.x, "radio_width", 11);
-			//var H:Int = U.xml_i(default_data.x, "radio_height", 11);
+		var W:Int = cast _loadWidth(data, 11, "radio_width");
+		var H:Int = cast _loadHeight(data, 11, "radio_height");
 		
-		var labelW:Int = cast _loadWidth(default_data, 100, "label_width");
-			//var labelW:Int = U.xml_i(default_data.x, "label_width", 100);
+		var labelW:Int = cast _loadWidth(data, 100, "label_width");
 		
 		for (radioNode in data.nodes.radio) {
 			var id:String = U.xml_str(radioNode.x, "id", true);
@@ -1271,13 +1270,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			frg.loadGraphics(radio_asset,dot_asset);
 		}
 		
-		var text_x:Int = U.xml_i(default_data.x, "text_x");
-		var text_y:Int = U.xml_i(default_data.x, "text_y");		
+		var text_x:Int = U.xml_i(data.x, "text_x");
+		var text_y:Int = U.xml_i(data.x, "text_y");		
 		
 		for (fo in frg.members) {
 			if (Std.is(fo, FlxUICheckBox)){
 				var fc:FlxUICheckBox = cast(fo, FlxUICheckBox);
-				formatButtonText(default_data, fc);
+				formatButtonText(data, fc);
 				fc.textX = text_x;				
 				fc.textY = text_y;
 			}
@@ -1286,13 +1285,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return frg;
 	}
 	
-	private function _loadCheckBox(data:Fast, definition:Fast = null):FlxUICheckBox {
+	private function _loadCheckBox(data:Fast):FlxUICheckBox {
 		var src:String = "";
 		var fc:FlxUICheckBox = null;
-		
-		var default_data:Fast = data;
-		if (definition != null) { default_data = definition; }
-		
+				
 		var label:String = U.xml_str(data.x, "label");
 		var context:String = U.xml_str(data.x, "context", true, "ui");
 		label = getText(label,context);
@@ -1300,11 +1296,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var context:String = U.xml_str(data.x, "context", true, "ui");
 		label = getText(label,context);
 			
-		var labelW:Int = cast _loadWidth(default_data, 100, "label_width");
-			//var labelW:Int = U.xml_i(default_data.x, "label_width", 100);
+		var labelW:Int = cast _loadWidth(data, 100, "label_width");
 		
-		var check_src:String = U.xml_str(default_data.x, "check_src", true);
-		var box_src:String = U.xml_str(default_data.x, "box_src", true);
+		var check_src:String = U.xml_str(data.x, "check_src", true);
+		var box_src:String = U.xml_str(data.x, "box_src", true);
 		
 		var params:Array<Dynamic> = getParams(data);
 				
@@ -1319,10 +1314,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		fc = new FlxUICheckBox(0, 0, box_asset, check_asset, label, labelW, _onClickCheckBox, params);
-		formatButtonText(default_data, fc);
+		formatButtonText(data, fc);
 		
-		var text_x:Int = U.xml_i(default_data.x, "text_x");
-		var text_y:Int = U.xml_i(default_data.x, "text_y");		
+		var text_x:Int = U.xml_i(data.x, "text_x");
+		var text_y:Int = U.xml_i(data.x, "text_y");		
 		
 		fc.textX = text_x;
 		fc.textY = text_y;
@@ -1375,15 +1370,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return true;
 	}
 	
-	private function _loadLayout(data:Fast, definition:Fast = null):FlxUI {
-		var default_data:Fast = data;
-		if (definition != null) { default_data = definition;}
-		var info:Fast = consolidateData(data, definition);		
+	private function _loadLayout(data:Fast):FlxUI {
 		
-		if(_loadTest(info)){
+		if(_loadTest(data)){
 		
 			var id:String = U.xml_str(data.x, "id", true);
-			var _ui:FlxUI = new FlxUI(info, this, this,_ptr_tongue);
+			var _ui:FlxUI = new FlxUI(data, this, this,_ptr_tongue);
 			_ui.id = id;
 		
 			return _ui;
@@ -1392,30 +1384,40 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return null;
 	}
 	
-	private function _loadTabMenu(data:Fast, definition:Fast = null):FlxUITabMenu{
-		var default_data:Fast = data;
-		if (definition != null) { default_data = definition;}
+	private function _loadDropDownMenu(data:Fast):FlxUIDropdownMenu {
+		return null;
+	}
+	
+	private function _loadTabMenu(data:Fast):FlxUITabMenu{
 		
-		var back_def_str:String = U.xml_str(default_data.x, "back_def");
-		var back_def:Fast = getDefinition(back_def_str);
+		var back_def_str:String = U.xml_str(data.x, "back_def");
+		var back_def:Fast = getDefinition(back_def_str);		
 		if (back_def == null) {
-			back_def = default_data;
+			back_def = data;
 		}
-		
-		var back:FlxUI9SliceSprite = _load9SliceSprite(data, back_def, "tab_menu");
+	
+		back_def = consolidateData(back_def, data);
+		var back:FlxUI9SliceSprite = _load9SliceSprite(back_def, "tab_menu");
 		
 		var tab_def:Fast = null;
 		
-		var stretch_tabs:Bool = U.xml_bool(default_data.x, "stretch_tabs",false);
+		var stretch_tabs:Bool = U.xml_bool(data.x, "stretch_tabs",false);
 		
-		if (default_data.hasNode.tab) {
-			var tab_def_str:String = U.xml_str(default_data.node.tab.x, "use_def");
+		var tab_def_str:String = "";
+		
+		if (data.hasNode.tab) {
+			for(tabNode in data.nodes.tab){
+				var temp = U.xml_str(tabNode.x, "use_def");
+				if (temp != "") { 
+					tab_def_str = temp;
+				}
+			}			
 			if (tab_def_str != "") {
 				tab_def = getDefinition(tab_def_str);
 			}else {
-				tab_def = default_data.node.tab;
+				tab_def = data.node.tab;
 			}
-		}
+		}		
 		
 		var list_tabs:Array<FlxUIButton> = new Array<FlxUIButton>();
 		
@@ -1424,16 +1426,20 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (data.hasNode.tab) {			
 			for (tab_node in data.nodes.tab) {
 				id = U.xml_str(tab_node.x, "id", true);
-				var label:String = U.xml_str(tab_node.x, "label");
-				var context:String = U.xml_str(tab_node.x, "context", true, "ui");
-				label = getText(label,context);
-		
-				var context:String = U.xml_str(tab_node.x, "context", true, "ui");
-				label = getText(label,context);
-		
-				var tab:FlxUIButton = cast _loadButton(tab_node, tab_def, true, true, "tab_menu");				
-				tab.id = id;
-				list_tabs.push(tab);
+				
+				if(id != ""){
+					var label:String = U.xml_str(tab_node.x, "label");
+					var context:String = U.xml_str(tab_node.x, "context", true, "ui");
+					label = getText(label,context);
+			
+					var context:String = U.xml_str(tab_node.x, "context", true, "ui");
+					label = getText(label,context);
+			
+					var tab_info:Fast = consolidateData(tab_node, tab_def);
+					var tab:FlxUIButton = cast _loadButton(tab_info, true, true, "tab_menu");				
+					tab.id = id;
+					list_tabs.push(tab);
+				}
 			}			
 		}
 		
@@ -1470,21 +1476,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return fg;
 	}
 			
-	private function _loadButton(data:Fast, definition:Fast = null, setCallback:Bool = true, isToggle:Bool = false, load_code:String=""):IFlxUIWidget{
+	private function _loadButton(data:Fast, setCallback:Bool = true, isToggle:Bool = false, load_code:String=""):IFlxUIWidget{
 		var src:String = ""; 
 		var fb:Dynamic;
 		fb = null;
+				
+		var resize_ratio:Float = U.xml_f(data.x, "resize_ratio", -1);
+		var resize_point:FlxPoint = _loadCompass(data, "resize_point");
+		var isVis:Bool = U.xml_bool(data.x, "visible", true);		
 		
-		var info:Fast = consolidateData(data, definition);
-		
-		/*var default_data:Fast = data;
-		if (definition != null) { default_data = definition;}*/
-		
-		var resize_ratio:Float = U.xml_f(info.x, "resize_ratio", -1);
-		var resize_point:FlxPoint = _loadCompass(info, "resize_point");
-		var isVis:Bool = U.xml_bool(info.x, "visible", true);		
-		
-		var label:String = U.xml_str(info.x, "label");
+		var label:String = U.xml_str(data.x, "label");
 		
 		var sprite:FlxUISprite = null;
 		//TODO:
@@ -1492,18 +1493,18 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			//once this issue: (https://github.com/HaxeFlixel/flixel/issues/614) is resolved
 			//we can have both, but for now we enforce one or the other
 		if (label == "") {		
-			if (info.hasNode.sprite) {
-				sprite = cast _loadThing("sprite",info.node.sprite);				
+			if (data.hasNode.sprite) {
+				sprite = cast _loadThing("sprite",data.node.sprite);				
 			}
 		}
 		
-		var context:String = U.xml_str(info.x, "context", true, "ui");
+		var context:String = U.xml_str(data.x, "context", true, "ui");
 		label = getText(label,context);
 		
-		var W:Int = cast _loadWidth(info, 0, "width");
-		var H:Int = cast _loadHeight(info, 0, "height");
+		var W:Int = cast _loadWidth(data, 0, "width");
+		var H:Int = cast _loadHeight(data, 0, "height");
 				
-		var params:Array<Dynamic> = getParams(info);
+		var params:Array<Dynamic> = getParams(data);
 		
 		if(sprite == null){
 			fb = new FlxUIButton(0, 0, label);			
@@ -1519,9 +1520,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		/***Begin graphics loading block***/
 		
-		if (info.hasNode.graphic) {
+		if (data.hasNode.graphic) {
 			
-			var blank:Bool = U.xml_bool(info.node.graphic.x, "blank");
+			var blank:Bool = U.xml_bool(data.node.graphic.x, "blank");
 			
 			if (blank) {
 				//load blank
@@ -1541,12 +1542,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 				
 				//dimensions of source 9slice image (optional)
-				var src_w:Int = U.xml_i(info.node.graphic.x, "src_w", 0);
-				var src_h:Int = U.xml_i(info.node.graphic.x, "src_h", 0);
-				var tile:Int = _loadTileRule(info.node.graphic);					
+				var src_w:Int = U.xml_i(data.node.graphic.x, "src_w", 0);
+				var src_h:Int = U.xml_i(data.node.graphic.x, "src_h", 0);
+				var tile:Int = _loadTileRule(data.node.graphic);					
 				
 				//custom frame indeces array (optional)
-				var frame_str:String = U.xml_str(info.node.graphic.x, "frames",true);
+				var frame_str:String = U.xml_str(data.node.graphic.x, "frames",true);
 				if (frame_str != "") {
 					var arr = frame_str.split(",");					
 					for (numstr in arr) {
@@ -1554,7 +1555,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 				}
 					
-				for (graphicNode in info.nodes.graphic) {
+				for (graphicNode in data.nodes.graphic) {
 					var graphic_id:String = U.xml_str(graphicNode.x, "id", true);
 					var image:String = U.xml_str(graphicNode.x, "image");
 					var slice9:String = U.xml_str(graphicNode.x, "slice9");
@@ -1638,21 +1639,32 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		/***End graphics loading block***/
 			
-		if(sprite == null){
-			formatButtonText(info, fb);
+		if (sprite == null) {
+			if (data != null && data.hasNode.text) {
+				formatButtonText(data, fb);
+			}else {
+				if (load_code == "tab_menu") {
+					fb.up_color = 0xffffff;
+					fb.down_color = 0xffffff;
+					fb.over_color = 0xffffff;
+					fb.up_toggle_color = 0xffffff;
+					fb.down_toggle_color = 0xffffff;
+					fb.over_toggle_color = 0xffffff;
+				}
+			}
 		}
 		
 		var text_x:Int = 0;
 		var text_y:Int = 0;
-		if (info.x.get("text_x") != null) {
-			text_x = U.xml_i(info.x, "text_x");			
-		}else if (info.x.get("label_x") != null) {
-			text_x = U.xml_i(info.x, "label_x");
+		if (data.x.get("text_x") != null) {
+			text_x = U.xml_i(data.x, "text_x");			
+		}else if (data.x.get("label_x") != null) {
+			text_x = U.xml_i(data.x, "label_x");
 		}
-		if (info.x.get("text_y") != null) {
-			text_y = U.xml_i(info.x, "text_y");			
-		}else if (info.x.get("label_y") != null) {
-			text_y = U.xml_i(info.x, "label_y");
+		if (data.x.get("text_y") != null) {
+			text_y = U.xml_i(data.x, "text_y");			
+		}else if (data.x.get("label_y") != null) {
+			text_y = U.xml_i(data.x, "label_y");
 		}
 		
 		//label offset has already been 'centered,' this adjust from there:
@@ -1672,27 +1684,23 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return b2;
 	}
 	
-	private function _loadRegion(data:Fast, definition:Fast = null):FlxUIRegion {
-		var info:Fast = consolidateData(data, definition);
-		var w:Int = cast _loadWidth(info);
-		var h:Int = cast _loadHeight(info);
+	private function _loadRegion(data:Fast):FlxUIRegion {
+		var w:Int = cast _loadWidth(data);
+		var h:Int = cast _loadHeight(data);
 		return new FlxUIRegion(0, 0, w, h);
 	}
 	
-	private function _load9SliceSprite(data:Fast,definition:Fast=null,load_code:String=""):FlxUI9SliceSprite{
+	private function _load9SliceSprite(data:Fast,load_code:String=""):FlxUI9SliceSprite{
 		var src:String = ""; 
 		var f9s:FlxUI9SliceSprite = null;
 				
-		var the_data:Fast = data;
-		if (definition != null) { the_data = definition;}
-		
 		var resize_ratio:Float = U.xml_f(data.x, "resize_ratio", -1);
 		var resize_point:FlxPoint = _loadCompass(data, "resize_point");
 		
 		var bounds: { min_width:Float, min_height:Float, 
 			          max_width:Float, max_height:Float } = calcMaxMinSize(data);				
 							  
-		src = U.xml_gfx(the_data.x, "src");
+		src = U.xml_gfx(data.x, "src");
 		if (src == "") { src = null; }
 		
 		if(src == null){
@@ -1716,11 +1724,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		var rc:Rectangle = new Rectangle(0, 0, rect_w, rect_h);
-		var slice9:String = U.xml_str(the_data.x, "slice9");
+		var slice9:String = U.xml_str(data.x, "slice9");
 		
-		var smooth:Bool = U.xml_bool(the_data.x, "smooth", false);
+		var smooth:Bool = U.xml_bool(data.x, "smooth", false);
 		
-		var tile:Int = _loadTileRule(the_data);
+		var tile:Int = _loadTileRule(data);
 				
 		f9s = new FlxUI9SliceSprite(0, 0, src, rc, slice9, tile, smooth,"",resize_ratio,resize_point);
 		
@@ -1738,14 +1746,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return tile;
 	}
 	
-	private function _loadSprite(data:Fast,definition:Fast=null):FlxUISprite{
+	private function _loadSprite(data:Fast):FlxUISprite{
 		var src:String = ""; 
 		var fs:FlxUISprite = null;
 		
-		var the_data:Fast = data;
-		if (definition != null) { the_data = definition;}
 		
-		src = U.xml_gfx(the_data.x, "src");
+		src = U.xml_gfx(data.x, "src");
 		
 		var bounds: { min_width:Float, min_height:Float, 
 			          max_width:Float, max_height:Float } = calcMaxMinSize(data);				
@@ -1753,15 +1759,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if(src != ""){
 			fs = new FlxUISprite(0, 0, src);		
 		}else {
-			var W:Int = cast _loadWidth(the_data);
-			var H:Int = cast _loadHeight(the_data);
+			var W:Int = cast _loadWidth(data);
+			var H:Int = cast _loadHeight(data);
 			
 			if (W < bounds.min_width) { W = cast bounds.min_width; }
 			else if (W > bounds.max_width) { W = cast bounds.max_width; }
 			if (H < bounds.min_height) { H = cast bounds.max_height; }
 			else if (H > bounds.max_height) { H = cast bounds.max_height;}			
 
-			var cstr:String = U.xml_str(the_data.x, "color");
+			var cstr:String = U.xml_str(data.x, "color");
 			var C:Int = 0;			
 			if (cstr != "") {
 				C = U.parseHex(cstr, true);			
@@ -2145,13 +2151,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		_delta(thing, X, Y);
 	}	
 	
-	private function _loadBorder(the_data:Fast):Array<Dynamic>
+	private function _loadBorder(data:Fast):Array<Dynamic>
 	{
-		var border_str:String = U.xml_str(the_data.x, "border", "");
+		var border_str:String = U.xml_str(data.x, "border", "");
 		var border_style:Int = FlxText.NONE;
-		var border_color:Int = _loadColor(the_data, "border_color", 0);
-		var border_size:Int = U.xml_i(the_data.x, "border_size", 1);
-		var border_quality:Float = U.xml_f(the_data.x, "border_quality", 0);
+		var border_color:Int = _loadColor(data, "border_color", 0);
+		var border_size:Int = U.xml_i(data.x, "border_size", 1);
+		var border_quality:Float = U.xml_f(data.x, "border_quality", 0);
 		
 		switch(border_str) {
 			case "shadow": border_style = FlxText.SHADOW;
@@ -2160,17 +2166,17 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			case "":
 				//no "border" value, check for shortcuts:
 				//try "outline"
-				border_str = U.xml_str(the_data.x, "shadow", true, "");
+				border_str = U.xml_str(data.x, "shadow", true, "");
 				if (border_str != "") {
 					border_style = FlxText.SHADOW;
 					border_color = U.parseHex(border_str, false, true);					
 				}else{
-					border_str = U.xml_str(the_data.x, "outline", true, "");
+					border_str = U.xml_str(data.x, "outline", true, "");
 					if (border_str != "") {
 						border_style = FlxText.OUTLINE;
 						border_color = U.parseHex(border_str, false, true);
 					}else{
-						border_str = U.xml_str(the_data.x, "outline_fast", "");
+						border_str = U.xml_str(data.x, "outline_fast", "");
 						if (border_str != "") {
 							border_style = FlxText.OUTLINE_FAST;
 							border_color = U.parseHex(border_str, false, true);

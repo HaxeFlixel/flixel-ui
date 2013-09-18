@@ -96,11 +96,11 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 
 	public var resize_point(default, set):FlxPoint;
 	public function set_resize_point(r:FlxPoint):FlxPoint { 
-		if (resize_point == null) { 
+		if (r != null) { 
 			resize_point = new FlxPoint(); 
+			resize_point.x = r.x;
+			resize_point.y = r.y;
 		}
-		resize_point.x = r.x;
-		resize_point.y = r.y;
 		return resize_point; 
 	}
 	
