@@ -57,7 +57,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 		button = new FlxUIButton(0, 0, Label, _clickCheck);
 		
 		//set default checkbox label format
-		button.label.setFormat(null, 8, 0xffffff, "left", FlxText.OUTLINE);
+		button.label.setFormat(null, 8, 0xffffff, "left", FlxText.BORDER_OUTLINE);
 		button.up_color = 0xffffff;
 		button.down_color = 0xffffff;
 		button.over_color = 0xffffff;
