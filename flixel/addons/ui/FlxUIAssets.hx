@@ -5,6 +5,7 @@ class FlxUIAssets
 {
 	//images	
 	inline static public var IMG_BUTTON:String = "flixel/flixel-ui/img/button.png";
+	inline static public var IMG_BUTTON_THIN:String = "flixel/flixel-ui/img/button_thin.png";
 	inline static public var IMG_BUTTON_TOGGLE:String = "flixel/flixel-ui/img/button_toggle.png";
 	
 	inline static public var IMG_CHECK_MARK:String = "flixel/flixel-ui/img/check_mark.png";
@@ -16,6 +17,10 @@ class FlxUIAssets
 	inline static public var IMG_RADIO_DOT:String = "flixel/flixel-ui/img/radio_dot.png";
 	inline static public var IMG_TAB:String = "flixel/flixel-ui/img/tab.png";
 	inline static public var IMG_TAB_BACK:String = "flixel/flixel-ui/img/tab_back.png";		
+	inline static public var IMG_BOX:String = "flixel/flixel-ui/img/box.png";
+	inline static public var IMG_DROPDOWN:String = "flixel/flixel-ui/img/dropdown_mark.png";
+	inline static public var IMG_HILIGHT:String = "flixel/flixel-ui/img/hilight.png";
+	inline static public var IMG_INVIS:String = "flixel/flixel-ui/img/invis.png";
 	
 	//slice9 rules
 	inline static public var SLICE9_BUTTON:String = "6,6,11,11";
