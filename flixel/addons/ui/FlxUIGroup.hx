@@ -29,7 +29,7 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 	public var width(default, set):Float=0;
 	public var height(default, set):Float=0;
 	
-	public var velocity:FlxPoint;
+	//public var velocity:FlxPoint;
 	
 	public var autoBounds:Bool = true;
 	
@@ -132,11 +132,6 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 	}
 	
 	public override function update():Void {
-		if (velocity != null)
-		{
-			x += velocity.x;
-			y += velocity.y;
-		}
 		super.update();
 	}	
 }
