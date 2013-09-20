@@ -766,8 +766,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 			default: 
 				//If I don't know how to load this thing, I will request it from my pointer:			
-				var dataObject = info;
-				var result = _ptr.getRequest("ui_get:" + type, this, dataObject);
+				var result = _ptr.getRequest("ui_get:" + type, this, info);
 				return result;
 		}
 		return null;
