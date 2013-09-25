@@ -1446,7 +1446,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			if (tab_def == null || !tab_def.hasNode.text) {
 				for (t in list_tabs) {
 					t.label.color = 0xFFFFFF;					
-					t.label.setBorderStyle(FlxText.OUTLINE);
+					t.label.setBorderStyle(FlxText.BORDER_OUTLINE);
 				}
 			}
 			
@@ -2153,31 +2153,31 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private function _loadBorder(data:Fast):Array<Dynamic>
 	{
 		var border_str:String = U.xml_str(data.x, "border", "");
-		var border_style:Int = FlxText.NONE;
+		var border_style:Int = FlxText.BORDER_NONE;
 		var border_color:Int = _loadColor(data, "border_color", 0);
 		var border_size:Int = U.xml_i(data.x, "border_size", 1);
 		var border_quality:Float = U.xml_f(data.x, "border_quality", 0);
 		
 		switch(border_str) {
-			case "shadow": border_style = FlxText.SHADOW;
-			case "outline": border_style = FlxText.OUTLINE;
-			case "outline_fast": border_style = FlxText.OUTLINE_FAST;
+			case "shadow": border_style = FlxText.BORDER_SHADOW;
+			case "outline": border_style = FlxText.BORDER_OUTLINE;
+			case "outline_fast": border_style = FlxText.BORDER_OUTLINE_FAST;
 			case "":
 				//no "border" value, check for shortcuts:
 				//try "outline"
 				border_str = U.xml_str(data.x, "shadow", true, "");
 				if (border_str != "") {
-					border_style = FlxText.SHADOW;
+					border_style = FlxText.BORDER_SHADOW;
 					border_color = U.parseHex(border_str, false, true);					
 				}else{
 					border_str = U.xml_str(data.x, "outline", true, "");
 					if (border_str != "") {
-						border_style = FlxText.OUTLINE;
+						border_style = FlxText.BORDER_OUTLINE;
 						border_color = U.parseHex(border_str, false, true);
 					}else{
 						border_str = U.xml_str(data.x, "outline_fast", "");
 						if (border_str != "") {
-							border_style = FlxText.OUTLINE_FAST;
+							border_style = FlxText.BORDER_OUTLINE_FAST;
 							border_color = U.parseHex(border_str, false, true);
 						}
 					}						

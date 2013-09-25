@@ -574,9 +574,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 				
 		// Then pick the appropriate frame of animation
 		if(toggled){
-			frame = 3 + status;
+			animation.gotoAndStop( 3 + status );
 		}else {
-			frame = status;
+			animation.gotoAndStop( status );
 		}		
 	}
 	
@@ -611,7 +611,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 					}
 				}
 			case FlxButton.PRESSED:
-				if (frame == FlxButton.PRESSED) {
+				if (animation.frameIndex == FlxButton.PRESSED) {
 					if (!depressOnClick) {
 						label.y--;			//undo the depress movement
 					}
