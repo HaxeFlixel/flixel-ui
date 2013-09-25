@@ -574,9 +574,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 				
 		// Then pick the appropriate frame of animation
 		if(toggled){
-			animation.gotoAndStop( 3 + status );
+			animation.frameIndex =  3 + status;
 		}else {
-			animation.gotoAndStop( status );
+			animation.frameIndex = status;
 		}		
 	}
 	

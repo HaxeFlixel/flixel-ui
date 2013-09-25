@@ -592,7 +592,6 @@ class U
 	
 	public static inline function font(str:String, style:String=""):String {
 		return _font(str,style) + ".ttf";
-		//return Assets.getFont("assets/fonts/" + str + suffix + ".ttf");
 	}
 	
 		//inline that does the work:

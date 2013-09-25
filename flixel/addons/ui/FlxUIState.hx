@@ -47,7 +47,7 @@ class FlxUIState extends FlxState implements IEventGetter
 	public function new() 
 	{
 		super();
-		FlxG.console.addCommand("resizeScreen", this, resizeScreen);
+		//FlxG.console.addCommand("resizeScreen", this, resizeScreen);
 	}
 	
 	public override function create():Void {
@@ -67,7 +67,9 @@ class FlxUIState extends FlxState implements IEventGetter
 			}
 			
 			if (data == null) {
-				trace("ERROR! Could not load _xml_id \"" + _xml_id + "\"");
+				#if debug
+					trace("ERROR! Could not load _xml_id \"" + _xml_id + "\"");
+				#end
 			}else{			
 				_ui.load(data);
 			}
@@ -80,16 +82,16 @@ class FlxUIState extends FlxState implements IEventGetter
 	
 	public function resizeScreen(width:Float=800, height:Float=600):Void {
 		#if sys
-			Lib.resizeFrame(width, height);
+			FlxG.stage.resize(cast width, cast height);
 			onResize(cast width,cast height);
 		#end
 	}
 		
-	public override function onResize(Width:Int,Height:Int):Void {
+	public override function onResize(Width:Int, Height:Int):Void {
 		FlxG.resizeGame(Width, Height);	
 		_reload_countdown = 1;
 		_reload = true;
-	}	
+	}
 	
 	public override function update():Void {
 		super.update();
@@ -100,7 +102,7 @@ class FlxUIState extends FlxState implements IEventGetter
 					if (_reload_countdown == 0) {
 						_reload = false;
 						#if debug
-						trace("RELOAD UI!");
+							trace("RELOAD UI!");
 						#end
 						reloadUI();
 					}

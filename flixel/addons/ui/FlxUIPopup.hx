@@ -49,6 +49,11 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	public function set_width(W:Float):Float { return width; }
 	public function set_height(H:Float):Float { return height; }
 	
+	public function setPosition(X:Float = 0, Y:Float = 0):Void {
+		x = X;
+		y = Y;
+	}
+	
 	/**************************************/
 	
 	public function reset(X:Float, Y:Float):Void {

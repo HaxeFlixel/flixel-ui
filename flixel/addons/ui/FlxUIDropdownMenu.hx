@@ -45,7 +45,7 @@ class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget
 		}
 		_text.y = Back.y + (Back.height - _text.height);
 		_text.color = 0x000000;
-		_text.borderStyle = FlxText.NONE;
+		_text.borderStyle = FlxText.BORDER_NONE;
 		
 		var yoff:Int = cast Back.y + Back.height;
 		
@@ -65,7 +65,7 @@ class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget
 				t.up_color = 0x000000;
 				t.over_color = 0xffffff;
 				t.down_color = 0xffffff;
-				t.label.borderStyle = FlxText.NONE;
+				t.label.borderStyle = FlxText.BORDER_NONE;
 				
 				t.resize(Back.width, Back.height);
 				
