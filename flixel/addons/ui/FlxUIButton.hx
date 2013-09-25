@@ -43,7 +43,9 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled
 	
 	public override function resize(W:Float, H:Float):Void {
 		super.resize(W, H);
-		label.width = W;		
+		if(label != null){
+			label.width = W;		
+		}
 	}
 	
 	/**********PRIVATE*********/
