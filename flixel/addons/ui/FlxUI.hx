@@ -1543,12 +1543,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				//dimensions of source 9slice image (optional)
 				var src_w:Int = U.xml_i(data.node.graphic.x, "src_w", 0);
 				var src_h:Int = U.xml_i(data.node.graphic.x, "src_h", 0);
-				var tile:Int = _loadTileRule(data.node.graphic);					
+				var tile:Int = _loadTileRule(data.node.graphic);
 				
 				//custom frame indeces array (optional)
 				var frame_str:String = U.xml_str(data.node.graphic.x, "frames",true);
 				if (frame_str != "") {
-					var arr = frame_str.split(",");					
+					var arr = frame_str.split(",");
 					for (numstr in arr) {
 						frames.push(Std.parseInt(numstr));
 					}
@@ -1593,9 +1593,18 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 							slice9_ids[2] = slice9;
 						case "all":
 							if (image != "") { 
-								graphic_ids = [U.gfx(image)]; 							
+								graphic_ids = [U.gfx(image)];
 							}
 							slice9_ids = [slice9];
+							if (src_w == 0 || src_h == 0) {		//infer these from looking at the src
+								var temp:BitmapData = Assets.getBitmapData(graphic_ids[0]);
+								src_w = temp.width;
+								if (isToggle) {
+									src_h = Std.int(temp.height / 6);
+								}else {
+									src_h = Std.int(temp.height / 3);
+								}
+							}
 					}
 	
 					if (graphic_ids[0] != "") {

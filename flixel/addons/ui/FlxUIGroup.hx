@@ -5,7 +5,6 @@ import flixel.FlxObject;
 import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxPoint;
 import flixel.FlxSprite;
-import flixel.addons.ui.FlxButtonPlus;
 #if (cpp || neko)
 	import flixel.atlas.FlxAtlas;
 #end

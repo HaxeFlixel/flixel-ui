@@ -1,5 +1,6 @@
 package flixel.addons.ui;
 import flash.display.BitmapData;
+import flash.errors.Error;
 import flash.events.Event;
 import flixel.addons.ui.IResizable;
 import flixel.FlxG;
@@ -69,7 +70,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		if (H == 0) { H = 20; }
 		
 		if(_slice9_assets != null){		
-			loadGraphicSlice9(_slice9_assets, cast W, cast H, _slice9_strings,tile,resize_ratio,has_toggle);
+			loadGraphicSlice9(_slice9_assets, cast W, cast H, _slice9_strings,tile,resize_ratio,has_toggle,_src_w,_src_h,_frame_indeces);
 		}else {
 			if (_no_graphic) {
 				var upB:BitmapData;
@@ -189,6 +190,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	/**
 	 * Loads graphics from one or more sprites, and if slice9 is not null, 9-slice scales them.
+	 * NOTE: If you only provide 1 asset, you MUST define src_w and src_h
 	 * @param	assets an array of asset file ids, ready to pass into Assets.getBitmapData();
 	 * @param	W width of button frame
 	 * @param	H height of button frame
@@ -201,12 +203,12 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	 * @param	frame_indeces array of which image frames go with which button frames (optional)
 	 */
 	
-	public function loadGraphicSlice9(assets:Array<String>=null,W:Int=80,H:Int=20,slice9:Array<String>=null,Tile:Int=FlxUI9SliceSprite.TILE_NONE,Resize_Ratio:Float=-1,isToggle:Bool=false,src_w:Int=-1,src_h:Int=-1,frame_indeces:Array<Int>=null):Void{
+	public function loadGraphicSlice9(assets:Array<String>=null,W:Int=80,H:Int=20,slice9:Array<String>=null,Tile:Int=FlxUI9SliceSprite.TILE_NONE,Resize_Ratio:Float=-1,isToggle:Bool=false,src_w:Int=0,src_h:Int=0,frame_indeces:Array<Int>=null):Void{
 	
-		if (src_w != -1) {
+		if (src_w != 0) {
 			_src_w = src_w;
 		}
-		if (src_h != -1) {
+		if (src_h != 0) {
 			_src_h = src_h;
 		}
 		
@@ -214,14 +216,14 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		
 		has_toggle = isToggle;
 		
-		resize_ratio = Resize_Ratio;	
+		resize_ratio = Resize_Ratio;
 		
 		_slice9_assets = assets;
 		_slice9_strings = slice9;
 		
 		var key:String = null;
 		
-		var arr_bmpData:Array<BitmapData> = [];		
+		var arr_bmpData:Array<BitmapData> = [];
 		var arr_flx9:Array<FlxUI9SliceSprite> = [];
 		
 		//Validate frame_indeces array
@@ -250,6 +252,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			}
 		}
 		
+		_frame_indeces = frame_indeces;
+		
 		if (W == 0) {
 			W = 80;
 		}
@@ -258,14 +262,24 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		}
 		
 		if (assets == null) {
+			var temp:BitmapData;
+			
 			//default asset
 			if(!isToggle){
 				assets = [FlxUIAssets.IMG_BUTTON];
 				slice9 = [FlxUIAssets.SLICE9_BUTTON];
+				temp = Assets.getBitmapData(assets[0]);
+				_src_w = cast temp.width;
+				_src_h = cast temp.height / 3;				//calc default source width/height
 			}else {
 				assets = [FlxUIAssets.IMG_BUTTON_TOGGLE];
 				slice9 = [FlxUIAssets.SLICE9_BUTTON_TOGGLE];
+				temp = Assets.getBitmapData(assets[0]);
+				_src_w = cast temp.width;
+				_src_h = cast temp.height / 6;				//calc default source width/height
 			}
+			
+			temp = null;
 		}
 		
 		if (!has_toggle && assets.length <= 3) {
@@ -281,40 +295,45 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		
 		_flashRect2.width = W;
 		_flashRect2.height = H;
-				
+		
 		if(assets.length == 1){								//loading everything from one graphic
 			var all = Assets.getBitmapData(assets[0]);		//load the image
 			
-			if(all.height > H){								//looks like a multi-frame graphic
-				for (i in 0...arr_bmpData.length) {
-					arr_bmpData[i] = grabButtonFrame(all, i, has_toggle,_src_w, _src_h);		//get each button frame					
-				}									
-				
-				if (slice9 != null && slice9[0] != "") {		//9slicesprites					
-					
-					//Scale each 9slicesprite
-					for (i in 0...arr_bmpData.length) {
-						arr_flx9[i] = new FlxUI9SliceSprite(0, 0, arr_bmpData[i], _flashRect2, slice9[0], tile, false, assets[0] + ":" + i , resize_ratio);
-						arr_flx9[i].resize_point = resize_point;
-					}
+			if (_src_w == 0 || _src_h == 0) {
+				throw new Error("Ambiguous situation! If you only provide one asset, you MUST provide src_w and src_h. Otherwise I can't tell if it's a stacked set of frames or a single frame.");
+			}else{
 			
-					//grab the pixel data:
+				if(all.height > _src_h){						//looks like a multi-frame graphic
 					for (i in 0...arr_bmpData.length) {
-						arr_bmpData[i] = arr_flx9[i].pixels;						
+						arr_bmpData[i] = grabButtonFrame(all, i, has_toggle,_src_w, _src_h);		//get each button frame
 					}
+					
+					if (slice9 != null && slice9[0] != "") {		//9slicesprites
 						
-					//in case the resize_ratio resulted in different dimensions
-					W = arr_bmpData[0].width;
-					H = arr_bmpData[0].height;
+						//Scale each 9slicesprite
+						for (i in 0...arr_bmpData.length) {
+							arr_flx9[i] = new FlxUI9SliceSprite(0, 0, arr_bmpData[i], _flashRect2, slice9[0], tile, false, assets[0] + ":" + i , resize_ratio);
+							arr_flx9[i].resize_point = resize_point;
+						}
+				
+						//grab the pixel data:
+						for (i in 0...arr_bmpData.length) {
+							arr_bmpData[i] = arr_flx9[i].pixels;
+						}
+							
+						//in case the resize_ratio resulted in different dimensions
+						W = arr_bmpData[0].width;
+						H = arr_bmpData[0].height;
+					}
+				}else {					//just one frame
+					arr_bmpData[0] = all;
 				}
-			}else {					//just one frame
-				arr_bmpData[0] = all;			
 			}
 		}else {						//loading multiple image files
 			
 			//ensure asset list is at least 3 long, fill with blanks if necessary
 			if(!has_toggle){
-				while (assets.length < 3) {		
+				while (assets.length < 3) {
 					assets.push("");
 				}
 			}else {
@@ -337,8 +356,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 					for (i in 1...assets.length) {
 						if (assets[i] != "") {
 							arr_flx9[i] = new FlxUI9SliceSprite(0, 0, assets[i], _flashRect2, slice9[i], tile, false,"",resize_ratio);
-							arr_bmpData[i] = arr_flx9[i].pixels;							
-						}						
+							arr_bmpData[i] = arr_flx9[i].pixels;
+						}
 					}
 					
 					//in case the resize_ratio resulted in different dimensions
@@ -346,9 +365,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 					H = arr_bmpData[0].height;
 				
 					
-				}else {			//load as static buttons						
+				}else {			//load as static buttons
 					key = "";
-					for(i in 0...assets.length){					
+					for(i in 0...assets.length){
 						arr_bmpData[i] = Assets.getBitmapData(assets[i]);
 						key += assets[i];
 						if (i < assets.length - 1) {
@@ -657,6 +676,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	private var _src_w:Int = 0;	//frame size of the source image. If 0, make an inferred guess.
 	private var _src_h:Int = 0;
 	
+	private var _frame_indeces:Array<Int>;
 	
 	//if you're doing 9-slice resizing:
 	private var _slice9_strings:Array<String>;	//the 9-slice scaling rules for the original assets
