@@ -22,7 +22,7 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget
 	
 	public function new(X:Float, Y:Float, Width:Int, Text:String = null, size:Int=8, EmbeddedFont:Bool = true, IsStatic:Bool=false)	
 	{
-		super(X, Y, Width, Text, size, EmbeddedFont, IsStatic);
+		super(X, Y, Width, Text, size, EmbeddedFont);
 	}
 	
 	public function resize(w:Float, h:Float):Void {

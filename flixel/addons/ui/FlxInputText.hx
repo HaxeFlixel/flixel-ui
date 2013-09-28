@@ -133,7 +133,7 @@ class FlxInputText extends FlxText
 	{
 		customFilterPattern = ~/[]*/g;
 		
-		super(X, Y, Width, Text, size, EmbeddedFont, isStatic);
+		super(X, Y, Width, Text, size, EmbeddedFont);
 		
 		backgroundColor = BackgroundColor;
 		if (BackgroundColor != 0) background = true;

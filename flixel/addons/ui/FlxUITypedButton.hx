@@ -71,7 +71,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		
 		if(_slice9_assets != null){		
 			loadGraphicSlice9(_slice9_assets, cast W, cast H, _slice9_strings,tile,resize_ratio,has_toggle,_src_w,_src_h,_frame_indeces);
-		}else {
+		} else {
 			if (_no_graphic) {
 				var upB:BitmapData;
 				if(!has_toggle){
@@ -109,9 +109,10 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	/**
 	 * Provide a list of assets, load states from each one
 	 * @param	assets
+	 * @param   key string key for caching (optional)
 	 */
 	
-	public function loadGraphicsMultiple(assets:Array<String>):Void {
+	public function loadGraphicsMultiple(assets:Array<String>, Key:String = ""):Void {
 		var key:String = "";
 				
 		if (assets.length <= 3) {
@@ -120,12 +121,20 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			if (assets[2] == null) { assets[2] = assets[1]; }
 			key = assets.join(",");			
 			var pixels = assembleButtonFrames(Assets.getBitmapData(assets[0]), Assets.getBitmapData(assets[1]), Assets.getBitmapData(assets[2]));
+			if (Key != "")
+			{
+				key = Key; // replaces generated key with provided key.
+			}
 			loadGraphicsUpOverDown(pixels, false, key);
 		}else if (assets.length <= 6) {
 			while (assets.length < 6) { assets.push(null); }
 			if (assets[4] == null) { assets[4] = assets[3]; }
 			if (assets[5] == null) { assets[5] = assets[4]; }
 			key = assets.join(",");
+			if (Key != "")
+			{
+				key = Key; // replaces generated key with provided key.
+			}
 			var pixels_normal = assembleButtonFrames(Assets.getBitmapData(assets[0]), Assets.getBitmapData(assets[1]), Assets.getBitmapData(assets[2]));
 			var pixels_toggle = assembleButtonFrames(Assets.getBitmapData(assets[3]), Assets.getBitmapData(assets[4]), Assets.getBitmapData(assets[5]));
 			var pixels = combineToggleBitmaps(pixels_normal, pixels_toggle);
@@ -149,7 +158,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		
 		if (for_toggle) {
 			has_toggle = true;	//this makes it assume it's 6 images tall
-		}		
+		}
 		
 		var upB:BitmapData = null;
 		var overB:BitmapData = null;
@@ -181,10 +190,10 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			togglePixels.dispose(); togglePixels = null;
 			
 			loadGraphic(combinedPixels, true, false, upB.width, upB.height, false, key);
-		}else {			
+		}else {
 			loadGraphic(normalPixels, true, false, upB.width, upB.height, false, key);
-		}		
-	}	
+		}
+	}
 	
 	/**Graphics chopping functions**/
 	
@@ -666,8 +675,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		
 		if (change_color) {
 			label.color = new_color;
-		}		
-	}			
+		}
+	}
 
 	/*********PRIVATE************/
 	
