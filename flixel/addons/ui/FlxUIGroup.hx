@@ -51,7 +51,7 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 		super();
 	}	
 		
-	public override function remove(Object:IFlxSprite,Splice:Bool=false):IFlxSprite {
+	public override function remove(Object:FlxBasic,Splice:Bool=false):FlxBasic{
 		var obj = super.remove(Object, Splice);
 		if (autoBounds) {
 			calcBounds();
@@ -59,7 +59,7 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 		return obj;
 	}
 	
-	public function hasThis(Object:IFlxSprite):Bool {
+	public function hasThis(Object:FlxBasic):Bool {
 		for (obj in members) {
 			if (obj == Object) {
 				return true;
@@ -68,12 +68,12 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 		return false;
 	}
 	
-	public override function add(fb:IFlxSprite):IFlxSprite {					
-		var obj = super.add(fb);
+	public override function add(fb:FlxBasic):FlxBasic{
+		var obj = super.add(cast fb);
 		if (autoBounds) {
 			calcBounds();
-		}		
-		return obj;
+		}
+		return fb;
 	}
 	
 	public inline function calcBounds():Void {
@@ -90,11 +90,12 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 						if (flui.x + flui.width > right) { right = flui.x + flui.width; }
 						if (flui.y < top) { top = flui.y; }
 						if (flui.y + flui.height > bottom) { bottom = flui.y + flui.height;}
-					}else {
-						if (fb.x < left)   { left = fb.x; }
-						if (fb.x > right)  { right = fb.x; }
-						if (fb.y < top)    { top = fb.y; }
-						if (fb.y > bottom) { bottom = fb.y;} 
+					}else if (Std.is(fb, IFlxSprite)) {
+						var flxi:IFlxSprite = cast fb;
+						if (flxi.x < left)   { left = flxi.x; }
+						if (flxi.x > right)  { right = flxi.x; }
+						if (flxi.y < top)    { top = flxi.y; }
+						if (flxi.y > bottom) { bottom = flxi.y;} 
 					}
 				}
 			}
@@ -110,10 +111,11 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 	 */
 	
 	public function floorAll():Void {
-		var fs:IFlxSprite;
-		for (fs in members) {
+		var fs:IFlxSprite = null;
+		for (fb in members) {
+			fs = cast fb;
 			fs.x = Math.floor(fs.x);
-			fs.y = Math.floor(fs.y);			
+			fs.y = Math.floor(fs.y);
 		}
 	}
 	

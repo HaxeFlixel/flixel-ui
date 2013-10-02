@@ -55,24 +55,29 @@ class FlxUIState extends FlxState implements IEventGetter
 			_tongue = static_tongue;
 		}
 		
-		if(_xml_id != "" && _xml_id != null){
+		
+		if(_xml_id != null && _xml_id != ""){
 			_ui = new FlxUI(null,this,null,_tongue);
 			add(_ui);
 			
-			_ui.getTextFallback = getTextFallback;
+			if(getTextFallback != null){
+				_ui.getTextFallback = getTextFallback;
+			}
 		
 			var data:Fast = U.xml(_xml_id);
 			if (data == null) {
 				data = U.xml(_xml_id, ".xml", true, "");	//try without default directory prepend
 			}
 			
+			
 			if (data == null) {
 				#if debug
 					trace("ERROR! Could not load _xml_id \"" + _xml_id + "\"");
 				#end
-			}else{			
+			}else{
 				_ui.load(data);
 			}
+			
 		}
 		
 		useMouse = true;
@@ -81,10 +86,11 @@ class FlxUIState extends FlxState implements IEventGetter
 	
 	
 	public function resizeScreen(width:Float=800, height:Float=600):Void {
-		#if sys
+		/*#if sys
+			//TODO: reimplement with next OpenFL
 			FlxG.stage.resize(cast width, cast height);
 			onResize(cast width,cast height);
-		#end
+		#end*/
 	}
 		
 	public override function onResize(Width:Int, Height:Int):Void {
@@ -147,7 +153,9 @@ class FlxUIState extends FlxState implements IEventGetter
 		add(_ui);
 				
 		var data:Fast = U.xml(_xml_id);
-		_ui.load(data);
+		if(data != null){
+			_ui.load(data);
+		}
 		
 		_reload = false;
 		_reload_countdown = 0;

@@ -18,11 +18,10 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget
 	
 	public var dropShadow(get, set):Bool;	
 	private var _dropShadow:Bool = false;
-	public var bold(default, set):Bool;
 	
 	public function new(X:Float, Y:Float, Width:Int, Text:String = null, size:Int=8, EmbeddedFont:Bool = true, IsStatic:Bool=false)	
 	{
-		super(X, Y, Width, Text, size, EmbeddedFont, IsStatic);
+		super(X, Y, Width, Text, size, EmbeddedFont);
 	}
 	
 	public function resize(w:Float, h:Float):Void {
@@ -68,13 +67,6 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget
 		return _dropShadow;
 	}	
 		
-	function set_bold(b:Bool):Bool
-	{
-		var format:TextFormat = _format;
-		format.bold = b;
-		_textField.setTextFormat(format);
-		return b;
-	}
 	
 	public function getTextField()
 	{

@@ -65,7 +65,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	/**Make sure to recursively propogate the tongue pointer 
 	 * down to all my members
 	 */
-	private function _tongueSet(list:Array<IFlxSprite>,tongue:IFireTongue):Void {		
+	private function _tongueSet(list:Array<FlxBasic>,tongue:IFireTongue):Void {		
 		for (fb in list) {
 			if (Std.is(fb, FlxUIGroup)) {
 				var g:FlxUIGroup = cast(fb, FlxUIGroup);
@@ -155,7 +155,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	public function removeAsset(key:String,destroy:Bool=true):IFlxUIWidget{
 		var asset = getAsset(key, false);
 		if (asset != null) {
-			replaceInGroup(asset, null, true);
+			replaceInGroup(cast asset, null, true);
 			_asset_index.remove(key);
 		}
 		if (destroy) {
@@ -180,9 +180,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 
 		var g:FlxUIGroup = getGroup(group_id,recursive);
 		if (g != null) {
-			g.add(asset);
+			g.add(cast asset);
 		}else {
-			add(asset);
+			add(cast asset);
 		}
 		
 		_asset_index.set(key,asset);
@@ -215,7 +215,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 			
 			//switch original for replacement in whatever group it was in
-			replaceInGroup(original, replace);
+			replaceInGroup(cast original, cast replace);
 			
 			//remove the original asset index key
 			_asset_index.remove(key);
@@ -267,14 +267,17 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 */
 	
 	public function load(data:Fast):Void {
+		
 		_group_index = new Map<String,FlxUIGroup>();
 		_asset_index = new Map<String,IFlxUIWidget>();
 		_definition_index = new Map<String,Fast>();
 		_mode_index = new Map<String,Fast>();
 		
+		
 		if (data != null) {
 			
 			_data = data;
+			
 			
 			//See if there's anything to include
 			if (data.hasNode.include) {
@@ -295,14 +298,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 			}
 			
+			
 			//First, load all our definitions
 			if (data.hasNode.definition) {
 				for (def_data in data.nodes.definition) {
 					var def_id:String = def_data.att.id;
-					_definition_index.set(def_id, def_data);					
+					_definition_index.set(def_id, def_data);
 				}
 			}
 		
+			
 			//Next, load all our modes
 			if (data.hasNode.mode) {
 				for (mode_data in data.nodes.mode) {
@@ -311,42 +316,38 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 			}
 		
-			
 			//Then, load all our group definitions
 			if(data.hasNode.group){
 				for (group_data in data.nodes.group) {
 					
 					//Create FlxUIGroup's for each group we define
 					var id:String = group_data.att.id;
-					var group:FlxUIGroup = new FlxUIGroup();					
+					var group:FlxUIGroup = new FlxUIGroup();
 					group.id = id;
 					_group_index.set(id, group);
 					add(group);
 					
-					// TODO - CREATE ATLAS COMMENTED FOR CPP TARGET.
-					/*#if (cpp || neko)
-						group.makeAtlas(str_id, FlxG.width, FlxG.height);
-					#end*/
-					
 					FlxG.log.add("Creating group (" + id + ")");
 				}
 			}
-					
+			
 			
 			#if debug
 				//Useful debugging info, make sure things go in the right group:
 				FlxG.log.add("Member list...");
 				for (fb in members) {
-					if (Std.is(fb, FlxUIGroup)) {
-						var g:FlxUIGroup = cast(fb, FlxUIGroup);
-						FlxG.log.add("-->Group(" + g.id + "), length="+g.members.length);						
-						for (fbb in g.members) {
-							FlxG.log.add("---->Member(" + fbb + ")");
+					if(fb != null){
+						if (Std.is(fb, FlxUIGroup)) {
+							var g:FlxUIGroup = cast(fb, FlxUIGroup);
+							FlxG.log.add("-->Group(" + g.id + "), length="+g.members.length);
+							for (fbb in g.members) {
+								FlxG.log.add("---->Member(" + fbb + ")");
+							}
+						}else {
+							FlxG.log.add("-->Thing(" + fb + ")");
 						}
-					}else {
-						FlxG.log.add("-->Thing(" + fb + ")");
 					}
-				}			
+				}
 			#end
 			
 			
@@ -359,40 +360,43 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					type.toLowerCase();
 					var obj:Fast = new Fast(node);
 					var group_id:String="";
-					var group:FlxUIGroup = null;		
-									
+					var group:FlxUIGroup = null;
+					
 					var thing_id:String = U.xml_str(obj.x, "id", true);
-										
+					
 					//If it belongs to a group, get that information ready:
 					if (obj.has.group) { 
 						group_id = obj.att.group; 
 						group = getGroup(group_id);
 					}
 					
+					
 					//Make the thing
-					var thing = _loadThing(type,obj);
+					var thing = _loadThing(type, obj);
 					
 					if (thing != null) {
-
 						if (group != null) {
-							group.add(thing);
+							group.add(cast thing);
 						}else {
-							add(thing);			
-						}		
-												
-						_loadPosition(obj, thing);	//Position the thing if possible						
+							//add(thing);
+						}
 						
-						if (thing_id != "") {
+						_loadPosition(obj, thing);	//Position the thing if possible
+						
+						if (thing_id != null && thing_id != "") {
 							_asset_index.set(thing_id, thing);
 						}
 					}
-				}				
-			}	
+				}
+			}
 			
 			_postLoad(data);
+			
 		}else {
 			_onFinishLoad();
 		}	
+		
+		
 	}
 	
 	private function _postLoad(data:Fast):Void {
@@ -477,36 +481,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 							if(thing != null){
 								_loadPosition(node, thing);
 							}
-					}	
-				}
-				
-				/*if (mode.hasNode.show) {
-					for (show_node in mode.nodes.show) {
-						id = U.xml_str(show_node.x, "id", true);
-						showThing(id, true);						
 					}
 				}
-				if (mode.hasNode.hide) {
-					for (hide_node in mode.nodes.hide) {
-						id = U.xml_str(hide_node.x, "id", true);
-						showThing(id, false);	
-					}
-				}
-				if (mode.hasNode.align) {
-					for (align_node in mode.nodes.align) {
-						_alignThing(align_node);
-					}
-				}
-				if (mode.hasNode.change) {
-					for (change_node in mode.nodes.change) {
-						
-					}
-				}
-				if (mode.hasNode.position) {
-					for (position_node in mode.nodes.position) {
-						
-					}
-				}*/
 			}
 		}else {
 			var target = getAsset(target_id);
@@ -650,25 +626,28 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @param	splice if replace is null, whether to splice the entry
 	 */
 	 
-	private function replaceInGroup(original:IFlxSprite,replace:IFlxSprite,splice:Bool=false){
+	private function replaceInGroup(original:FlxBasic,replace:FlxBasic,splice:Bool=false){
 		//Slow, unoptimized, searches through everything
+		
 		if(_group_index != null){
 			for (key in _group_index.keys()) {
 				var group:FlxUIGroup = _group_index.get(key);
 				if (group.members != null) {
 					var i:Int = 0;
 					for (member in group.members) {
-						if (member == original) {
-							group.members[i] = replace;
-							if (replace == null) {
-								if (splice) {
-									group.members.splice(i, 1);
-									i--;
+						if(member != null){
+							if (member == original) {
+								group.members[i] = replace;
+								if (replace == null) {
+									if (splice) {
+										group.members.splice(i, 1);
+										i--;
+									}
 								}
+								return;
 							}
-							return;
+							i++;
 						}
-						i++;
 					}
 				}
 			}
@@ -677,16 +656,18 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		//if we get here, it's not in any group, it's just in our global member list
 		if (this.members != null) {
 			var i:Int = 0;
-			for (member in this.members) {				
-				if (member == original) {
-					members[i] = replace;
-					if (replace == null) {
-						if (splice) {
-							members.splice(i, 1);
-							i--;
+			for (member in this.members) {
+				if(member != null){
+					if (member == original) {
+						members[i] = replace;
+						if (replace == null) {
+							if (splice) {
+								members.splice(i, 1);
+								i--;
+							}
 						}
+						return;
 					}
-					return;
 				}
 				i++;
 			}
@@ -1083,25 +1064,25 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		if (type == "align") {
 			_alignThing(data);
-		}		
+		}
 		
 		if (thing == null) {
 			return;
 		}
 		
-		var use_def:String = U.xml_str(data.x, "use_def", true);		
+		var use_def:String = U.xml_str(data.x, "use_def", true);
 		var definition:Fast = null;
 		if (use_def != "") {
 			definition = getDefinition(use_def);
-		}		
+		}
 		
 		if (Std.is(thing, IResizable)) {
 			var bounds: { min_width:Float, min_height:Float, 
-			              max_width:Float, max_height:Float } = calcMaxMinSize(data);				
+			              max_width:Float, max_height:Float } = calcMaxMinSize(data);
 			
-			_resizeThing(cast(thing, IResizable), bounds);		
+			_resizeThing(cast(thing, IResizable), bounds);
 			
-		}						
+		}
 		
 		_delta(thing, -thing.x, -thing.y);	//reset position to 0,0
 		_loadPosition(data, thing);			//reposition
@@ -1115,7 +1096,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var h:Float = _loadHeight(data);
 		
 		var bounds: { min_width:Float, min_height:Float, 
-			          max_width:Float, max_height:Float } = calcMaxMinSize(data);				
+			          max_width:Float, max_height:Float } = calcMaxMinSize(data);
 		
 		if (w < bounds.min_width) { w = bounds.min_width; }
 		if (h < bounds.min_height) { h = bounds.min_height; }
@@ -1273,11 +1254,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var text_y:Int = U.xml_i(data.x, "text_y");		
 		
 		for (fo in frg.members) {
-			if (Std.is(fo, FlxUICheckBox)){
-				var fc:FlxUICheckBox = cast(fo, FlxUICheckBox);
-				formatButtonText(data, fc);
-				fc.textX = text_x;				
-				fc.textY = text_y;
+			if(fo != null){
+				if (Std.is(fo, FlxUICheckBox)){
+					var fc:FlxUICheckBox = cast(fo, FlxUICheckBox);
+					formatButtonText(data, fc);
+					fc.textX = text_x;				
+					fc.textY = text_y;
+				}
 			}
 		}
 						
