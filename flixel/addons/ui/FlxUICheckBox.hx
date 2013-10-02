@@ -22,10 +22,10 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 {
 	public var box:FlxSprite;
 	public var mark:FlxSprite;
-	public var button:FlxUIButton;	
+	public var button:FlxUIButton;
 	public var max_width:Float = -1;
 	
-	public var checked(get_checked, set_checked):Bool;	
+	public var checked(get_checked, set_checked):Bool;
 	
 	//Set this to false if you just want the checkbox itself to be clickable
 	public var textIsClickable:Bool = true;
@@ -38,10 +38,10 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 	public var box_space:Float = 2;
 	
 	private var _textX:Float = 0;
-	private var _textY:Float = 0;	
+	private var _textY:Float = 0;
 	
 	public function new(X:Float = 0, Y:Float = 0, ?Box:Dynamic, ?Check:Dynamic, ?Label:String, LabelW:Int=100, ?OnClick:Dynamic, ?params:Array<Dynamic>)
-	{		
+	{
 		x = 0;
 		y = 0;
 		super();
@@ -74,13 +74,13 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 		setExternalCallback(OnClick);
 		button.setOnUpCallback(_clickCheck, [params]);    //for internal use, check/uncheck box, bubbles up to _externalCallback
 				
-		mark = new FlxSprite();		
+		mark = new FlxSprite();
 		if (Check == null) {
 			//if null load from default assets:
 			Check = FlxUIAssets.IMG_CHECK_MARK;
 		}		
 		
-		mark.loadGraphic(Check);				
+		mark.loadGraphic(Check);
 		
 		add(box);
 		add(mark);
@@ -91,7 +91,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 		
 		//FlxTimer.start(0.001, anchorTime);
 		
-		checked = false; 		
+		checked = false;
 		button.depressOnClick = false;
 		
 		x = X;

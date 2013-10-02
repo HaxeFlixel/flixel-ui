@@ -378,7 +378,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						if (group != null) {
 							group.add(cast thing);
 						}else {
-							//add(thing);
+							add(cast thing);
 						}
 						
 						_loadPosition(obj, thing);	//Position the thing if possible

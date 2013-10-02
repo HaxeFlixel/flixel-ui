@@ -32,16 +32,14 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 	
 	public var autoBounds:Bool = true;
 	
-		/***GETTER SETTER FUNCTIONS***/				
-
+		/***GETTER SETTER FUNCTIONS***/
+		
 		public function set_width(f:Float):Float {
-			width = f;
-			return width;
+			return width = f;
 		}
 		
 		public function set_height(f:Float):Float {
-			height = f;
-			return height;
+			return height = f;
 		}
 		
 	/***PUBLIC FUNCTIONS***/
@@ -49,9 +47,17 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 	public function new() 
 	{
 		super();
-	}	
-		
-	public override function remove(Object:FlxBasic,Splice:Bool=false):FlxBasic{
+	}
+	
+	public override function add(Object:FlxBasic):FlxBasic {
+		var obj = super.add(Object);
+		if (autoBounds) {
+			calcBounds();
+		}
+		return obj;
+	}
+	
+	public override function remove(Object:FlxBasic,Splice:Bool=false):FlxBasic {
 		var obj = super.remove(Object, Splice);
 		if (autoBounds) {
 			calcBounds();
@@ -68,15 +74,8 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 		return false;
 	}
 	
-	public override function add(fb:FlxBasic):FlxBasic{
-		var obj = super.add(cast fb);
-		if (autoBounds) {
-			calcBounds();
-		}
-		return fb;
-	}
 	
-	public inline function calcBounds():Void {
+	public function calcBounds():Void {
 		if(members != null && members.length > 0){
 			var left:Float = Math.POSITIVE_INFINITY;
 			var right:Float = Math.NEGATIVE_INFINITY;
@@ -131,8 +130,4 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 			}
 		}
 	}
-	
-	public override function update():Void {
-		super.update();
-	}	
 }
