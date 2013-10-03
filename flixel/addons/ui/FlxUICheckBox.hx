@@ -89,8 +89,6 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 		anchorLabelX();
 		anchorLabelY();
 		
-		//FlxTimer.start(0.001, anchorTime);
-		
 		checked = false;
 		button.depressOnClick = false;
 		
@@ -104,6 +102,13 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 	public function get_label():FlxUIText { if (button == null) { return null;} return button.label; }
 	
 	/**/
+	
+	private override function set_visible(Value:Bool):Bool
+	{
+		//don't cascade to my members
+		visible = Value;
+		return visible;
+	}
 	
 	private function anchorTime(f:FlxTimer):Void {
 		trace("ANCHOR TIME");
@@ -183,8 +188,15 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 		
 	/*****GETTER/SETTER***/
 	
-	public function get_checked():Bool { return _checked; }
-	public function set_checked(b:Bool):Bool { _checked = b; mark.visible = b; return b; }
+	public function get_checked():Bool { 
+		return _checked; 
+	}
+	
+	public function set_checked(b:Bool):Bool { 
+		_checked = b; 
+		mark.visible = b; 
+		return b; 
+	}
 	
 	/*****PRIVATE******/
 	
@@ -204,7 +216,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 			arr = U.copy_shallow_arr(arr);
 		}else {
 			arr = new Array<Dynamic>();
-			arr.push(Params);						
+			arr.push(Params);
 		}
 				
 		if (_checked) {
@@ -212,7 +224,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 		}else {
 			arr.push("checked:false");
 		}
-		_externalCallback(arr);		
+		_externalCallback(arr);
 	}
 	
 }

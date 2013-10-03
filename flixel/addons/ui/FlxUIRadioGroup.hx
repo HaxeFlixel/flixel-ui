@@ -226,10 +226,9 @@ class FlxUIRadioGroup extends FlxUIGroup
 					yy = c.y;
 				}
 			}else {
-				c = new FlxUICheckBox(0, 0, _box_asset, _dot_asset, label, _label_width, _onClick, [id]);				
+				c = new FlxUICheckBox(0, 0, _box_asset, _dot_asset, label, _label_width, _onClick, [id]);
 				c.x = Std.int(xx);
 				c.y = Std.int(yy);
-				//c = new FlxUICheckBox(Std.int(xx), Std.int(yy), _onClick, [id], label, _width, _height);
 				
 				add(c);
 				c.text = label;
