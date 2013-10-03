@@ -127,9 +127,8 @@ class FlxInputText extends FlxText
 	 * @param	Text			The actual text you would like to display initially.
 	 * @param   size			Initial size of the font	 
 	 * @param	EmbeddedFont	Whether this text field uses embedded fonts or not
-	 * @param	IsStatic		Whether this text field can't be changed (text or appearance)
 	 */
-	public function new(X:Float, Y:Float, Width:Int=200, Text:String=null, size:Int = 8, TextColor:Int = 0xFF000000, BackgroundColor:Int = 0xFFFFFFFF, EmbeddedFont:Bool=true, isStatic:Bool=false)
+	public function new(X:Float, Y:Float, Width:Int=200, Text:String=null, size:Int = 8, TextColor:Int = 0xFF000000, BackgroundColor:Int = 0xFFFFFFFF, EmbeddedFont:Bool=true)
 	{
 		customFilterPattern = ~/[]*/g;
 		

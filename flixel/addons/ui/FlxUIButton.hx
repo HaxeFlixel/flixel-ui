@@ -1,5 +1,7 @@
 package flixel.addons.ui;
 import flash.events.Event;
+import flash.geom.Point;
+import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
@@ -23,6 +25,8 @@ import openfl.Assets;
 
 class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled
 {
+	private var _noIconGraphicsBkup:BitmapData;
+	
 	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Dynamic) {
 		super(X, Y, null, OnClick);		
 		if (Label != null) {
@@ -46,6 +50,49 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled
 		if(label != null){
 			label.width = W;		
 		}
+	}
+	
+	public function addIcon(icon:FlxSprite)
+	{
+		// Creates a backup of current button image.
+		_noIconGraphicsBkup = cachedGraphics.bitmap.clone();
+		
+		// Stamps the icon in every frame of this button.
+		for (i in 0...frames)
+		{
+			this.stamp(icon, 0, Std.int(i * height));			
+		}
+	}
+	
+	public function removeIcon()
+	{
+		if (_noIconGraphicsBkup != null)
+		{
+			// Retreives the stored button image before icon was applied.
+			cachedGraphics.bitmap.fillRect(cachedGraphics.bitmap.rect, 0x0);					// clears the bitmap first.
+			cachedGraphics.bitmap.copyPixels(_noIconGraphicsBkup, new Rectangle(0, 0, _noIconGraphicsBkup.width, _noIconGraphicsBkup.height), new Point());
+			resetFrameBitmapDatas();
+			
+			#if flash
+			calcFrame();
+			#end
+		}
+	}
+	
+	public function changeIcon(newIcon:FlxSprite)
+	{
+		removeIcon();
+		addIcon(newIcon);
+	}
+	
+	override public function destroy():Void
+	{
+		if (_noIconGraphicsBkup != null)
+		{
+			_noIconGraphicsBkup.dispose();
+		}
+		
+		super.destroy();
 	}
 	
 	/**********PRIVATE*********/

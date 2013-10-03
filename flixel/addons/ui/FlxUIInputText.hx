@@ -8,8 +8,8 @@ class FlxUIInputText extends FlxInputText implements IResizable implements IFlxU
 {
 	public var id:String;
 	
-	public function new(X:Float, Y:Float, Width:Int = 200, Text:String = null, size:Int = 8, TextColor:Int = 0xFF000000, BackgroundColor:Int = 0xFFFFFFFF, EmbeddedFont:Bool = true, isStatic:Bool = false) {
-		super(X, Y, Width, Text, size, TextColor, BackgroundColor, EmbeddedFont, isStatic);
+	public function new(X:Float, Y:Float, Width:Int = 200, Text:String = null, size:Int = 8, TextColor:Int = 0xFF000000, BackgroundColor:Int = 0xFFFFFFFF, EmbeddedFont:Bool = true) {
+		super(X, Y, Width, Text, size, TextColor, BackgroundColor, EmbeddedFont);
 	}
 	
 	public function get_width():Float {

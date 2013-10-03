@@ -19,7 +19,7 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget
 	public var dropShadow(get, set):Bool;	
 	private var _dropShadow:Bool = false;
 	
-	public function new(X:Float, Y:Float, Width:Int, Text:String = null, size:Int=8, EmbeddedFont:Bool = true, IsStatic:Bool=false)	
+	public function new(X:Float, Y:Float, Width:Int, Text:String = null, size:Int=8, EmbeddedFont:Bool = true)	
 	{
 		super(X, Y, Width, Text, size, EmbeddedFont);
 	}

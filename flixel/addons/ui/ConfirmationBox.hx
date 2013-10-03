@@ -242,7 +242,7 @@ class ConfirmationBox extends BasicPopUp
 		titleBox.setFormat(U.font("verdana"), 18, 0xffffff, "center");
 		titleBox.bold = true;
 		//titleBox.aa = false;
-		titleBox.setBorderStyle(FlxText.SHADOW);
+		titleBox.setBorderStyle(FlxText.BORDER_SHADOW);
 		titleBox.dropShadow = true;
 		
 		descriptionBox = new FlxUIText(25, 35, 315, text);
