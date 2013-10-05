@@ -42,8 +42,6 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 	
 	public function new(X:Float = 0, Y:Float = 0, ?Box:Dynamic, ?Check:Dynamic, ?Label:String, LabelW:Int=100, ?OnClick:Dynamic, ?params:Array<Dynamic>)
 	{
-		x = 0;
-		y = 0;
 		super();
 		
 		box = new FlxSprite();
@@ -200,9 +198,9 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 	
 	/*****PRIVATE******/
 	
-	private var _checked:Bool;	
+	private var _checked:Bool;
 	private var _externalCallback:Dynamic;
-			
+	
 	private function _clickCheck(Params:Dynamic = null):Void 
 	{
 		checked = !checked;

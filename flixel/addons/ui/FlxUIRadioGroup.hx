@@ -226,7 +226,7 @@ class FlxUIRadioGroup extends FlxUIGroup
 					yy = c.y;
 				}
 			}else {
-				c = new FlxUICheckBox(0, 0, _box_asset, _dot_asset, label, _label_width, _onClick, [id]);
+				c = new FlxUICheckBox(0, 0, _box_asset, _dot_asset, label, _label_width, _onClickDoCallback, [id]);
 				c.x = Std.int(xx);
 				c.y = Std.int(yy);
 				
@@ -238,8 +238,12 @@ class FlxUIRadioGroup extends FlxUIGroup
 			i++;
 		}
 	}
-		
-	private function _onClick(params_:Array<Dynamic>, doCallback:Bool = true):Bool{
+	
+	private function _onClickDoCallback(params_:Array<Dynamic>):Bool {
+		return _onClick(params_, true);
+	}
+	
+	private function _onClick(params_:Array<Dynamic>, doCallback:Bool):Bool{
 		if (!_clickable) { return false; }
 		
 		var i:Int = 0;
