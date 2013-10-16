@@ -81,14 +81,14 @@ class TabGroup extends FlxUIGroup
 		
 	public function addNoSort(o:IFlxSprite) {
 		for (oo in members) {
-			if (o == oo) {
+			if (o == cast(oo, IFlxSprite)) {
 				return;	//can't add an object more than once
 			}
 		}
 		if (o == null) {
 			return;
 		}
-		members.push(o);
+		members.push(cast(o, FlxBasic));
 		//super.add(o);
 	}
 	
@@ -138,7 +138,7 @@ class TabGroup extends FlxUIGroup
 		}
 	}
 		
-	public override function add(o:IFlxSprite):IFlxSprite{
+	public override function add(o:FlxBasic):FlxBasic{
 		
 		for (oo in members) {
 			if (o == oo) {
