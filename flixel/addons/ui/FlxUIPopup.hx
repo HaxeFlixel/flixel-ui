@@ -24,14 +24,14 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	public var facing(default, set):Int;
 	public var moves(default, set):Bool;
 	public var immovable(default, set):Bool;
-	public var offset(default, set):IFlxPoint;
-	public var origin(default, set):IFlxPoint;
-	public var scale(default, set):IFlxPoint;
-	public var velocity(default, set):IFlxPoint;
-	public var maxVelocity(default, set):IFlxPoint;
-	public var acceleration(default, set):IFlxPoint;
-	public var drag(default, set):IFlxPoint;
-	public var scrollFactor(default, set):IFlxPoint;
+	public var offset(default, set):FlxPoint;
+	public var origin(default, set):FlxPoint;
+	public var scale(default, set):FlxPoint;
+	public var velocity(default, set):FlxPoint;
+	public var maxVelocity(default, set):FlxPoint;
+	public var acceleration(default, set):FlxPoint;
+	public var drag(default, set):FlxPoint;
+	public var scrollFactor(default, set):FlxPoint;
 	public function set_x(Value:Float):Float { return x = Value; }
 	public function set_y(Value:Float):Float { return y = Value; }
 	public function set_width(Value:Float):Float { return width = Value; }
@@ -41,14 +41,14 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	public function set_facing(Value:Int):Int { return facing = Value; }
 	public function set_moves(Value:Bool):Bool { return moves = Value; }
 	public function set_immovable(Value:Bool):Bool { return immovable = Value; }
-	private function set_offset(Value:IFlxPoint):IFlxPoint { return offset = Value; }
-	private function set_origin(Value:IFlxPoint):IFlxPoint { return origin = Value; }
-	private function set_scale(Value:IFlxPoint):IFlxPoint { return scale = Value; }
-	private function set_velocity(Value:IFlxPoint):IFlxPoint { return velocity = Value; }
-	private function set_acceleration(Value:IFlxPoint):IFlxPoint { return acceleration = Value; }
-	private function set_drag(Value:IFlxPoint):IFlxPoint { return drag = Value; }
-	private function set_maxVelocity(Value:IFlxPoint):IFlxPoint { return maxVelocity = Value; }
-	private function set_scrollFactor(Value:IFlxPoint):IFlxPoint { return scrollFactor = Value; }
+	private function set_offset(Value:FlxPoint):FlxPoint { return offset = Value; }
+	private function set_origin(Value:FlxPoint):FlxPoint { return origin = Value; }
+	private function set_scale(Value:FlxPoint):FlxPoint { return scale = Value; }
+	private function set_velocity(Value:FlxPoint):FlxPoint { return velocity = Value; }
+	private function set_acceleration(Value:FlxPoint):FlxPoint { return acceleration = Value; }
+	private function set_drag(Value:FlxPoint):FlxPoint { return drag = Value; }
+	private function set_maxVelocity(Value:FlxPoint):FlxPoint { return maxVelocity = Value; }
+	private function set_scrollFactor(Value:FlxPoint):FlxPoint { return scrollFactor = Value; }
 	public function reset(X:Float, Y:Float):Void { setPosition(X, Y); }
 	public function setPosition(X:Float = 0, Y:Float = 0):Void { x = X; y = Y; }
 	
