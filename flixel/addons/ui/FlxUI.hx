@@ -43,7 +43,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	public var tongue(get, set):IFireTongue;
 	public function get_tongue():IFireTongue { return _ptr_tongue; }
-	public function set_tongue(t:IFireTongue):IFireTongue {
+	public function set_tongue(t:IFireTongue):IFireTongue 
+	{
 		_ptr_tongue = t;		
 		_tongueSet(members, t);
 		return _ptr_tongue;
@@ -55,17 +56,18 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private var _ptr_tongue:IFireTongue;
 	private var _data:Fast;
 		
-	private static var _flashRect:Rectangle;
-	private static var _flashRect2:Rectangle;
-	private static var _flashPoint:Point;
-	private static var _flashPointZero:Point;
+	private static var _FlashRect:Rectangle;
+	private static var _FlashRect2:Rectangle;
+	private static var _FlashPoint:Point;
+	private static var _FlashPointZero:Point;
 	
 	private static var _assets_init:Bool = false;
 	
 	/**Make sure to recursively propogate the tongue pointer 
 	 * down to all my members
 	 */
-	private function _tongueSet(list:Array<FlxBasic>,tongue:IFireTongue):Void {		
+	private function _tongueSet(list:Array<FlxSprite>, tongue:IFireTongue):Void 
+	{		
 		for (fb in list) {
 			if (Std.is(fb, FlxUIGroup)) {
 				var g:FlxUIGroup = cast(fb, FlxUIGroup);
@@ -102,11 +104,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		//to help with drawing
-		if(_flashRect == null){
-			_flashRect = new Rectangle();
-			_flashRect2 = new Rectangle();
-			_flashPoint = new Point();
-			_flashPointZero = new Point();
+		if (_FlashRect == null)
+		{
+			_FlashRect = new Rectangle();
+			_FlashRect2 = new Rectangle();
+			_FlashPoint = new Point();
+			_FlashPointZero = new Point();
 		}
 		
 		super();
@@ -152,7 +155,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @return	the asset, or null if destroy=true
 	 */
 	
-	public function removeAsset(key:String,destroy:Bool=true):IFlxUIWidget{
+	public function removeAsset(key:String, destroy:Bool=true):IFlxUIWidget{
 		var asset = getAsset(key, false);
 		if (asset != null) {
 			replaceInGroup(cast asset, null, true);
@@ -257,7 +260,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		_superIndexUI = null;
 		_ptr_tongue = null;
-		super.destroy();	
+		super.destroy();
 	}
 	
 	/**
@@ -626,9 +629,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @param	splice if replace is null, whether to splice the entry
 	 */
 	 
-	private function replaceInGroup(original:FlxBasic,replace:FlxBasic,splice:Bool=false){
-		//Slow, unoptimized, searches through everything
-		
+	private function replaceInGroup(original:FlxSprite, replace:FlxSprite, splice:Bool = false)
+	{
+		//Slow, unoptimized, searches through everything	
 		if(_group_index != null){
 			for (key in _group_index.keys()) {
 				var group:FlxUIGroup = _group_index.get(key);

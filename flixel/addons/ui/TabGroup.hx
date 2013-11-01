@@ -79,9 +79,9 @@ class TabGroup extends FlxUIGroup
 		super.destroy();
 	}
 		
-	public function addNoSort(o:IFlxSprite) {
+	public function addNoSort(o:FlxSprite) {
 		for (oo in members) {
-			if (o == cast(oo, IFlxSprite)) {
+			if (o == cast(oo, FlxSprite)) {
 				return;	//can't add an object more than once
 			}
 		}
@@ -118,7 +118,7 @@ class TabGroup extends FlxUIGroup
 				add(g);
 				return;
 			}else {
-				addNoSort(cast(g,IFlxSprite));
+				addNoSort(cast(g, FlxSprite));
 				return;
 			}
 		}

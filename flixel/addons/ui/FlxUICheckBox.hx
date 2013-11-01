@@ -29,8 +29,6 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 	
 	//Set this to false if you just want the checkbox itself to be clickable
 	public var textIsClickable:Bool = true;
-		
-	public var dirty:Bool = false;
 	
 	public var textX(get, set):Float;
 	public var textY(get, set):Float;
