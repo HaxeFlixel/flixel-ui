@@ -55,7 +55,7 @@ class FlxUIState extends FlxState implements IEventGetter
 			_tongue = static_tongue;
 		}
 		
-
+		
 		if(_xml_id != null && _xml_id != ""){
 			_ui = new FlxUI(null,this,null,_tongue);
 			add(_ui);
@@ -77,6 +77,7 @@ class FlxUIState extends FlxState implements IEventGetter
 			}else{
 				_ui.load(data);
 			}
+			
 		}
 		
 		useMouse = true;
