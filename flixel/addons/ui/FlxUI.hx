@@ -1650,7 +1650,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		} else {
 		    // Center sprite icon 
-		    autoCenterLabel();
+		    fb.autoCenterLabel();
 		}
 		
 		var text_x:Int = 0;

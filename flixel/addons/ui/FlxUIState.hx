@@ -55,30 +55,31 @@ class FlxUIState extends FlxState implements IEventGetter
 			_tongue = static_tongue;
 		}
 		
+
+		if (_ui == null) {
+			if(_xml_id != null && _xml_id != ""){
+				_ui = new FlxUI(null,this,null,_tongue);
+				add(_ui);
+			
+				if(getTextFallback != null){
+					_ui.getTextFallback = getTextFallback;
+				}
 		
-		if(_xml_id != null && _xml_id != ""){
-			_ui = new FlxUI(null,this,null,_tongue);
-			add(_ui);
+				var data:Fast = U.xml(_xml_id);
+				if (data == null) {
+					data = U.xml(_xml_id, ".xml", true, "");	//try without default directory prepend
+				}
 			
-			if(getTextFallback != null){
-				_ui.getTextFallback = getTextFallback;
+			
+				if (data == null) {
+					#if debug
+						trace("ERROR! Could not load _xml_id \"" + _xml_id + "\"");
+					#end
+				}else{
+					_ui.load(data);
+				}
 			}
-		
-			var data:Fast = U.xml(_xml_id);
-			if (data == null) {
-				data = U.xml(_xml_id, ".xml", true, "");	//try without default directory prepend
-			}
-			
-			
-			if (data == null) {
-				#if debug
-					trace("ERROR! Could not load _xml_id \"" + _xml_id + "\"");
-				#end
-			}else{
-				_ui.load(data);
-			}
-			
-		}
+	}
 		
 		useMouse = true;
 	}
