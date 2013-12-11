@@ -55,23 +55,23 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private var _ptr_tongue:IFireTongue;
 	private var _data:Fast;
 		
-	private static var _flashRect:Rectangle;
+	/*private static var _flashRect:Rectangle;
 	private static var _flashRect2:Rectangle;
 	private static var _flashPoint:Point;
-	private static var _flashPointZero:Point;
+	private static var _flashPointZero:Point;*/
 	
 	private static var _assets_init:Bool = false;
 	
 	/**Make sure to recursively propogate the tongue pointer 
 	 * down to all my members
 	 */
-	private function _tongueSet(list:Array<FlxBasic>,tongue:IFireTongue):Void {		
-		for (fb in list) {
-			if (Std.is(fb, FlxUIGroup)) {
-				var g:FlxUIGroup = cast(fb, FlxUIGroup);
+	private function _tongueSet(list:Array<FlxSprite>,tongue:IFireTongue):Void {		
+		for (fs in list) {
+			if (Std.is(fs, FlxUIGroup)) {
+				var g:FlxUIGroup = cast(fs, FlxUIGroup);
 				_tongueSet(g.members, tongue);
-			}else if (Std.is(fb, FlxUI)) {
-				var fu:FlxUI = cast(fb, FlxUI);
+			}else if (Std.is(fs, FlxUI)) {
+				var fu:FlxUI = cast(fs, FlxUI);
 				fu.tongue = tongue;
 			}
 		}
@@ -626,7 +626,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @param	splice if replace is null, whether to splice the entry
 	 */
 	 
-	private function replaceInGroup(original:FlxBasic,replace:FlxBasic,splice:Bool=false){
+	private function replaceInGroup(original:FlxSprite,replace:FlxSprite,splice:Bool=false){
 		//Slow, unoptimized, searches through everything
 		
 		if(_group_index != null){
@@ -2317,7 +2317,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			fb.over_color = 0;				
 			
 			if (the_label != null) {
-				the_label.setFormat(the_font, size, color, align);				
+				the_label.setFormat(the_font, size, color, align);
 				the_label.borderStyle = border[0];
 				the_label.borderColor = border[1];
 				the_label.borderSize = border[2];

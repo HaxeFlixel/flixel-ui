@@ -11,7 +11,6 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	
 	/**STUBS TO MAKE THE INTERFACE HAPPY:**/
 	
-
 	public var immovable(default, set):Bool;
 	public function set_immovable(Immovable:Bool):Bool { return immovable; }
 
@@ -21,20 +20,38 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	public var facing(default, set):Int;
 	public function set_facing(Facing:Int):Int { return facing; }
 	
-	public var offset:IFlxPoint;
-	public var origin:IFlxPoint;
-	public var scale:IFlxPoint;
-	public var velocity:IFlxPoint;
-	public var maxVelocity:IFlxPoint;
-	public var acceleration:IFlxPoint;
-	public var drag:IFlxPoint;
-	public var scrollFactor:IFlxPoint;
+	public var moves(default, set):Bool;
+	public function set_moves(Moves:Bool):Bool { return moves; }
+	
+	public var offset(default, set):FlxPoint;
+	public function set_offset(Offset:FlxPoint):FlxPoint { return offset;}
+	
+	public var origin(default, set):FlxPoint;
+	public function set_origin(Origin:FlxPoint):FlxPoint { return origin;}
+	
+	public var scale(default, set):FlxPoint;
+	public function set_scale(Scale:FlxPoint):FlxPoint { return scale;}
+	
+	public var velocity(default, set):FlxPoint;
+	public function set_velocity(Velocity:FlxPoint):FlxPoint { return velocity;}
+	
+	public var maxVelocity(default, set):FlxPoint;
+	public function set_maxVelocity(MaxVelocity:FlxPoint):FlxPoint { return maxVelocity;}
+	
+	public var acceleration(default, set):FlxPoint;
+	public function set_acceleration(Acceleration:FlxPoint):FlxPoint { return acceleration;}
+	
+	public var drag(default, set):FlxPoint;
+	public function set_drag(Drag:FlxPoint):FlxPoint { return drag;}
+	
+	public var scrollFactor(default, set):FlxPoint;
+	public function set_scrollFactor(ScrollFactor:FlxPoint):FlxPoint { return scrollFactor;}
 
 	public var x(default, set):Float=0;
 	public var y(default, set):Float=0;
 	
 	public function set_x(X:Float):Float { return x; }
-	public function set_y(Y:Float):Float { return y; }	
+	public function set_y(Y:Float):Float { return y; }
 	
 	public var alpha(default, set):Float=1;
 	

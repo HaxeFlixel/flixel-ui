@@ -25,8 +25,8 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 	/***PUBLIC GETTER/SETTERS***/
 	
 	//just getters, based on total size of contents, kinda buggy
-	public var width(default, set):Float=0;
-	public var height(default, set):Float=0;
+	/*public var width(default, set):Float=0;
+	public var height(default, set):Float=0;*/
 	
 	//public var velocity:FlxPoint;
 	
@@ -34,13 +34,13 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 	
 		/***GETTER SETTER FUNCTIONS***/
 		
-		public function set_width(f:Float):Float {
+		/*public function set_width(f:Float):Float {
 			return width = f;
 		}
 		
 		public function set_height(f:Float):Float {
 			return height = f;
-		}
+		}*/
 		
 	/***PUBLIC FUNCTIONS***/
 	
@@ -49,7 +49,7 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 		super();
 	}
 	
-	public override function add(Object:FlxBasic):FlxBasic {
+	public override function add(Object:FlxSprite):FlxSprite{
 		var obj = super.add(Object);
 		if (autoBounds) {
 			calcBounds();
@@ -57,7 +57,7 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 		return obj;
 	}
 	
-	public override function remove(Object:FlxBasic,Splice:Bool=false):FlxBasic {
+	public override function remove(Object:FlxSprite, Splice:Bool = false):FlxSprite {
 		var obj = super.remove(Object, Splice);
 		if (autoBounds) {
 			calcBounds();
@@ -118,7 +118,7 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 		}
 	}
 	
-	public function set_color(col:Int=0xffffff):Void {
+	/*public function set_color(col:Int=0xffffff):Void {
 		var fb:FlxBasic;
 		for (fb in members) {
 			if (Std.is(fb, FlxSprite)) {
@@ -129,5 +129,5 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 				fg.set_color(col);
 			}
 		}
-	}
+	}*/
 }
