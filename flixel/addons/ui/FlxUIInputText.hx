@@ -12,11 +12,11 @@ class FlxUIInputText extends FlxInputText implements IResizable implements IFlxU
 		super(X, Y, Width, Text, size, TextColor, BackgroundColor, EmbeddedFont);
 	}
 	
-	public function get_width():Float {
+	override public function get_width():Float {
 		return width;
 	}
 	
-	public function get_height():Float {
+	override public function get_height():Float {
 		return height;
 	}
 	

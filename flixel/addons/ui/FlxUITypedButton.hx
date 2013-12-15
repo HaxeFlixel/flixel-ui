@@ -48,8 +48,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	/**For IResizable:**/
 	
-	public function get_width():Float { return width; }
-	public function get_height():Float { return height; }
+	override public function get_width():Float { return width; }
+	override public function get_height():Float { return height; }
 		
 	public function resize(W:Float, H:Float):Void {
 		var old_width:Float = width;

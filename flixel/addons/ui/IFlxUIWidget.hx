@@ -9,7 +9,7 @@ import flixel.FlxSprite.IFlxSprite;
 interface IFlxUIWidget extends IFlxSprite
 {
 	 public var id:String;
-	 public var width(default, set):Float;
-	 public var height(default, set):Float;
+	 public var width(get, set):Float;
+	 public var height(get, set):Float;
 }
 
