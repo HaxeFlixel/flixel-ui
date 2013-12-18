@@ -31,10 +31,10 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget
 	}
 		
 	//For IResizable:
-	public function get_width():Float {
+	override public function get_width():Float {
 		return width;
 	}	
-	public function get_height():Float {
+	override public function get_height():Float {
 		return height;
 	}
 	

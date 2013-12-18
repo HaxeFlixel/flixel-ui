@@ -29,6 +29,8 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 	
 	//Set this to false if you just want the checkbox itself to be clickable
 	public var textIsClickable:Bool = true;
+		
+	public var checkbox_dirty:Bool = false;
 	
 	public var textX(get, set):Float;
 	public var textY(get, set):Float;
@@ -165,19 +167,19 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 	public function set_text(value:String):String
 	{
 		button.label.text = value;
-		dirty = true;
+		checkbox_dirty = true;
 		return value;
 	}
 			
 	public override function update():Void{
 		super.update();
 		
-		if (dirty) {			
+		if (checkbox_dirty) {			
 			if (button.label != null) {
 				anchorLabelX();
 				anchorLabelY();
 				button.mouse_width = button.label.textWidth() + button.labelOffset.x;
-				dirty = false;
+				checkbox_dirty = false;
 			}
 		}
 	}

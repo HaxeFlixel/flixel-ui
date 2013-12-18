@@ -524,7 +524,7 @@ class U
 	}
 	
 	public static function xml(str:String, extension:String = "xml",getFast:Bool=true,dir="assets/xml/"):Dynamic{
-		var str:String = Assets.getText(dir + str + "." + extension);		
+		var str:String = Assets.getText(dir + str + "." + extension);
 		if (str == null) {
 			return null;
 		}
@@ -590,7 +590,10 @@ class U
 		return _font(str, style);
 	}	
 	
-	public static inline function font(str:String, style:String=""):String {
+ 	public static inline function font(str:String, style:String = ""):String {
+		/*#if flash
+			return _font(str,style);
+		#end*/
 		return _font(str,style) + ".ttf";
 	}
 	
@@ -604,6 +607,7 @@ class U
 				case "italic", "i": suffix = "i";
 				case "bold-italic", "bolditalic", "italic-bold", "italicbold", "ibold", "boldi", "ib", "bi", "z":suffix = "z";
 			}
+			
 			return "assets/fonts/" + str + suffix;
 		}
 	

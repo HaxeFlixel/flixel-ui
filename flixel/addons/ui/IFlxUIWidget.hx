@@ -1,6 +1,5 @@
 package flixel.addons.ui;
-
-import flixel.IFlxSprite;
+import flixel.FlxSprite.IFlxSprite;
 
 /**
  * ...
@@ -9,7 +8,8 @@ import flixel.IFlxSprite;
 
 interface IFlxUIWidget extends IFlxSprite
 {
-	public var id:String;
-	public var width(default, set):Float;
-	public var height(default, set):Float;
+	 public var id:String;
+	 public var width(get, set):Float;
+	 public var height(get, set):Float;
 }
+

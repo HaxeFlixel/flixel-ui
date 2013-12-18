@@ -26,11 +26,11 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 	
 	/**For IResizable**/
 	
-	public function get_width():Float {
+	override public function get_width():Float {
 		return _back.width;
 	}
 	
-	public function get_height():Float {
+	override public function get_height():Float {
 		var fbt = getFirstTab();
 		if (fbt != null) {
 			return (_back.y + _back.height) - fbt.y;

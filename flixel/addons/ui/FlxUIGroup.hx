@@ -24,19 +24,11 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 	
 	/***PUBLIC GETTER/SETTERS***/
 	
+	
 	//public var velocity:FlxPoint;
 	
 	public var autoBounds:Bool = true;
 	
-		/***GETTER SETTER FUNCTIONS***/
-		
-		override public function set_width(f:Float):Float {
-			return width = f;
-		}
-		
-		override public function set_height(f:Float):Float {
-			return height = f;
-		}
 		
 	/***PUBLIC FUNCTIONS***/
 	

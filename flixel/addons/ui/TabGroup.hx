@@ -19,7 +19,7 @@ import flixel.addons.ui.FlxUIGroup;
 */
 class TabGroup extends FlxUIGroup
 {
-	private var curr_index:Int = 0;
+	/*private var curr_index:Int = 0;
 	private var curr_sub_index:Int = 0;
 	private var multi_object:Bool = false;
 	
@@ -34,7 +34,7 @@ class TabGroup extends FlxUIGroup
 	public var checkBounds:Bool = true;
 	public var checkRect:FlxRect;
 	
-	public var checkOverTab:Bool = false;
+	public var checkOverTab:Bool = false;*/
 
 	public function new() 
 	{

@@ -105,8 +105,8 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	}
 	
 	//For IResizable
-	public function get_width():Float { return width; }
-	public function get_height():Float { return height; }
+	override public function get_width():Float { return width; }
+	override public function get_height():Float { return height; }
 	
 	public function resize(w:Float, h:Float):Void {		
 		

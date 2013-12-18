@@ -9,48 +9,51 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 {	
 	public var id:String;
 	
-	/**STUBS TO MAKE THE INTERFACE HAPPY:
-	 * 
-	 * Note from Sam:
-	 * This is quite a lot of maintenance code, this class should probably inherit from FlxSpriteGroup somehow.
-	 * Maybe need to create new FlxState class that derives from FlxSpriteGroup, maybe FlxUIState?
-	 */
-	public var x(default, set):Float;
-	public var y(default, set):Float;
-	public var width(default, set):Float;
-	public var height(default, set):Float;
-	public var alpha(default, set):Float;
+	/**STUBS TO MAKE THE INTERFACE HAPPY:**/
+	
+	public var immovable(default, set):Bool;
+	public function set_immovable(Immovable:Bool):Bool { return immovable; }
+
 	public var angle(default, set):Float;
 	public var facing(default, set):Int;
 	public var moves(default, set):Bool;
-	public var immovable(default, set):Bool;
 	public var offset(default, set):FlxPoint;
 	public var origin(default, set):FlxPoint;
 	public var scale(default, set):FlxPoint;
-	public var velocity(default, set):FlxPoint;
-	public var maxVelocity(default, set):FlxPoint;
-	public var acceleration(default, set):FlxPoint;
-	public var drag(default, set):FlxPoint;
+	public var velocity:FlxPoint;
+	public var maxVelocity:FlxPoint;
+	public var acceleration:FlxPoint;
+	public var drag:FlxPoint;
 	public var scrollFactor(default, set):FlxPoint;
 	public function set_x(Value:Float):Float { return x = Value; }
 	public function set_y(Value:Float):Float { return y = Value; }
+	public function get_width():Float { return width; }
 	public function set_width(Value:Float):Float { return width = Value; }
 	public function set_height(Value:Float):Float { return height = Value; }
+	public function get_height():Float { return height; }
 	public function set_angle(Value:Float):Float { return angle = Value; }
 	public function set_alpha(Value:Float):Float { return alpha = Value; }
 	public function set_facing(Value:Int):Int { return facing = Value; }
 	public function set_moves(Value:Bool):Bool { return moves = Value; }
-	public function set_immovable(Value:Bool):Bool { return immovable = Value; }
 	private function set_offset(Value:FlxPoint):FlxPoint { return offset = Value; }
 	private function set_origin(Value:FlxPoint):FlxPoint { return origin = Value; }
 	private function set_scale(Value:FlxPoint):FlxPoint { return scale = Value; }
-	private function set_velocity(Value:FlxPoint):FlxPoint { return velocity = Value; }
-	private function set_acceleration(Value:FlxPoint):FlxPoint { return acceleration = Value; }
-	private function set_drag(Value:FlxPoint):FlxPoint { return drag = Value; }
-	private function set_maxVelocity(Value:FlxPoint):FlxPoint { return maxVelocity = Value; }
 	private function set_scrollFactor(Value:FlxPoint):FlxPoint { return scrollFactor = Value; }
 	public function reset(X:Float, Y:Float):Void { setPosition(X, Y); }
 	public function setPosition(X:Float = 0, Y:Float = 0):Void { x = X; y = Y; }
+	
+
+	public var x(default, set):Float=0;
+	public var y(default, set):Float=0;
+	
+		
+	public var alpha(default, set):Float=1;
+	
+
+	
+	@:isVar public var width(get, set):Float;
+	@:isVar public var height(get, set):Float;
+
 	
 	/**************************************/
 	
