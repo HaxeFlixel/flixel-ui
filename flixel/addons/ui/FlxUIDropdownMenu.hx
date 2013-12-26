@@ -4,7 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
-import flixel.ui.FlxClickArea;
+import flixel.addons.ui.FlxClickArea;
 import flixel.util.FlxPoint;
 
 /**
