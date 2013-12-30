@@ -16,7 +16,7 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget
 {
 	public var id:String; 
 	
-	public var dropShadow(get, set):Bool;	
+	public var dropShadow(get, set):Bool;
 	private var _dropShadow:Bool = false;
 	
 	public function new(X:Float, Y:Float, Width:Int, Text:String = null, size:Int=8, EmbeddedFont:Bool = true)	
@@ -28,14 +28,6 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget
 		width = w;
 		height = h;
 		calcFrame();
-	}
-		
-	//For IResizable:
-	public function get_width():Float {
-		return width;
-	}	
-	public function get_height():Float {
-		return height;
 	}
 	
 	public function textWidth():Float {	return _textField.textWidth; }

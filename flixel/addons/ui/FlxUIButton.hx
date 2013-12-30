@@ -28,7 +28,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled
 	private var _noIconGraphicsBkup:BitmapData;
 	
 	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Dynamic) {
-		super(X, Y, null, OnClick);		
+		super(X, Y, null, OnClick);
 		if (Label != null) {
 			//create a FlxUIText label
 			//labelOffset = new FlxPoint(-1, 3);
@@ -48,19 +48,27 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled
 	public override function resize(W:Float, H:Float):Void {
 		super.resize(W, H);
 		if(label != null){
-			label.width = W;		
+			label.width = W;
 		}
 	}
 	
-	public function addIcon(icon:FlxSprite)
+	public function addIcon(icon:FlxSprite,center:Bool=true)
 	{
 		// Creates a backup of current button image.
 		_noIconGraphicsBkup = cachedGraphics.bitmap.clone();
 		
+		var sx:Int = 0;
+		var sy:Int = 0;
+		
+		if(center){
+			sx = Std.int((width - icon.width) / 2);
+			sy = Std.int((height - icon.height) / 2);
+		}
+		
 		// Stamps the icon in every frame of this button.
 		for (i in 0...frames)
 		{
-			this.stamp(icon, 0, Std.int(i * height));			
+			this.stamp(icon, sx, sy + Std.int(i * height));
 		}
 	}
 	

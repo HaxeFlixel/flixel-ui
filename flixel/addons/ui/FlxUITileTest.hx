@@ -38,10 +38,7 @@ class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIW
 		
 		makeTiles(tileWidth,tileHeight,_tilesWide,_tilesTall,_color1,_color2);
 	}
-		
-	//For IResizable
-	public function get_width():Float { return width; }
-	public function get_height():Float { return height; }
+
 	
 	private function makeTiles(tileWidth:Int,tileHeight:Int,tilesWide:Int,tilesTall:Int,color1:Int=0xff808080,color2:Int=0xffc4c4c4):Void {
 		makeGraphic(tileWidth * tilesWide, tileHeight * tilesTall, color1);

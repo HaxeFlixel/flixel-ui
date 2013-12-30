@@ -15,7 +15,7 @@ import openfl.Assets;
  * ...
  * @author 
  */
-class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResizable implements IFlxUIWidget 
+class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResizable implements IFlxUIWidget implements IFlxUIButton
 {
 	public var id:String; 
 	public var resize_ratio:Float = -1;
@@ -30,7 +30,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public var depressOnClick:Bool = true;
 	
 	public var has_toggle:Bool = false;
-	public var toggled:Bool = false;	
+	public var toggled:Bool = false;
 	
 	//Change these to something besides 0 to make the label use that color
 	//when that state is active
@@ -41,16 +41,17 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public var up_toggle_color:Int = 0;
 	public var over_toggle_color:Int = 0;
 	public var down_toggle_color:Int = 0;
-		
+	
+	public var skipButtonUpdate(default, set):Bool = false;
+	public function set_skipButtonUpdate(b:Bool):Bool {
+		skipButtonUpdate = b;
+		return skipButtonUpdate;
+	}
+	
 	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Dynamic) {
 		super(X, Y, Label, OnClick);
 	}
 	
-	/**For IResizable:**/
-	
-	public function get_width():Float { return width; }
-	public function get_height():Float { return height; }
-		
 	public function resize(W:Float, H:Float):Void {
 		var old_width:Float = width;
 		var old_height:Float = height;
@@ -598,17 +599,17 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	}
 	
 	public override function updateButton():Void {
-		super.updateButton();
-				
+		if(!skipButtonUpdate){
+			super.updateButton();
+		}
+		
 		// Then pick the appropriate frame of animation
 		if(toggled){
 			animation.frameIndex =  3 + status;
 		}else {
 			animation.frameIndex = status;
-		}		
+		}
 	}
-	
-	
 	
 	public override function update():Void {
 		
@@ -627,14 +628,14 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		switch (status)
 		{
 			case FlxButton.HIGHLIGHT:
-				if (!toggled) {					
+				if (!toggled) {
 					if (old_color != over_color) {
 						new_color = over_color;
 						change_color = true;
 					}
 				}else{
 					if (old_color != over_toggle_color) {
-						new_color = over_toggle_color;						
+						new_color = over_toggle_color;
 						change_color = true;
 					}
 				}
@@ -655,7 +656,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 					}
 				}else {
 					if (old_color != down_toggle_color) {
-						new_color = down_toggle_color;						
+						new_color = down_toggle_color;
 						change_color = true;
 					}
 				}

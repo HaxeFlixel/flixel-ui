@@ -44,10 +44,23 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	public var tongue(get, set):IFireTongue;
 	public function get_tongue():IFireTongue { return _ptr_tongue; }
 	public function set_tongue(t:IFireTongue):IFireTongue {
-		_ptr_tongue = t;		
+		_ptr_tongue = t;
 		_tongueSet(members, t);
 		return _ptr_tongue;
-	}	
+	}
+	
+	public var focus(default, set):IFlxUIWidget;	//set focused object
+	
+	public function set_focus(widget:IFlxUIWidget):IFlxUIWidget {
+		if (focus != null) {
+			onFocusLost(focus);
+		}
+		focus = widget;
+		if (focus != null) {
+			onFocus(focus);
+		}
+		return widget;
+	}
 	
 	//Set this 
 	public var getTextFallback:String->String->Bool->String = null;
@@ -65,7 +78,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	/**Make sure to recursively propogate the tongue pointer 
 	 * down to all my members
 	 */
-	private function _tongueSet(list:Array<FlxSprite>,tongue:IFireTongue):Void {		
+	private function _tongueSet(list:Array<FlxSprite>,tongue:IFireTongue):Void {
 		for (fs in list) {
 			if (Std.is(fs, FlxUIGroup)) {
 				var g:FlxUIGroup = cast(fs, FlxUIGroup);
@@ -76,6 +89,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}
 	}
+	
 	
 	/***EVENT HANDLING***/
 	
@@ -122,7 +136,47 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			load(data);
 		}
 	}
-		
+	
+	public function onFocus(widget:IFlxUIWidget):Void {
+		if (Std.is(widget, FlxUIDropdownMenu)) {
+			//when drop down menu has focus, every other button needs to skip updating
+			for (asset in members){
+				if (Std.is(asset, IFlxUIButton)) {
+					var skip:Bool = false;
+					if (Std.is(asset, FlxUIDropdownMenu)) {
+						var ddasset:FlxUIDropdownMenu = cast asset;
+						if (ddasset == widget) {
+							skip = true;
+						}
+					}
+					if(!skip){
+						var ibtn:IFlxUIButton = cast asset;
+						ibtn.skipButtonUpdate = true;			//skip button updates until further notice
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * This causes FlxUI to respond to a specific widget losing focus
+	 * @param	widget
+	 */
+	
+	public function onFocusLost(widget:IFlxUIWidget):Void {
+		if (Std.is(widget, FlxUIDropdownMenu)) {
+			//Right now, all this does is toggle button updating on and off for 
+			
+			//when drop down menu loses focus, every other button can resume updating
+			for (asset in members){
+				if (Std.is(asset, IFlxUIButton)) {
+					var ibtn:IFlxUIButton = cast asset;
+					ibtn.skipButtonUpdate = false;			//skip button updates until further notice
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Set a pointer to another FlxUI for the purposes of indexing
 	 * @param	flxUI
@@ -728,11 +782,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			case "text": return _loadText(info);
 			case "button": return _loadButton(info);
 			case "button_toggle": return _loadButton(info,true,true);
-						
+			
 			case "tab_menu": return _loadTabMenu(info);
 			
-			/*case "dropdown_menu", "dropdown",
-			     "pulldown", "pulldown_menu": return _loadDropDownMenu(info);*/
+			case "dropdown_menu", "dropdown",
+			     "pulldown", "pulldown_menu": return _loadDropDownMenu(info);
 			
 			case "checkbox": return _loadCheckBox(info);
 			case "radio_group": return _loadRadioGroup(info);
@@ -746,7 +800,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 							return null;
 			
 			default: 
-				//If I don't know how to load this thing, I will request it from my pointer:			
+				//If I don't know how to load this thing, I will request it from my pointer:
 				var result = _ptr.getRequest("ui_get:" + type, this, info);
 				return result;
 		}
@@ -1289,24 +1343,135 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var check_asset:String = null;  
 		
 		if(box_src != ""){
-			box_asset = U.gfx(box_src);		
+			box_asset = U.gfx(box_src);
 		}
 		if(check_src != ""){
-			check_asset = U.gfx(check_src);		
+			check_asset = U.gfx(check_src);
 		}
 		
 		fc = new FlxUICheckBox(0, 0, box_asset, check_asset, label, labelW, _onClickCheckBox, params);
 		formatButtonText(data, fc);
 		
 		var text_x:Int = U.xml_i(data.x, "text_x");
-		var text_y:Int = U.xml_i(data.x, "text_y");		
+		var text_y:Int = U.xml_i(data.x, "text_y");
 		
 		fc.textX = text_x;
 		fc.textY = text_y;
 		
 		fc.text = label;
-								
+		
 		return fc;
+	}
+	
+	private function _loadDropDownMenu(data:Fast):FlxUIDropdownMenu {
+		
+		/*
+		 *   <dropdown label="Something">
+		 *      <data id="thing_1" label="Thing 1"/>
+		 *      <data id="thing_2" label="Thing 2"/>
+		 *      <data id="1_fish" label="One Fish"/>
+		 *      <data id="2_fish" label="Two Fish"/>
+		 *      <data id="0xff0000_fish" label="Red Fish"/>
+		 *      <data id="0x0000ff_fish" label="Blue Fish"/>
+		 *   </dropdown>
+		 * 
+		 *   <dropdown label="Whatever" back_def="dd_back" panel_def="dd_panel" button_def="dd_button">
+		 *      <asset id="a" def="thing_a"/>
+		 *      <asset id="b" def="thing_b"/>
+		 *      <asset id="c" def="thing_c"/>
+		 *   </dropdown> 
+		 * 
+		 *   <dropdown label="Whatever" back_def="dd_back" panel_def="dd_panel" button_def="dd_button">
+		 *      <data id="blah" label="Blah"/>
+		 *      <data id="blah2" label="Blah2"/>
+		 *      <data id="blah3" label="Blah3"/>
+		 *   </dropdown>
+		 */
+		
+		var fud:FlxUIDropdownMenu = null;
+		
+		var label:String = U.xml_str(data.x, "label");
+		var context:String = U.xml_str(data.x, "context", true, "ui");
+		label = getText(label,context);
+		
+		var back_def:String = U.xml_str(data.x, "back_def", true);
+		var panel_def:String = U.xml_str(data.x, "panel_def", true);
+		var button_def:String = U.xml_str(data.x, "button_def", true);
+		var label_def:String = U.xml_str(data.x, "label_def", true);
+		
+		var back_asset:FlxSprite = null;
+		var panel_asset:FlxUI9SliceSprite = null;
+		var button_asset:FlxUISpriteButton = null;
+		var label_asset:FlxUIText = null;
+				
+		if (back_def != "") {
+			back_asset = _loadSprite(getDefinition(back_def));
+		}
+		
+		if (panel_def != "") {
+			panel_asset = _load9SliceSprite(getDefinition(panel_def));
+		}
+		
+		if (button_def != "") {
+			try{
+				button_asset = cast _loadButton(getDefinition(button_def), false, false);
+			}catch (e:Error) {
+				FlxG.log.add("couldn't loadButton with definition \"" + button_def + "\"");
+				button_asset = null;
+			}
+		}
+		
+		if (label_def != "") {
+			try{
+				label_asset = cast _loadText(getDefinition(label_def));
+			}catch (e:Error) {
+				FlxG.log.add("couldn't loadText with definition \"" + label_def + "\"");
+				label_asset = null;
+			}
+			if (label_asset != null && label != "") {
+				label_asset.text = label;
+			}
+		}
+		
+		var asset_list:Array<FlxUIButton> = null;
+		var data_list:Array<StrIdLabel> = null;
+		
+		if (data.hasNode.data) {
+			for (dataNode in data.nodes.data) {
+				if (data_list == null) { 
+					data_list = new Array<StrIdLabel>();
+				}
+				var idl:StrIdLabel = new StrIdLabel(U.xml_str(dataNode.x, "id", true), U.xml_str(dataNode.x, "label"));
+				data_list.push(idl);
+			}
+		}else if (data.hasNode.asset) {
+			for (assetNode in data.nodes.asset) {
+				if (asset_list == null) {
+					asset_list = new Array<FlxUIButton>();
+				}
+				var def_id:String = U.xml_str(assetNode.x, "def", true);
+				var id:String = U.xml_str(assetNode.x, "id", true);
+				var asset:FlxUIButton = null;
+				
+				try{
+					asset = cast _loadButton(getDefinition(def_id), false);
+				}catch (e:Error) {
+					FlxG.log.add("couldn't loadButton with definition \"" + def_id + "\"");
+				}
+				
+				if (asset != null) {
+					asset.id = id;
+					if (asset_list == null) {
+						asset_list = new Array<FlxUIButton>();
+					}
+					asset_list.push(asset);
+				}
+			}
+		}
+		
+		fud = new FlxUIDropdownMenu(0, 0, back_asset, panel_asset, asset_list, data_list, label_asset, button_asset, _onClickDropDown, _onClickDropDown_control);
+		
+		return fud;
 	}
 	
 	private function _loadTest(data:Fast):Bool {
@@ -1363,10 +1528,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			return _ui;
 		}
 		
-		return null;
-	}
-	
-	private function _loadDropDownMenu(data:Fast):FlxUIDropdownMenu {
 		return null;
 	}
 	
@@ -1536,6 +1697,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				//custom frame indeces array (optional)
 				var frame_str:String = U.xml_str(data.node.graphic.x, "frames",true);
 				if (frame_str != "") {
+					frames = new Array<Int>();
 					var arr = frame_str.split(",");
 					for (numstr in arr) {
 						frames.push(Std.parseInt(numstr));
@@ -2039,10 +2201,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						if (index == 1) { return_val = other.x; }
 					}else {
 						switch(prop) {
+							case "top", "up": return_val = other.y;
+							case "bottom", "down": return_val = other.y +other.height;
 							case "right": return_val = other.x + other.width;
 							case "left": return_val = other.x;
 							case "center": return_val = other.x + (other.width / 2);
 							case "width": return_val = other.width;
+							case "height": return_val = other.height;
 						}
 					}
 				case "h", "height":
@@ -2053,8 +2218,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						switch(prop){
 							case "top", "up": return_val = other.y;
 							case "bottom", "down": return_val = other.y +other.height;
+							case "right": return_val = other.x + other.width;
+							case "left": return_val = other.x;
 							case "center": return_val = other.y + (other.height / 2);
 							case "height": return_val = other.height;
+							case "width": return_val = other.width;
 						}
 					}
 			}
@@ -2223,6 +2391,21 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}		
 	}
 	
+	private function _onClickDropDown_control(isActive:Bool, dropdown:FlxUIDropdownMenu):Void {
+		if (isActive) {
+			focus = dropdown;
+		}else {
+			focus = null;
+		}
+	}
+	
+	private function _onClickDropDown(params:Array<Dynamic> = null):Void {
+		FlxG.log.add("FlxUI._onClickDropDown(" + params + ")");
+		if (_ptr != null) {
+			_ptr.getEvent("click_dropdown", this, params);
+		}
+	}
+	
 	private function _onClickButton(params:Array<Dynamic> = null):Void {
 		FlxG.log.add("FlxUI._onClickButton(" + params + ")");
 		if (_ptr != null) {
@@ -2282,17 +2465,17 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 			if (use_def != "") {
 				text_def = getDefinition(use_def);
-			}			
+			}
 			
 			var info:Fast = consolidateData(textNode, text_def);
-						
+			
 			var case_id:String = U.xml_str(info.x, "id", true);
 			var the_font:String = _loadFontFace(info);
 			var size:Int = U.xml_i(info.x, "size"); if (size == 0) { size = 8;}
-			var color:Int = _loadColor(info);				
+			var color:Int = _loadColor(info);
 			
 			var border:Array<Dynamic> = _loadBorder(info);
-									
+			
 			//var dropShadow:Bool = U.xml_bool(text_data.x, "dropShadow");
 			var align:String = U.xml_str(info.x, "align", true); if (align == "") { align = null;}
 			
@@ -2307,14 +2490,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 			}else if (Std.is(button, FlxUICheckBox)) {
 				var cb:FlxUICheckBox = cast button;
-				fb = cb.button;				
+				fb = cb.button;
 				align = "left";			//force this for check boxes
 			}
 			
 			the_label = fb.label;
 			fb.up_color = color;
 			fb.down_color = 0;
-			fb.over_color = 0;				
+			fb.over_color = 0;
 			
 			if (the_label != null) {
 				the_label.setFormat(the_font, size, color, align);
@@ -2323,7 +2506,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				the_label.borderSize = border[2];
 				the_label.borderQuality = border[3];
 				
-				//TODO: text.dropShadow = true;		
+				//TODO: text.dropShadow = true;
 				
 				if (Std.is(the_label, FlxUIText)) {
 					var ftu:FlxUIText = cast the_label;
@@ -2336,14 +2519,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			for (textColorNode in info.nodes.color) {
 				var color:Int = _loadColor(textColorNode);
 				var state_id:String = U.xml_str(textColorNode.x, "id", true);
-				var toggle:Bool = U.xml_bool(textColorNode.x, "toggle");				
+				var toggle:Bool = U.xml_bool(textColorNode.x, "toggle");
 				switch(state_id) {
 					case "up", "inactive", "", "up", "normal": 
 						if (!toggle) {
 							fb.up_color = color; 
 						}else {
 							fb.up_toggle_color = color;
-						}							
+						}
 					case "active", "hilight", "over", "hover": 
 						if(!toggle){
 							fb.over_color = color; 
@@ -2356,7 +2539,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						}else {
 							fb.down_toggle_color = color;
 						}
-				}				
+				}
 			}
 			
 			if (fb.over_color == 0) {			//if no over color, match up color
@@ -2365,9 +2548,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			if (fb.down_color == 0) {			//if no down color, match over color
 				fb.down_color = fb.over_color;
 			}
-				
+			
 			//if toggles are undefined, match them to the normal versions
-			if (fb.up_toggle_color == 0) {			
+			if (fb.up_toggle_color == 0) {
 				fb.up_toggle_color = fb.up_color;
 			}
 			if (fb.over_toggle_color == 0) {

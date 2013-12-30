@@ -4,17 +4,24 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
-import flixel.ui.FlxClickArea;
+import flixel.addons.ui.FlxClickArea;
 import flixel.util.FlxPoint;
 
 /**
  * larsiusprime
  * @author 
  */
-class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget
+class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget implements IFlxUIButton
 {
+	public var skipButtonUpdate(default, set):Bool;
+	public function set_skipButtonUpdate(b:Bool):Bool {
+		_button.skipButtonUpdate = b;
+		return b;
+	}
+	
+	//TODO: needs destruct function
 
-	public function new(X:Float=0, Y:Float=0, Back:FlxSprite=null,DropPanel:FlxUI9SliceSprite=null,?Asset_list:Array<FlxUIButton>,?Data_list:Array<StrIdLabel>,?Text:FlxUIText,?Button:FlxUISpriteButton,?Callback:String->Void) 
+	public function new(X:Float = 0, Y:Float = 0, Back:FlxSprite = null, DropPanel:FlxUI9SliceSprite = null, ?Asset_list:Array<FlxUIButton>, ?Data_list:Array<StrIdLabel>, ?Text:FlxUIText, ?Button:FlxUISpriteButton, ?Callback:Array<Dynamic>->Void, ?UIControlCallback:Bool->FlxUIDropdownMenu->Void) 
 	{
 		super();
 		
@@ -24,7 +31,7 @@ class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget
 		_mPoint = new FlxPoint();
 		
 		var rect:Rectangle = null;
-				
+		
 		if (Back == null) {
 			rect = new Rectangle(0, 0, 120, 20);
 			Back = new FlxUI9SliceSprite(0, 0, FlxUIAssets.IMG_BOX, rect, "1,1,14,14");
@@ -34,14 +41,14 @@ class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget
 
 		if (Button == null) {
 			Button = new FlxUISpriteButton(0, 0, new FlxSprite(0, 0, FlxUIAssets.IMG_DROPDOWN), onDropdown);
-			Button.loadGraphicSlice9([FlxUIAssets.IMG_BUTTON_THIN],[FlxUIAssets.SLICE9_BUTTON]);
+			Button.loadGraphicSlice9([FlxUIAssets.IMG_BUTTON_THIN], 80, 20, [FlxUIAssets.SLICE9_BUTTON],FlxUI9SliceSprite.TILE_NONE,-1,false,FlxUIAssets.IMG_BUTTON_SIZE,FlxUIAssets.IMG_BUTTON_SIZE);
 		}
 		Button.resize(Back.height, Back.height);
 		Button.x = Back.x + Back.width - Button.width;
 		
-		_text = Text;		
+		_text = Text;
 		if (_text == null) {
-			_text = new FlxUIText(0, 0, Std.int(Back.width - Back.height), "Item 1");			
+			_text = new FlxUIText(0, 0, Std.int(Back.width - Back.height), "Item 1");
 		}
 		_text.y = Back.y + (Back.height - _text.height);
 		_text.color = 0x000000;
@@ -80,9 +87,9 @@ class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget
 				i++;
 			}
 		}else if (Asset_list != null) {
-			for (btn in Asset_list) {				
+			for (btn in Asset_list) {
 				_list.push(btn);
-				btn.resize(Back.width, Back.height);				
+				btn.resize(Back.width, Back.height);
 				btn.y = yoff;
 				yoff += Std.int(Back.height);
 				
@@ -99,7 +106,7 @@ class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget
 		_dropPanel.resize(Back.width, yoff);
 		_dropPanel.visible = false;
 		
-		add(_dropPanel);		
+		add(_dropPanel);
 		add(Back);
 		add(Button);
 		add(_text);
@@ -110,6 +117,8 @@ class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget
 		}
 		
 		_callback = Callback;
+		_ui_control_callback = UIControlCallback;
+		_button = cast Button;
 	}
 	
 	public override function update():Void {
@@ -118,13 +127,14 @@ class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget
 			_mPoint.x = FlxG.mouse.x;
 			_mPoint.y = FlxG.mouse.y;
 			if (!_dropPanel.overlapsPoint(_mPoint)) {
-				_dropdown_active = false;
 				showList(false);
 			}
 		}
 	}	
 	
-	private var _callback:String->Void;
+	private var _button:FlxUISpriteButton = null;
+	private var _ui_control_callback:Bool->FlxUIDropdownMenu->Void;
+	private var _callback:Array<Dynamic>->Void;
 	private var _list:Array<FlxUIButton>;
 	private var _text:FlxUIText;
 	private var _dropPanel:FlxUI9SliceSprite;
@@ -132,16 +142,22 @@ class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget
 	private var _mPoint:FlxPoint = null;
 	
 	private function showList(b:Bool):Void {
+		_dropdown_active = b;
+		
 		for (button in _list) {
 			button.visible = b;
 			button.active = b;
 		}
+		
 		_dropPanel.visible = b;
+		
+		if(_ui_control_callback != null){
+			_ui_control_callback(b, this);
+		}
 	}
 	
 	private function onDropdown(?params:Array<Dynamic>):Void {
 		showList(true);
-		_dropdown_active = true;
 	}	
 	
 	private function onClickItem(i:Int):Void {
@@ -149,7 +165,7 @@ class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget
 		_text.text = item.label.text;
 		showList(false);
 		if (_callback != null) {
-			_callback(item.id);
+			_callback([item.id]);
 		}
 	}
 	

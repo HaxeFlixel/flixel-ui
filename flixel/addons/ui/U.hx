@@ -1,4 +1,5 @@
 package flixel.addons.ui;
+import haxe.Json;
 import haxe.xml.Fast;
 import flash.display.BitmapData;
 import flash.display.BlendMode;
@@ -523,8 +524,29 @@ class U
 		return xml(id);
 	}
 	
-	public static function xml(str:String, extension:String = "xml",getFast:Bool=true,dir="assets/xml/"):Dynamic{
-		var str:String = Assets.getText(dir + str + "." + extension);
+	public static function json(str:String, extension:String = "json",dir="assets/json/"):Dynamic {
+		var json_str:String = Assets.getText(dir + str + "." + extension);
+		if(json_str != "" && json_str != null){
+			var the_json = Json.parse(json_str);
+			return the_json;
+		}
+		return null;
+	}
+	
+	public static function field(object:Dynamic, field:String, _default:Dynamic = null):Dynamic {
+		if (object == null) return null;
+		if (Reflect.hasField(object, field)) {
+			var thing:Dynamic = Reflect.field(object, field);
+			if (thing == null) {
+				return _default;
+			}
+			return thing;
+		}
+		return _default;
+	}
+	
+	public static function xml(id:String, extension:String = "xml",getFast:Bool=true,dir="assets/xml/"):Dynamic{
+		var str:String = Assets.getText(dir + id + "." + extension);
 		if (str == null) {
 			return null;
 		}
@@ -826,9 +848,39 @@ class U
 							str_arr.push(i);
 						}
 					}
-				}				
+				}
 			}
-		}			
+		}
+		return str_arr;
+	}
+	
+	/**
+	 * Converts a comma and hyphen list string of numbers to a String array
+	 * @param	str input, ex: "1,2,3", "2-4", "1,2,3,5-10"
+	 * @return int array, ex: [1,2,3], [2,3,4], [1,2,3,5,6,7,8,9,10]
+	 */
+	
+	public static inline function intStr_to_arrStr(str:String):Array<String> {
+		var arr:Array<String> = str.split(",");
+		var str_arr:Array<String> = new Array<String>();
+		for (s in arr) {
+			if(s.indexOf("-") == -1){			//if it's just a number, "5" push it: [5]
+				str_arr.push(Std.string(Std.parseInt(s)));		//validation -- force it to be an int
+			}else {		//if it's a range, say, "5-10", push all: [5,6,7,8,9,10]
+				var range:Array<String> = str.split("-");
+				var lo:Int = -1;
+				var hi:Int = -1;
+				if(range != null && range.length == 2){
+					lo = Std.parseInt(range[0]);
+					hi = Std.parseInt(range[1]) + 1;	//+1 so it's inclusive
+					if(lo >= 0 && hi > lo){
+						for (i in lo...hi) {
+							str_arr.push(Std.string(i));
+						}
+					}
+				}
+			}
+		}
 		return str_arr;
 	}
 	

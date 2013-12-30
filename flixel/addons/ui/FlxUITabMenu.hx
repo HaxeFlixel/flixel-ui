@@ -10,7 +10,7 @@ import flixel.util.FlxTimer;
  * @author Lars Doucet
  */
 
-class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResizable
+class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResizable implements IFlxUIButton
 {
 
 	/***Event Handling***/
@@ -24,13 +24,35 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 		return null;
 	}	
 	
+	/**For IFlxUIButton**/
+	
+	public var skipButtonUpdate(default, set):Bool;
+	public function set_skipButtonUpdate(b:Bool):Bool {
+		skipButtonUpdate = b;
+		var tab:FlxUIButton;
+		for (tab in _tabs) {
+			tab.skipButtonUpdate = b;
+		}
+		var group:FlxUIGroup;
+		for (group in _tab_groups) {
+			var sprite:FlxSprite;
+			for (sprite in group.members) {
+				if (Std.is(sprite, IFlxUIButton)) {
+					var widget:IFlxUIButton = cast sprite;
+					widget.skipButtonUpdate = b;
+				}
+			}
+		}
+		return b;
+	}
+	
 	/**For IResizable**/
 	
-	public function get_width():Float {
+	public override function get_width():Float {
 		return _back.width;
 	}
 	
-	public function get_height():Float {
+	public override function get_height():Float {
 		var fbt = getFirstTab();
 		if (fbt != null) {
 			return (_back.y + _back.height) - fbt.y;

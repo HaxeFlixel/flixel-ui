@@ -18,7 +18,7 @@ import openfl.Assets;
  * @author Lars Doucet
  */
 
-class FlxUICheckBox extends FlxUIGroup implements ILabeled
+class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButton
 {
 	public var box:FlxSprite;
 	public var mark:FlxSprite;
@@ -39,6 +39,14 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 	
 	private var _textX:Float = 0;
 	private var _textY:Float = 0;
+	
+	public var skipButtonUpdate(default,set):Bool = false;
+	
+	public function set_skipButtonUpdate(b:Bool):Bool {
+		skipButtonUpdate = b;
+		button.skipButtonUpdate = skipButtonUpdate;
+		return skipButtonUpdate;
+	}
 	
 	public function new(X:Float = 0, Y:Float = 0, ?Box:Dynamic, ?Check:Dynamic, ?Label:String, LabelW:Int=100, ?OnClick:Dynamic, ?params:Array<Dynamic>)
 	{
@@ -174,7 +182,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 	public override function update():Void{
 		super.update();
 		
-		if (checkbox_dirty) {			
+		if (checkbox_dirty) {
 			if (button.label != null) {
 				anchorLabelX();
 				anchorLabelY();
