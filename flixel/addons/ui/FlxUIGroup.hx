@@ -24,23 +24,11 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 	
 	/***PUBLIC GETTER/SETTERS***/
 	
-	//just getters, based on total size of contents, kinda buggy
-	/*public var width(default, set):Float=0;
-	public var height(default, set):Float=0;*/
 	
 	//public var velocity:FlxPoint;
 	
 	public var autoBounds:Bool = true;
 	
-		/***GETTER SETTER FUNCTIONS***/
-		
-		/*public function set_width(f:Float):Float {
-			return width = f;
-		}
-		
-		public function set_height(f:Float):Float {
-			return height = f;
-		}*/
 		
 	/***PUBLIC FUNCTIONS***/
 	
@@ -49,7 +37,7 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 		super();
 	}
 	
-	public override function add(Object:FlxSprite):FlxSprite{
+	public override function add(Object:FlxSprite):FlxSprite {
 		var obj = super.add(Object);
 		if (autoBounds) {
 			calcBounds();
@@ -57,7 +45,7 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 		return obj;
 	}
 	
-	public override function remove(Object:FlxSprite, Splice:Bool = false):FlxSprite {
+	public override function remove(Object:FlxSprite,Splice:Bool=false):FlxSprite {
 		var obj = super.remove(Object, Splice);
 		if (autoBounds) {
 			calcBounds();
@@ -65,7 +53,7 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 		return obj;
 	}
 	
-	public function hasThis(Object:FlxBasic):Bool {
+	public function hasThis(Object:FlxSprite):Bool {
 		for (obj in members) {
 			if (obj == Object) {
 				return true;
@@ -82,15 +70,15 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 			var top:Float = Math.POSITIVE_INFINITY;
 			var bottom:Float = Math.NEGATIVE_INFINITY;
 			for (fb in members) {
-				if(fb != null){
+				if (fb != null){
 					if (Std.is(fb, IFlxUIWidget)) {
-						var flui:IFlxUIWidget = cast fb;
+						var flui:FlxSprite = cast fb;
 						if (flui.x < left) { left = flui.x; }
 						if (flui.x + flui.width > right) { right = flui.x + flui.width; }
 						if (flui.y < top) { top = flui.y; }
 						if (flui.y + flui.height > bottom) { bottom = flui.y + flui.height;}
-					}else if (Std.is(fb, IFlxSprite)) {
-						var flxi:IFlxSprite = cast fb;
+					}else if (Std.is(fb, FlxSprite)) {
+						var flxi:FlxSprite = cast fb;
 						if (flxi.x < left)   { left = flxi.x; }
 						if (flxi.x > right)  { right = flxi.x; }
 						if (flxi.y < top)    { top = flxi.y; }
@@ -110,24 +98,11 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 	 */
 	
 	public function floorAll():Void {
-		var fs:IFlxSprite = null;
+		var fs:FlxSprite = null;
 		for (fb in members) {
 			fs = cast fb;
 			fs.x = Math.floor(fs.x);
 			fs.y = Math.floor(fs.y);
 		}
 	}
-	
-	/*public function set_color(col:Int=0xffffff):Void {
-		var fb:FlxBasic;
-		for (fb in members) {
-			if (Std.is(fb, FlxSprite)) {
-				var fo:FlxSprite = cast(fb, FlxSprite);
-				fo.color = col;
-			}else if (Std.is(fb, FlxUIGroup)) {
-				var fg:FlxUIGroup = cast(fb, FlxUIGroup);
-				fg.set_color(col);
-			}
-		}
-	}*/
 }

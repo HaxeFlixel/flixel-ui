@@ -43,7 +43,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	public var tongue(get, set):IFireTongue;
 	public function get_tongue():IFireTongue { return _ptr_tongue; }
-	public function set_tongue(t:IFireTongue):IFireTongue {
+	public function set_tongue(t:IFireTongue):IFireTongue 
+	{
 		_ptr_tongue = t;
 		_tongueSet(members, t);
 		return _ptr_tongue;
@@ -78,7 +79,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	/**Make sure to recursively propogate the tongue pointer 
 	 * down to all my members
 	 */
-	private function _tongueSet(list:Array<FlxSprite>,tongue:IFireTongue):Void {
+	private function _tongueSet(list:Array<FlxSprite>, tongue:IFireTongue):Void 
+	{		
 		for (fs in list) {
 			if (Std.is(fs, FlxUIGroup)) {
 				var g:FlxUIGroup = cast(fs, FlxUIGroup);
@@ -113,14 +115,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (_assets_init == false) {
 			FlxUIAssets.init();
 			_assets_init = true;
-		}
-		
-		//to help with drawing
-		if(_flashRect == null){
-			_flashRect = new Rectangle();
-			_flashRect2 = new Rectangle();
-			_flashPoint = new Point();
-			_flashPointZero = new Point();
 		}
 		
 		super();
@@ -206,7 +200,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @return	the asset, or null if destroy=true
 	 */
 	
-	public function removeAsset(key:String,destroy:Bool=true):IFlxUIWidget{
+	public function removeAsset(key:String, destroy:Bool=true):IFlxUIWidget{
 		var asset = getAsset(key, false);
 		if (asset != null) {
 			replaceInGroup(cast asset, null, true);
@@ -311,7 +305,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		_superIndexUI = null;
 		_ptr_tongue = null;
-		super.destroy();	
+		super.destroy();
 	}
 	
 	/**
