@@ -25,7 +25,7 @@ Please note the test project in flixel-demos requires the localization library *
 
 latest dev version:
 
-    haxelib git https://github.com/haxeflixel/flixel-ui
+    haxelib git flixel-ui https://github.com/HaxeFlixel/flixel-ui
 
 when we finally upload it to haxelib:
 
