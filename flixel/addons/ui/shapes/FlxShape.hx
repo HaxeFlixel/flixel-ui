@@ -1,194 +1,134 @@
 package flixel.addons.ui.shapes;
 
-import flash.display.Bitmap;
-import flash.display.BitmapData;
-import flash.display.BlendMode;
 import flash.display.Shape;
-import flash.geom.ColorTransform;
 import flash.geom.Matrix;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-import flixel.FlxG;
-import flixel.FlxObject;
+import flixel.FlxSprite;
+import flixel.util.FlxSpriteUtil.FillStyle;
+import flixel.util.FlxSpriteUtil.LineStyle;
 
 /**
- * ...
+ * A convenience class for wrapping vector shape drawing in FlxSprites, all ready to go.
+ * Don't use this class by itself -- use things like FlxLine, FlxCircle, that extend it
+ * 
+ * 
+ * 
  * @author Lars A. Doucet
  */
-class FlxShape extends FlxObject 
-{
-	public var st_thick(never, set_st_thick):Float;
-	public var fill(never, set_fill):Int;
-	public var line_col(never, set_line_col):Int;
-	public var alpha(get_alpha, set_alpha):Float;
 
-	private var has_fill:Bool;
-	private var fill_col:Int;
-	private var stroke_col:Int;
-	private var stroke_thick:Float;
-	private var _w:Int;
-	private var _h:Int;
-	private var drawShape:Shape;
-	private var _flashRect:Rectangle;
-	private var _alpha:Float;
+class FlxShape extends FlxSprite
+{
+	public var lineStyle(default, set):LineStyle;		//stroke settings
+	public var fillStyle(default, set):FillStyle;		//fill settings
 	
-	public var blend:String;
-	public var movable:Bool;
-	public var shape_id:String;
-	public var _canvas:BitmapData;
-	public var _canvasBMP:Bitmap;
+	public var shape_id:String;						//string id of the shape
+	public var shapeDirty:Bool = false;				//flag to flip to force it to redraw the shape
 	
-	private var _mat:Matrix;
-	private var _ct:ColorTransform;
-	private var _pt:Point;
+	/**
+	 * (You should never instantiate this directly, only call it as a super)
+	 * Creates a Shape wrapped in a FlxSprite
+	 * @param	X				X location
+	 * @param	Y				Y location
+	 * @param	CanvasWidth		Width of pixel canvas
+	 * @param	CanvasHeight	Height of pixel canvas
+	 * @param	LineStyle_		Drawing style for strokes -- see flixel.util.FlxSpriteUtil.LineStyle
+	 * @param	FillStyle_		Drawing style for fills -- see flixel.util.FlxSpriteUtil.FillStyle
+	 * @param	TrueWidth		Width of raw unstyled geometric object, ignoring line thickness, filters, etc
+	 * @param	TrueHeight		Height of raw unstyled geometric object, ignoring line thickness, filters, etc
+	 */
 	
-	public function new(st:Float, sc:Int, fill:Bool, fc:Int, X:Float, Y:Float, w:Int, h:Int) 
+	public function new(X:Float, Y:Float, CanvasWidth:Float, CanvasHeight:Float, LineStyle_:LineStyle, FillStyle_:FillStyle, TrueWidth:Float=0, TrueHeight:Float=0) 
 	{
-		_alpha = 1;
-		blend = Std.string(BlendMode.NORMAL);
-		movable = false;
+		super(X, Y);
+		
 		shape_id = "";
-		_pt = new Point();
-		stroke_thick = st;
-		stroke_col = sc;
-		has_fill = fill;
-		fill_col = fc;
-		drawShape = new Shape();
-		_w = w;
-		_h = h;
-		if (_w < 1) 
-			_w = 1;
-		if (_h < 1) 
-			_h = 1;
-		_canvas = new BitmapData(_w, _h, true, 0x00000000);
-		_canvasBMP = new Bitmap(_canvas);
-		_mat = new Matrix();
-		_ct = new ColorTransform(1, 1, 1, 1, 0, 0, 0, 1);
-		super(X, Y, w, h);
+		
+		if (CanvasWidth < 1) { CanvasWidth = 1; }
+		if (CanvasHeight < 1) { CanvasHeight = 1; }
+		
+		width = CanvasWidth;
+		height = CanvasHeight;
+		
+		makeGraphic(Std.int(width), Std.int(height), 0x00000000, true);
+		
+		lineStyle = LineStyle_;
+		fillStyle = FillStyle_;
+		
+		if (TrueWidth != 0 && TrueHeight != 0) {
+			if(TrueWidth < CanvasWidth && TrueHeight < CanvasHeight){
+				fixBoundaries(TrueWidth, TrueHeight);
+			}
+		}
+		
+		shapeDirty = true;		//draw the shape next draw() command
+	}
+	
+	/**
+	 * Fixes boundaries so that the sprite's bbox & origin line up with the underlying geometric object's
+	 * @param	trueWidth	width of geometric object (ignoring strokes, etc)
+	 * @param	trueHeight	height of geometric object (ignoring strokes, etc)
+	 */
+	
+	private function fixBoundaries(trueWidth:Float, trueHeight:Float):Void {
+		width = trueWidth;		//reset width/height to geometric reality 
+		height = trueHeight;
+		
+		var strokeBuffer:Float = (lineStyle.thickness);
+		
+		//set offsets so that X/Y correspond to shape's geometric upper-left, ignoring stroke boundaries
+		offset.x = strokeBuffer / 2;
+		offset.y = strokeBuffer / 2;
+		
+		shapeDirty = true;		//redraw the shape next draw() command
 	}
 
 	override public function destroy():Void 
 	{
-		drawShape = null;
-		_flashRect = null;
-		if (_canvas != null)
-		{
-			_canvas.dispose();
-			_canvas = null;
-		}
-		if (_canvasBMP != null) 
-		{
-			_canvasBMP.bitmapData = null;
-			_canvasBMP = null;
-		}
-		_mat = null;
-		_ct = null;
-		_pt = null;
+		lineStyle = null;
+		fillStyle = null;
 		super.destroy();
 	}
-
-	public function set_st_thick(n:Float):Float 
-	{
-		stroke_thick = n;
-		buffer();
-		return n;
+	
+	public function set_lineStyle(ls:LineStyle):LineStyle {
+		lineStyle = ls;
+		shapeDirty = true;
+		return lineStyle;
 	}
-
-	public function set_fill(u:Int):Int 
-	{
-		fill_col = u;
-		buffer();
-		return u;
+	
+	public function set_fillStyle(fs:FillStyle):FillStyle {
+		fillStyle = fs;
+		shapeDirty = true;
+		return fillStyle;
 	}
-
-	public function set_line_col(u:Int):Int 
+	
+	public function redrawShape():Void
 	{
-		stroke_col = u;
-		buffer();
-		return u;
-	}
-
-	public function set_alpha(n:Float):Float
-	{
-		if (n > 1) 
-			n = 1;
-		if (n < 0) 
-			n = 0;
-		_alpha = n;
-		return n;
-	}
-
-	public function get_alpha():Float 
-	{
-		return _alpha;
-	}
-
-	public function set_loc(X:Float, Y:Float):Void 
-	{
-		x = X;
-		y = Y;
-		buffer();
-	}
-
-	public function get_loc():Point
-	{
-		return _pt.clone();
-	}
-
-	public function set_size(W:Int, H:Int):Void 
-	{
-		if (W != -1) 
-			_w = W;
-		if (H != -1) 
-			_h = H;
-		buffer();
-	}
-
-	public function buffer():Void
-	{
-		getScreenXY(_point);
-		//var m:Matrix = new Matrix();
-		//m.identity();
-		if(_mat == null) 
-			_mat = new Matrix();
-		_mat.identity();
-		/*if(movable){
-
-		_mat.translate(_point.x, _point.y);
-
-		}*/
-		
-		_ct = new ColorTransform(1, 1, 1, 1, 0, 0, 0, (-255 + (255 * alpha)));
-		_pt.x = _point.x;
-		_pt.y = _point.y;
-		_canvas.draw(drawShape);
-	}
-
-	//TODO:
-	//the entire DRAW function!
-	/*override public function render():Void {
-		if(movable)  {
-			_canvasBMP.x = _point.x;
-			_canvasBMP.y = _point.y;
+		pixels.fillRect(pixels.rect, 0x00000000);
+		if (lineStyle.thickness > 1) {
+			var matrix:Matrix = getStrokeOffsetMatrix(_matrix);
+			drawSpecificShape(matrix);
+		}else {
+			drawSpecificShape();
 		}
-		if(alpha == 0)  {
-			return;
-		}
-		if(alpha != 1 || blend != BlendMode.NORMAL)  {
-			_canvasBMP.x = 0;
-			_canvasBMP.y = 0;
-			//_canvasBMP.alpha = alpha;
-			//_canvasBMP.blendMode = blend;
-			//_canvasBMP.
-			_ct.alphaOffset = (-255 + (256 * alpha));
-			//FlxG.buffer.draw(drawShape);
-			FlxG.buffer.draw(_canvasBMP, null, _ct, blend);
-		}
+	}
+	
+	private function getStrokeOffsetMatrix(matrix:Matrix):Matrix{
+		var buffer:Float = lineStyle.thickness / 2;
+		matrix.identity();
+		matrix.translate(buffer, buffer);
+		return matrix;
+	}
+	
+	private function drawSpecificShape(matrix:Matrix=null):Void {
+		//override per subclass
+		//put your actual drawing function here
+	}
 
-		else  {
-			FlxG.buffer.copyPixels(_canvas, _canvas.rect, _pt, null, null, true);
+	public override function draw():Void {
+		if (shapeDirty) {
+			redrawShape();
+			shapeDirty = false;
 		}
-
-	}*/
+		super.draw();
+	}
 
 }

@@ -1,27 +1,25 @@
 package flixel.addons.ui.shapes;
 
 import flash.geom.Point;
+import flixel.util.FlxPoint;
 
 /**
- * ...
+ * Helper for FlxShapeLightning
  * @author Lars A. Doucet
  */
 class LineSegment 
 {
-	public var a:Point;
-	public var b:Point;
-	public var thick:Int;
+	public var a:FlxPoint;
+	public var b:FlxPoint;
 	
-	public function new(_a:Point, _b:Point, t:Int = 1) 
+	public function new(A:FlxPoint, B:FlxPoint) 
 	{
-		thick = 1;
-		a = _a.clone();
-		b = _b.clone();
-		thick = t;
+		a = new FlxPoint(A.x,A.y);
+		b = new FlxPoint(B.x,B.y);
 	}
 
 	public function copy():LineSegment 
 	{
-		return new LineSegment(a, b, thick);
+		return new LineSegment(a, b);
 	}
 }
