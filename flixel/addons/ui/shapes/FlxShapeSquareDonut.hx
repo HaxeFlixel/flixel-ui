@@ -7,14 +7,14 @@ import flash.geom.Matrix;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxSpriteUtil.LineStyle;
 
-class FlxShapeDonut extends FlxShape 
+class FlxShapeSquareDonut extends FlxShape 
 {
 	public var radius_out(default, set):Float;
 	public var radius_in(default, set):Float;
 
 	/**
-	 * Creates a FlxSprite with a donut drawn on top of it. 
-	 * X/Y is where the SPRITE is, the donut's upper-left
+	 * Creates a FlxSprite with a square donut drawn on top of it. 
+	 * X/Y is where the SPRITE is, the square's upper-left
 	 * @param	X x position of the canvas
 	 * @param	Y y position of the canvas
 	 * @param	RadiusIn 
@@ -25,7 +25,7 @@ class FlxShapeDonut extends FlxShape
 	
 	public function new(X:Float, Y:Float, RadiusOut:Float, RadiusIn:Float, LineStyle_:LineStyle, FillStyle_:FillStyle) 
 	{
-		shape_id = "donut";
+		shape_id = "square_donut";
 		
 		lineStyle = LineStyle_;
 		fillStyle = FillStyle_;
@@ -71,10 +71,11 @@ class FlxShapeDonut extends FlxShape
 	{
 		var cx:Float = Math.ceil(width / 2);
 		var cy:Float = Math.ceil(height / 2);
-		FlxSpriteUtil.drawCircle(this, cx, cy, radius_out, fillStyle.color, lineStyle, matrix);
+		
+		FlxSpriteUtil.drawRect(this, 0, 0, radius_out * 2, radius_out * 2, fillStyle.color, lineStyle, fillStyle, matrix);
 		if (radius_in > 0) {
-			FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, 0xffff0000, null, matrix, BlendMode.ERASE, true);
+			FlxSpriteUtil.drawRect(this, (radius_out - radius_in), (radius_out - radius_in), radius_in * 2, radius_in * 2, 0xffff0000, null, fillStyle, matrix, BlendMode.ERASE, true);
 		}
-		FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, 0x00000000, lineStyle, matrix);
+		FlxSpriteUtil.drawRect(this, (radius_out - radius_in), (radius_out - radius_in), radius_in * 2, radius_in * 2, 0x00000000, lineStyle, null, matrix);
 	}
 }

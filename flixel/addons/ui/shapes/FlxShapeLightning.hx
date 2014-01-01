@@ -13,20 +13,26 @@ import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxSpriteUtil.LineStyle;
 import flixel.util.FlxVector;
 
+/**
+ * This creates a Lightning bolt drawn on top of a FlxSprite object. 
+ * 
+ * TODO:
+	 * I'm not currently adding enough border room to properly account for the filter effect
+ */
+
 class FlxShapeLightning extends FlxShapeLine
 {
 
 	public var lightningStyle(default, set):LightningStyle;
 	
-	
 	/**
 	 * Creates a lightning bolt!
-	 * @param	X		
-	 * @param	Y		
-	 * @param	A			start point
-	 * @param	B			end point
+	 * @param	X			X location of the sprite canvas
+	 * @param	Y			Y location of the sprite canvas
+	 * @param	A			start point, relative to canvas
+	 * @param	B			end point, relative to canvas
 	 * @param	Style		LightningStyle object
-	 * @param	UseDefaults	use default settings to fill in gaps
+	 * @param	UseDefaults	use default settings to fill in style gaps?
 	 */	
 	public function new(X:Float, Y:Float, A:FlxPoint, B:FlxPoint, Style:LightningStyle, UseDefaults:Bool=true) 
 	{
@@ -51,8 +57,6 @@ class FlxShapeLightning extends FlxShapeLine
 		
 		//create the main lightning bolt
 		calculate(A, B, lightningStyle.displacement, 0);
-		
-		shapeDirty = true;
 	}
 	
 	private function addSegment(A:FlxPoint, B:FlxPoint):Void 
@@ -75,6 +79,7 @@ class FlxShapeLightning extends FlxShapeLine
 			calculate(A, mid, Displacement / 2, Iteration);
 			calculate(B, mid, Displacement / 2, Iteration);
 		}
+		shapeDirty = true;
 	}
 	
 	public function set_lightningStyle(Style:LightningStyle):LightningStyle {
@@ -119,55 +124,73 @@ class FlxShapeLightning extends FlxShapeLine
 		FlxG.log.add("ul = (" + left + "," + up + ")");
 		FlxG.log.add("lr = (" + down + "," + right + ")");
 		
-		var newWidth:Float = right - left;
-		var newHeight:Float = down - up;
-		
 		var strokeBuffer:Float = lightningStyle.thickness;
 		
-		makeGraphic(Std.int(newWidth+strokeBuffer), Std.int(newHeight+strokeBuffer), 0x00000000, true);
-
-		_matrix.identity();
-		
+		//point-to-point size, unstroked
 		var trueWidth:Float = Math.abs(point.x - point2.x);
 		var trueHeight:Float = Math.abs(point.y - point2.y);
 		
-		var dw:Float = 0;
-		var dh:Float = 0;
+		//bbox size, unstroked
+		var newWidth:Float = right - left;
+		var newHeight:Float = down - up;
+		
+		//size of canvas, w/ borders to account for stroke
+		var canvasWidth:Int = Std.int(newWidth + strokeBuffer);
+		var canvasHeight:Int = Std.int(newHeight + strokeBuffer);
+		
+		offset.x = 0;
+		offset.y = 0;
+		width = canvasWidth;
+		height = canvasHeight;
+		
+		if(canvasWidth != pixels.width || canvasHeight != pixels.height){
+			makeGraphic(canvasWidth, canvasHeight, 0x00000000, true);
+		}else {
+			pixels.fillRect(pixels.rect, 0x00000000);
+		}
+		
+		_matrix.identity();
+		
+		var dw:Int = 0;
+		var dh:Int= 0;
 		
 		//if it's poking of the left or top, I need to adjust the drawing location
-		if (left < 0) { dw = -left + (strokeBuffer / 2); }
-		if (up   < 0) { dh = -up   + (strokeBuffer / 2); }
+		if (left < 0) { dw = Std.int(-left + (strokeBuffer/2)); }
+		if (up   < 0) { dh = Std.int(-up   + (strokeBuffer/2)); }
 		
-		lineStyle.thickness = lightningStyle.thickness;
-		lineStyle.color = lightningStyle.color;
+		//lineStyle.thickness = 1;		//lightningStyle.thickness;
+		//lineStyle.color = 0xffffff00; 	//lightningStyle.color;
+		
 		for(l in list_segs) {
 			FlxSpriteUtil.drawLine(this, l.a.x+dw, l.a.y+dh, l.b.x+dw, l.b.y+dh, lineStyle);
 		}
 		
-		fixBoundaries(trueWidth, trueHeight);
+		//lineStyle.thickness = 1;
+		var fillStyle:FillStyle = { hasFill:false };
 		
-		if(left < 0){
-			offset.x -= left;
-		}
-		if(up < 0){
-			offset.y -= up;
-		}
+			/****DEBUGGING*****
+			//draw canvas border
+			lineStyle.color = 0x88ffffff;
+			FlxSpriteUtil.drawRect(this, 0, 0, canvasWidth-1, canvasHeight-1, 0, lineStyle, fillStyle);
 		
-		filterDirty = true;
+			//draw point-to-point border
+			lineStyle.color = 0xff00aaff;
+			FlxSpriteUtil.drawRect(this, dw, dh, dw + trueWidth - 1, dh + trueHeight - 1, 0, lineStyle, fillStyle);
+			*******************/
 		
-		/*
-		var a:Array<Dynamic> = new Array<Dynamic>();
-		var i:Int = 0;
-		while (i < halo_cols.length) 
-		{
-			a.push(new GlowFilter(halo_cols[i], (1.0 - (0.15 * i)), 3, 3));
-			i++;
-		}
+		width = trueWidth;
+		height = trueHeight;
 		
-		drawShape.filters = a;
-		_canvas = new BitmapData(ul.x + drawShape.width, ul.y + drawShape.height, true, 0x00000000);
-		_canvasBMP.bitmapData = _canvas;
-		super.buffer();*/
+		offset.x = dw;
+		offset.y = dh;
+		
+		shapeDirty = true;
+		filterDirty = true;		//update filters too
+	}
+	
+	private override function fixBoundaries(trueWidth:Float, trueHeight:Float):Void {
+		//doNothing, because this class requires special treatement
+		//and I don't want this to get called by accident and screw things up
 	}
 	
 	public override function draw():Void {
@@ -192,7 +215,20 @@ class FlxShapeLightning extends FlxShapeLine
 				var pixels2:BitmapData = pixels.clone();
 				pixels2.applyFilter(pixels, pixels.rect, _flashPointZero, gf);
 				
+				//remember size settings
+				var w:Float = width;
+				var h:Float = height;
+				var ox:Float = offset.x;
+				var oy:Float = offset.y;
+				
+				//update pixels
 				pixels = pixels2;
+				
+				//restore size settings
+				width = w;
+				height = h;
+				offset.x = ox;
+				offset.y = oy;
 			}
 			
 			filterDirty = false;

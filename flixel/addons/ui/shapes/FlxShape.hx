@@ -126,7 +126,7 @@ class FlxShape extends FlxSprite
 	public override function draw():Void {
 		if (shapeDirty) {
 			redrawShape();
-			shapeDirty = false;
+			shapeDirty = false;				//call this AFTER incase redrawShape() sets shapeDirty = true
 		}
 		super.draw();
 	}
