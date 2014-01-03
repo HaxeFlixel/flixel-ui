@@ -40,8 +40,6 @@ class BasicPopUp extends FlxUIGroup
 	
 	var SPACE:Float = 7;
 	
-	var tabGroup:TabGroup;
-	
 	var isSetup:Bool = false;	
 	
 	private var wait_a_sec:Bool = false;

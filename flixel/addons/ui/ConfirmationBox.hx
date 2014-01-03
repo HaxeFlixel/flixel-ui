@@ -243,7 +243,6 @@ class ConfirmationBox extends BasicPopUp
 		titleBox.bold = true;
 		//titleBox.aa = false;
 		titleBox.setBorderStyle(FlxText.BORDER_SHADOW);
-		titleBox.dropShadow = true;
 		
 		descriptionBox = new FlxUIText(25, 35, 315, text);
 		descriptionBox.setFormat(U.font("verdana"), 14,0x000000,"center");
@@ -268,13 +267,6 @@ class ConfirmationBox extends BasicPopUp
 		add(titleBox);
 		add(descriptionBox);
 		hide();
-		
-		tabGroup = new TabGroup();
-		add(tabGroup);
-		
-		tabGroup.add(yes_btn);
-		tabGroup.add(no_btn);
-		tabGroup.add(cancel_btn);
 	}
 		
 }
