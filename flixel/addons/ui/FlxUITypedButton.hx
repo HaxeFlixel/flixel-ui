@@ -50,6 +50,11 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Dynamic) {
 		super(X, Y, Label, OnClick);
+		
+		//force label to be 100% visible always
+		status_alphas[FlxButton.NORMAL = 1.0];
+		status_alphas[FlxButton.HIGHLIGHT = 1.0];
+		status_alphas[FlxButton.PRESSED = 1.0];
 	}
 	
 	public function resize(W:Float, H:Float):Void {
@@ -619,7 +624,6 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		if (label == null) {
 			return;
 		}
-		label.alpha = 1;
 		
 		var old_color:Int = 0xff000000 + label.color;
 		var new_color:Int = 0;
