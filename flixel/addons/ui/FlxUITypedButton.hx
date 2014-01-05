@@ -48,10 +48,6 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		return skipButtonUpdate;
 	}
 	
-	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Dynamic) {
-		super(X, Y, Label, OnClick);
-	}
-	
 	public function resize(W:Float, H:Float):Void {
 		var old_width:Float = width;
 		var old_height:Float = height;
@@ -60,11 +56,11 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		var old_offy:Float = 0;
 		if (label != null) {
 			//calculate offset delta from center position
-			old_offx = labelOffset.x;				//store old raw offset
-			old_offy = labelOffset.y;
+			old_offx = labelOffsets[status].x;				//store old raw offset
+			old_offy = labelOffsets[status].y;
 			autoCenterLabel();						//reset to center position
-			old_offx = (old_offx - labelOffset.x);	//get difference
-			old_offy = (old_offy - labelOffset.y);
+			old_offx = (old_offx - labelOffsets[status].x);	//get difference
+			old_offy = (old_offy - labelOffsets[status].y);
 		}
 		
 		if (W == 0) { W = 80; }
@@ -88,8 +84,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		}
 		
 		autoCenterLabel();			//center based on new dimensions
-		labelOffset.x += old_offx;	//add delta from center offset
-		labelOffset.y += old_offy;
+		labelOffsets[status].x += old_offx;	//add delta from center offset
+		labelOffsets[status].y += old_offy;
 		
 		var diff_w:Float = width - old_width;
 		var diff_h:Float = height - old_height;
@@ -433,22 +429,20 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	public function autoCenterLabel():Void {
 		if (label != null) {
-			if (labelOffset == null) {
-				labelOffset = new FlxPoint();
-			}
-			
-			labelOffset.x = (width - label.width);
+			for (offset in labelOffsets) {
+				offset.x = (width - label.width);
 				
 			if (Std.is(label, FlxUIText)) {
 				var tlabel:FlxUIText = cast label;
-				//labelOffset.y = (height - tlabel.textHeight()) / 2;	
-				labelOffset.y = (height - tlabel.height) / 2;	
+				//offset.y = (height - tlabel.textHeight()) / 2;	
+				offset.y = (height - tlabel.height) / 2;	
 				//only use textHeight() for FlxText, presumably
 				//if they're using centered text, you want the full
 				//FlxText object width
 			}else {
-				labelOffset.x = (width - label.width) / 2;
-				labelOffset.y = (height - label.height)/2;
+				offset.x = (width - label.width) / 2;
+				offset.y = (height - label.height)/2;
+			}
 			}
 		}
 	}
@@ -611,13 +605,12 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		}
 	}
 	
-	public override function update():Void {
+	override private function set_status(Value:Int):Int
+	{
+		super.set_status(Value);
 		
-		/**Adds more control for coloring text in each state**/
-		
-		super.update();
 		if (label == null) {
-			return;
+			return Value;
 		}
 		label.alpha = 1;
 		
@@ -677,6 +670,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		if (change_color) {
 			label.color = new_color;
 		}
+		
+		return Value;
 	}
 
 	/*********PRIVATE************/
@@ -692,12 +687,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	private var _slice9_strings:Array<String>;	//the 9-slice scaling rules for the original assets
 	private var _slice9_assets:Array<String>;	//the asset id's of the original 9-slice scale assets
 	
-	private override function onMouseUp(event:Event):Void
+	private override function onUpHandler():Void
 	{
-		if (!exists || !visible || !active || (status != FlxButton.PRESSED)) {
-			return;
-		}		
+		super.onUpHandler();	
 		toggled = !toggled;
-		super.onMouseUp(event);
 	}
 }

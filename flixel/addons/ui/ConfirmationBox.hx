@@ -209,7 +209,7 @@ class ConfirmationBox extends BasicPopUp
 		text = fixword(text);
 		
 		yes_btn = new FlxUIButton(35, 147, STR_YES);
-		yes_btn.setOnUpCallback(pressButton, ["yes"]);
+		yes_btn.onUp.setCallback(pressButton, ["yes"]);
 		yes_btn.loadGraphicsMultiple([U.gfx("button_confirmation_up", "ui", "buttons"), U.gfx("button_confirmation_over", "ui", "buttons")]);
 				
 			/*yes_btn = new FlxButtonPlusX(35, 147, pressButton,["yes"]);
@@ -221,7 +221,7 @@ class ConfirmationBox extends BasicPopUp
 			//fb.textNormalX.dropShadow = true;
 		
 		no_btn = new FlxUIButton(118, 147, STR_NO);
-		no_btn.setOnUpCallback(pressButton, ["no"]);
+		no_btn.onUp.setCallback(pressButton, ["no"]);
 		no_btn.loadGraphicsMultiple([U.gfx("button_confirmation_red_up", "ui", "buttons"), U.gfx("button_confirmation_red_over", "ui", "buttons")]);
 			
 			/*no_btn = new FlxButtonPlusX(118, 147, pressButton,["no"]);
@@ -230,7 +230,7 @@ class ConfirmationBox extends BasicPopUp
 			//no_btn.text = STR_NO;
 	
 		cancel_btn = new FlxUIButton(200, 147, STR_CANCEL);
-		cancel_btn.setOnUpCallback(pressButton, ["cancel"]);
+		cancel_btn.onUp.setCallback(pressButton, ["cancel"]);
 		cancel_btn.loadGraphicsMultiple([U.gfx("button_confirmation_red_up", "ui", "buttons"), U.gfx("button_confirmation_red_over", "ui", "buttons")]);
 			
 			/*cancel_btn = new FlxButtonPlusX(200, 147, pressButton,["cancel"]);
