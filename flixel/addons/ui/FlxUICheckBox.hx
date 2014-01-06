@@ -78,7 +78,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		max_width = Std.int(box.width + box_space + LabelW);
 		
 		setExternalCallback(OnClick);
-		button.setOnUpCallback(_clickCheck, [params]);    //for internal use, check/uncheck box, bubbles up to _externalCallback
+		button.onUp.setCallback(_clickCheck, [params]);    //for internal use, check/uncheck box, bubbles up to _externalCallback
 				
 		mark = new FlxSprite();
 		if (Check == null) {
@@ -141,14 +141,14 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 	
 	public function anchorLabelX():Void {
 		if (button != null) {
-			button.labelOffset.x = (box.width + box_space) + _textX;		
+			button.labelOffsets[button.status].x = (box.width + box_space) + _textX;		
 		}			
 	}
 	
 	public function anchorLabelY():Void{
 		if (button != null) {			
 			button.y = box.y + (box.height - button.height) / 2;
-			button.labelOffset.y = (button.height-button.label.textHeight())/2 + _textY;
+			button.labelOffsets[button.status].y = (button.height-button.label.textHeight())/2 + _textY;
 		}
 	}
 	
@@ -186,7 +186,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 			if (button.label != null) {
 				anchorLabelX();
 				anchorLabelY();
-				button.mouse_width = button.label.textWidth() + button.labelOffset.x;
+				button.mouse_width = button.label.textWidth() + button.labelOffsets[button.status].x;
 				checkbox_dirty = false;
 			}
 		}

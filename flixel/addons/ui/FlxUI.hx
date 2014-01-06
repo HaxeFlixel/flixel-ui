@@ -1663,7 +1663,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		fb.resize_point = resize_point;
 		
 		if (setCallback) {
-			fb.setOnUpCallback(_onClickButton, [params]);
+			fb.onUp.setCallback(_onClickButton, [params]);
 		}
 		
 		/***Begin graphics loading block***/
@@ -1831,8 +1831,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		//label offset has already been 'centered,' this adjust from there:
-		fb.labelOffset.x += text_x;
-		fb.labelOffset.y += text_y;		
+		fb.labelOffsets[fb.status].x += text_x;
+		fb.labelOffsets[fb.status].y += text_y;		
 		
 		fb.visible = isVis;
 		
