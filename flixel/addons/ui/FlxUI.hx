@@ -724,49 +724,77 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	/************LOADING FUNCTIONS**************/
 	
-	private function _loadThing(type:String, data:Fast):IFlxUIWidget{
-		var use_def:String = U.xml_str(data.x, "use_def", true);		
-		var definition:Fast = null;
-		if (use_def != "") {
-			definition = getDefinition(use_def);
+	/**
+	 * Make any necessary changes to data/definition xml objects (such as for locale or haxedef settings)
+	 * @param	data		Fast xml data
+	 * @param	nodeName	name of the node, "locale", or "haxedef"
+	 */
+	
+	private function applyNodeChanges(data:Fast,nodeName:String):Fast {
+		//Make any necessary UI adjustments based on locale
+		
+		var nodeValue:String = "";
+		
+		//If nodeName="locale", set nodeValue once and only match current locale
+		if (nodeName == "locale") {
+			if (_ptr_tongue == null) {
+				return data;
+			}
+			nodeValue = _ptr_tongue.locale.toLowerCase();	//match current locale only
 		}
 		
-		//If we have per-locale UI tweaks
-		if (data.hasNode.locale) {
+		//Else if nodeName="haxedef", check each valid haxedef inside the loop itself
+		var haxedef:Bool = false;
+		if (nodeName == "haxedef") {
+			haxedef = true;
+		}
+		
+		for (cNode in data.nodes.resolve(nodeName)) {
+			var cid:String = U.xml_str(cNode.x, "id", true);
 			
-			//Deep-copy the data and definition xml objects
-			data = U.copyFast(data);
-			if (definition != null) {
-				definition = U.copyFast(definition);
+			if(haxedef){
+				nodeValue = "";
+				if (U.checkHaxedef(cid)) {
+					nodeValue = cid;
+				}
 			}
 			
-			//Make any necessary UI adjustments based on locale
-			if (_ptr_tongue != null) {
-				for (lNode in data.nodes.locale) {
-					var lid:String = U.xml_str(lNode.x, "id", true);
-					if (lid == _ptr_tongue.locale.toLowerCase()) {
-						if (lNode.hasNode.change) {
-							for (change in lNode.nodes.change) {
-								var xml:Xml;
-								for (att in change.x.attributes()) {
-									var value:String = change.x.get(att);
-									if (data.x.exists(att)) {
-										data.x.set(att, value);
-									}											
-									if (definition != null) {
-										if (definition.x.exists(att)) {
-											definition.x.set(att, value);
-										}
-									}
-								}
-							}
+			if (cid == nodeValue) {
+				if (cNode.hasNode.change) {
+					for (change in cNode.nodes.change) {
+						var xml:Xml;
+						for (att in change.x.attributes()) {
+							var value:String = change.x.get(att);
+							data.x.set(att, value);
 						}
 					}
 				}
 			}
 		}
 		
+		return data;
+	}
+	
+	private function _loadThing(type:String, data:Fast):IFlxUIWidget{
+		var use_def:String = U.xml_str(data.x, "use_def", true);
+		var definition:Fast = null;
+		if (use_def != "") {
+			definition = getDefinition(use_def);
+		}
+		
 		var info:Fast = consolidateData(data, definition);
+		
+		if (info.hasNode.locale || info.hasNode.haxedef) {
+			info = U.copyFast(info);
+			
+			if(info.hasNode.locale){
+				info = applyNodeChanges(info, "locale");
+			}
+			
+			if (info.hasNode.haxedef) {
+				info = applyNodeChanges(info, "haxedef");
+			}
+		}
 		
 		switch(type) {
 			case "region": return _loadRegion(info);
@@ -1290,9 +1318,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var radio_asset:String = null;
 		if (radio_src != "") {
-			radio_asset = U.gfx(radio_src);		
+			radio_asset = U.gfx(radio_src);
 		}
-			
+		
 		var dot_asset:Dynamic=null;
 		if (dot_src != "") {
 			dot_asset = U.gfx(dot_src);
@@ -1302,25 +1330,25 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		//and FlxUIRadioGroup will default to defaults defined in FlxUIAssets 
 		
 		frg = new FlxUIRadioGroup(0, 0, ids, labels, _onClickRadioGroup, y_space, W, H, labelW);
-						
+		
 		if (radio_asset != "" && radio_asset != null) {
 			frg.loadGraphics(radio_asset,dot_asset);
 		}
 		
 		var text_x:Int = U.xml_i(data.x, "text_x");
-		var text_y:Int = U.xml_i(data.x, "text_y");		
+		var text_y:Int = U.xml_i(data.x, "text_y");
 		
 		for (fo in frg.members) {
 			if(fo != null){
 				if (Std.is(fo, FlxUICheckBox)){
 					var fc:FlxUICheckBox = cast(fo, FlxUICheckBox);
 					formatButtonText(data, fc);
-					fc.textX = text_x;				
+					fc.textX = text_x;
 					fc.textY = text_y;
 				}
 			}
 		}
-						
+		
 		return frg;
 	}
 	
@@ -1629,16 +1657,17 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				
 		var resize_ratio:Float = U.xml_f(data.x, "resize_ratio", -1);
 		var resize_point:FlxPoint = _loadCompass(data, "resize_point");
-		var isVis:Bool = U.xml_bool(data.x, "visible", true);		
+		var isVis:Bool = U.xml_bool(data.x, "visible", true);
 		
 		var label:String = U.xml_str(data.x, "label");
 		
 		var sprite:FlxUISprite = null;
+		
 		//TODO:
 			//currently you can only have a text label OR a sprite icon
 			//once this issue: (https://github.com/HaxeFlixel/flixel/issues/614) is resolved
 			//we can have both, but for now we enforce one or the other
-		if (label == "") {		
+		if (label == "") {
 			if (data.hasNode.sprite) {
 				sprite = cast _loadThing("sprite",data.node.sprite);
 			}
@@ -1651,7 +1680,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var W:Int = cast _loadWidth(data, 0, "width");
 		var H:Int = cast _loadHeight(data, 0, "height");
-				
+		
 		var params:Array<Dynamic> = getParams(data);
 		
 		if(sprite == null){
@@ -1820,25 +1849,25 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var text_x:Int = 0;
 		var text_y:Int = 0;
 		if (data.x.get("text_x") != null) {
-			text_x = U.xml_i(data.x, "text_x");			
+			text_x = U.xml_i(data.x, "text_x");
 		}else if (data.x.get("label_x") != null) {
 			text_x = U.xml_i(data.x, "label_x");
 		}
 		if (data.x.get("text_y") != null) {
-			text_y = U.xml_i(data.x, "text_y");			
+			text_y = U.xml_i(data.x, "text_y");
 		}else if (data.x.get("label_y") != null) {
 			text_y = U.xml_i(data.x, "label_y");
 		}
 		
 		//label offset has already been 'centered,' this adjust from there:
-		fb.labelOffsets[fb.status].x += text_x;
-		fb.labelOffsets[fb.status].y += text_y;		
+		fb.allLabelOffset.x += text_x;
+		fb.allLabelOffset.y += text_y;
 		
 		fb.visible = isVis;
 		
 		return fb;
 	}
-	 		
+	
 	private static inline function _loadBitmapRect(source:String,rect_str:String):BitmapData {
 		var b1:BitmapData = Assets.getBitmapData(U.gfx(source));
 		var r:Rectangle = FlxUI9SliceSprite.getRectFromString(rect_str);

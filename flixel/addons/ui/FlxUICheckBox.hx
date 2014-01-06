@@ -7,6 +7,7 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
+import flixel.ui.FlxButton;
 import flixel.util.FlxRect;
 import flixel.util.FlxPoint;
 import flixel.FlxSprite;
@@ -32,13 +33,10 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		
 	public var checkbox_dirty:Bool = false;
 	
-	public var textX(get, set):Float;
-	public var textY(get, set):Float;
+	public var textX(default, set):Float;
+	public var textY(default, set):Float;
 	
 	public var box_space:Float = 2;
-	
-	private var _textX:Float = 0;
-	private var _textY:Float = 0;
 	
 	public var skipButtonUpdate(default,set):Bool = false;
 	
@@ -96,7 +94,14 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		anchorLabelY();
 		
 		checked = false;
-		button.depressOnClick = false;
+		
+		//set all these to 0
+		button.labelOffsets[FlxButton.NORMAL].x = 0;
+		button.labelOffsets[FlxButton.NORMAL].y = 0;
+		button.labelOffsets[FlxButton.PRESSED].x = 0;
+		button.labelOffsets[FlxButton.PRESSED].y = 0;
+		button.labelOffsets[FlxButton.HIGHLIGHT].x = 0;
+		button.labelOffsets[FlxButton.HIGHLIGHT].y = 0;
 		
 		x = X;
 		y = Y;
@@ -117,23 +122,20 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 	}
 	
 	private function anchorTime(f:FlxTimer):Void {
-		trace("ANCHOR TIME");
 		anchorLabelY();
 	}
 	
-	public function get_textX():Float { return _textX;}
 	public function set_textX(n:Float):Float {
-		_textX = n;
+		textX = n;
 		anchorLabelX();
-		return _textX;
+		return textX;
 	}
 	
-	public function get_textY():Float { return _textY;}
 	public function set_textY(n:Float):Float {
-		_textY = n;
-		anchorLabelY();					
-		return _textY;
-	}	
+		textY = n;
+		anchorLabelY();
+		return textY;
+	}
 	
 	public function setExternalCallback(callBack:Dynamic):Void {
 		_externalCallback = callBack;
@@ -141,14 +143,13 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 	
 	public function anchorLabelX():Void {
 		if (button != null) {
-			button.labelOffsets[button.status].x = (box.width + box_space) + _textX;		
-		}			
+			button.allLabelOffset.x = (box.width + box_space) + textX;
+		}
 	}
 	
 	public function anchorLabelY():Void{
-		if (button != null) {			
-			button.y = box.y + (box.height - button.height) / 2;
-			button.labelOffsets[button.status].y = (button.height-button.label.textHeight())/2 + _textY;
+		if (button != null) {
+			button.y = box.y + (box.height - button.height) / 2 + textY;
 		}
 	}
 	
@@ -178,12 +179,16 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		checkbox_dirty = true;
 		return value;
 	}
-			
+	
 	public override function update():Void{
 		super.update();
 		
 		if (checkbox_dirty) {
 			if (button.label != null) {
+				if (Std.is(button.label, FlxUIText)) {
+					var ftu:FlxUIText = cast button.label;
+					ftu.forceCalcFrame();					//force update
+				}
 				anchorLabelX();
 				anchorLabelY();
 				button.mouse_width = button.label.textWidth() + button.labelOffsets[button.status].x;

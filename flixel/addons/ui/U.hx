@@ -644,7 +644,62 @@ class U
 	public static function FU(str:String):String {
 		return str.substr(0, 1).toUpperCase() + str.substr(1, str.length - 1);
 	}
-		
+	
+	public static function checkHaxedef(str:String):Bool {
+		str = str.toLowerCase();
+		switch(str) {
+			case "cpp":
+				#if cpp
+					return true;
+				#end
+			case "windows":
+				#if windows
+					return true;
+				#end
+			case "mac":
+				#if mac
+					return true;
+				#end
+			case "linux":
+				#if linux
+					return true;
+				#end
+			case "desktop":
+				#if desktop
+					return true;
+				#end
+			case "mobile":
+				#if mobile
+					return true;
+				#end
+			case "android":
+				#if android
+					return true;
+				#end
+			case "ios":
+				#if ios
+					return true;
+				#end
+			case "flash":
+				#if flash
+					return true;
+				#end
+			case "html5":
+				#if html5
+					return true;
+				#end
+			case "web":
+				#if web
+					return true;
+				#end
+			case "sys":
+				#if sys
+					return true;
+				#end
+		}
+		return false;
+	}
+	
 	public static function copy_shallow_arr(src:Array<Dynamic>):Array<Dynamic> {
 		var arr:Array<Dynamic> = new Array<Dynamic>();
 		var thing:Dynamic;

@@ -41,6 +41,7 @@ class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 
 		if (Button == null) {
 			Button = new FlxUISpriteButton(0, 0, new FlxSprite(0, 0, FlxUIAssets.IMG_DROPDOWN), onDropdown);
+			//Button.onUp.setCallback(onDropdown);
 			Button.loadGraphicSlice9([FlxUIAssets.IMG_BUTTON_THIN], 80, 20, [FlxUIAssets.SLICE9_BUTTON],FlxUI9SliceSprite.TILE_NONE,-1,false,FlxUIAssets.IMG_BUTTON_SIZE,FlxUIAssets.IMG_BUTTON_SIZE);
 		}
 		Button.resize(Back.height, Back.height);
@@ -67,7 +68,7 @@ class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 				t.id = data.id;
 				
 				t.loadGraphicSlice9([FlxUIAssets.IMG_INVIS, FlxUIAssets.IMG_HILIGHT, FlxUIAssets.IMG_HILIGHT],Std.int(Back.width),Std.int(Back.height),["1,1,3,3","1,1,3,3","1,1,3,3"], FlxUI9SliceSprite.TILE_NONE);
-				t.depressOnClick = false;
+				t.labelOffsets[FlxButton.PRESSED].y = 0;	//turn off the 1-pixel depress on click
 				
 				t.up_color = 0x000000;
 				t.over_color = 0xffffff;
@@ -158,7 +159,7 @@ class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	
 	private function onDropdown(?params:Array<Dynamic>):Void {
 		showList(true);
-	}	
+	}
 	
 	private function onClickItem(i:Int):Void {
 		var item:FlxUIButton = _list[i];
@@ -168,9 +169,4 @@ class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 			_callback([item.id]);
 		}
 	}
-	
-	
-	
-	//public function new(back_:FlxSprite,?tabs_:Array<FlxUIButton>,?tab_ids_and_labels_:Array<{id:String,label:String}>,stretch_tabs:Bool=false) 
-	
 }

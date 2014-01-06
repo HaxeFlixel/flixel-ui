@@ -31,7 +31,11 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget
 	
 	public function forceCalcFrame():Void {
 		_regen = true;
-		calcFrame();
+		#if flash
+			calcFrame();
+		#else
+			calcFrame(true);
+		#end
 	}
 	
 	public function getTextField()
