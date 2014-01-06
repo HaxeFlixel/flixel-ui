@@ -29,9 +29,7 @@ class FlxShapeDoubleCircle extends FlxShapeDonut
 	{
 		var cx:Float = Math.ceil(width / 2);
 		var cy:Float = Math.ceil(height / 2);
-		
-		_drawStyle.matrix = matrix;
-		FlxSpriteUtil.drawCircle(this, cx, cy, radius_out, fillStyle.color, lineStyle, _drawStyle);
-		FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, 0x00000000, lineStyle, _drawStyle);
+		FlxSpriteUtil.drawCircle(this, cx, cy, radius_out, fillStyle.color, lineStyle,  { matrix: matrix });
+		FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, 0x00000000, lineStyle,  { matrix: matrix });
 	}
 }
