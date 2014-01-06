@@ -498,7 +498,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		_curr_mode = mode_id;
 		var id:String = "";
 		var thing;
-		if(target_id == ""){			
+		if(target_id == ""){
 			if (mode != null) {
 			
 				#if debug
@@ -542,8 +542,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	private function showThing(id:String, b:Bool = true):Void{
-		if (id.indexOf(",") != -1) {		
-			var ids:Array<String> = id.split(",");		//if commas, it's a list
+		if (id.indexOf(",") != -1) {
+			var ids:Array<String> = id.split(",");			//if commas, it's a list
 			for(each_id in ids){
 				var thing = getAsset(each_id);
 				if (thing != null) {
@@ -1565,7 +1565,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private function _loadTabMenu(data:Fast):FlxUITabMenu{
 		
 		var back_def_str:String = U.xml_str(data.x, "back_def");
-		var back_def:Fast = getDefinition(back_def_str);		
+		var back_def:Fast = getDefinition(back_def_str);
 		if (back_def == null) {
 			back_def = data;
 		}
@@ -1585,19 +1585,19 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				if (temp != "") { 
 					tab_def_str = temp;
 				}
-			}			
+			}
 			if (tab_def_str != "") {
 				tab_def = getDefinition(tab_def_str);
 			}else {
 				tab_def = data.node.tab;
 			}
-		}		
+		}
 		
 		var list_tabs:Array<FlxUIButton> = new Array<FlxUIButton>();
 		
 		var id:String = "";
 		
-		if (data.hasNode.tab) {			
+		if (data.hasNode.tab) {
 			for (tab_node in data.nodes.tab) {
 				id = U.xml_str(tab_node.x, "id", true);
 				
@@ -1643,7 +1643,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				_ui.id = id;
 				fg.addGroup(_ui);
 			}
-		}		
+		}
 		
 		//fg.selected_tab = 0;
 		

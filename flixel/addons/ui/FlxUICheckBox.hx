@@ -105,6 +105,9 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		
 		x = X;
 		y = Y;
+		
+		textX = 0;
+		textY = 0;	//forces anchorLabel() to be called and upate correctly
 	}
 	
 	/**For ILabeled:**/
