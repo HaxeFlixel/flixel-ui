@@ -88,6 +88,7 @@ class FlxShapeLine extends FlxShape
 
 	public override function drawSpecificShape(matrix:Matrix=null):Void 
 	{
-		FlxSpriteUtil.drawLine(this, point.x, point.y, point2.x, point2.y, lineStyle, matrix);
+		_drawStyle.matrix = matrix;
+		FlxSpriteUtil.drawLine(this, point.x, point.y, point2.x, point2.y, lineStyle, _drawStyle);
 	}
 }

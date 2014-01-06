@@ -206,7 +206,8 @@ class FlxShapeCross extends FlxShape
 		_matrix.identity();
 		_matrix.translate(lineStyle.thickness / 2, lineStyle.thickness / 2);
 		
-		FlxSpriteUtil.drawPolygon(this, vertices, fillStyle.color, lineStyle, fillStyle, _matrix);
+		_drawStyle.matrix = _matrix;
+		FlxSpriteUtil.drawPolygon(this, vertices, fillStyle.color, lineStyle, fillStyle, _drawStyle);
 		
 		fixBoundaries(horizontalLength, verticalLength);
 	}

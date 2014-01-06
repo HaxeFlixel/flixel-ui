@@ -72,10 +72,14 @@ class FlxShapeSquareDonut extends FlxShape
 		var cx:Float = Math.ceil(width / 2);
 		var cy:Float = Math.ceil(height / 2);
 		
-		FlxSpriteUtil.drawRect(this, 0, 0, radius_out * 2, radius_out * 2, fillStyle.color, lineStyle, fillStyle, matrix);
+		_drawStyle.matrix = matrix;
+		FlxSpriteUtil.drawRect(this, 0, 0, radius_out * 2, radius_out * 2, fillStyle.color, lineStyle, fillStyle, _drawStyle);
 		if (radius_in > 0) {
-			FlxSpriteUtil.drawRect(this, (radius_out - radius_in), (radius_out - radius_in), radius_in * 2, radius_in * 2, 0xffff0000, null, fillStyle, matrix, BlendMode.ERASE, true);
+			_drawStyle.blendMode = BlendMode.ERASE;
+			_drawStyle.smoothing = true;
+			FlxSpriteUtil.drawRect(this, (radius_out - radius_in), (radius_out - radius_in), radius_in * 2, radius_in * 2, 0xffff0000, null, fillStyle, _drawStyle);
 		}
-		FlxSpriteUtil.drawRect(this, (radius_out - radius_in), (radius_out - radius_in), radius_in * 2, radius_in * 2, 0x00000000, lineStyle, null, matrix);
+		_drawStyle.blendMode = BlendMode.NORMAL;
+		FlxSpriteUtil.drawRect(this, (radius_out - radius_in), (radius_out - radius_in), radius_in * 2, radius_in * 2, 0x00000000, lineStyle, null, _drawStyle);
 	}
 }

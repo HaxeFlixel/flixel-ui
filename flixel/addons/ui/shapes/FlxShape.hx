@@ -1,10 +1,12 @@
 package flixel.addons.ui.shapes;
 
+import flash.display.BlendMode;
 import flash.display.Shape;
 import flash.geom.Matrix;
 import flixel.FlxSprite;
 import flixel.util.FlxSpriteUtil.FillStyle;
 import flixel.util.FlxSpriteUtil.LineStyle;
+import flixel.util.FlxSpriteUtil.DrawStyle;
 
 /**
  * A convenience class for wrapping vector shape drawing in FlxSprites, all ready to go.
@@ -53,6 +55,10 @@ class FlxShape extends FlxSprite
 		lineStyle = LineStyle_;
 		fillStyle = FillStyle_;
 		
+		//we'll eventually want a public drawStyle parameter, but we'll also need an internval _drawStyle to do 
+		//some specific tricks for various shapes (special matrices, punching holes in Donut shapes by using ERASE blend mode, etc)
+		_drawStyle = {matrix:null,colorTransform:null,blendMode:BlendMode.NORMAL,clipRect:null,smoothing:true};
+		
 		if (TrueWidth != 0 && TrueHeight != 0) {
 			if(TrueWidth < CanvasWidth && TrueHeight < CanvasHeight){
 				fixBoundaries(TrueWidth, TrueHeight);
@@ -61,6 +67,8 @@ class FlxShape extends FlxSprite
 		
 		shapeDirty = true;		//draw the shape next draw() command
 	}
+	
+	private var _drawStyle:DrawStyle;
 	
 	/**
 	 * Fixes boundaries so that the sprite's bbox & origin line up with the underlying geometric object's
@@ -99,6 +107,7 @@ class FlxShape extends FlxSprite
 		shapeDirty = true;
 		return fillStyle;
 	}
+	
 	
 	public function redrawShape():Void
 	{

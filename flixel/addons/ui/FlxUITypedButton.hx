@@ -100,11 +100,13 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			label.scrollFactor = scrollFactor;
 		}
 		
-		// Then pick the appropriate frame of animation
-		if(toggled){
-			animation.frameIndex =  3 + status;
-		}else {
-			animation.frameIndex = status;
+		if(animation != null){
+			// Then pick the appropriate frame of animation
+			if(toggled){
+				animation.frameIndex =  3 + status;
+			}else {
+				animation.frameIndex = status;
+			}
 		}
 	}
 	

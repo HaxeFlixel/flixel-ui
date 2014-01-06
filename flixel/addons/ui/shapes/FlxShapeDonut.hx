@@ -71,10 +71,17 @@ class FlxShapeDonut extends FlxShape
 	{
 		var cx:Float = Math.ceil(width / 2);
 		var cy:Float = Math.ceil(height / 2);
-		FlxSpriteUtil.drawCircle(this, cx, cy, radius_out, fillStyle.color, lineStyle, matrix);
+		
+		_drawStyle.matrix = matrix;
+		
+		FlxSpriteUtil.drawCircle(this, cx, cy, radius_out, fillStyle.color, lineStyle, _drawStyle);
 		if (radius_in > 0) {
-			FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, 0xffff0000, null, matrix, BlendMode.ERASE, true);
+			_drawStyle.blendMode = BlendMode.ERASE;
+			_drawStyle.smoothing = true;
+			FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, 0xffff0000, null, _drawStyle);
 		}
-		FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, 0x00000000, lineStyle, matrix);
+		_drawStyle.blendMode = BlendMode.NORMAL;
+		
+		FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, 0x00000000, lineStyle, _drawStyle);
 	}
 }
