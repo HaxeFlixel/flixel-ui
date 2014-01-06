@@ -22,7 +22,6 @@ import flixel.util.FlxVector;
 
 class FlxShapeLightning extends FlxShapeLine
 {
-
 	public var lightningStyle(default, set):LightningStyle;
 	
 	/**
@@ -258,4 +257,25 @@ typedef LightningStyle = {
 	?displacement:Float,
 	?detail:Float,
 	?halo_colors:Array<Int>
+}
+
+/**
+ * Helper for FlxShapeLightning
+ * @author Lars A. Doucet
+ */
+class LineSegment 
+{
+	public var a:FlxPoint;
+	public var b:FlxPoint;
+	
+	public function new(A:FlxPoint, B:FlxPoint) 
+	{
+		a = new FlxPoint(A.x,A.y);
+		b = new FlxPoint(B.x,B.y);
+	}
+
+	public function copy():LineSegment 
+	{
+		return new LineSegment(a, b);
+	}
 }

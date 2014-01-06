@@ -90,16 +90,16 @@ class FlxShapeArrow extends FlxShape
 		
 		if (outlineStyle != null) {
 			//draw the outline
-			FlxSpriteUtil.drawLine(this, point.x, point.y, point2.x, point2.y, outlineStyle, matrix);
+			FlxSpriteUtil.drawLine(this, point.x, point.y, point2.x, point2.y, outlineStyle, { matrix: matrix } );
 			//draw the arrowhead outline
-			FlxSpriteUtil.drawPolygon(this, vertices, outlineStyle.color, outlineStyle, _matrix2);
+			FlxSpriteUtil.drawPolygon(this, vertices, outlineStyle.color, outlineStyle, { matrix: _matrix2 } );
 		}
 		
 		//draw the line itself
-		FlxSpriteUtil.drawLine(this, point.x, point.y, point2.x, point2.y, lineStyle, matrix);
+		FlxSpriteUtil.drawLine(this, point.x, point.y, point2.x, point2.y, lineStyle, { matrix: matrix } );
 		
 		//draw the arrowhead
-		FlxSpriteUtil.drawPolygon(this, vertices, lineStyle.color, lineStyle, _matrix2);
+		FlxSpriteUtil.drawPolygon(this, vertices, lineStyle.color, lineStyle, { matrix: _matrix2 } );
 		
 		fixBoundaries(Math.abs(point.x - point2.x), Math.abs(point.y - point2.y));
 	}

@@ -58,6 +58,6 @@ class FlxShapeCircle extends FlxShape
 
 	public override function drawSpecificShape(matrix:Matrix=null):Void 
 	{
-		FlxSpriteUtil.drawCircle(this, Math.ceil(width / 2), Math.ceil(height / 2), radius, fillStyle.color, lineStyle, matrix);
+		FlxSpriteUtil.drawCircle(this, Math.ceil(width / 2), Math.ceil(height / 2), radius, fillStyle.color, lineStyle, { matrix: matrix });
 	}
 }
