@@ -30,7 +30,6 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget
 	public function textHeight():Float { return _textField.textHeight; }
 	
 	public function forceCalcFrame():Void {
-		_regen = true;
 		#if flash
 			calcFrame();
 		#else
