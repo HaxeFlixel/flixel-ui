@@ -495,7 +495,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			
 			if (Std.is(label, FlxUIText)) {
 				var tlabel:FlxUIText = cast label;
-				trace(tlabel.text);
+				#if debug
+					trace(tlabel.text);
+				#end
 				offY = (height - tlabel.height) / 2;
 			}else {
 				offX = (width - label.width) / 2;

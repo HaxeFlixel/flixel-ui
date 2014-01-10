@@ -286,8 +286,10 @@ class Vector2D {
 
  		 */	public function divide(scalar : Float) : Void {
 		//#if debug
-		if(scalar == 0)  {
-			trace("Vector::dividedBy() - Illegal Divide by Zero!");
+		if (scalar == 0)  {
+			#if debug
+				trace("Vector::dividedBy() - Illegal Divide by Zero!");
+			#end
 		}
 
 		else  {
@@ -396,8 +398,10 @@ class Vector2D {
  		 * 
 
  		 */	public function dividedBy(scalar : Float) : Vector2D {
-		if(scalar == 0)  {
-			trace("Vector::dividedBy() - Illegal Divide by Zero!");
+		if (scalar == 0)  {
+			#if debug
+				trace("Vector::dividedBy() - Illegal Divide by Zero!");
+			#end
 			return new Vector2D();
 		}
 
