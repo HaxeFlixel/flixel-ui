@@ -24,11 +24,10 @@ class FlxUISpriteButton extends FlxUITypedButton<FlxSprite>
 		if (Asset != null) {
 			label = Asset;	
 		}
-		autoCenterLabel();
 	}	
 	
 	/**For IResizable:**/
-		
+	
 	public override function resize(W:Float, H:Float):Void {
 		super.resize(W, H);
 		autoCenterLabel();

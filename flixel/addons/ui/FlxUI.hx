@@ -1831,6 +1831,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					fb.down_toggle_color = 0xffffff;
 					fb.over_toggle_color = 0xffffff;
 				}
+				else {
+					// Center sprite icon 
+					fb.autoCenterLabel();
+				}
 			}
 		}
 		
