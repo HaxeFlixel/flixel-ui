@@ -1,10 +1,12 @@
 package flixel.addons.ui;
+
 import flash.geom.Rectangle;
+import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
-import flixel.addons.ui.FlxClickArea;
 import flixel.util.FlxPoint;
 
 /**

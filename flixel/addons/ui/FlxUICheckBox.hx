@@ -1,24 +1,15 @@
 package flixel.addons.ui;
-import flash.display.BitmapData;
-import flash.events.MouseEvent;
-import flash.geom.Rectangle;
-import flixel.FlxCamera;
-import flixel.FlxG;
-import flixel.FlxObject;
-import flixel.system.FlxAssets;
+
+import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.ILabeled;
+import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
-import flixel.util.FlxRect;
-import flixel.util.FlxPoint;
-import flixel.FlxSprite;
-import flixel.util.FlxMath;
 import flixel.util.FlxTimer;
-import openfl.Assets;
 
 /**
  * @author Lars Doucet
  */
-
 class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButton
 {
 	public var box:FlxSprite;

@@ -1,24 +1,18 @@
 package flixel.addons.ui;
-import flash.display.Bitmap;
-import flash.display.PixelSnapping;
-import flash.display.Shape;
-import flash.display.StageQuality;
-import flash.geom.Point;
-import flash.geom.Matrix;
-import flash.display.Graphics;
-import flash.display.Sprite;
-import flash.geom.Rectangle;
+
 import flash.display.BitmapData;
-import flixel.FlxG;
+import flash.display.Sprite;
+import flash.geom.Matrix;
+import flash.geom.Point;
+import flash.geom.Rectangle;
+import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.addons.ui.interfaces.IResizable;
 import flixel.util.FlxPoint;
 import openfl.Assets;
-import flixel.FlxObject;
-import flixel.FlxSprite;
 
 /**
  * @author Lars Doucet
  */
-
 class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFlxUIWidget 
 {
 	private static var bitmapsCreated:Int = 0; // for debug
@@ -40,7 +34,6 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	private static var _staticPoint:Point = new Point();
 	private static var _staticRect:Rectangle = new Rectangle();
 	private static var _staticRect2:Rectangle = new Rectangle();
-	
 	
 	//specialty smoothing modes	
 	public static inline var TILE_NONE:Int = 0x00;

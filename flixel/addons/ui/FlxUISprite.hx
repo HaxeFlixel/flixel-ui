@@ -1,14 +1,13 @@
 package flixel.addons.ui;
-import haxe.xml.Fast;
-import flash.geom.ColorTransform;
-import flixel.group.FlxGroup;
+
+import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.FlxG.IDestroyable;
 import flixel.FlxSprite;
 
 /**
  * Cheap extension of FlxSprite
  * @author Lars Doucet
  */
-
 class FlxUISprite extends FlxSprite implements IDestroyable implements IFlxUIWidget 
 {
 	//simple string ID, handy for identification, etc
@@ -34,6 +33,4 @@ class FlxUISprite extends FlxSprite implements IDestroyable implements IFlxUIWid
 		ptr_owner = null;
 		super.destroy();
 	}
-	
-	
 }

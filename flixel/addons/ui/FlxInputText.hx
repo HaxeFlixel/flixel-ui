@@ -1,13 +1,13 @@
 package flixel.addons.ui;
+
 import flash.display.BitmapData;
+import flash.errors.Error;
 import flash.events.KeyboardEvent;
 import flash.geom.Rectangle;
-import flash.text.TextField;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
-import flixel.util.FlxTimer;
 import flixel.util.FlxPoint;
-import flash.errors.Error;
+import flixel.util.FlxTimer;
 	
 /**
  * FlxInputText v1.11, ported to Haxe
@@ -22,7 +22,6 @@ import flash.errors.Error;
  * License: Creative Commons Attribution 3.0 United States
  * @link http://creativecommons.org/licenses/by/3.0/us/
  */
-
 class FlxInputText extends FlxText 
 {		
 	public static inline var NO_FILTER:Int			= 0;

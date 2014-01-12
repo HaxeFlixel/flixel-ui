@@ -1,10 +1,9 @@
 package flixel.addons.ui;
-import flixel.FlxBasic;
-import flixel.group.FlxGroup;
-import flixel.FlxObject;
-import flixel.group.FlxSpriteGroup;
-import flixel.util.FlxPoint;
+
+import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.FlxG.IDestroyable;
 import flixel.FlxSprite;
+import flixel.group.FlxSpriteGroup;
 #if (cpp || neko)
 	import flixel.atlas.FlxAtlas;
 #end

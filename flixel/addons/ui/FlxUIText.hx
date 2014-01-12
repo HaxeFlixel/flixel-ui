@@ -1,16 +1,13 @@
 package flixel.addons.ui;
-import flash.filters.DropShadowFilter;
-import flash.filters.GlowFilter;
-import flash.text.AntiAliasType;
-import flash.text.TextField;
-import flash.text.TextFormat;
+
+import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.addons.ui.interfaces.IResizable;
 import flixel.text.FlxText;
 
 /**
  * Simple extension to the basic text field class.
  * @author Lars Doucet
  */
-
 class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget 
 {
 	public var id:String; 
@@ -41,5 +38,4 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget
 	{
 		return _textField;
 	}
-	
 }

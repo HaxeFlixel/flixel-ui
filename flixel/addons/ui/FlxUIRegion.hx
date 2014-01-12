@@ -1,6 +1,9 @@
 package flixel.addons.ui;
-import flixel.FlxObject;
+
+import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxSprite;
+import flixel.util.FlxRandom;
 
 /**
  * A scalable object with width and height that isn't used for display purposes
@@ -14,7 +17,7 @@ class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizabl
 		super(X, Y);
 		
 		#if debug
-			color = U.randomColor(true);
+			color = FlxRandom.color();
 		#end
 				
 		resize(W, H);

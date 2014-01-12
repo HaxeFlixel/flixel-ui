@@ -1,11 +1,12 @@
 package flixel.addons.ui;
+
 import flash.display.BitmapData;
 import flash.errors.Error;
-import flash.events.Event;
-import flixel.addons.ui.IResizable;
+import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.ui.FlxTypedButton;
 import flixel.util.FlxPoint;

@@ -1,14 +1,11 @@
 package flixel.addons.ui;
-import flash.display.BitmapData;
-import flixel.FlxObject;
+
+import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.util.FlxPoint;
-import flixel.FlxSprite;
-import openfl.Assets;
 
 /**
  * @author Lars Doucet
  */
-
 class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton
 {
 	public var clickable(get_clickable, set_clickable):Bool;

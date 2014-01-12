@@ -1,10 +1,9 @@
-package flixel.addons.ui;
+package flixel.addons.ui.interfaces;
 
 /**
  * A simple, quick-and-dirty messaging interface
  * @author Lars Doucet
  */
-
 interface IEventGetter 
 {
 	/**

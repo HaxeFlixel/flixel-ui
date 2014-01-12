@@ -1,7 +1,4 @@
 package flixel.addons.ui;
-import flash.display.BitmapData;
-import flash.text.Font;
-import openfl.Assets;
 
 class FlxUIAssets
 {
@@ -35,10 +32,5 @@ class FlxUIAssets
 	inline static public var XML_DEFAULTS_ID:String = "flixel/flixel-ui/xml/defaults";
 	inline static public var XML_DEFAULT_POPUP_ID:String = "flixel/flixel-ui/xml/default_popup";
 	
-	static public var index_size:Map<String,Array<Float>>=null;
-	
-	static public function init():Void
-	{
-		//
-	}
+	static public var index_size:Map<String,Array<Float>> = null;
 }

@@ -1,15 +1,15 @@
 package flixel.addons.ui;
+
 import flash.geom.Rectangle;
-import flixel.FlxG;
+import flixel.addons.ui.interfaces.IEventGetter;
+import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
-import flixel.ui.FlxButton;
-import flixel.util.FlxTimer;
 
 /**
  * @author Lars Doucet
  */
-
 class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResizable implements IFlxUIButton
 {
 

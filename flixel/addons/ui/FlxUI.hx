@@ -1,25 +1,22 @@
 package flixel.addons.ui;
-import flash.display.Bitmap;
+
+import flash.display.BitmapData;
 import flash.errors.Error;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import haxe.xml.Fast;
-import flash.display.BitmapData;
-import flash.Lib;
-import openfl.Assets;
-import flixel.FlxBasic;
-import flixel.ui.FlxButton;
+import flixel.addons.ui.interfaces.IEventGetter;
+import flixel.addons.ui.interfaces.IFireTongue;
+import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.addons.ui.interfaces.ILabeled;
+import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxG;
-import flixel.group.FlxGroup;
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.FlxState;
-import flixel.util.FlxPoint;
 import flixel.text.FlxText;
-import flixel.tile.FlxTilemap;
-import flixel.addons.ui.IEventGetter;
-import flixel.addons.ui.IResizable;
-
+import flixel.util.FlxPoint;
+import haxe.xml.Fast;
+import openfl.Assets;
 
 /**
  * A simple xml-driven user interface
@@ -30,7 +27,6 @@ import flixel.addons.ui.IResizable;
  * 
  * @author Lars Doucet
  */
-
 class FlxUI extends FlxUIGroup implements IEventGetter
 {	
 	
@@ -74,10 +70,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private static var _flashPoint:Point;
 	private static var _flashPointZero:Point;*/
 	
-	private static var _assets_init:Bool = false;
-	
-	/**Make sure to recursively propogate the tongue pointer 
-	 * down to all my members
+	/**
+	 * Make sure to recursively propogate the tongue pointer down to all my members
 	 */
 	private function _tongueSet(list:Array<FlxSprite>, tongue:IFireTongue):Void 
 	{		
@@ -91,7 +85,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}
 	}
-	
 	
 	/***EVENT HANDLING***/
 	
@@ -112,11 +105,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 	public function new(data:Fast=null,ptr:IEventGetter=null,superIndex_:FlxUI=null,tongue_:IFireTongue=null) 
 	{
-		if (_assets_init == false) {
-			FlxUIAssets.init();
-			_assets_init = true;
-		}
-		
 		super();
 		_ptr_tongue = tongue_;	//set the localization data structure, if any.
 								//we set this directly b/c no children have been created yet
@@ -1026,7 +1014,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 			}else {
 				//if we are resizing, resize it to the target size now
-				if (Std.is(widget, flixel.addons.ui.IResizable)) {
+				if (Std.is(widget, IResizable)) {
 					var widgetr:IResizable = cast widget;
 					if(axis == "vertical"){
 						widgetr.resize(widgetr.width, object_size);

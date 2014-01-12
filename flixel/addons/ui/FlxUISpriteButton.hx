@@ -1,13 +1,6 @@
 package flixel.addons.ui;
-import flash.events.Event;
-import flixel.FlxG;
+
 import flixel.FlxSprite;
-import flixel.text.FlxText;
-import flixel.ui.FlxButton;
-import flash.display.BitmapData;
-import flixel.util.FlxPoint;
-import flixel.util.FlxTimer;
-import openfl.Assets;
 
 /**
  * This class extends FlxUISpriteButton and has a Sprite "label"
@@ -18,7 +11,6 @@ import openfl.Assets;
  * 
  * Furthermore, you have the ability to
  */
-
 class FlxUISpriteButton extends FlxUITypedButton<FlxSprite>
 {
 	public function new(X:Float = 0, Y:Float = 0, ?Asset:FlxSprite, ?OnClick:Dynamic) {
@@ -40,6 +32,5 @@ class FlxUISpriteButton extends FlxUITypedButton<FlxSprite>
 	public override function resize(W:Float, H:Float):Void {
 		super.resize(W, H);
 		autoCenterLabel();
-	}
-		
+	}	
 }

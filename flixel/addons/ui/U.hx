@@ -1,31 +1,23 @@
 package flixel.addons.ui;
-import haxe.Json;
-import haxe.xml.Fast;
+
 import flash.display.BitmapData;
 import flash.display.BlendMode;
 import flash.geom.Point;
-import flash.Lib;
-import flash.text.Font;
-import openfl.Assets;
 import flixel.FlxBasic;
 import flixel.FlxG;
-import flixel.group.FlxGroup;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.util.FlxPoint;
+import haxe.Json;
+import haxe.xml.Fast;
+import openfl.Assets;
 
 /**
  * Utility functions, inlined where possible
  * @author Lars Doucet
  */
-
 class U 
 {
-
-	public function new() 
-	{
-		
-	}	
-	
 	/**
 	 * Safety wrapper for reading a string attribute from xml
 	 * @param	data the Xml object
@@ -65,15 +57,6 @@ class U
 			}
 		}
 		return Math.NaN;
-	}
-	
-	public static function arrayContains(arr:Array<Dynamic>, thing:Dynamic):Bool {
-		for (i in 0...arr.length) {
-			if (arr[i] == thing) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	public static function isStrNum(str:String):Bool {
@@ -206,27 +189,6 @@ class U
 			}
 		}return null;
 	}*/
-	
-	
-	/**
-	 * Simple rand function - return an integer in this range
-	 * @param	min	smallest possible value
-	 * @param	max largest possible value
-	 * @return
-	 */
-	
-	public static inline function iRandRange(min:Int, max:Int):Int {
-		/*var n:Float = Math.random();
-		var range:Float = cast(max - min, Float);
-		var i:Int = (n * range) + min;
-		return i;*/
-		
-		//rand = random(0 <= r < 1)
-		//range = 1+(max-min)
-		//result = floor(rand * range) + min
-		
-		return Std.int(Math.random() * cast(1+max-min, Float)) + min;
-	}
 
 	public static inline function test_int(i1:Int, test:String, i2:Int):Bool {
 		var bool:Bool = false;
@@ -475,23 +437,13 @@ class U
 	}*/
 	
 	
-	public static inline function getLocList(xmin:Int, ymin:Int, xmax:Int, ymax:Int):Array<IntPt> {
-		var list:Array<IntPt> = new Array<IntPt>();
+	public static inline function getLocList(xmin:Int, ymin:Int, xmax:Int, ymax:Int):Array<FlxPoint> {
+		var list:Array<FlxPoint> = new Array<FlxPoint>();
 		for (yy in ymin...ymax + 1) {
 			for (xx in xmin...xmax + 1) {
-				list.push(new IntPt(xx, yy));
+				list.push(new FlxPoint(xx, yy));
 			}
 		}return list;
-	}
-		
-	public static inline function shuffleArray(a:Array<Dynamic>):Array<Dynamic>{		
-		var i:Int = a.length - 1; while (i > 0) {
-			var n:Int = U.iRandRange(0, i);
-			var t:Dynamic = a[n];
-			a[n] = a[i];
-			a[i] = t;
-		}
-		return a;
 	}
 	
 	public static inline function disposeXML(thing:Dynamic):Void {
@@ -958,7 +910,7 @@ class U
 		}return str;
 	}
 	
-	public static inline function obj_direction(a:FlxObject, b:FlxObject):IntPt {
+	public static inline function obj_direction(a:FlxObject, b:FlxObject):FlxPoint {
 		var ax:Float = a.x + (a.width / 2);
 		var ay:Float = a.y + (a.height / 2);
 		
@@ -968,7 +920,7 @@ class U
 		var dx:Float = a.x - b.x;
 		var dy:Float = a.y - b.y;
 		
-		var ipt:IntPt = new IntPt(Std.int(dx / Math.abs(dx)), Std.int(dy / Math.abs(dy)));
+		var ipt = new FlxPoint(Std.int(dx / Math.abs(dx)), Std.int(dy / Math.abs(dy)));
 		return ipt;
 	}
 
@@ -1028,14 +980,6 @@ class U
 		
 		return Math.abs(bx2 + bx1 - (ax2 + ax1)) <= (bx2 - bx1 + ax2 - ax1) &&
 		Math.abs(by2 + by1 - (ay2 + ay1)) <= (by2 - by1 + ay2 - ay1);
-	}
-		
-	public static inline function rand(n:Float, n2:Float):Float {
-		var min:Float = n;
-		var max:Float = n2;
-		if (n > n2) { min = n2; max = n;}
-		var diff:Float	= max - min;
-		return (Math.random() * diff)+min;			
 	}
 	
 	/**

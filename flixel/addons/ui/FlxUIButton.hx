@@ -1,15 +1,10 @@
 package flixel.addons.ui;
-import flash.events.Event;
+
+import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import flixel.FlxG;
+import flixel.addons.ui.interfaces.ILabeled;
 import flixel.FlxSprite;
-import flixel.text.FlxText;
-import flixel.ui.FlxButton;
-import flash.display.BitmapData;
-import flixel.util.FlxPoint;
-import flixel.util.FlxTimer;
-import openfl.Assets;
 
 /**
  * This class extends FlxUITypedButton and has a Text label, and is thus
@@ -22,7 +17,6 @@ import openfl.Assets;
  * Furthermore, you have the ability to set the text's coloring for each
  * state just by adjusting a few public variables
  */
-
 class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled
 {
 	private var _noIconGraphicsBkup:BitmapData;

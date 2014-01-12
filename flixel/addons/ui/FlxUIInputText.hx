@@ -1,9 +1,11 @@
 package flixel.addons.ui;
 
+import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.addons.ui.interfaces.IResizable;
+
 /**
  * @author Lars Doucet
  */
-
 class FlxUIInputText extends FlxInputText implements IResizable implements IFlxUIWidget 
 {
 	public var id:String;
@@ -21,5 +23,4 @@ class FlxUIInputText extends FlxInputText implements IResizable implements IFlxU
 	public function forceCalcFrame():Void {
 		calcFrame();
 	}
-	
 }
