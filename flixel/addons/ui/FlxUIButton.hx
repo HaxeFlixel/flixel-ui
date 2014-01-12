@@ -62,7 +62,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled
 		// Stamps the icon in every frame of this button.
 		for (i in 0...frames)
 		{
-			this.stamp(icon, sx, sy + Std.int(i * height));
+			stamp(icon, sx, sy + Std.int(i * height));
 		}
 	}
 	

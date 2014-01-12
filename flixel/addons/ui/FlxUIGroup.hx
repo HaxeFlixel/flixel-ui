@@ -31,9 +31,9 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 		
 	/***PUBLIC FUNCTIONS***/
 	
-	public function new() 
+	public function new(X:Float = 0, Y:Float = 0) 
 	{
-		super();
+		super(X, Y);
 	}
 	
 	public override function add(Object:FlxSprite):FlxSprite {
