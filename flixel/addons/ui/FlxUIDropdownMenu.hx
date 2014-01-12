@@ -36,6 +36,7 @@ class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	 * @param	Y					y position of the dropdown menu
 	 * @param	DataList			The data to be displayed
 	 * @param	Callback			Function to be called when of of the entries of the list was clicked
+	 * @param	Width				Width of the dropdown - only relevant when no back sprite was specified
 	 * @param	Back				Optional sprite to be placed in the background
 	 * @param	DropPanel			Optional 9-slice-background for actual drop down menu 
 	 * @param	ButtonList			Optional list of buttons to be used for the corresponding entry in DataList
@@ -43,14 +44,14 @@ class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	 * @param	ToggleButton		Optional button that toggles the dropdown list
 	 * @param	UIControlCallback	Used internally by FlxUI
 	 */
-	public function new(X:Float = 0, Y:Float = 0, DataList:Array<StrIdLabel>, ?Callback:Array<Dynamic>->Void, ?Back:FlxSprite, ?DropPanel:FlxUI9SliceSprite, ?ButtonList:Array<FlxUIButton>, ?Text:FlxUIText, ?ToggleButton:FlxUISpriteButton, ?UIControlCallback:Bool->FlxUIDropdownMenu->Void) 
+	public function new(X:Float = 0, Y:Float = 0, DataList:Array<StrIdLabel>, ?Callback:Array<Dynamic>->Void, Width:Int = 120, ?Back:FlxSprite, ?DropPanel:FlxUI9SliceSprite, ?ButtonList:Array<FlxUIButton>, ?Text:FlxUIText, ?ToggleButton:FlxUISpriteButton, ?UIControlCallback:Bool->FlxUIDropdownMenu->Void) 
 	{
 		super(X, Y);
 		
 		var rect:Rectangle = null;
 		
 		if (Back == null) {
-			rect = new Rectangle(0, 0, 120, 20);
+			rect = new Rectangle(0, 0, Width, 20);
 			Back = new FlxUI9SliceSprite(0, 0, FlxUIAssets.IMG_BOX, rect, "1,1,14,14");
 		}
 		rect.width = Back.width;
@@ -200,5 +201,27 @@ class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		if (_callback != null) {
 			_callback([item.id]);
 		}
+	}
+	
+	/**
+	 * Helper function to easily create a data list for a dropdown menu from an array of strings.
+	 * 
+	 * @param	StringArray		The strings to use as data - used for both label and string ID.
+	 * @param	UseIndexID		Whether to use the integer index of the current string as ID.
+	 * @return	The StrIDLabel array ready to be used in FlxUIDropDownMenu's constructor
+	 */
+	static public function makeStrIdLabelArray(StringArray:Array<String>, UseIndexID:Bool = false):Array<StrIdLabel>
+	{
+		var strIdArray:Array<StrIdLabel> = [];
+		for (i in 0...StringArray.length)
+		{
+			var ID:String = StringArray[i];
+			if (UseIndexID)
+			{
+				ID = Std.string(i);
+			}
+			strIdArray[i] = new StrIdLabel(ID, StringArray[i]);
+		}
+		return strIdArray;
 	}
 }

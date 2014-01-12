@@ -1476,7 +1476,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}
 		
-		fud = new FlxUIDropdownMenu(0, 0, data_list, _onClickDropDown, back_asset, panel_asset, asset_list, label_asset, button_asset, _onClickDropDown_control);
+		fud = new FlxUIDropdownMenu(0, 0, data_list, _onClickDropDown, 120, back_asset, panel_asset, asset_list, label_asset, button_asset, _onClickDropDown_control);
 		
 		return fud;
 	}

@@ -18,5 +18,4 @@ class StrIdLabel
 	public function copy():StrIdLabel {
 		return new StrIdLabel(id, label);
 	}
-	
 }
