@@ -17,12 +17,4 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget
 		height = h;
 		calcFrame();
 	}
-	
-	public function forceCalcFrame():Void {
-		#if flash
-			calcFrame();
-		#else
-			calcFrame(true);
-		#end
-	}
 }

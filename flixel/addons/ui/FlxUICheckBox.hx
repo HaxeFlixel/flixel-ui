@@ -181,7 +181,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 			if (button.label != null) {
 				if (Std.is(button.label, FlxUIText)) {
 					var ftu:FlxUIText = cast button.label;
-					ftu.forceCalcFrame();					//force update
+					ftu.drawFrame(); //force update
 				}
 				anchorLabelX();
 				anchorLabelY();

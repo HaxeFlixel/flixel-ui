@@ -1210,7 +1210,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			ftu.borderSize = border[2];
 			ftu.borderQuality = border[3];
 
-			ftu.forceCalcFrame();
+			ftu.drawFrame();
 			ft = ftu;
 		}else {
 			var fti:FlxUIInputText = new FlxUIInputText(0, 0, W, text);
@@ -1219,7 +1219,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			fti.borderColor = border[1];
 			fti.borderSize = border[2];
 			fti.borderQuality = border[3];
-			fti.forceCalcFrame();
+			fti.drawFrame();
 			ft = fti;
 		}		
 		return ft;
@@ -2535,7 +2535,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				
 				if (Std.is(the_label, FlxUIText)) {
 					var ftu:FlxUIText = cast the_label;
-					ftu.forceCalcFrame();
+					ftu.drawFrame();
 				}
 				
 				fb.autoCenterLabel();

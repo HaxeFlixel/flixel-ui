@@ -149,15 +149,6 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		}
 	}
 	
-		
-	public function forceCalcFrame():Void {
-		#if flash
-			calcFrame();
-		#else
-			calcFrame(true);
-		#end
-	}
-		
 	/**
 	 * Provide a list of assets, load states from each one
 	 * @param	assets
