@@ -120,13 +120,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	public function onFocus(widget:IFlxUIWidget):Void {
-		if (Std.is(widget, FlxUIDropdownMenu)) {
+		if (Std.is(widget, FlxUIDropDownMenu)) {
 			//when drop down menu has focus, every other button needs to skip updating
 			for (asset in members){
 				if (Std.is(asset, IFlxUIButton)) {
 					var skip:Bool = false;
-					if (Std.is(asset, FlxUIDropdownMenu)) {
-						var ddasset:FlxUIDropdownMenu = cast asset;
+					if (Std.is(asset, FlxUIDropDownMenu)) {
+						var ddasset:FlxUIDropDownMenu = cast asset;
 						if (ddasset == widget) {
 							skip = true;
 						}
@@ -146,7 +146,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 */
 	
 	public function onFocusLost(widget:IFlxUIWidget):Void {
-		if (Std.is(widget, FlxUIDropdownMenu)) {
+		if (Std.is(widget, FlxUIDropDownMenu)) {
 			//Right now, all this does is toggle button updating on and off for 
 			
 			//when drop down menu loses focus, every other button can resume updating
@@ -1369,7 +1369,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return fc;
 	}
 	
-	private function _loadDropDownMenu(data:Fast):FlxUIDropdownMenu {
+	private function _loadDropDownMenu(data:Fast):FlxUIDropDownMenu {
 		
 		/*
 		 *   <dropdown label="Something">
@@ -1394,7 +1394,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		 *   </dropdown>
 		 */
 		
-		var fud:FlxUIDropdownMenu = null;
+		var fud:FlxUIDropDownMenu = null;
 		
 		var label:String = U.xml_str(data.x, "label");
 		var context:String = U.xml_str(data.x, "context", true, "ui");
@@ -1476,7 +1476,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}
 		
-		fud = new FlxUIDropdownMenu(0, 0, data_list, _onClickDropDown, 120, back_asset, panel_asset, asset_list, label_asset, button_asset, _onClickDropDown_control);
+		var header = new FlxUIDropDownHeader(120, back_asset, label_asset, button_asset);
+		fud = new FlxUIDropDownMenu(0, 0, data_list, _onClickDropDown, header , panel_asset, asset_list, _onClickDropDown_control);
 		
 		return fud;
 	}
@@ -2405,7 +2406,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}		
 	}
 	
-	private function _onClickDropDown_control(isActive:Bool, dropdown:FlxUIDropdownMenu):Void {
+	private function _onClickDropDown_control(isActive:Bool, dropdown:FlxUIDropDownMenu):Void {
 		if (isActive) {
 			focus = dropdown;
 		}else {
