@@ -23,11 +23,6 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public var resize_point:FlxPoint = null;
 	public var tile:Int = FlxUI9SliceSprite.TILE_NONE;
 	
-	//set these to adjust the bounding box for the sake of clickability
-	//if -1 they are ignored
-	public var mouse_width:Float = -1;
-	public var mouse_height:Float = -1;
-	
 	public var has_toggle:Bool = false;
 	public var toggled:Bool = false;
 	
@@ -171,7 +166,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	public function loadGraphicsMultiple(assets:Array<String>, Key:String = ""):Void {
 		var key:String = "";
-				
+		
 		if (assets.length <= 3) {
 			while (assets.length < 3) { assets.push(null); }
 			if (assets[1] == null) { assets[1] = assets[0]; }
@@ -604,121 +599,35 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		return pixels;
 	}
 	
-	/**
-	 * Overriden to allow the user to manually specify where the clickable regions are
-	 * @param	point
-	 * @param	InScreenSpace
-	 * @param	?Camera
-	 * @return
-	 */
-	
-	override public function overlapsPoint(point:FlxPoint, InScreenSpace:Bool = false, ?Camera:FlxCamera):Bool
-	{
-		var mw:Float = width;
-		var mh:Float = height;
-		if (mouse_width != -1) { 
-			mw = mouse_width;
-		}
-		if (mouse_height != -1) {
-			mh = mouse_height;
-		}
-		
-		if (scale.x == 1 && scale.y == 1)
-		{
-			if (!InScreenSpace)
-			{
-				return (point.x > x) && (point.x < x + mw) && (point.y > y) && (point.y < y + mh);
-			}
-			
-			if (Camera == null)
-			{
-				Camera = FlxG.camera;
-			}
-			var X:Float = point.x - Camera.scroll.x;
-			var Y:Float = point.y - Camera.scroll.y;
-			getScreenXY(_point, Camera);
-			return (X > _point.x) && (X < _point.x + mw) && (Y > _point.y) && (Y < _point.y + mh);
-
-		}
-		
-		if (!InScreenSpace)
-		{
-			return (point.x > x - 0.5 * mw * (scale.x - 1)) && (point.x < x + mw + 0.5 * mw * (scale.x - 1)) && (point.y > y - 0.5 * mh * (scale.y - 1)) && (point.y < y + mh + 0.5 * mh * (scale.y - 1));
-		}
-		
-		if (Camera == null)
-		{
-			Camera = FlxG.camera;
-		}
-		var X:Float = point.x - Camera.scroll.x;
-		var Y:Float = point.y - Camera.scroll.y;
-		getScreenXY(_point, Camera);
-		return (X > _point.x - 0.5 * mw * (scale.x - 1)) && (X < _point.x + mw + 0.5 * mw * (scale.x - 1)) && (Y > _point.y - 0.5 * mh * (scale.y - 1)) && (Y < _point.y + mh + 0.5 * mh * (scale.y - 1));
-	}
-	
 	public override function updateButton():Void {
-		if(!skipButtonUpdate){
+		if (!skipButtonUpdate){
 			super.updateButton();
 		}
 	}
 	
-	override private function set_status(Value:Int):Int
+	override private function onUpHandler():Void
 	{
-		super.set_status(Value);
-		
-		if (label == null) {
-			return Value;
-		}
-		
-		var old_color:Int = 0xff000000 + label.color;
-		var new_color:Int = 0;
-		var change_color:Bool = false;
-		
-		switch (status)
-		{
-			case FlxButton.HIGHLIGHT:
-				if (!toggled) {
-					if (old_color != over_color) {
-						new_color = over_color;
-						change_color = true;
-					}
-				}else{
-					if (old_color != over_toggle_color) {
-						new_color = over_toggle_color;
-						change_color = true;
-					}
-				}
-			case FlxButton.PRESSED:
-				if(!toggled){
-					if (old_color != down_color) {
-						new_color = down_color;
-						change_color = true;
-					}
-				}else {
-					if (old_color != down_toggle_color) {
-						new_color = down_toggle_color;
-						change_color = true;
-					}
-				}
-			default:
-				if(!toggled){
-					if (old_color != up_color) {
-						new_color = up_color;
-						change_color = true;
-					}
-				}else {
-					if (old_color != up_toggle_color) {
-						new_color = up_toggle_color;
-						change_color = true;
-					}
-				}
-		}
-		
-		if (change_color) {
-			label.color = new_color;
-		}
-		
-		return Value;
+		toggled = !toggled;
+		super.onUpHandler();
+		label.color = (toggled) ? up_toggle_color : up_color;
+	}
+	
+	override private function onDownHandler():Void
+	{
+		super.onDownHandler();
+		label.color = (toggled) ? down_toggle_color : down_color;
+	}
+	
+	override private function onOverHandler():Void
+	{
+		super.onOverHandler();
+		label.color = (toggled) ? over_toggle_color : over_color;
+	}
+	
+	override private function onOutHandler():Void
+	{
+		super.onOutHandler();
+		label.color = (toggled) ? up_toggle_color : up_color;
 	}
 
 	/*********PRIVATE************/
@@ -735,10 +644,4 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	private var _slice9_assets:Array<String>;	//the asset id's of the original 9-slice scale assets
 	
 	private var _centerLabelOffset:FlxPoint = null;	//this is the offset necessary to center ALL the labels
-	
-	private override function onUpHandler():Void
-	{
-		toggled = !toggled;
-		super.onUpHandler();
-	}
 }

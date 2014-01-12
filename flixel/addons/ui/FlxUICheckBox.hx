@@ -185,7 +185,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 				}
 				anchorLabelX();
 				anchorLabelY();
-				button.mouse_width = button.label.textWidth() + button.labelOffsets[button.status].x;
+				button.width = box.frameWidth + button.label.textField.textWidth + (button.label.x - (button.x + box.frameWidth));
 				checkbox_dirty = false;
 			}
 		}
