@@ -147,16 +147,14 @@ class U
 			}else{
 				str = U.gfx(str);
 				if (test) {
-					try{
+					try {
 						var testbmp:BitmapData = Assets.getBitmapData(str);
 						if (testbmp == null) {
 							throw ("couldn't load bmp \""+att+"\"");
 						}
 						testbmp = null;					
-					}catch (msg:String) {
-						#if debug
-							trace("***ERROR*** U.xml_gfx() : " + msg);
-						#end
+					} catch (msg:String) {
+						FlxG.log.error("FlxUI: U.xml_gfx() : " + msg);
 					}
 				}			
 			}

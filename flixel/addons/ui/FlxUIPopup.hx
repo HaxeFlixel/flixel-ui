@@ -102,11 +102,9 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 				var i:Int = cast data[0];
 				var label:String = cast data[1];
 				switch(i) {
-					case 0, 1, 2:	castParent().getEvent("click_popup", this, data);
-									#if debug
-										trace("flxuipopup close");
-									#end
-									close();
+					case 0, 1, 2:	
+						castParent().getEvent("click_popup", this, data);
+						close();
 				}
 		}
 		super.eventResponse(id, sender, data);

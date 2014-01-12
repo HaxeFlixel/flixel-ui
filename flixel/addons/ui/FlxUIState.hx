@@ -65,10 +65,8 @@ class FlxUIState extends FlxState implements IEventGetter
 			
 			
 			if (data == null) {
-				#if debug
-					trace("ERROR! Could not load _xml_id \"" + _xml_id + "\"");
-				#end
-			}else{
+				FlxG.log.error("FlxUISubState: Could not load _xml_id \"" + _xml_id + "\"");
+			} else{
 				_ui.load(data);
 			}
 			
@@ -101,9 +99,6 @@ class FlxUIState extends FlxState implements IEventGetter
 					_reload_countdown--;
 					if (_reload_countdown == 0) {
 						_reload = false;
-						#if debug
-							trace("RELOAD UI!");
-						#end
 						reloadUI();
 					}
 				}

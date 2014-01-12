@@ -488,14 +488,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var thing;
 		if(target_id == ""){
 			if (mode != null) {
-			
-				#if debug
-					trace("mode = " + mode.x);
-				
-					for (el in mode.elements) {
-						trace("el = " + el.x);
-					}
-				#end
 				
 				var xml:Xml;
 				for (node in mode.elements) {
@@ -1128,10 +1120,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var id:String = U.xml_str(data.x, "id", true);
 		var thing:IFlxUIWidget = getAsset(id);
-		
-		#if debug
-			trace("FlxUI._postLoadThing(" + type + ") id=" + id);
-		#end
 		
 		if (type == "align") {
 			_alignThing(data);
