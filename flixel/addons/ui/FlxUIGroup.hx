@@ -1,20 +1,15 @@
 package flixel.addons.ui;
 
 import flixel.addons.ui.interfaces.IFlxUIWidget;
-import flixel.FlxG.IDestroyable;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
-#if (cpp || neko)
-	import flixel.atlas.FlxAtlas;
-#end
 
 /**
  * A cheap extension of FlxUIGroup that lets you move all the children around
  * without having to call reset()
  * @author Lars Doucet
  */
-
-class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxUIWidget
+class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 {	
 	/***PUBLIC VARS***/
 		

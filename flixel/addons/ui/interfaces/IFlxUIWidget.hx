@@ -1,6 +1,6 @@
 package flixel.addons.ui.interfaces;
 
-import flixel.IFlxSprite;
+import flixel.interfaces.IFlxSprite;
 
 /**
  * ...

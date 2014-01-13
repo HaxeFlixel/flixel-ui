@@ -1,14 +1,13 @@
 package flixel.addons.ui;
 
 import flixel.addons.ui.interfaces.IFlxUIWidget;
-import flixel.FlxG.IDestroyable;
 import flixel.FlxSprite;
 
 /**
  * Cheap extension of FlxSprite
  * @author Lars Doucet
  */
-class FlxUISprite extends FlxSprite implements IDestroyable implements IFlxUIWidget 
+class FlxUISprite extends FlxSprite implements IFlxUIWidget 
 {
 	//simple string ID, handy for identification, etc
 	public var id:String;

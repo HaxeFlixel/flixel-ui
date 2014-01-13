@@ -7,6 +7,7 @@ import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.interfaces.IFlxDestroyable;
 import flixel.util.FlxPoint;
 import haxe.Json;
 import haxe.xml.Fast;
@@ -546,8 +547,8 @@ class U
 		
 		if (Std.is(thing,Array)){
 			clearArray(thing);
-		}else if (Std.is(thing,IDestroyable)) {
-			var idstr:IDestroyable = cast(thing, IDestroyable);
+		}else if (Std.is(thing,IFlxDestroyable)) {
+			var idstr:IFlxDestroyable = cast(thing, IFlxDestroyable);
 			idstr.destroy();
 			idstr = null;
 		}else if (Std.is(thing,FlxBasic)) {
