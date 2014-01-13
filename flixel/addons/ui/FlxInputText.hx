@@ -320,11 +320,11 @@ class FlxInputText extends FlxText
 	/**
 	 * Draws the frame of animation for the input text.
 	 * 
-	 * @param	CPP		Whether the frame should also be recalculated if we're on a non-flash target
+	 * @param	RunOnCpp	Whether the frame should also be recalculated if we're on a non-flash target
 	 */
-	private override function calcFrame(CPP:Bool = false):Void
+	private override function calcFrame(RunOnCpp:Bool = false):Void
 	{
-		super.calcFrame(CPP);
+		super.calcFrame(RunOnCpp);
 		
 		if (fieldBorderSprite != null && fieldBorderThickness > 0) {
 			fieldBorderSprite.makeGraphic(cast (width + fieldBorderThickness * 2), cast (height + fieldBorderThickness * 2), fieldBorderColor);
