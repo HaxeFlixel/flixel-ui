@@ -4,19 +4,18 @@ import flash.display.BitmapData;
 import flash.errors.Error;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-
-import flixel.FlxG;
-import flixel.FlxObject;
-import flixel.FlxSprite;
-import flixel.text.FlxText;
-import flixel.util.FlxPoint;
+import flixel.addons.ui.FlxUI.MaxMinSize;
 import flixel.addons.ui.interfaces.IEventGetter;
 import flixel.addons.ui.interfaces.IFireTongue;
 import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.ILabeled;
 import flixel.addons.ui.interfaces.IResizable;
-
+import flixel.FlxG;
+import flixel.FlxObject;
+import flixel.FlxSprite;
+import flixel.text.FlxText;
+import flixel.util.FlxPoint;
 import haxe.xml.Fast;
 import openfl.Assets;
 
@@ -24,8 +23,8 @@ import openfl.Assets;
  * A simple xml-driven user interface
  * 
  * Usage example:
-	_ui = new FlxUI(U.xml("save_slot"),this);
-	add(_ui);
+ *	_ui = new FlxUI(U.xml("save_slot"),this);
+ *	add(_ui);
  * 
  * @author Lars Doucet
  */
@@ -2025,7 +2024,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return 0;
 	}
 	
-	private function calcMaxMinSize(data:Fast,width:Dynamic=null,height:Dynamic=null):{min_width:Float,min_height:Float,max_width:Float,max_height:Float}{
+	private function calcMaxMinSize(data:Fast, width:Dynamic = null, height:Dynamic = null):MaxMinSize {
 		var min_w:Float = 0;
 		var min_h:Float = 0;
 		var max_w:Float = Math.POSITIVE_INFINITY;
@@ -2092,8 +2091,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		return { min_width:min_w, min_height:min_h, max_width:max_w, max_height:max_h };
 	}
-	
-	/**********************/
 	
 	private function _getDataSize(target:String, str:String, default_:Float = 0):Float {		
 		
@@ -2589,5 +2586,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}
 	}
+}
 
+typedef MaxMinSize = {
+	min_width:Float,
+	min_height:Float,
+	max_width:Float,
+	max_height:Float
 }
