@@ -137,7 +137,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 	
 	public function anchorLabelX():Void {
 		if (button != null) {
-			button.allLabelOffset.x = (box.width + box_space) + textX;
+			button.label.offset.x = -((box.width + box_space) + textX);
 		}
 	}
 	

@@ -1842,8 +1842,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		//label offset has already been 'centered,' this adjust from there:
-		fb.allLabelOffset.x += text_x;
-		fb.allLabelOffset.y += text_y;
+		fb.label.offset.x -= text_x;
+		fb.label.offset.y -= text_y;
 		
 		fb.visible = isVis;
 		

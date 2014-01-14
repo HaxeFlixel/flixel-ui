@@ -26,8 +26,6 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public var has_toggle:Bool = false;
 	public var toggled:Bool = false;
 	
-	public var allLabelOffset:FlxPoint = null;		//user specified global offset for all labels
-	
 	//Change these to something besides 0 to make the label use that color
 	//when that state is active
 	public var up_color:Int = 0;
@@ -58,7 +56,6 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		super(X, Y, Label, OnClick, OnClickParams);
 		
 		_centerLabelOffset = new FlxPoint(0, 0);
-		allLabelOffset = new FlxPoint(0, 0);
 		
 		//By default, the button depresses the label by 1 pixel when pressed
 		labelOffsets[FlxButton.HIGHLIGHT].x = 0;
@@ -87,18 +84,15 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			label.x += _centerLabelOffset.x;	//CENTER the label offsets using the private variable
 			label.y += _centerLabelOffset.y;
 			
-			label.x += allLabelOffset.x;		//apply global user label offsets using the public variable
-			label.y += allLabelOffset.y;
-			
 			label.x += labelOffsets[status].x;	//apply status-specific user label offset using the public variable
 			label.y += labelOffsets[status].y;
 			
 			label.scrollFactor = scrollFactor;
 		}
 		
-		if(animation != null){
+		if (animation != null){
 			// Then pick the appropriate frame of animation
-			if(toggled){
+			if (toggled){
 				animation.frameIndex =  3 + status;
 			}else {
 				animation.frameIndex = status;

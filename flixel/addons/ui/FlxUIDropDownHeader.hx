@@ -63,7 +63,7 @@ class FlxUIDropDownHeader extends FlxUIGroup
 		button.width = Width;
 		button.offset.x -= (Width - button.frameWidth);
 		button.x = offset.x;
-		button.label.offset.x = button.offset.x;
+		button.label.offset.x += button.offset.x;
 		
 		// Text
 		if (text == null) {
