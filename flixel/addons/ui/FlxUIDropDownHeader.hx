@@ -59,6 +59,12 @@ class FlxUIDropDownHeader extends FlxUIGroup
 		button.resize(background.height, background.height);
 		button.x = background.x + background.width - button.width;
 		
+		// Reposition and resize the button hitbox so the whole header is clickable
+		button.width = Width;
+		button.offset.x -= (Width - button.frameWidth);
+		button.x = offset.x;
+		button.label.offset.x = button.offset.x;
+		
 		// Text
 		if (text == null) {
 			text = new FlxUIText(0, 0, Std.int(background.width));
