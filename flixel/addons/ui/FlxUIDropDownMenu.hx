@@ -30,7 +30,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	/**
 	 * Function to be called when of of the entries of the list was clicked.
 	 */
-	public var callback:Array<Dynamic>->Void;
+	public var callback:String->Void;
 	/**
 	 * The list of items that is shown when the toggle button is clicked.
 	 */
@@ -54,7 +54,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	 * @param	ButtonList			Optional list of buttons to be used for the corresponding entry in DataList
 	 * @param	UIControlCallback	Used internally by FlxUI
 	 */
-	public function new(X:Float = 0, Y:Float = 0, DataList:Array<StrIdLabel>, ?Callback:Array<Dynamic>->Void, ?Header:FlxUIDropDownHeader, ?DropPanel:FlxUI9SliceSprite, ?ButtonList:Array<FlxUIButton>, ?UIControlCallback:Bool->FlxUIDropDownMenu->Void) 
+	public function new(X:Float = 0, Y:Float = 0, DataList:Array<StrIdLabel>, ?Callback:String->Void, ?Header:FlxUIDropDownHeader, ?DropPanel:FlxUI9SliceSprite, ?ButtonList:Array<FlxUIButton>, ?UIControlCallback:Bool->FlxUIDropDownMenu->Void) 
 	{
 		super(X, Y);
 		
@@ -197,7 +197,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		showList(false);
 		
 		if (callback != null) {
-			callback([item.id]);
+			callback(item.id);
 		}
 	}
 	

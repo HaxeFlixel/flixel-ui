@@ -2413,7 +2413,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 	}
 	
-	private function _onClickDropDown(params:Array<Dynamic> = null):Void {
+	private function _onClickDropDown(?params:String):Void {
 		FlxG.log.add("FlxUI._onClickDropDown(" + params + ")");
 		if (_ptr != null) {
 			_ptr.getEvent("click_dropdown", this, params);
