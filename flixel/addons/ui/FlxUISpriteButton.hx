@@ -12,9 +12,18 @@ import flixel.FlxSprite;
  * Furthermore, you have the ability to
  */
 class FlxUISpriteButton extends FlxUITypedButton<FlxSprite>
-{
-	public function new(X:Float = 0, Y:Float = 0, ?Asset:FlxSprite, ?OnClick:Dynamic) {
-		super(X, Y, null, OnClick);		
+{	
+	/**
+	 * Creates a new <code>FlxUISpriteButton</code>.
+	 * 
+	 * @param	X				The X position of the button.
+	 * @param	Y				The Y position of the button.
+	 * @param	Label			The text that you want to appear on the button.
+	 * @param	OnClick			The function to call whenever the button is clicked.
+	 * @param	OnClickParams	The params to call the onClick function with.
+	 */
+	public function new(X:Float = 0, Y:Float = 0, ?Asset:FlxSprite, ?OnClick:Dynamic, ?OnClickParams:Array<Dynamic>) {
+		super(X, Y, null, OnClick, OnClickParams);		
 	
 		//Instead of "Label" we have "Asset" which is the id of the asset you want to load
 		//If you're trying to push in a raw BitmapData object, add that to the cache first and pass in the key
