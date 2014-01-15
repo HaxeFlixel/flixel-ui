@@ -80,12 +80,11 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 				
 				t.loadGraphicSlice9([FlxUIAssets.IMG_INVIS, FlxUIAssets.IMG_HILIGHT, FlxUIAssets.IMG_HILIGHT], Std.int(header.background.width),
 									Std.int(header.background.height),["1,1,3,3","1,1,3,3","1,1,3,3"], FlxUI9SliceSprite.TILE_NONE);
-				t.labelOffsets[FlxButton.PRESSED].y -= 1;	//turn off the 1-pixel depress on click
+				t.labelOffsets[FlxButton.PRESSED].y -= 1;	// turn off the 1-pixel depress on click
 				
 				t.up_color = FlxColor.BLACK;
 				t.over_color = FlxColor.WHITE;
 				t.down_color = FlxColor.WHITE;
-				//t.label.borderStyle = FlxText.BORDER_NONE;
 				
 				t.resize(header.background.width - 2, header.background.height - 1);
 				t.x = 1;
@@ -185,7 +184,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		}
 	}
 	
-	private function onDropdown(?params:Array<Dynamic>):Void 
+	private function onDropdown():Void 
 	{
 		(dropPanel.visible) ? showList(false) : showList(true);
 	}

@@ -135,7 +135,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		var diff_w:Float = width - old_width;
 		var diff_h:Float = height - old_height;
 		
-		if(resize_point != null){
+		if (resize_point != null){
 			var delta_x:Float = diff_w * resize_point.x;
 			var delta_y:Float = diff_h * resize_point.y;
 			x -= delta_x;

@@ -17,15 +17,15 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 	public var button:FlxUIButton;
 	public var max_width:Float = -1;
 	
-	public var checked(get_checked, set_checked):Bool;
+	public var checked(get_checked, set_checked):Bool = false;
 	
 	//Set this to false if you just want the checkbox itself to be clickable
 	public var textIsClickable:Bool = true;
 		
 	public var checkbox_dirty:Bool = false;
 	
-	public var textX(default, set):Float;
-	public var textY(default, set):Float;
+	public var textX(default, set):Float = 0;
+	public var textY(default, set):Float = 0;
 	
 	public var box_space:Float = 2;
 	

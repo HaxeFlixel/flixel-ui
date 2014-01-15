@@ -1630,9 +1630,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 	private function _loadButton(data:Fast, setCallback:Bool = true, isToggle:Bool = false, load_code:String=""):IFlxUIWidget{
 		var src:String = ""; 
-		var fb:Dynamic;
-		fb = null;
-				
+		var fb:Dynamic = null;
+		
 		var resize_ratio:Float = U.xml_f(data.x, "resize_ratio", -1);
 		var resize_point:FlxPoint = _loadCompass(data, "resize_point");
 		var isVis:Bool = U.xml_bool(data.x, "visible", true);
@@ -1656,8 +1655,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		label = getText(label,context,true,code);
 		
-		var W:Int = cast _loadWidth(data, 0, "width");
-		var H:Int = cast _loadHeight(data, 0, "height");
+		var W:Int = Std.int(_loadWidth(data, 0, "width"));
+		var H:Int = Std.int(_loadHeight(data, 0, "height"));
 		
 		var params:Array<Dynamic> = getParams(data);
 		
@@ -1796,14 +1795,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, tile, resize_ratio, isToggle, src_w, src_h, frames);
 			}
 		}else {			
-			if(load_code == "tab_menu"){
+			if (load_code == "tab_menu"){
 				//load default tab menu graphics
 				var graphic_ids:Array<String> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
 				var slice9_ids:Array<String> = [FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB];
-				fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);				
+				fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle, 0, 0, null);				
 			}else{
 				//load default graphics			
-				fb.loadGraphicSlice9(null, W, H, null, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);
+				fb.loadGraphicSlice9(null, W, H, null, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle, 0, 0, null);
 			}
 		}		
 		
