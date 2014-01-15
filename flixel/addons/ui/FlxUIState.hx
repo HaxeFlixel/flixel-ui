@@ -80,8 +80,8 @@ class FlxUIState extends FlxState implements IEventGetter
 	public function resizeScreen(width:Float=800, height:Float=600):Void {
 		/*#if sys
 			//TODO: reimplement with next OpenFL
-			FlxG.stage.resize(cast width, cast height);
-			onResize(cast width,cast height);
+			FlxG.stage.resize(Std.int(width), Std.int(height));
+			onResize(Std.int(width), Std.int(height));
 		#end*/
 	}
 		

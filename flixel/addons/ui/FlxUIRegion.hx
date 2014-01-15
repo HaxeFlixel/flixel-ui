@@ -27,7 +27,7 @@ class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizabl
 		width = w;
 		height = h;
 		#if debug
-			makeGraphic(cast w,cast h);
+			makeGraphic(Std.int(w), Std.int(h));
 		#end
 	}	 
 }

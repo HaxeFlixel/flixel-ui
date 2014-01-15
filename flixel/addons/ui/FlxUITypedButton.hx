@@ -114,19 +114,19 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		if (H == 0) { H = 20; }
 		
 		if(_slice9_assets != null){
-			loadGraphicSlice9(_slice9_assets, cast W, cast H, _slice9_strings,tile,resize_ratio,has_toggle,_src_w,_src_h,_frame_indeces);
+			loadGraphicSlice9(_slice9_assets, Std.int(W), Std.int(H), _slice9_strings,tile,resize_ratio,has_toggle,_src_w,_src_h,_frame_indeces);
 		} else {
 			if (_no_graphic) {
 				var upB:BitmapData;
 				if(!has_toggle){
-					upB = new BitmapData(cast W, cast (H * 3), true, 0x00000000);
+					upB = new BitmapData(Std.int(W), Std.int(H * 3), true, 0x00000000);
 				}else {
-					upB = new BitmapData(cast W, cast (H * 6), true, 0x00000000);
+					upB = new BitmapData(Std.int(W), Std.int(H * 6), true, 0x00000000);
 				}
 				loadGraphicsUpOverDown(upB);
 			}else {
 				//default assets
-				loadGraphicSlice9(null, cast W, cast H, null,tile);
+				loadGraphicSlice9(null, Std.int(W), Std.int(H), null,tile);
 			}
 		}
 		
@@ -315,14 +315,14 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 				assets = [FlxUIAssets.IMG_BUTTON];
 				slice9 = [FlxUIAssets.SLICE9_BUTTON];
 				temp = Assets.getBitmapData(assets[0]);
-				_src_w = cast temp.width;
-				_src_h = cast temp.height / 3;				//calc default source width/height
+				_src_w = Std.int(temp.width);
+				_src_h = Std.int(temp.height / 3);				//calc default source width/height
 			}else {
 				assets = [FlxUIAssets.IMG_BUTTON_TOGGLE];
 				slice9 = [FlxUIAssets.SLICE9_BUTTON_TOGGLE];
 				temp = Assets.getBitmapData(assets[0]);
-				_src_w = cast temp.width;
-				_src_h = cast temp.height / 6;				//calc default source width/height
+				_src_w = Std.int(temp.width);
+				_src_h = Std.int(temp.height / 6);				//calc default source width/height
 			}
 			
 			temp = null;
@@ -511,9 +511,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		var h:Int = src_h;
 		if(h == 0){
 			if (!for_toggle) {
-				h = cast all_frames.height / 3;
+				h = Std.int(all_frames.height / 3);
 			}else {
-				h = cast all_frames.height / 6;
+				h = Std.int(all_frames.height / 6);
 			}
 		}
 		var w:Int = src_w;

@@ -62,7 +62,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		
 		//TODO:
 		//the +2 is a magic number, possibly should be a user-set parameter
-		button.loadGraphicSlice9(["", "", ""], Std.int(box.width + 2 + LabelW), cast box.height);
+		button.loadGraphicSlice9(["", "", ""], Std.int(box.width + 2 + LabelW), Std.int(box.height));
 		
 		max_width = Std.int(box.width + box_space + LabelW);
 		

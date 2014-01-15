@@ -140,7 +140,7 @@ class FlxInputText extends FlxText
 		caretColor = TextColor;
 			
 		caret = new FlxSprite();
-		caret.makeGraphic(1,cast (size + 2), 0xFFFFFFFF);
+		caret.makeGraphic(1, Std.int(size + 2), 0xFFFFFFFF);
 		caret.color = caretColor;
 		caretIndex = 0;
 		
@@ -327,7 +327,7 @@ class FlxInputText extends FlxText
 		super.calcFrame(RunOnCpp);
 		
 		if (fieldBorderSprite != null && fieldBorderThickness > 0) {
-			fieldBorderSprite.makeGraphic(cast (width + fieldBorderThickness * 2), cast (height + fieldBorderThickness * 2), fieldBorderColor);
+			fieldBorderSprite.makeGraphic(Std.int(width + fieldBorderThickness * 2), Std.int(height + fieldBorderThickness * 2), fieldBorderColor);
 			fieldBorderSprite.x = x - fieldBorderThickness;
 			fieldBorderSprite.y = y - fieldBorderThickness;
 		}
@@ -336,7 +336,7 @@ class FlxInputText extends FlxText
 			// Draw background
 		if (background) 
 		{
-			var buffer:BitmapData = new BitmapData(cast width, cast (height * 2), true, backgroundColor); 
+			var buffer:BitmapData = new BitmapData(Std.int(width), Std.int(height * 2), true, backgroundColor); 
 			buffer.draw(framePixels);
 			framePixels = buffer;		
 		}
@@ -512,7 +512,7 @@ class FlxInputText extends FlxText
 	override private function set_size(Size:Float):Float
 	{
 		super.size = Size;		
-		caret.makeGraphic(1, cast (size + 2), 0xFFFFFFFF);
+		caret.makeGraphic(1, Std.int(size + 2), 0xFFFFFFFF);
 		return Size;
 	}
 	

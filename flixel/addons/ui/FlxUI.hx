@@ -1190,7 +1190,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var code:String = U.xml_str(data.x, "code", true, "");
 		text = getText(text,context, true, code);
 		
-		var W:Int = cast _loadWidth(data, 100);
+		var W:Int = Std.int(_loadWidth(data, 100));
 		
 		var the_font:String = _loadFontFace(data);
 		
@@ -1858,8 +1858,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	private function _loadRegion(data:Fast):FlxUIRegion {
-		var w:Int = cast _loadWidth(data);
-		var h:Int = cast _loadHeight(data);
+		var w:Int = Std.int(_loadWidth(data));
+		var h:Int = Std.int(_loadHeight(data));
 		return new FlxUIRegion(0, 0, w, h);
 	}
 	
@@ -1883,14 +1883,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		var rc:Rectangle;
-		var rect_w:Int = cast _loadWidth(data);
-		var rect_h:Int = cast _loadHeight(data);
+		var rect_w:Int = Std.int(_loadWidth(data));
+		var rect_h:Int = Std.int(_loadHeight(data));
 				
-		if (rect_w < bounds.min_width) { rect_w = cast bounds.min_width; }
+		if (rect_w < bounds.min_width) { rect_w = Std.int(bounds.min_width); }
 		else if (rect_w > bounds.max_width) { rect_w = cast bounds.max_width; }
 		
-		if (rect_h < bounds.min_height) { rect_h = cast bounds.min_height; }
-		else if (rect_h > bounds.max_height) { rect_h = cast bounds.max_height; }
+		if (rect_h < bounds.min_height) { rect_h = Std.int(bounds.min_height); }
+		else if (rect_h > bounds.max_height) { rect_h = Std.int(bounds.max_height); }
 		
 		if (rect_w == 0 || rect_h == 0) {
 			return null;
@@ -1932,13 +1932,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if(src != ""){
 			fs = new FlxUISprite(0, 0, src);
 		}else {
-			var W:Int = cast _loadWidth(data);
-			var H:Int = cast _loadHeight(data);
+			var W:Int = Std.int(_loadWidth(data));
+			var H:Int = Std.int(_loadHeight(data));
 			
-			if (W < bounds.min_width) { W = cast bounds.min_width; }
-			else if (W > bounds.max_width) { W = cast bounds.max_width; }
-			if (H < bounds.min_height) { H = cast bounds.max_height; }
-			else if (H > bounds.max_height) { H = cast bounds.max_height;}
+			if (W < bounds.min_width) { W = Std.int(bounds.min_width); }
+			else if (W > bounds.max_width) { W = Std.int(bounds.max_width); }
+			if (H < bounds.min_height) { H = Std.int(bounds.max_height); }
+			else if (H > bounds.max_height) { H = Std.int(bounds.max_height);}
 
 			var cstr:String = U.xml_str(data.x, "color");
 			var C:Int = 0;

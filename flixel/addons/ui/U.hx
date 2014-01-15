@@ -254,7 +254,7 @@ class U
 	 */
 	
 	public static inline function padDigits(i:Int, d:Int):String {
-		var f:Float = cast(i, Float);
+		var f:Float = i;
 		var str:String = "";
 		var num_digits:Int = 0;
 		while (f >= 1) {
@@ -312,17 +312,6 @@ class U
 		}
 		
 		return return_val;
-	}
-	
-	public static inline function randomColor(is32Bit:Bool=false):Int {
-		var r:Int = cast (Math.random() * 0xff);
-		var g:Int = cast (Math.random() * 0xff);
-		var b:Int = cast (Math.random() * 0xff);
-		var rgb:Int = rgb2hex(r, g, b);
-		if (is32Bit) {
-			rgb = 0xff000000 | rgb;
-		}
-		return rgb;
 	}
 	
 	/**
@@ -543,7 +532,6 @@ class U
 	
 	public static function destroyThing(thing:Dynamic):Void {
 		if (thing == null) return;
-		
 		
 		if (Std.is(thing,Array)){
 			clearArray(thing);
