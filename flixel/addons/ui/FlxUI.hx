@@ -5,6 +5,8 @@ import flash.errors.Error;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.addons.ui.FlxUI.MaxMinSize;
+import flixel.addons.ui.FlxUIDropdownMenu.FlxUIDropDownHeader;
+import flixel.addons.ui.FlxUIDropdownMenu.FlxUIDropDownMenu;
 import flixel.addons.ui.interfaces.IEventGetter;
 import flixel.addons.ui.interfaces.IFireTongue;
 import flixel.addons.ui.interfaces.IFlxUIButton;
