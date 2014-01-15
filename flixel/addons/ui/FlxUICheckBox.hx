@@ -17,7 +17,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 	public var button:FlxUIButton;
 	public var max_width:Float = -1;
 	
-	public var checked(get_checked, set_checked):Bool = false;
+	public var checked(default, set):Bool = false;
 	
 	//Set this to false if you just want the checkbox itself to be clickable
 	public var textIsClickable:Bool = true;
@@ -193,19 +193,13 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		
 	/*****GETTER/SETTER***/
 	
-	public function get_checked():Bool { 
-		return _checked; 
-	}
-	
 	public function set_checked(b:Bool):Bool { 
-		_checked = b; 
 		mark.visible = b; 
-		return b; 
+		return checked = b; 
 	}
 	
 	/*****PRIVATE******/
 	
-	private var _checked:Bool;
 	private var _externalCallback:Dynamic;
 	
 	private function _clickCheck(Params:Dynamic = null):Void 
@@ -223,8 +217,8 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 			arr = new Array<Dynamic>();
 			arr.push(Params);
 		}
-				
-		if (_checked) {
+		
+		if (checked) {
 			arr.push("checked:true");
 		}else {
 			arr.push("checked:false");
