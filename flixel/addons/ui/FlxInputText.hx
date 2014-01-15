@@ -291,6 +291,7 @@ class FlxInputText extends FlxText
 	{
 		var hit:FlxPoint = new FlxPoint(FlxG.mouse.x - x, FlxG.mouse.y - y);
 		var caretRightOfText:Bool = false;
+		#if !js
 		if (hit.y < 2) hit.y = 2;
 		else if (hit.y > _textField.textHeight + 2) hit.y = _textField.textHeight + 2;
 		if (hit.x < 2) hit.x = 2;
@@ -302,7 +303,7 @@ class FlxInputText extends FlxText
 			hit.x = _textField.getLineMetrics(_textField.numLines - 1).width;
 			caretRightOfText = true;
 		}
-		
+		#end
 		var index:Int = 0;
 		
 		#if flash
