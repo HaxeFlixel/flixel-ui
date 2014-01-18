@@ -266,7 +266,7 @@ class FlxUIDropDownHeader extends FlxUIGroup
 		if (button == null) {
 			button = new FlxUISpriteButton(0, 0, new FlxSprite(0, 0, FlxUIAssets.IMG_DROPDOWN));
 			button.loadGraphicSlice9([FlxUIAssets.IMG_BUTTON_THIN], 80, 20, [FlxUIAssets.SLICE9_BUTTON],
-									FlxUI9SliceSprite.TILE_NONE,-1, false, FlxUIAssets.IMG_BUTTON_SIZE, FlxUIAssets.IMG_BUTTON_SIZE);
+									FlxUI9SliceSprite.TILE_NONE, -1, false, FlxUIAssets.IMG_BUTTON_SIZE, FlxUIAssets.IMG_BUTTON_SIZE);
 		}
 		button.resize(background.height, background.height);
 		button.x = background.x + background.width - button.width;

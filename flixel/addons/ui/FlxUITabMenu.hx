@@ -136,7 +136,7 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 					//load default graphics
 					var graphic_ids:Array<String> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
 					var slice9_ids:Array<String> = [FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB];
-					fb.loadGraphicSlice9(graphic_ids, 0, 0, slice9_ids, -1, true);
+					fb.loadGraphicSlice9(graphic_ids, 0, 0, slice9_ids, FlxUI9SliceSprite.TILE_NONE, -1, true);
 					tabs_.push(fb);
 				}
 			}
