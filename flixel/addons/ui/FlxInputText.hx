@@ -189,6 +189,7 @@ class FlxInputText extends FlxText
 	{
 		super.update();
 		
+		#if (!FLX_NO_MOUSE  && !FLX_NO_TOUCH)
 		// Set focus and caretIndex as a response to mouse press
 		if (FlxG.mouse.justPressed) {
 			if (overlapsPoint(new FlxPoint(FlxG.mouse.x, FlxG.mouse.y))) {
@@ -199,6 +200,7 @@ class FlxInputText extends FlxText
 				hasFocus = false;
 			}
 		}
+		#end
 	}
 	
 	/**
@@ -289,6 +291,7 @@ class FlxInputText extends FlxText
 	 */
 	public function getCaretIndexFromPoint(Landing:FlxPoint):Int
 	{
+	#if !FLX_NO_MOUSE	
 		var hit:FlxPoint = new FlxPoint(FlxG.mouse.x - x, FlxG.mouse.y - y);
 		var caretRightOfText:Bool = false;
 		#if !js
@@ -316,6 +319,9 @@ class FlxInputText extends FlxText
 			//Figure something else out instead, or augment openfl-native's TextField
 		#end
 		return index;
+	#else
+		return 0;
+	#end
 	}
 	
 	/**

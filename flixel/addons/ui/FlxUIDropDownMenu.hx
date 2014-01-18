@@ -145,6 +145,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	{
 		super.update();
 		
+		#if (!FLX_NO_MOUSE && !FLX_NO_TOUCH)
 		if (dropPanel.visible && FlxG.mouse.justPressed) 
 		{
 			if (!dropPanel.overlapsPoint(FlxG.mouse)) 
@@ -152,6 +153,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 				showList(false);
 			}
 		}
+		#end
 	}	
 	
 	override public function destroy():Void
