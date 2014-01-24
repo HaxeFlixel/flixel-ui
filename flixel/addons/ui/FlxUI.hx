@@ -16,6 +16,7 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
+import flixel.util.FlxArrayUtil;
 import flixel.util.FlxPoint;
 import haxe.xml.Fast;
 import openfl.Assets;
@@ -1381,7 +1382,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return fc;
 	}
 	
-	private function _loadDropDownMenu(data:Fast):FlxUIDropDownMenu {
+	private function _loadDropDownMenu(data:Fast):FlxUIDropDownMenu{
 		
 		/*
 		 *   <dropdown label="Something">
