@@ -8,6 +8,7 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.ui.FlxTypedButton;
+import flixel.util.FlxArrayUtil;
 import flixel.util.FlxPoint;
 import openfl.Assets;
 
@@ -124,7 +125,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		if (H == 0) { H = 20; }
 		
 		if(_slice9_assets != null){
-			loadGraphicSlice9(_slice9_assets, cast W, cast H, _slice9_strings,tile,resize_ratio,has_toggle,_src_w,_src_h,_frame_indeces);
+			loadGraphicSlice9(_slice9_assets, cast W, cast H, _slice9_arrays,tile,resize_ratio,has_toggle,_src_w,_src_h,_frame_indeces);
 		} else {
 			if (_no_graphic) {
 				var upB:BitmapData;
@@ -209,7 +210,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	public function loadGraphicsUpOverDown(asset:Dynamic, for_toggle:Bool=false, ?key:String):Void {
 		_slice9_assets = null;
-		_slice9_strings = null;
+		_slice9_arrays = null;
 		resize_ratio = -1;
 		
 		if (for_toggle) {
@@ -259,7 +260,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	 * @param	assets an array of asset file ids, ready to pass into Assets.getBitmapData();
 	 * @param	W width of button frame
 	 * @param	H height of button frame
-	 * @param	slice9 an array of slice9 strings, ie:"6,6,11,11" that specifies upper-left and bottom-right slice9 pixel points
+	 * @param	slice9 an array of slice9 int-arrays, ie:[6,6,11,11] that specifies upper-left and bottom-right slice9 pixel points
 	 * @param	tile	Whether to tile the middle pieces or stretch them (default is false --> stretch)
 	 * @param	Resize_Ratio ratio to force during resizing (W/H). -1 means ignore
 	 * @param	isToggle whether this is for a toggle button or not
@@ -268,7 +269,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	 * @param	frame_indeces array of which image frames go with which button frames (optional)
 	 */
 	
-	public function loadGraphicSlice9(assets:Array<String>=null,W:Int=80,H:Int=20,slice9:Array<String>=null,Tile:Int=FlxUI9SliceSprite.TILE_NONE,Resize_Ratio:Float=-1,isToggle:Bool=false,src_w:Int=0,src_h:Int=0,frame_indeces:Array<Int>=null):Void{
+	public function loadGraphicSlice9(assets:Array<String>=null,W:Int=80,H:Int=20,slice9:Array<Array<Int>>=null,Tile:Int=FlxUI9SliceSprite.TILE_NONE,Resize_Ratio:Float=-1,isToggle:Bool=false,src_w:Int=0,src_h:Int=0,frame_indeces:Array<Int>=null):Void{
 	
 		if (src_w != 0) {
 			_src_w = src_w;
@@ -284,7 +285,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		resize_ratio = Resize_Ratio;
 		
 		_slice9_assets = assets;
-		_slice9_strings = slice9;
+		_slice9_arrays = slice9;
 		
 		var key:String = null;
 		
@@ -332,13 +333,13 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			//default asset
 			if(!isToggle){
 				assets = [FlxUIAssets.IMG_BUTTON];
-				slice9 = [FlxUIAssets.SLICE9_BUTTON];
+				slice9 = [FlxArrayUtil.intFromString(FlxUIAssets.SLICE9_BUTTON)];
 				temp = Assets.getBitmapData(assets[0]);
 				_src_w = cast temp.width;
 				_src_h = cast temp.height / 3;				//calc default source width/height
 			}else {
 				assets = [FlxUIAssets.IMG_BUTTON_TOGGLE];
-				slice9 = [FlxUIAssets.SLICE9_BUTTON_TOGGLE];
+				slice9 = [FlxArrayUtil.intFromString(FlxUIAssets.SLICE9_BUTTON_TOGGLE)];
 				temp = Assets.getBitmapData(assets[0]);
 				_src_w = cast temp.width;
 				_src_h = cast temp.height / 6;				//calc default source width/height
@@ -373,19 +374,19 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 						arr_bmpData[i] = grabButtonFrame(all, i, has_toggle,_src_w, _src_h);		//get each button frame
 					}
 					
-					if (slice9 != null && slice9[0] != "") {		//9slicesprites
+					if (slice9 != null && slice9[0] != []) {		//9slicesprites
 						
 						//Scale each 9slicesprite
 						for (i in 0...arr_bmpData.length) {
 							arr_flx9[i] = new FlxUI9SliceSprite(0, 0, arr_bmpData[i], _flashRect2, slice9[0], tile, false, assets[0] + ":" + i , resize_ratio);
 							arr_flx9[i].resize_point = resize_point;
 						}
-				
+						
 						//grab the pixel data:
 						for (i in 0...arr_bmpData.length) {
 							arr_bmpData[i] = arr_flx9[i].pixels;
 						}
-							
+						
 						//in case the resize_ratio resulted in different dimensions
 						W = arr_bmpData[0].width;
 						H = arr_bmpData[0].height;
@@ -408,11 +409,11 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			}
 			
 			if (assets[0] != "") {
-				if (slice9 != null && slice9[0] != "") {	//load as 9slicesprites
+				if (slice9 != null && slice9[0] != []) {	//load as 9slicesprites
 						
 					//make at least 3(or 6) long, fill with blanks if necessary
 					while (slice9.length < assets.length) {
-						slice9.push("");
+						slice9.push(null);
 					}
 					
 					arr_flx9[0] = new FlxUI9SliceSprite(0, 0, assets[0],_flashRect2, slice9[0], tile, false,"",resize_ratio);
@@ -495,7 +496,6 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			
 			if (Std.is(label, FlxUIText)) {
 				var tlabel:FlxUIText = cast label;
-				trace(tlabel.text);
 				offY = (height - tlabel.height) / 2;
 			}else {
 				offX = (width - label.width) / 2;
@@ -731,8 +731,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	private var _frame_indeces:Array<Int>;
 	
 	//if you're doing 9-slice resizing:
-	private var _slice9_strings:Array<String>;	//the 9-slice scaling rules for the original assets
-	private var _slice9_assets:Array<String>;	//the asset id's of the original 9-slice scale assets
+	private var _slice9_arrays:Array<Array<Int>>;	//the 9-slice scaling rules for the original assets
+	private var _slice9_assets:Array<String>;		//the asset id's of the original 9-slice scale assets
 	
 	private var _centerLabelOffset:FlxPoint = null;	//this is the offset necessary to center ALL the labels
 	

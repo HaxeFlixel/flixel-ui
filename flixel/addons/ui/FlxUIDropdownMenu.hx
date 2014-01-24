@@ -5,6 +5,8 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.addons.ui.FlxClickArea;
+import flixel.util.FlxAngle;
+import flixel.util.FlxArrayUtil;
 import flixel.util.FlxPoint;
 
 /**
@@ -42,7 +44,9 @@ class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		if (Button == null) {
 			Button = new FlxUISpriteButton(0, 0, new FlxSprite(0, 0, FlxUIAssets.IMG_DROPDOWN), onDropdown);
 			//Button.onUp.setCallback(onDropdown);
-			Button.loadGraphicSlice9([FlxUIAssets.IMG_BUTTON_THIN], 80, 20, [FlxUIAssets.SLICE9_BUTTON],FlxUI9SliceSprite.TILE_NONE,-1,false,FlxUIAssets.IMG_BUTTON_SIZE,FlxUIAssets.IMG_BUTTON_SIZE);
+			Button.loadGraphicSlice9([FlxUIAssets.IMG_BUTTON_THIN], 80, 20, 
+									 [FlxArrayUtil.intFromString(FlxUIAssets.SLICE9_BUTTON)],
+									 FlxUI9SliceSprite.TILE_NONE,-1,false,FlxUIAssets.IMG_BUTTON_SIZE,FlxUIAssets.IMG_BUTTON_SIZE);
 		}
 		Button.resize(Back.height, Back.height);
 		Button.x = Back.x + Back.width - Button.width;
@@ -67,7 +71,11 @@ class FlxUIDropdownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 				
 				t.id = data.id;
 				
-				t.loadGraphicSlice9([FlxUIAssets.IMG_INVIS, FlxUIAssets.IMG_HILIGHT, FlxUIAssets.IMG_HILIGHT],Std.int(Back.width),Std.int(Back.height),["1,1,3,3","1,1,3,3","1,1,3,3"], FlxUI9SliceSprite.TILE_NONE);
+				t.loadGraphicSlice9([FlxUIAssets.IMG_INVIS, FlxUIAssets.IMG_HILIGHT, FlxUIAssets.IMG_HILIGHT],
+									Std.int(Back.width), Std.int(Back.height),
+									[[1, 1, 3, 3], [1, 1, 3, 3], [1, 1, 3, 3]], 
+									FlxUI9SliceSprite.TILE_NONE);
+				
 				t.labelOffsets[FlxButton.PRESSED].y = 0;	//turn off the 1-pixel depress on click
 				
 				t.up_color = 0x000000;

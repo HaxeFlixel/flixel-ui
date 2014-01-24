@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
+import flixel.util.FlxArrayUtil;
 import flixel.util.FlxTimer;
 
 /**
@@ -135,7 +136,8 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 					
 					//load default graphics
 					var graphic_ids:Array<String> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
-					var slice9_ids:Array<String> = [FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB];
+					var slice9tab:Array<Int> = FlxArrayUtil.intFromString(FlxUIAssets.SLICE9_TAB);
+					var slice9_ids:Array<Array<Int>> = [slice9tab, slice9tab, slice9tab, slice9tab, slice9tab, slice9tab];
 					fb.loadGraphicSlice9(graphic_ids, 0, 0, slice9_ids, -1, true);
 					tabs_.push(fb);
 				}

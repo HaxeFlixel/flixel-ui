@@ -129,7 +129,7 @@ class FlxUIState extends FlxState implements IEventGetter
 		super.destroy();
 	}
 		
-	public function getEvent(id:String, sender:Dynamic, data:Dynamic):Void {		
+	public function getEvent(id:String, sender:Dynamic, data:Dynamic):Void {
 		eventResponse(id, sender, processEventData(data));
 	}
 	
@@ -140,6 +140,16 @@ class FlxUIState extends FlxState implements IEventGetter
 	public function getRequest(id:String, sender:Dynamic, data:Dynamic):Dynamic {
 		//define per subclass
 		return null;
+	}
+	
+	public function getText(Flag:String,Context:String="ui",Safe:Bool=true):String{
+		if (_tongue != null) {
+			return _tongue.get(Flag, Context, Safe);
+		}
+		if (getTextFallback != null){
+			return getTextFallback(Flag, Context, Safe);
+		}
+		return Flag;
 	}
 	
 	private function reloadUI():Void {

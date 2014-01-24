@@ -3,6 +3,7 @@ import flash.display.Bitmap;
 import flash.errors.Error;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flixel.util.FlxArrayUtil;
 import haxe.xml.Fast;
 import flash.display.BitmapData;
 import flash.Lib;
@@ -359,8 +360,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			//Next, load all our modes
 			if (data.hasNode.mode) {
 				for (mode_data in data.nodes.mode) {
+					var mode_data2:Fast = applyNodeConditionals(mode_data);
 					var mode_id:String = mode_data.att.id;
-					_mode_index.set(mode_id, mode_data);
+					//mode_data
+					_mode_index.set(mode_id, mode_data2);
 				}
 			}
 		
@@ -454,8 +457,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			var node:Xml;
 			for (node in data.x.elements()) 
 			{
-				_postLoadThing(node.nodeName.toLowerCase(), new Fast(node));					
-			}			
+				_postLoadThing(node.nodeName.toLowerCase(), new Fast(node));
+			}
 		}
 		
 		if (data.hasNode.mode) {
@@ -470,7 +473,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 			
 		if (_failure_checks != null) {
-			for (data in _failure_checks) {					
+			for (data in _failure_checks) {
 				if (_checkFailure(data)) {
 					failed = true;
 					break;
@@ -478,7 +481,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 			U.clearArraySoft(_failure_checks);
 			_failure_checks = null;
-		}				
+		}
 		
 		_onFinishLoad();
 	}
@@ -509,9 +512,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 				#end
 				
-				var xml:Xml;
+				var xml:Xml = null;
 				for (node in mode.elements) {
-					xml = node.x;
+					
+					var node2:Fast = applyNodeConditionals(node);	//check for conditionals
+					xml = node2.x;
+					
 					var nodeName:String = xml.nodeName;
 					
 					switch(nodeName) {
@@ -520,14 +526,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						case "hide":
 							showThing(U.xml_str(xml, "id", true), false);
 						case "align":
-							_alignThing(node);
+							_alignThing(node2);
 						case "change":
-							_changeThing(node);
+							_changeThing(node2);
 						case "position":
 							id = U.xml_str(xml, "id", true);
 							thing = getAsset(id);
 							if(thing != null){
-								_loadPosition(node, thing);
+								_loadPosition(node2, thing);
 							}
 					}
 				}
@@ -724,6 +730,21 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	/************LOADING FUNCTIONS**************/
 	
+	private function applyNodeConditionals(info:Fast):Fast{
+		if (info.hasNode.locale || info.hasNode.haxedef) {
+			info = U.copyFast(info);
+			
+			if(info.hasNode.locale){
+				info = applyNodeChanges(info, "locale");
+			}
+			
+			if (info.hasNode.haxedef) {
+				info = applyNodeChanges(info, "haxedef");
+			}
+		}
+		return info;
+	}
+	
 	/**
 	 * Make any necessary changes to data/definition xml objects (such as for locale or haxedef settings)
 	 * @param	data		Fast xml data
@@ -783,18 +804,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		var info:Fast = consolidateData(data, definition);
-		
-		if (info.hasNode.locale || info.hasNode.haxedef) {
-			info = U.copyFast(info);
-			
-			if(info.hasNode.locale){
-				info = applyNodeChanges(info, "locale");
-			}
-			
-			if (info.hasNode.haxedef) {
-				info = applyNodeChanges(info, "haxedef");
-			}
-		}
+		info = applyNodeConditionals(info);
 		
 		switch(type) {
 			case "region": return _loadRegion(info);
@@ -913,7 +923,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _alignThing(data:Fast):Void {
 		var datastr:String = data.x.toString();
-		if (data.hasNode.objects) {			
+		if (data.hasNode.objects) {
 			for (objectNode in data.nodes.objects) {
 				var objects:Array<String> = U.xml_str(objectNode.x, "value", true, "").split(",");
 			
@@ -926,8 +936,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				if (axis != "horizontal" && axis != "vertical") {
 					throw new Error("FlxUI._alignThing(): axis must be \"horizontal\" or \"vertical\"!");
 					return;
-				}			
-							
+				}
+				
 				if (data.hasNode.bounds) {
 					var bound_range:Float = -1;
 					
@@ -935,7 +945,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					
 					if (axis == "horizontal") {
 						bounds.x = _getDataSize("w", U.xml_str(data.node.bounds.x, "left"), -1);
-						bounds.y = _getDataSize("w", U.xml_str(data.node.bounds.x, "right"), -1);					
+						bounds.y = _getDataSize("w", U.xml_str(data.node.bounds.x, "right"), -1);
 					}else if (axis == "vertical") {
 						bounds.x = _getDataSize("h", U.xml_str(data.node.bounds.x, "top"), -1);
 						bounds.y = _getDataSize("h", U.xml_str(data.node.bounds.x, "bottom"), -1);
@@ -950,7 +960,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						//throw new Error("FlxUI._alignThing(): missing bound!");
 						return;
 					}
-										
+					
 					_doAlign(objects, axis, spacing, resize, bounds);
 					
 					if(data.hasNode.anchor || data.has.x || data.has.y){
@@ -968,12 +978,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}else {
 			throw new Error("FlxUI._alignThing(): <objects> node not found!");
 			return;
-		}				
+		}
 	}
 	
 	private function _doAlign(objects:Array<String>, axis:String, spacing:Float, resize:Bool, bounds:FlxPoint):Void {
 		var total_spacing:Float = 0;
-		var total_size:Float = 0;		
+		var total_size:Float = 0;
 		
 		var bound_range:Float = bounds.y - bounds.x;
 		
@@ -990,7 +1000,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		//calculate total size of everything
 		for (id in objects) {
-			var widget:IFlxUIWidget = getAsset(id);						
+			var widget:IFlxUIWidget = getAsset(id);
 			
 			var theval:Float = 0;
 			
@@ -998,7 +1008,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				case "width": theval = widget.width;
 				case "height": theval = widget.height;
 			}
-						
+			
 			total_size += theval;
 		}
 		
@@ -1043,7 +1053,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 			
 			i++;
-		}		
+		}
 	}
 	
 	private function _checkFailure(data:Fast):Bool{
@@ -1141,10 +1151,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var id:String = U.xml_str(data.x, "id", true);
 		var thing:IFlxUIWidget = getAsset(id);
 		
-		#if debug
-			trace("FlxUI._postLoadThing(" + type + ") id=" + id);
-		#end
-		
 		if (type == "align") {
 			_alignThing(data);
 		}
@@ -1163,8 +1169,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			var bounds: { min_width:Float, min_height:Float, 
 			              max_width:Float, max_height:Float } = calcMaxMinSize(data);
 			
-			_resizeThing(cast(thing, IResizable), bounds);
-			
+			if(bounds != null){
+				_resizeThing(cast(thing, IResizable), bounds);
+			}
 		}
 		
 		_delta(thing, -thing.x, -thing.y);	//reset position to 0,0
@@ -1712,15 +1719,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}else{
 			
 				var graphic_ids:Array<String>=null;
-				var slice9_ids:Array<String>=null;
+				var slice9_ids:Array<Array<Int>>=null;
 				var frames:Array<Int>=null;
 				
 				if (isToggle) {
 					graphic_ids = ["", "", "", "", "", ""];
-					slice9_ids= ["", "", "", "", "", ""];
+					slice9_ids= [null, null, null, null, null, null];
 				}else {				
 					graphic_ids = ["", "", ""];
-					slice9_ids = ["", "", ""];
+					slice9_ids = [null, null, null];
 				}
 				
 				//dimensions of source 9slice image (optional)
@@ -1741,7 +1748,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				for (graphicNode in data.nodes.graphic) {
 					var graphic_id:String = U.xml_str(graphicNode.x, "id", true);
 					var image:String = U.xml_str(graphicNode.x, "image");
-					var slice9:String = U.xml_str(graphicNode.x, "slice9");
+					var slice9:Array<Int> = FlxArrayUtil.intFromString(U.xml_str(graphicNode.x, "slice9"));
 					tile = _loadTileRule(graphicNode);
 					
 					var toggleState:Bool = U.xml_bool(graphicNode.x, "toggle");
@@ -1821,16 +1828,17 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			if(load_code == "tab_menu"){
 				//load default tab menu graphics
 				var graphic_ids:Array<String> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
-				var slice9_ids:Array<String> = [FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB];
-				fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);				
+				var slice9_tab:Array<Int> = FlxArrayUtil.intFromString(FlxUIAssets.SLICE9_TAB);
+				var slice9_ids:Array<Array<Int>> = [slice9_tab, slice9_tab, slice9_tab, slice9_tab, slice9_tab, slice9_tab];
+				fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);
 			}else{
-				//load default graphics			
+				//load default graphics
 				fb.loadGraphicSlice9(null, W, H, null, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);
 			}
-		}		
+		}
 		
 		/***End graphics loading block***/
-			
+		
 		if (sprite == null) {
 			if (data != null && data.hasNode.text) {
 				formatButtonText(data, fb);
@@ -1890,7 +1898,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var resize_point:FlxPoint = _loadCompass(data, "resize_point");
 		
 		var bounds: { min_width:Float, min_height:Float, 
-			          max_width:Float, max_height:Float } = calcMaxMinSize(data);				
+			          max_width:Float, max_height:Float } = calcMaxMinSize(data);
 							  
 		src = U.xml_gfx(data.x, "src");
 		if (src == "") { src = null; }
@@ -1905,18 +1913,20 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var rect_w:Int = cast _loadWidth(data);
 		var rect_h:Int = cast _loadHeight(data);
 				
-		if (rect_w < bounds.min_width) { rect_w = cast bounds.min_width; }
-		else if (rect_w > bounds.max_width) { rect_w = cast bounds.max_width; }
-		
-		if (rect_h < bounds.min_height) { rect_h = cast bounds.min_height; }
-		else if (rect_h > bounds.max_height) { rect_h = cast bounds.max_height; }
-		
+		if(bounds != null){
+			if (rect_w < bounds.min_width) { rect_w = cast bounds.min_width; }
+			else if (rect_w > bounds.max_width) { rect_w = cast bounds.max_width; }
+			
+			if (rect_h < bounds.min_height) { rect_h = cast bounds.min_height; }
+			else if (rect_h > bounds.max_height) { rect_h = cast bounds.max_height; }
+		}
+			
 		if (rect_w == 0 || rect_h == 0) {
 			return null;
 		}
 		
 		var rc:Rectangle = new Rectangle(0, 0, rect_w, rect_h);
-		var slice9:String = U.xml_str(data.x, "slice9");
+		var slice9:Array<Int> = FlxArrayUtil.intFromString(U.xml_str(data.x, "slice9"));
 		
 		var smooth:Bool = U.xml_bool(data.x, "smooth", false);
 		
@@ -1946,19 +1956,21 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		src = U.xml_gfx(data.x, "src");
 		
 		var bounds: { min_width:Float, min_height:Float, 
-			          max_width:Float, max_height:Float } = calcMaxMinSize(data);
-				
+					  max_width:Float, max_height:Float } = calcMaxMinSize(data);
+		
 		if(src != ""){
 			fs = new FlxUISprite(0, 0, src);
 		}else {
 			var W:Int = cast _loadWidth(data);
 			var H:Int = cast _loadHeight(data);
 			
-			if (W < bounds.min_width) { W = cast bounds.min_width; }
-			else if (W > bounds.max_width) { W = cast bounds.max_width; }
-			if (H < bounds.min_height) { H = cast bounds.max_height; }
-			else if (H > bounds.max_height) { H = cast bounds.max_height;}
-
+			if(bounds != null){
+				if (W < bounds.min_width) { W = cast bounds.min_width; }
+				else if (W > bounds.max_width) { W = cast bounds.max_width; }
+				if (H < bounds.min_height) { H = cast bounds.max_height; }
+				else if (H > bounds.max_height) { H = cast bounds.max_height; }
+			}
+			
 			var cstr:String = U.xml_str(data.x, "color");
 			var C:Int = 0;
 			if (cstr != "") {
@@ -2061,40 +2073,38 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				max_w = min_w;
 				max_h = min_h;
 			}
-		}else{		
-			if (data.hasNode.min_size) {
-				for(minNode in data.nodes.min_size){
-					var min_w_str:String = U.xml_str(minNode.x, "width");
-					var min_h_str:String = U.xml_str(minNode.x, "height");
-					temp_min_w = _getDataSize("w", min_w_str, 0);
-					temp_min_h = _getDataSize("h", min_h_str, 0);			
-					if (temp_min_w > min_w) {
-						min_w = temp_min_w;
-					}
-					if (temp_min_h > min_h) {
-						min_h = temp_min_h;
-					}
+		}else if (data.hasNode.min_size) {
+			for(minNode in data.nodes.min_size){
+				var min_w_str:String = U.xml_str(minNode.x, "width");
+				var min_h_str:String = U.xml_str(minNode.x, "height");
+				temp_min_w = _getDataSize("w", min_w_str, 0);
+				temp_min_h = _getDataSize("h", min_h_str, 0);
+				if (temp_min_w > min_w) {
+					min_w = temp_min_w;
+				}
+				if (temp_min_h > min_h) {
+					min_h = temp_min_h;
 				}
 			}
-			
-			if (data.hasNode.max_size) {
-				for(maxNode in data.nodes.max_size){
-					var max_w_str:String = U.xml_str(maxNode.x, "width");
-					var max_h_str:String = U.xml_str(maxNode.x, "height");
-					temp_max_w = _getDataSize("w", max_w_str, Math.POSITIVE_INFINITY);
-					temp_max_h = _getDataSize("h", max_h_str, Math.POSITIVE_INFINITY);			
-					if (temp_max_w < max_w) {
-						max_w = temp_max_w;
-					}
-					if (temp_max_h < max_h) {
-						max_h = temp_max_h;
-					}
+		}else if (data.hasNode.max_size) {
+			for(maxNode in data.nodes.max_size){
+				var max_w_str:String = U.xml_str(maxNode.x, "width");
+				var max_h_str:String = U.xml_str(maxNode.x, "height");
+				temp_max_w = _getDataSize("w", max_w_str, Math.POSITIVE_INFINITY);
+				temp_max_h = _getDataSize("h", max_h_str, Math.POSITIVE_INFINITY);
+				if (temp_max_w < max_w) {
+					max_w = temp_max_w;
+				}
+				if (temp_max_h < max_h) {
+					max_h = temp_max_h;
 				}
 			}
+		}else {
+			return null;
 		}
 		
 		if (width != null){
-			if (width > min_w) { min_w = width; }			
+			if (width > min_w) { min_w = width; }
 			if (width < max_w) { max_w = width; }
 		}
 		if (height != null) {

@@ -1256,4 +1256,14 @@ class U
 			return s;
 		}
 		
+		public static function strCase(str:String, code:String):String {
+			switch(code) {
+				case "u": return str.toUpperCase();		//uppercase
+				case "l": return str.toLowerCase();		//lowercase
+				case "fu": return U.FU(str);			//first letter uppercase
+				case "fu_": return U.FU_(str);			//first letter in each word uppercase
+			}
+			return str;
+		}
+		
 }

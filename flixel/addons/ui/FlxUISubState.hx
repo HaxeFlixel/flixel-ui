@@ -64,7 +64,7 @@ class FlxUISubState extends FlxSubState implements IEventGetter
 			
 			if (data == null) {
 				trace("ERROR! Could not load _xml_id \"" + _xml_id + "\"");
-			}else{			
+			}else{
 				_ui.load(data);
 			}
 		}
@@ -73,7 +73,7 @@ class FlxUISubState extends FlxSubState implements IEventGetter
 	}
 	
 	public override function onResize(Width:Int,Height:Int):Void {
-		FlxG.resizeGame(Width, Height);	
+		FlxG.resizeGame(Width, Height);
 		_reload_countdown = 5;
 		_reload = true;
 	}	
@@ -108,7 +108,7 @@ class FlxUISubState extends FlxSubState implements IEventGetter
 		super.destroy();
 	}
 		
-	public function getEvent(id:String, sender:Dynamic, data:Dynamic):Void {		
+	public function getEvent(id:String, sender:Dynamic, data:Dynamic):Void {
 		eventResponse(id, sender, processEventData(data));
 	}
 	
@@ -121,6 +121,16 @@ class FlxUISubState extends FlxSubState implements IEventGetter
 		return null;
 	}
 	
+	public function getText(Flag:String,Context:String="ui",Safe:Bool=true):String {
+		if (_tongue != null) {
+			return _tongue.get(Flag, Context, Safe);
+		}
+		if (getTextFallback != null) {
+			return getTextFallback(Flag, Context, Safe);
+		}
+		return Flag;
+	}
+	
 	public function castParent():IEventGetter {
 		if (_parentState != null) {
 			if (Std.is(_parentState, IEventGetter)) {
@@ -130,7 +140,7 @@ class FlxUISubState extends FlxSubState implements IEventGetter
 		return null;
 	}
 	
-	private function reloadUI():Void {		
+	private function reloadUI():Void {
 		if (_ui != null) {
 			remove(_ui, true);
 			_ui.destroy();
@@ -139,7 +149,7 @@ class FlxUISubState extends FlxSubState implements IEventGetter
 		
 		_ui = new FlxUI(null,this,null,_tongue);
 		add(_ui);
-				
+		
 		var data:Fast = U.xml(_xml_id);
 		_ui.load(data);
 		
