@@ -69,13 +69,10 @@ class FlxUIState extends FlxState implements IEventGetter
 			} else{
 				_ui.load(data);
 			}
-			
 		}
 		
-		useMouse = true;
+		FlxG.mouse.visible = true;
 	}
-	
-	
 	
 	public function resizeScreen(width:Float=800, height:Float=600):Void {
 		/*#if sys

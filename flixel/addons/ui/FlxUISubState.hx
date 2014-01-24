@@ -63,7 +63,7 @@ class FlxUISubState extends FlxSubState implements IEventGetter
 			}
 		}
 		
-		useMouse = true;
+		FlxG.mouse.visible = true;
 	}
 	
 	public override function onResize(Width:Int,Height:Int):Void {
