@@ -1,24 +1,15 @@
 package flixel.addons.ui;
-import flash.display.BitmapData;
-import flash.events.MouseEvent;
-import flash.geom.Rectangle;
-import flixel.FlxCamera;
-import flixel.FlxG;
-import flixel.FlxObject;
-import flixel.system.FlxAssets;
+
+import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.ILabeled;
+import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
-import flixel.util.FlxRect;
-import flixel.util.FlxPoint;
-import flixel.FlxSprite;
-import flixel.util.FlxMath;
 import flixel.util.FlxTimer;
-import openfl.Assets;
 
 /**
  * @author Lars Doucet
  */
-
 class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButton
 {
 	public var box:FlxSprite;
@@ -26,15 +17,15 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 	public var button:FlxUIButton;
 	public var max_width:Float = -1;
 	
-	public var checked(get_checked, set_checked):Bool;
+	public var checked(default, set):Bool = false;
 	
 	//Set this to false if you just want the checkbox itself to be clickable
 	public var textIsClickable:Bool = true;
 		
 	public var checkbox_dirty:Bool = false;
 	
-	public var textX(default, set):Float;
-	public var textY(default, set):Float;
+	public var textX(default, set):Float = 0;
+	public var textY(default, set):Float = 0;
 	
 	public var box_space:Float = 2;
 	
@@ -71,7 +62,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		
 		//TODO:
 		//the +2 is a magic number, possibly should be a user-set parameter
-		button.loadGraphicSlice9(["", "", ""], Std.int(box.width + 2 + LabelW), cast box.height);
+		button.loadGraphicSlice9(["", "", ""], Std.int(box.width + 2 + LabelW), Std.int(box.height));
 		
 		max_width = Std.int(box.width + box_space + LabelW);
 		
@@ -146,7 +137,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 	
 	public function anchorLabelX():Void {
 		if (button != null) {
-			button.allLabelOffset.x = (box.width + box_space) + textX;
+			button.label.offset.x = -((box.width + box_space) + textX);
 		}
 	}
 	
@@ -190,11 +181,11 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 			if (button.label != null) {
 				if (Std.is(button.label, FlxUIText)) {
 					var ftu:FlxUIText = cast button.label;
-					ftu.forceCalcFrame();					//force update
+					ftu.drawFrame(); //force update
 				}
 				anchorLabelX();
 				anchorLabelY();
-				button.mouse_width = button.label.textWidth() + button.labelOffsets[button.status].x;
+				button.width = box.frameWidth + button.label.textField.textWidth + (button.label.x - (button.x + box.frameWidth));
 				checkbox_dirty = false;
 			}
 		}
@@ -202,19 +193,13 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		
 	/*****GETTER/SETTER***/
 	
-	public function get_checked():Bool { 
-		return _checked; 
-	}
-	
 	public function set_checked(b:Bool):Bool { 
-		_checked = b; 
 		mark.visible = b; 
-		return b; 
+		return checked = b; 
 	}
 	
 	/*****PRIVATE******/
 	
-	private var _checked:Bool;
 	private var _externalCallback:Dynamic;
 	
 	private function _clickCheck(Params:Dynamic = null):Void 
@@ -232,8 +217,8 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 			arr = new Array<Dynamic>();
 			arr.push(Params);
 		}
-				
-		if (_checked) {
+		
+		if (checked) {
 			arr.push("checked:true");
 		}else {
 			arr.push("checked:false");

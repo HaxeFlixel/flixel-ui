@@ -1,6 +1,9 @@
 package flixel.addons.ui;
+
 import flash.geom.Rectangle;
-import flixel.FlxG;
+import flixel.addons.ui.interfaces.IEventGetter;
+import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
@@ -10,7 +13,6 @@ import flixel.util.FlxTimer;
 /**
  * @author Lars Doucet
  */
-
 class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResizable implements IFlxUIButton
 {
 
@@ -138,7 +140,7 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 					var graphic_ids:Array<String> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
 					var slice9tab:Array<Int> = FlxArrayUtil.intFromString(FlxUIAssets.SLICE9_TAB);
 					var slice9_ids:Array<Array<Int>> = [slice9tab, slice9tab, slice9tab, slice9tab, slice9tab, slice9tab];
-					fb.loadGraphicSlice9(graphic_ids, 0, 0, slice9_ids, -1, true);
+					fb.loadGraphicSlice9(graphic_ids, 0, 0, slice9_ids, FlxUI9SliceSprite.TILE_NONE, -1, true);
 					tabs_.push(fb);
 				}
 			}

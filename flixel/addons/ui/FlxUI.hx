@@ -1,37 +1,34 @@
 package flixel.addons.ui;
-import flash.display.Bitmap;
+
+import flash.display.BitmapData;
 import flash.errors.Error;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import flixel.util.FlxArrayUtil;
-import haxe.xml.Fast;
-import flash.display.BitmapData;
-import flash.Lib;
-import openfl.Assets;
-import flixel.FlxBasic;
-import flixel.ui.FlxButton;
+import flixel.addons.ui.FlxUI.MaxMinSize;
+import flixel.addons.ui.FlxUIDropDownMenu;
+import flixel.addons.ui.interfaces.IEventGetter;
+import flixel.addons.ui.interfaces.IFireTongue;
+import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.addons.ui.interfaces.ILabeled;
+import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxG;
-import flixel.group.FlxGroup;
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.FlxState;
-import flixel.util.FlxPoint;
 import flixel.text.FlxText;
-import flixel.tile.FlxTilemap;
-import flixel.addons.ui.IEventGetter;
-import flixel.addons.ui.IResizable;
-
+import flixel.util.FlxPoint;
+import haxe.xml.Fast;
+import openfl.Assets;
 
 /**
  * A simple xml-driven user interface
  * 
  * Usage example:
-	_ui = new FlxUI(U.xml("save_slot"),this);
-	add(_ui);
+ *	_ui = new FlxUI(U.xml("save_slot"),this);
+ *	add(_ui);
  * 
  * @author Lars Doucet
  */
-
 class FlxUI extends FlxUIGroup implements IEventGetter
 {	
 	
@@ -75,10 +72,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private static var _flashPoint:Point;
 	private static var _flashPointZero:Point;*/
 	
-	private static var _assets_init:Bool = false;
-	
-	/**Make sure to recursively propogate the tongue pointer 
-	 * down to all my members
+	/**
+	 * Make sure to recursively propogate the tongue pointer down to all my members
 	 */
 	private function _tongueSet(list:Array<FlxSprite>, tongue:IFireTongue):Void 
 	{		
@@ -92,7 +87,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}
 	}
-	
 	
 	/***EVENT HANDLING***/
 	
@@ -113,11 +107,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 	public function new(data:Fast=null,ptr:IEventGetter=null,superIndex_:FlxUI=null,tongue_:IFireTongue=null) 
 	{
-		if (_assets_init == false) {
-			FlxUIAssets.init();
-			_assets_init = true;
-		}
-		
 		super();
 		_ptr_tongue = tongue_;	//set the localization data structure, if any.
 								//we set this directly b/c no children have been created yet
@@ -133,13 +122,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	public function onFocus(widget:IFlxUIWidget):Void {
-		if (Std.is(widget, FlxUIDropdownMenu)) {
+		if (Std.is(widget, FlxUIDropDownMenu)) {
 			//when drop down menu has focus, every other button needs to skip updating
 			for (asset in members){
 				if (Std.is(asset, IFlxUIButton)) {
 					var skip:Bool = false;
-					if (Std.is(asset, FlxUIDropdownMenu)) {
-						var ddasset:FlxUIDropdownMenu = cast asset;
+					if (Std.is(asset, FlxUIDropDownMenu)) {
+						var ddasset:FlxUIDropDownMenu = cast asset;
 						if (ddasset == widget) {
 							skip = true;
 						}
@@ -159,7 +148,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 */
 	
 	public function onFocusLost(widget:IFlxUIWidget):Void {
-		if (Std.is(widget, FlxUIDropdownMenu)) {
+		if (Std.is(widget, FlxUIDropDownMenu)) {
 			//Right now, all this does is toggle button updating on and off for 
 			
 			//when drop down menu loses focus, every other button can resume updating
@@ -503,16 +492,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var thing;
 		if(target_id == ""){
 			if (mode != null) {
-			
-				#if debug
-					trace("mode = " + mode.x);
 				
-					for (el in mode.elements) {
-						trace("el = " + el.x);
-					}
-				#end
-				
-				var xml:Xml = null;
+				var xml:Xml;
 				for (node in mode.elements) {
 					
 					var node2:Fast = applyNodeConditionals(node);	//check for conditionals
@@ -1036,7 +1017,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 			}else {
 				//if we are resizing, resize it to the target size now
-				if (Std.is(widget, flixel.addons.ui.IResizable)) {
+				if (Std.is(widget, IResizable)) {
 					var widgetr:IResizable = cast widget;
 					if(axis == "vertical"){
 						widgetr.resize(widgetr.width, object_size);
@@ -1220,7 +1201,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var code:String = U.xml_str(data.x, "code", true, "");
 		text = getText(text,context, true, code);
 		
-		var W:Int = cast _loadWidth(data, 100);
+		var W:Int = Std.int(_loadWidth(data, 100));
 		
 		var the_font:String = _loadFontFace(data);
 		
@@ -1241,7 +1222,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			ftu.borderSize = border[2];
 			ftu.borderQuality = border[3];
 
-			ftu.forceCalcFrame();
+			ftu.drawFrame();
 			ft = ftu;
 		}else {
 			var fti:FlxUIInputText = new FlxUIInputText(0, 0, W, text);
@@ -1250,7 +1231,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			fti.borderColor = border[1];
 			fti.borderSize = border[2];
 			fti.borderQuality = border[3];
-			fti.forceCalcFrame();
+			fti.drawFrame();
 			ft = fti;
 		}		
 		return ft;
@@ -1400,7 +1381,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return fc;
 	}
 	
-	private function _loadDropDownMenu(data:Fast):FlxUIDropdownMenu {
+	private function _loadDropDownMenu(data:Fast):FlxUIDropDownMenu {
 		
 		/*
 		 *   <dropdown label="Something">
@@ -1425,7 +1406,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		 *   </dropdown>
 		 */
 		
-		var fud:FlxUIDropdownMenu = null;
+		var fud:FlxUIDropDownMenu = null;
 		
 		var label:String = U.xml_str(data.x, "label");
 		var context:String = U.xml_str(data.x, "context", true, "ui");
@@ -1507,7 +1488,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}
 		
-		fud = new FlxUIDropdownMenu(0, 0, back_asset, panel_asset, asset_list, data_list, label_asset, button_asset, _onClickDropDown, _onClickDropDown_control);
+		var header = new FlxUIDropDownHeader(120, back_asset, label_asset, button_asset);
+		fud = new FlxUIDropDownMenu(0, 0, data_list, _onClickDropDown, header , panel_asset, asset_list, _onClickDropDown_control);
 		
 		return fud;
 	}
@@ -1659,9 +1641,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 	private function _loadButton(data:Fast, setCallback:Bool = true, isToggle:Bool = false, load_code:String=""):IFlxUIWidget{
 		var src:String = ""; 
-		var fb:Dynamic;
-		fb = null;
-				
+		var fb:Dynamic = null;
+		
 		var resize_ratio:Float = U.xml_f(data.x, "resize_ratio", -1);
 		var resize_point:FlxPoint = _loadCompass(data, "resize_point");
 		var isVis:Bool = U.xml_bool(data.x, "visible", true);
@@ -1685,8 +1666,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		label = getText(label,context,true,code);
 		
-		var W:Int = cast _loadWidth(data, 0, "width");
-		var H:Int = cast _loadHeight(data, 0, "height");
+		var W:Int = Std.int(_loadWidth(data, 0, "width"));
+		var H:Int = Std.int(_loadHeight(data, 0, "height"));
 		
 		var params:Array<Dynamic> = getParams(data);
 		
@@ -1825,7 +1806,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, tile, resize_ratio, isToggle, src_w, src_h, frames);
 			}
 		}else {			
-			if(load_code == "tab_menu"){
+			if (load_code == "tab_menu"){
 				//load default tab menu graphics
 				var graphic_ids:Array<String> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
 				var slice9_tab:Array<Int> = FlxArrayUtil.intFromString(FlxUIAssets.SLICE9_TAB);
@@ -1851,6 +1832,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					fb.down_toggle_color = 0xffffff;
 					fb.over_toggle_color = 0xffffff;
 				}
+				else {
+					// Center sprite icon 
+					fb.autoCenterLabel();
+				}
 			}
 		}
 		
@@ -1868,8 +1853,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		//label offset has already been 'centered,' this adjust from there:
-		fb.allLabelOffset.x += text_x;
-		fb.allLabelOffset.y += text_y;
+		fb.label.offset.x -= text_x;
+		fb.label.offset.y -= text_y;
 		
 		fb.visible = isVis;
 		
@@ -1885,8 +1870,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	private function _loadRegion(data:Fast):FlxUIRegion {
-		var w:Int = cast _loadWidth(data);
-		var h:Int = cast _loadHeight(data);
+		var w:Int = Std.int(_loadWidth(data));
+		var h:Int = Std.int(_loadHeight(data));
 		return new FlxUIRegion(0, 0, w, h);
 	}
 	
@@ -1910,17 +1895,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		var rc:Rectangle;
-		var rect_w:Int = cast _loadWidth(data);
-		var rect_h:Int = cast _loadHeight(data);
+		var rect_w:Int = Std.int(_loadWidth(data));
+		var rect_h:Int = Std.int(_loadHeight(data));
 				
 		if(bounds != null){
-			if (rect_w < bounds.min_width) { rect_w = cast bounds.min_width; }
+			if (rect_w < bounds.min_width) { rect_w = Std.int(bounds.min_width); }
 			else if (rect_w > bounds.max_width) { rect_w = cast bounds.max_width; }
 			
-			if (rect_h < bounds.min_height) { rect_h = cast bounds.min_height; }
-			else if (rect_h > bounds.max_height) { rect_h = cast bounds.max_height; }
+			if (rect_h < bounds.min_height) { rect_h = Std.int(bounds.min_height); }
+			else if (rect_h > bounds.max_height) { rect_h = Std.int(bounds.max_height); }
 		}
-			
 		if (rect_w == 0 || rect_h == 0) {
 			return null;
 		}
@@ -1961,16 +1945,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if(src != ""){
 			fs = new FlxUISprite(0, 0, src);
 		}else {
-			var W:Int = cast _loadWidth(data);
-			var H:Int = cast _loadHeight(data);
+			var W:Int = Std.int(_loadWidth(data));
+			var H:Int = Std.int(_loadHeight(data));
 			
 			if(bounds != null){
-				if (W < bounds.min_width) { W = cast bounds.min_width; }
-				else if (W > bounds.max_width) { W = cast bounds.max_width; }
-				if (H < bounds.min_height) { H = cast bounds.max_height; }
-				else if (H > bounds.max_height) { H = cast bounds.max_height; }
+				if (W < bounds.min_width) { W = Std.int(bounds.min_width); }
+				else if (W > bounds.max_width) { W = Std.int(bounds.max_width); }
+				if (H < bounds.min_height) { H = Std.int(bounds.max_height); }
+				else if (H > bounds.max_height) { H = Std.int(bounds.max_height);}
 			}
-			
+
 			var cstr:String = U.xml_str(data.x, "color");
 			var C:Int = 0;
 			if (cstr != "") {
@@ -2054,7 +2038,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return 0;
 	}
 	
-	private function calcMaxMinSize(data:Fast,width:Dynamic=null,height:Dynamic=null):{min_width:Float,min_height:Float,max_width:Float,max_height:Float}{
+	private function calcMaxMinSize(data:Fast, width:Dynamic = null, height:Dynamic = null):MaxMinSize {
 		var min_w:Float = 0;
 		var min_h:Float = 0;
 		var max_w:Float = Math.POSITIVE_INFINITY;
@@ -2119,8 +2103,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		return { min_width:min_w, min_height:min_h, max_width:max_w, max_height:max_h };
 	}
-	
-	/**********************/
 	
 	private function _getDataSize(target:String, str:String, default_:Float = 0):Float {		
 		
@@ -2361,7 +2343,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadBorder(data:Fast):Array<Dynamic>
 	{
-		var border_str:String = U.xml_str(data.x, "border", "");
+		var border_str:String = U.xml_str(data.x, "border");
 		var border_style:Int = FlxText.BORDER_NONE;
 		var border_color:Int = _loadColor(data, "border_color", 0);
 		var border_size:Int = U.xml_i(data.x, "border_size", 1);
@@ -2384,7 +2366,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						border_style = FlxText.BORDER_OUTLINE;
 						border_color = U.parseHex(border_str, false, true);
 					}else{
-						border_str = U.xml_str(data.x, "outline_fast", "");
+						border_str = U.xml_str(data.x, "outline_fast");
 						if (border_str != "") {
 							border_style = FlxText.BORDER_OUTLINE_FAST;
 							border_color = U.parseHex(border_str, false, true);
@@ -2435,7 +2417,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}		
 	}
 	
-	private function _onClickDropDown_control(isActive:Bool, dropdown:FlxUIDropdownMenu):Void {
+	private function _onClickDropDown_control(isActive:Bool, dropdown:FlxUIDropDownMenu):Void {
 		if (isActive) {
 			focus = dropdown;
 		}else {
@@ -2443,7 +2425,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 	}
 	
-	private function _onClickDropDown(params:Array<Dynamic> = null):Void {
+	private function _onClickDropDown(?params:String):Void {
 		FlxG.log.add("FlxUI._onClickDropDown(" + params + ")");
 		if (_ptr != null) {
 			_ptr.getEvent("click_dropdown", this, params);
@@ -2565,7 +2547,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				
 				if (Std.is(the_label, FlxUIText)) {
 					var ftu:FlxUIText = cast the_label;
-					ftu.forceCalcFrame();
+					ftu.drawFrame();
 				}
 				
 				fb.autoCenterLabel();
@@ -2616,5 +2598,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}
 	}
+}
 
+typedef MaxMinSize = {
+	min_width:Float,
+	min_height:Float,
+	max_width:Float,
+	max_height:Float
 }

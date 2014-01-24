@@ -1,21 +1,15 @@
 package flixel.addons.ui;
-import flixel.FlxBasic;
-import flixel.group.FlxGroup;
-import flixel.FlxObject;
-import flixel.group.FlxSpriteGroup;
-import flixel.util.FlxPoint;
+
+import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxSprite;
-#if (cpp || neko)
-	import flixel.atlas.FlxAtlas;
-#end
+import flixel.group.FlxSpriteGroup;
 
 /**
  * A cheap extension of FlxUIGroup that lets you move all the children around
  * without having to call reset()
  * @author Lars Doucet
  */
-
-class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxUIWidget
+class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 {	
 	/***PUBLIC VARS***/
 		
@@ -32,9 +26,9 @@ class FlxUIGroup extends FlxSpriteGroup implements IDestroyable implements IFlxU
 		
 	/***PUBLIC FUNCTIONS***/
 	
-	public function new() 
+	public function new(X:Float = 0, Y:Float = 0) 
 	{
-		super();
+		super(X, Y);
 	}
 	
 	public override function add(Object:FlxSprite):FlxSprite {

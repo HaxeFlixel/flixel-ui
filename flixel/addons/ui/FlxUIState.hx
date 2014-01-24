@@ -1,16 +1,10 @@
 package flixel.addons.ui;
-import flixel.FlxCamera;
-import haxe.xml.Fast;
-import flash.display.BitmapData;
-import flash.Lib;
-import flixel.FlxBasic;
-import flixel.ui.FlxButton;
+
+import flixel.addons.ui.interfaces.IEventGetter;
+import flixel.addons.ui.interfaces.IFireTongue;
 import flixel.FlxG;
-import flixel.group.FlxGroup;
-import flixel.FlxObject;
-import flixel.FlxSprite;
 import flixel.FlxState;
-import flixel.text.FlxText;
+import haxe.xml.Fast;
 
 /**
  * This is a simple extension of FlxState that does two things:
@@ -71,25 +65,20 @@ class FlxUIState extends FlxState implements IEventGetter
 			
 			
 			if (data == null) {
-				#if debug
-					trace("ERROR! Could not load _xml_id \"" + _xml_id + "\"");
-				#end
-			}else{
+				FlxG.log.error("FlxUISubState: Could not load _xml_id \"" + _xml_id + "\"");
+			} else{
 				_ui.load(data);
 			}
-			
 		}
 		
-		useMouse = true;
+		FlxG.mouse.visible = true;
 	}
-	
-	
 	
 	public function resizeScreen(width:Float=800, height:Float=600):Void {
 		/*#if sys
 			//TODO: reimplement with next OpenFL
-			FlxG.stage.resize(cast width, cast height);
-			onResize(cast width,cast height);
+			FlxG.stage.resize(Std.int(width), Std.int(height));
+			onResize(Std.int(width), Std.int(height));
 		#end*/
 	}
 		
@@ -107,9 +96,6 @@ class FlxUIState extends FlxState implements IEventGetter
 					_reload_countdown--;
 					if (_reload_countdown == 0) {
 						_reload = false;
-						#if debug
-							trace("RELOAD UI!");
-						#end
 						reloadUI();
 					}
 				}

@@ -1,7 +1,4 @@
 package flixel.addons.ui;
-import flash.display.BitmapData;
-import flash.text.Font;
-import openfl.Assets;
 
 class FlxUIAssets
 {
@@ -10,7 +7,7 @@ class FlxUIAssets
 	inline static public var IMG_BUTTON_THIN:String = "flixel/flixel-ui/img/button_thin.png";
 	inline static public var IMG_BUTTON_TOGGLE:String = "flixel/flixel-ui/img/button_toggle.png";
 
-	inline static public var IMG_BUTTON_SIZE:Float = 18;	//each of the above buttons is 18x18
+	inline static public var IMG_BUTTON_SIZE:Int = 18;	//each of the above buttons is 18x18
 	
 	inline static public var IMG_CHECK_MARK:String = "flixel/flixel-ui/img/check_mark.png";
 	inline static public var IMG_CHECK_BOX:String = "flixel/flixel-ui/img/check_box.png";
@@ -35,10 +32,5 @@ class FlxUIAssets
 	inline static public var XML_DEFAULTS_ID:String = "flixel/flixel-ui/xml/defaults";
 	inline static public var XML_DEFAULT_POPUP_ID:String = "flixel/flixel-ui/xml/default_popup";
 	
-	static public var index_size:Map<String,Array<Float>>=null;
-	
-	static public function init():Void
-	{
-		//
-	}
+	static public var index_size:Map<String,Array<Float>> = null;
 }

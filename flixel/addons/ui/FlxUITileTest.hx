@@ -1,12 +1,14 @@
 package flixel.addons.ui;
+
 import flash.display.BitmapData;
 import flash.geom.Point;
+import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.addons.ui.interfaces.IResizable;
 
 /**
  * This is mostly just for testing purposes, it is NOT a replacement for FlxTileMap
  * @author 
  */
-
 class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIWidget 
 {
 	public var widthInTiles(get,null):Int;

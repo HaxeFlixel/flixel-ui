@@ -1,15 +1,10 @@
 package flixel.addons.ui;
-import flash.events.Event;
+
+import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import flixel.FlxG;
+import flixel.addons.ui.interfaces.ILabeled;
 import flixel.FlxSprite;
-import flixel.text.FlxText;
-import flixel.ui.FlxButton;
-import flash.display.BitmapData;
-import flixel.util.FlxPoint;
-import flixel.util.FlxTimer;
-import openfl.Assets;
 
 /**
  * This class extends FlxUITypedButton and has a Text label, and is thus
@@ -22,13 +17,21 @@ import openfl.Assets;
  * Furthermore, you have the ability to set the text's coloring for each
  * state just by adjusting a few public variables
  */
-
 class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled
 {
 	private var _noIconGraphicsBkup:BitmapData;
 	
-	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Dynamic) {
-		super(X, Y, null, OnClick);
+	/**
+	 * Creates a new <code>FlxUIButton</code>.
+	 * 
+	 * @param	X				The X position of the button.
+	 * @param	Y				The Y position of the button.
+	 * @param	Label			The text that you want to appear on the button.
+	 * @param	OnClick			The function to call whenever the button is clicked.
+	 * @param	OnClickParams	The params to call the onClick function with.
+	 */
+	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Dynamic, ?OnClickParams:Dynamic) {
+		super(X, Y, null, OnClick, OnClickParams);
 		if (Label != null) {
 			//create a FlxUIText label
 			//labelOffsets[status].set(-1, 3);
@@ -68,7 +71,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled
 		// Stamps the icon in every frame of this button.
 		for (i in 0...frames)
 		{
-			this.stamp(icon, sx, sy + Std.int(i * height));
+			stamp(icon, sx, sy + Std.int(i * height));
 		}
 	}
 	

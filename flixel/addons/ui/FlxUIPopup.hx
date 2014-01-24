@@ -1,4 +1,6 @@
 package flixel.addons.ui;
+
+import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.util.FlxPoint;
 
 /**
@@ -97,12 +99,12 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	public override function eventResponse(id:String, sender:Dynamic, data:Array<Dynamic>):Void {
 		switch(id) {
 			case "click_button":
-				var i:Int = cast data[0];
-				var label:String = cast data[1];
+				var i:Int = Std.int(data[0]);
+				var label:String = Std.string(data[1]);
 				switch(i) {
-					case 0, 1, 2:	castParent().getEvent("click_popup", this, data);
-									trace("flxuipopup close");
-									close();
+					case 0, 1, 2:	
+						castParent().getEvent("click_popup", this, data);
+						close();
 				}
 		}
 		super.eventResponse(id, sender, data);
