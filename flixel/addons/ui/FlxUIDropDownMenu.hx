@@ -123,7 +123,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		dropPanel = DropPanel;
 		if (dropPanel == null) {
 			var rect = new Rectangle(0 , 0, header.background.width, header.background.height);
-			dropPanel = new FlxUI9SliceSprite(0, 0, FlxUIAssets.IMG_BOX, rect, "1,1,14,14");
+			dropPanel = new FlxUI9SliceSprite(0, 0, FlxUIAssets.IMG_BOX, rect, [1,1,14,14]);
 		}
 		
 		dropPanel.y = header.background.y;
@@ -263,14 +263,14 @@ class FlxUIDropDownHeader extends FlxUIGroup
 		
 		// Background
 		if (background == null) {
-			background = new FlxUI9SliceSprite(0, 0, FlxUIAssets.IMG_BOX, new Rectangle(0, 0, Width, 20), "1,1,14,14");
+			background = new FlxUI9SliceSprite(0, 0, FlxUIAssets.IMG_BOX, new Rectangle(0, 0, Width, 20), [1,1,14,14]);
 		}
 
 		// Button
 		if (button == null) {
 			button = new FlxUISpriteButton(0, 0, new FlxSprite(0, 0, FlxUIAssets.IMG_DROPDOWN));
 			button.loadGraphicSlice9([FlxUIAssets.IMG_BUTTON_THIN], 80, 20, 
-									[FlxArrayUtil.intFromString(FlxUIAssets.SLICE9_BUTTON)],
+									[FlxStringUtil.toIntArray(FlxUIAssets.SLICE9_BUTTON)],
 									FlxUI9SliceSprite.TILE_NONE, -1, false, FlxUIAssets.IMG_BUTTON_SIZE, FlxUIAssets.IMG_BUTTON_SIZE);
 		}
 		button.resize(background.height, background.height);

@@ -11,6 +11,7 @@ import flixel.ui.FlxButton;
 import flixel.ui.FlxTypedButton;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxPoint;
+import flixel.util.FlxStringUtil;
 import openfl.Assets;
 
 /**
@@ -314,13 +315,13 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			//default asset
 			if(!isToggle){
 				assets = [FlxUIAssets.IMG_BUTTON];
-				slice9 = [FlxArrayUtil.intFromString(FlxUIAssets.SLICE9_BUTTON)];
+				slice9 = [FlxStringUtil.toIntArray(FlxUIAssets.SLICE9_BUTTON)];
 				temp = Assets.getBitmapData(assets[0]);
 				_src_w = Std.int(temp.width);
 				_src_h = Std.int(temp.height / 3);				//calc default source width/height
 			}else {
 				assets = [FlxUIAssets.IMG_BUTTON_TOGGLE];
-				slice9 = [FlxArrayUtil.intFromString(FlxUIAssets.SLICE9_BUTTON_TOGGLE)];
+				slice9 = [FlxStringUtil.toIntArray(FlxUIAssets.SLICE9_BUTTON_TOGGLE)];
 				temp = Assets.getBitmapData(assets[0]);
 				_src_w = Std.int(temp.width);
 				_src_h = Std.int(temp.height / 6);				//calc default source width/height

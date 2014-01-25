@@ -18,6 +18,7 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxPoint;
+import flixel.util.FlxStringUtil;
 import haxe.xml.Fast;
 import openfl.Assets;
 
@@ -1726,11 +1727,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						frames.push(Std.parseInt(numstr));
 					}
 				}
-					
+				
 				for (graphicNode in data.nodes.graphic) {
 					var graphic_id:String = U.xml_str(graphicNode.x, "id", true);
 					var image:String = U.xml_str(graphicNode.x, "image");
-					var slice9:Array<Int> = FlxArrayUtil.intFromString(U.xml_str(graphicNode.x, "slice9"));
+					var slice9:Array<Int> = FlxStringUtil.toIntArray(U.xml_str(graphicNode.x, "slice9"));
 					tile = _loadTileRule(graphicNode);
 					
 					var toggleState:Bool = U.xml_bool(graphicNode.x, "toggle");
@@ -1810,7 +1811,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			if (load_code == "tab_menu"){
 				//load default tab menu graphics
 				var graphic_ids:Array<String> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
-				var slice9_tab:Array<Int> = FlxArrayUtil.intFromString(FlxUIAssets.SLICE9_TAB);
+				var slice9_tab:Array<Int> = FlxStringUtil.toIntArray(FlxUIAssets.SLICE9_TAB);
 				var slice9_ids:Array<Array<Int>> = [slice9_tab, slice9_tab, slice9_tab, slice9_tab, slice9_tab, slice9_tab];
 				fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);
 			}else{
@@ -1911,7 +1912,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		var rc:Rectangle = new Rectangle(0, 0, rect_w, rect_h);
-		var slice9:Array<Int> = FlxArrayUtil.intFromString(U.xml_str(data.x, "slice9"));
+		var slice9:Array<Int> = FlxStringUtil.toIntArray(U.xml_str(data.x, "slice9"));
 		
 		var smooth:Bool = U.xml_bool(data.x, "smooth", false);
 		
