@@ -14,10 +14,6 @@ import flixel.util.FlxPoint;
 import flixel.util.FlxStringUtil;
 import openfl.Assets;
 
-/**
- * ...
- * @author 
- */
 class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResizable implements IFlxUIWidget implements IFlxUIButton
 {
 	public var id:String; 
@@ -47,15 +43,14 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	/**
 	 * Creates a new <code>FlxUITypedButton</code> object with a gray background.
 	 * 
-	 * @param	X				The X position of the button.
-	 * @param	Y				The Y position of the button.
-	 * @param	Label			The text that you want to appear on the button.
-	 * @param	OnClick			The function to call whenever the button is clicked.
-	 * @param	OnClickParams	The params to call the onClick function with
+	 * @param	X			The X position of the button.
+	 * @param	Y			The Y position of the button.
+	 * @param	Label		The text that you want to appear on the button.
+	 * @param	OnClick		The function to call whenever the button is clicked.
 	 */
-	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Dynamic, ?OnClickParams:Array<Dynamic>)
+	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Void->Void)
 	{
-		super(X, Y, Label, OnClick, OnClickParams);
+		super(X, Y, Label, OnClick);
 		
 		_centerLabelOffset = new FlxPoint(0, 0);
 		

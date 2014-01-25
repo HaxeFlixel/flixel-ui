@@ -1682,7 +1682,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		fb.resize_point = resize_point;
 		
 		if (setCallback) {
-			fb.onUp.setCallback(_onClickButton, [params]);
+			fb.onUp.callback = _onClickButton.bind(params);
 		}
 		
 		/***Begin graphics loading block***/

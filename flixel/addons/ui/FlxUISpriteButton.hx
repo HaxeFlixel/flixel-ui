@@ -19,11 +19,10 @@ class FlxUISpriteButton extends FlxUITypedButton<FlxSprite>
 	 * @param	Y				The Y position of the button.
 	 * @param	Label			The text that you want to appear on the button.
 	 * @param	OnClick			The function to call whenever the button is clicked.
-	 * @param	OnClickParams	The params to call the onClick function with.
 	 */
-	public function new(X:Float = 0, Y:Float = 0, ?Asset:FlxSprite, ?OnClick:Dynamic, ?OnClickParams:Array<Dynamic>) 
+	public function new(X:Float = 0, Y:Float = 0, ?Asset:FlxSprite, ?OnClick:Void->Void) 
 	{
-		super(X, Y, null, OnClick, OnClickParams);		
+		super(X, Y, null, OnClick);		
 		
 		//Instead of "Label" we have "Asset" which is the id of the asset you want to load
 		//If you're trying to push in a raw BitmapData object, add that to the cache first and pass in the key

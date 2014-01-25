@@ -76,7 +76,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 			for (data in DataList) 
 			{
 				var t:FlxUIButton = new FlxUIButton(0, 0, data.label);
-				t.onUp.setCallback(onClickItem, [i]);
+				t.onUp.callback = onClickItem.bind(i);
 				
 				t.id = data.id;
 				

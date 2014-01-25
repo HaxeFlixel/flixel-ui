@@ -49,7 +49,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		
 		box.loadGraphic(Box, true, false);
 		
-		button = new FlxUIButton(0, 0, Label, _clickCheck);
+		button = new FlxUIButton(0, 0, Label, _clickCheck.bind(null));
 		
 		//set default checkbox label format
 		button.label.setFormat(null, 8, 0xffffff, "left", FlxText.BORDER_OUTLINE);
@@ -67,7 +67,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		max_width = Std.int(box.width + box_space + LabelW);
 		
 		setExternalCallback(OnClick);
-		button.onUp.setCallback(_clickCheck, [params]);    //for internal use, check/uncheck box, bubbles up to _externalCallback
+		button.onUp.callback = _clickCheck.bind(params);    //for internal use, check/uncheck box, bubbles up to _externalCallback
 				
 		mark = new FlxSprite();
 		if (Check == null) {

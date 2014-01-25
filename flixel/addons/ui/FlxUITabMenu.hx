@@ -153,7 +153,7 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 		var i:Int = 0;
 		for (tab in _tabs) {
 			add(tab);
-			tab.onUp.setCallback(showTabId, [tab.id]);
+			tab.onUp.callback = showTabId.bind(tab.id);
 			i++;
 		}
 		
