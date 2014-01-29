@@ -1148,7 +1148,7 @@ class U
 			return s;
 		}
 		
-		static public function formatXml(_xml:Xml):String 
+		public static function formatXml(_xml:Xml):String
 		{
 			var s:String = _xml.toString();
 			
