@@ -13,7 +13,7 @@ import flixel.util.FlxColor;
 class FlxUISpriteButton extends FlxUITypedButton<FlxSprite>
 {	
 	/**
-	 * Creates a new <code>FlxUISpriteButton</code>.
+	 * Creates a new FlxUISpriteButton.
 	 * 
 	 * @param	X				The X position of the button.
 	 * @param	Y				The Y position of the button.

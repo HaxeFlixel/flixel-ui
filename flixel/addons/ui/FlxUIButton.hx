@@ -22,7 +22,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled
 	private var _noIconGraphicsBkup:BitmapData;
 	
 	/**
-	 * Creates a new <code>FlxUIButton</code>.
+	 * Creates a new FlxUIButton.
 	 * 
 	 * @param	X			The X position of the button.
 	 * @param	Y			The Y position of the button.

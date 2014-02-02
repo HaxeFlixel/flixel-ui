@@ -41,7 +41,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	}
 	
 	/**
-	 * Creates a new <code>FlxUITypedButton</code> object with a gray background.
+	 * Creates a new FlxUITypedButton object with a gray background.
 	 * 
 	 * @param	X			The X position of the button.
 	 * @param	Y			The Y position of the button.

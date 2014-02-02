@@ -119,7 +119,7 @@ class FlxInputText extends FlxText
 	private var _fieldBorderColor:Int = 0xFF000000;
 	
 	/**
-	 * Creates a new <code>FlxText</code> object at the specified position.
+	 * Creates a new FlxText object at the specified position.
 	 * @param	X				The X position of the text.
 	 * @param	Y				The Y position of the text.
 	 * @param	Width			The width of the text object (height is determined automatically).
