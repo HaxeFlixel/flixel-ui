@@ -2,13 +2,10 @@
  "name": "flixel-ui",
  "url" : "https://github.com/HaxeFlixel/flixel-ui",
  "license": "MIT",
- "tags": ["flash", "game", "cpp", "openfl", "flixel", "ui", "flixel-ui"],
+ "tags": ["game", "openfl", "flash", "neko", "cpp", "android", "ios", "cross"],
  "description": "A UI library for Flixel",
- "version": "0.0.2",
- "releasenote": "Pre-alpha release",
- "contributors": ["larsiusprime"],
- "dependencies": { 
-  "openfl": "",
-  "flixel": ""
- }
+ "version": "1.0.0",
+ "releasenote": "Initial haxelib release",
+ "contributors": ["haxeflixel"],
+ "dependencies": { "openfl": "", "flixel": "" }
 }
