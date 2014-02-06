@@ -101,7 +101,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (currState != null) {
 			currState.getEvent(name, sender, data, params);
 		}else {
-			FlxG.log.error("Warning, FlxUI event not handled, IFlxUIWidgets need to exist within an IFlxUIState");
+			FlxG.log.warn("could not call getEvent() for FlxUI event \"+"name"+\" because current state is not a FlxUIState.\nSolution: state should extend FlxUIState, implement IEventGetter. Otherwise, set broadcastToFlxUI=false for your IFlxUIWidget to supress the events.");
 		}
 	}
 	
