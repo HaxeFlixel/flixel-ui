@@ -92,19 +92,19 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	/***EVENT HANDLING***/
 	
-	public function callEvent(id:String, sender:IFlxUIWidget, data:Dynamic):Void {
-		getEvent(id, sender, data);
+	public function callEvent(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
+		getEvent(id, sender, data, params);
 	}
 	
-	public function getEvent(id:String, sender:IFlxUIWidget, data:Dynamic):Void {
+	public function getEvent(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
 		if (_ptr != null) {
-			_ptr.getEvent(id, sender, data);
+			_ptr.getEvent(id, sender, data, params);
 		}
 	}
 	
-	public function getRequest(id:String, sender:IFlxUIWidget, data:Dynamic):Dynamic {
+	public function getRequest(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Dynamic {
 		if (_ptr != null) {
-			return _ptr.getRequest(id, sender, data);
+			return _ptr.getRequest(id, sender, data, params);
 		}
 		return null;
 	}
@@ -804,7 +804,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			case "chrome", "nineslicesprite", "nine_slice_sprite", "nineslice", "nine_slice": return _load9SliceSprite(info);
 			case "tile_test": return _loadTileTest(info);
 			case "sprite": return _loadSprite(info);
-			case "text": return _loadText(info);
+			case "text": return _loadText(info);								//if input has events
 			case "numeric_stepper": return _loadNumericStepper(info);			//has events, params
 			case "button": return _loadButton(info);							//has events, params
 			case "button_toggle": return _loadButton(info,true,true);			//has events, params
@@ -2627,6 +2627,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 	}
 }
+
+typedef UIEventCallback = String->IFlxUIWidget->Dynamic->Array<Dynamic>->Void;
 
 typedef NamedBool = {
 	name:String,

@@ -1,5 +1,6 @@
 package flixel.addons.ui;
 
+import flixel.addons.ui.FlxUI.UIEventCallback;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxSprite;
 
@@ -9,7 +10,7 @@ import flixel.FlxSprite;
  */
 class FlxUISprite extends FlxSprite implements IFlxUIWidget 
 {
-	public var uiEventCallback:String->IFlxUIWidget->Dynamic->Void;
+	public var uiEventCallback:UIEventCallback;
 	
 	//simple string ID, handy for identification, etc
 	public var id:String;

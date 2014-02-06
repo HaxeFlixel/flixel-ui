@@ -1,5 +1,6 @@
 package flixel.addons.ui;
 
+import flixel.addons.ui.FlxUI.UIEventCallback;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.util.FlxPoint;
 
@@ -9,7 +10,7 @@ import flixel.util.FlxPoint;
  */
 class FlxUIPopup extends FlxUISubState implements IFlxUIWidget 
 {
-	public var uiEventCallback:String->IFlxUIWidget->Dynamic->Void;
+	public var uiEventCallback:UIEventCallback;
 	
 	public var id:String;
 	
@@ -98,18 +99,18 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 		}
 	}	
 	 
-	public override function eventResponse(id:String, sender:IFlxUIWidget, data:Array<Dynamic>):Void {
+	public override function getEvent(id:String, sender:IFlxUIWidget, data:Array<Dynamic>, ?params:Array<Dynamic>):Void {
 		switch(id) {
 			case "click_button":
-				var i:Int = Std.int(data[0]);
-				var label:String = Std.string(data[1]);
+				var i:Int = Std.int(params[0]);
+				var label:String = Std.string(params[1]);
 				switch(i) {
-					case 0, 1, 2:	
-						castParent().getEvent("click_popup", this, data);
+					case 0, 1, 2:
+						castParent().getEvent("click_popup", this, data, params);
 						close();
 				}
 		}
-		super.eventResponse(id, sender, data);
+		super.getEvent(id, sender, data, params);
 	}
 	
 	private var _quickSetupParams:{title:String, body:String, button_labels:Array<String>} = null;

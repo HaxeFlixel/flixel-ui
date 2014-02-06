@@ -14,7 +14,7 @@ interface IEventGetter
 	 * @param	sender the object that initiated the event
 	 * @param	data data you want to send
 	 */
-	public function getEvent(id:String, sender:Dynamic, data:Dynamic):Void;
+	public function getEvent(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>):Void;
 	
 	/**
 	 * Usage: response = getRequest("event_id",sender,some_data);
@@ -26,5 +26,5 @@ interface IEventGetter
 	 * @param	data data you want to send
 	 * @return	varies
 	 */
-	public function getRequest(id:String, sender:Dynamic, data:Dynamic):Dynamic;
+	public function getRequest(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>):Dynamic;
 }

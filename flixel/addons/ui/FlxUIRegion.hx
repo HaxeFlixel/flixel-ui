@@ -1,5 +1,6 @@
 package flixel.addons.ui;
 
+import flixel.addons.ui.FlxUI.UIEventCallback;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxSprite;
@@ -11,7 +12,7 @@ import flixel.util.FlxRandom;
  */
 class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizable
 {
-	public var uiEventCallback:String->IFlxUIWidget->Dynamic->Void;
+	public var uiEventCallback:UIEventCallback;
 	
 	public var id:String;
 	

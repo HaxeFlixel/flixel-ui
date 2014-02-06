@@ -2,6 +2,7 @@ package flixel.addons.ui;
 
 import flash.display.BitmapData;
 import flash.errors.Error;
+import flixel.addons.ui.FlxUI.UIEventCallback;
 import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
@@ -25,7 +26,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public var has_toggle:Bool = false;
 	public var toggled:Bool = false;
 	
-	public var uiEventCallback:String->IFlxUIWidget->Dynamic->Void;
+	public var uiEventCallback:UIEventCallback;
 	
 	//Change these to something besides 0 to make the label use that color
 	//when that state is active
@@ -615,7 +616,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			label.color = (toggled) ? up_toggle_color : up_color;
 		}
 		if (uiEventCallback != null) {
-			uiEventCallback(CLICK_EVENT, this, params);
+			uiEventCallback(CLICK_EVENT, this, null, params);
 		}
 	}
 	
@@ -626,7 +627,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			label.color = (toggled) ? down_toggle_color : down_color;
 		}
 		if (uiEventCallback != null) {
-			uiEventCallback(DOWN_EVENT, this, params);
+			uiEventCallback(DOWN_EVENT, this, null, params);
 		}
 	}
 	
@@ -637,7 +638,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			label.color = (toggled) ? over_toggle_color : over_color;
 		}
 		if (uiEventCallback != null) {
-			uiEventCallback(OVER_EVENT, this, params);
+			uiEventCallback(OVER_EVENT, this, null, params);
 		}
 	}
 	
@@ -648,7 +649,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			label.color = (toggled) ? up_toggle_color : up_color;
 		}
 		if (uiEventCallback != null) {
-			uiEventCallback(OUT_EVENT, this, params);
+			uiEventCallback(OUT_EVENT, this, null, params);
 		}
 	}
 

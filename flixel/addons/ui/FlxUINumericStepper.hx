@@ -176,7 +176,7 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 		stack = Stack;
 	}
 	
-	private function _onInputTextEvent(id:String, sender:IFlxUIWidget, data:Dynamic):Void {
+	private function _onInputTextEvent(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
 		var text:String = cast data;
 		if (text == "") 
 		{
@@ -201,11 +201,7 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 	
 	private function _doCallback(event:String):Void{
 		if (uiEventCallback != null) {
-			if (params != null) {
-				uiEventCallback(event, this, [value, params]);
-			}else {
-				uiEventCallback(event, this, [value]);
-			}
+			uiEventCallback(event, this, value, params);
 		}
 	}
 }

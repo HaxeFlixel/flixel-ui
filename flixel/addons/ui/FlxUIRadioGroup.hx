@@ -255,7 +255,7 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHas
 		}
 	}
 	
-	private function _onCheckBoxEvent(id:String, sender:IFlxUIWidget, data:Dynamic):Void {
+	private function _onCheckBoxEvent(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
 		_onClick(cast sender, true);
 	}
 	
@@ -274,11 +274,7 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHas
 		
 		if (doCallback) {
 			if (uiEventCallback != null) {
-				if(params != null){
-					uiEventCallback(CLICK_EVENT, this, [_ids[_selected], params]);
-				}else {
-					uiEventCallback(CLICK_EVENT, this, [_ids[_selected]]);
-				}
+				uiEventCallback(CLICK_EVENT, this, _ids[_selected], params);
 			}
 		}
 		return true;

@@ -237,11 +237,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		showList(false);
 		
 		if (uiEventCallback != null) {
-			if (params != null) {
-				uiEventCallback(CLICK_EVENT, this, [item.id, params]);
-			}else {
-				uiEventCallback(CLICK_EVENT, this, [item.id]);
-			}
+			uiEventCallback(CLICK_EVENT, this, item.id, params);
 		}
 	}
 	

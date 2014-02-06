@@ -218,11 +218,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		if (uiEventCallback == null) {
 			return;
 		}
-		
-		var nb:NamedBool = cast params[params.length - 1];
-		nb.value = checked;
-		
-		uiEventCallback(CLICK_EVENT, this, params);
+		uiEventCallback(CLICK_EVENT, this, checked, params);
 	}
 	
 }

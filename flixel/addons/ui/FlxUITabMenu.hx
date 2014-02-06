@@ -20,11 +20,11 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 
 	/***Event Handling***/
 	
-	public function getEvent(id:String, sender:IFlxUIWidget, data:Dynamic):Void {
+	public function getEvent(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
 		//not yet implemented
 	}
 	
-	public function getRequest(id:String, sender:IFlxUIWidget, data:Dynamic):Dynamic {
+	public function getRequest(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Dynamic {
 		//not yet implemented
 		return null;
 	}	
@@ -189,7 +189,7 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 		}
 	}
 	
-	private function _onTabEvent(id:String, sender:IFlxUIWidget, data:Dynamic):Void {
+	private function _onTabEvent(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
 		switch(id) {
 			case "click_button":
 				var tab:FlxUIButton = cast sender;

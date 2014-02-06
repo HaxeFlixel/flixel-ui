@@ -1,5 +1,6 @@
 package flixel.addons.ui.interfaces;
 
+import flixel.addons.ui.FlxUI.UIEventCallback;
 import flixel.interfaces.IFlxSprite;
 
 /**
@@ -12,7 +13,7 @@ interface IFlxUIWidget extends IFlxSprite
 	public var width(get, set):Float;
 	public var height(get, set):Float;
 	
-	public var uiEventCallback:String->IFlxUIWidget->Dynamic->Void;
+	public var uiEventCallback:UIEventCallback;
 	 /*public function onFocusLost():Void;
 	 public function onFocus():Void;*/
 }

@@ -1,5 +1,6 @@
 package flixel.addons.ui;
 
+import flixel.addons.ui.FlxUI.UIEventCallback;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
 import flixel.text.FlxText;
@@ -10,7 +11,7 @@ import flixel.text.FlxText;
  */
 class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget 
 {
-	public var uiEventCallback:String->IFlxUIWidget->Dynamic->Void;
+	public var uiEventCallback:UIEventCallback;
 	
 	public var id:String; 
 	
