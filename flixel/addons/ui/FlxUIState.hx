@@ -1,16 +1,10 @@
 package flixel.addons.ui;
-import flixel.FlxCamera;
-import haxe.xml.Fast;
-import flash.display.BitmapData;
-import flash.Lib;
-import flixel.FlxBasic;
-import flixel.ui.FlxButton;
+
+import flixel.addons.ui.interfaces.IEventGetter;
+import flixel.addons.ui.interfaces.IFireTongue;
 import flixel.FlxG;
-import flixel.group.FlxGroup;
-import flixel.FlxObject;
-import flixel.FlxSprite;
 import flixel.FlxState;
-import flixel.text.FlxText;
+import haxe.xml.Fast;
 
 /**
  * This is a simple extension of FlxState that does two things:
@@ -32,12 +26,12 @@ class FlxUIState extends FlxState implements IEventGetter
 	private var _ui:FlxUI;
 	private var _tongue:IFireTongue;
 	
-	public static var static_tongue:IFireTongue=null;	
+	public static var static_tongue:IFireTongue=null;
 	//if this is not null, each state will grab this auto-magically
 	//otherwise it's up to you to set _tongue before the UI stuff loads.
 	
 	//set this to true to make it automatically reload the UI when the window size changes
-	public var reload_ui_on_resize:Bool = false;	
+	public var reload_ui_on_resize:Bool = false;
 	
 	private var _reload:Bool = false;
 	private var _reload_countdown:Int = 0;
@@ -71,25 +65,20 @@ class FlxUIState extends FlxState implements IEventGetter
 			
 			
 			if (data == null) {
-				#if debug
-					trace("ERROR! Could not load _xml_id \"" + _xml_id + "\"");
-				#end
-			}else{
+				FlxG.log.error("FlxUISubState: Could not load _xml_id \"" + _xml_id + "\"");
+			} else{
 				_ui.load(data);
 			}
-			
 		}
 		
-		useMouse = true;
+		FlxG.mouse.visible = true;
 	}
-	
-	
 	
 	public function resizeScreen(width:Float=800, height:Float=600):Void {
 		/*#if sys
 			//TODO: reimplement with next OpenFL
-			FlxG.stage.resize(cast width, cast height);
-			onResize(cast width,cast height);
+			FlxG.stage.resize(Std.int(width), Std.int(height));
+			onResize(Std.int(width), Std.int(height));
 		#end*/
 	}
 		
@@ -107,9 +96,6 @@ class FlxUIState extends FlxState implements IEventGetter
 					_reload_countdown--;
 					if (_reload_countdown == 0) {
 						_reload = false;
-						#if debug
-							trace("RELOAD UI!");
-						#end
 						reloadUI();
 					}
 				}
@@ -129,7 +115,7 @@ class FlxUIState extends FlxState implements IEventGetter
 		super.destroy();
 	}
 		
-	public function getEvent(id:String, sender:Dynamic, data:Dynamic):Void {		
+	public function getEvent(id:String, sender:Dynamic, data:Dynamic):Void {
 		eventResponse(id, sender, processEventData(data));
 	}
 	
@@ -140,6 +126,16 @@ class FlxUIState extends FlxState implements IEventGetter
 	public function getRequest(id:String, sender:Dynamic, data:Dynamic):Dynamic {
 		//define per subclass
 		return null;
+	}
+	
+	public function getText(Flag:String,Context:String="ui",Safe:Bool=true):String{
+		if (_tongue != null) {
+			return _tongue.get(Flag, Context, Safe);
+		}
+		if (getTextFallback != null){
+			return getTextFallback(Flag, Context, Safe);
+		}
+		return Flag;
 	}
 	
 	private function reloadUI():Void {

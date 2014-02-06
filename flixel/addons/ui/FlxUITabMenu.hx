@@ -1,16 +1,20 @@
 package flixel.addons.ui;
+
 import flash.geom.Rectangle;
-import flixel.FlxG;
+import flixel.addons.ui.interfaces.IEventGetter;
+import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
+import flixel.util.FlxArrayUtil;
+import flixel.util.FlxStringUtil;
 import flixel.util.FlxTimer;
 
 /**
  * @author Lars Doucet
  */
-
-class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResizable
+class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResizable implements IFlxUIButton
 {
 
 	/***Event Handling***/
@@ -24,13 +28,35 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 		return null;
 	}	
 	
+	/**For IFlxUIButton**/
+	
+	public var skipButtonUpdate(default, set):Bool;
+	public function set_skipButtonUpdate(b:Bool):Bool {
+		skipButtonUpdate = b;
+		var tab:FlxUIButton;
+		for (tab in _tabs) {
+			tab.skipButtonUpdate = b;
+		}
+		var group:FlxUIGroup;
+		for (group in _tab_groups) {
+			var sprite:FlxSprite;
+			for (sprite in group.members) {
+				if (Std.is(sprite, IFlxUIButton)) {
+					var widget:IFlxUIButton = cast sprite;
+					widget.skipButtonUpdate = b;
+				}
+			}
+		}
+		return b;
+	}
+	
 	/**For IResizable**/
 	
-	override public function get_width():Float {
+	public override function get_width():Float {
 		return _back.width;
 	}
 	
-	override public function get_height():Float {
+	public override function get_height():Float {
 		var fbt = getFirstTab();
 		if (fbt != null) {
 			return (_back.y + _back.height) - fbt.y;
@@ -79,10 +105,10 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 	
 	public function new(back_:FlxSprite,?tabs_:Array<FlxUIButton>,?tab_ids_and_labels_:Array<{id:String,label:String}>,stretch_tabs:Bool=false) 
 	{
-		super();		
+		super();
 		
 		if (back_ == null) {
-			//default, make this:			
+			//default, make this:
 			back_ = new FlxUI9SliceSprite(0, 0, FlxUIAssets.IMG_CHROME_FLAT, new Rectangle(0, 0, 200, 200));
 		}
 		
@@ -93,12 +119,12 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 			if (tab_ids_and_labels_ != null) {
 				tabs_ = new Array<FlxUIButton>();
 			
-				//load default graphic data if only tab_ids_and_labels are provided					
+				//load default graphic data if only tab_ids_and_labels are provided
 				for (tdata in tab_ids_and_labels_) {
 					//set label and id
 					var fb:FlxUIButton = new FlxUIButton(0, 0, tdata.label);
 					
-					//default style:					
+					//default style:
 					fb.up_color = 0xffffff;
 					fb.down_color = 0xffffff;
 					fb.over_color = 0xffffff;
@@ -106,14 +132,16 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 					fb.down_toggle_color = 0xffffff;
 					fb.over_toggle_color = 0xffffff;
 					
+					fb.label.color = 0xFFFFFF;
 					fb.label.setBorderStyle(FlxText.BORDER_OUTLINE);
 					
 					fb.id = tdata.id;
 					
 					//load default graphics
 					var graphic_ids:Array<String> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
-					var slice9_ids:Array<String> = [FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB, FlxUIAssets.SLICE9_TAB];
-					fb.loadGraphicSlice9(graphic_ids, 0, 0, slice9_ids, -1, true);		
+					var slice9tab:Array<Int> = FlxStringUtil.toIntArray(FlxUIAssets.SLICE9_TAB);
+					var slice9_ids:Array<Array<Int>> = [slice9tab, slice9tab, slice9tab, slice9tab, slice9tab, slice9tab];
+					fb.loadGraphicSlice9(graphic_ids, 0, 0, slice9_ids, FlxUI9SliceSprite.TILE_NONE, -1, true);
 					tabs_.push(fb);
 				}
 			}
@@ -121,16 +149,16 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 		
 		_tabs = tabs_;
 		_stretch_tabs = stretch_tabs;
-				
+		
 		var i:Int = 0;
 		for (tab in _tabs) {
 			add(tab);
-			tab.setOnUpCallback(showTabId, [tab.id]);
+			tab.onUp.callback = showTabId.bind(tab.id);
 			i++;
 		}
 		
 		distributeTabs();
-				
+		
 		_tab_groups = new Array<FlxUIGroup>();
 	}
 	
@@ -147,18 +175,18 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 				diff_size = (_back.width - tot_size);
 			}
 		}
-				
+		
 		_tabs.sort(sortTabs);
 		
 		for (tab in _tabs) {
 			
-			tab.x = x + xx;	
-			tab.y = y + 0;			
+			tab.x = x + xx;
+			tab.y = y + 0;
 			
 			if (_stretch_tabs) {
 				if(diff_size > 0){
 					tab.resize(tab_width + 1, tab.get_height());
-					xx += (Std.int(tab_width)+1);					
+					xx += (Std.int(tab_width)+1);
 					diff_size-1;
 				}else {
 					tab.resize(tab_width, tab.get_height());
@@ -234,23 +262,23 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 	
 	public function showTabId(id:String):Void {
 		
-		_selected_tab = -1;		
+		_selected_tab = -1;
 		_selected_tab_id = "";
 		
 		var i:Int = 0;
-		for (tab in _tabs) {			
+		for (tab in _tabs) {
 			tab.toggled = false;
 			if (tab.id == id) {
 				tab.toggled = true;
 				_selected_tab_id = id;
 				_selected_tab = i;
-			}			
+			}
 			i++;
 		}
 		
 		_showOnlyGroup(id);
 	}
-			
+	
 	/***PRIVATE***/
 	
 	private var _back:FlxSprite;

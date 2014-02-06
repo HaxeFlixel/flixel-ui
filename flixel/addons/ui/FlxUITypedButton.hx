@@ -1,36 +1,28 @@
 package flixel.addons.ui;
+
 import flash.display.BitmapData;
 import flash.errors.Error;
-import flash.events.Event;
-import flixel.addons.ui.IResizable;
+import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.ui.FlxTypedButton;
+import flixel.util.FlxArrayUtil;
 import flixel.util.FlxPoint;
+import flixel.util.FlxStringUtil;
 import openfl.Assets;
 
-/**
- * ...
- * @author 
- */
-class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResizable implements IFlxUIWidget 
+class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResizable implements IFlxUIWidget implements IFlxUIButton
 {
 	public var id:String; 
 	public var resize_ratio:Float = -1;
 	public var resize_point:FlxPoint = null;
 	public var tile:Int = FlxUI9SliceSprite.TILE_NONE;
 	
-	//set these to adjust the bounding box for the sake of clickability
-	//if -1 they are ignored
-	public var mouse_width:Float = -1;
-	public var mouse_height:Float = -1;
-	
-	public var depressOnClick:Bool = true;
-	
 	public var has_toggle:Bool = false;
-	public var toggled:Bool = false;	
+	public var toggled:Bool = false;
 	
 	//Change these to something besides 0 to make the label use that color
 	//when that state is active
@@ -41,16 +33,70 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public var up_toggle_color:Int = 0;
 	public var over_toggle_color:Int = 0;
 	public var down_toggle_color:Int = 0;
-		
-	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Dynamic) {
-		super(X, Y, Label, OnClick);
+	
+	public var skipButtonUpdate(default, set):Bool = false;
+	public function set_skipButtonUpdate(b:Bool):Bool {
+		skipButtonUpdate = b;
+		return skipButtonUpdate;
 	}
 	
-	/**For IResizable:**/
-	
-	override public function get_width():Float { return width; }
-	override public function get_height():Float { return height; }
+	/**
+	 * Creates a new FlxUITypedButton object with a gray background.
+	 * 
+	 * @param	X			The X position of the button.
+	 * @param	Y			The Y position of the button.
+	 * @param	Label		The text that you want to appear on the button.
+	 * @param	OnClick		The function to call whenever the button is clicked.
+	 */
+	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Void->Void)
+	{
+		super(X, Y, Label, OnClick);
 		
+		_centerLabelOffset = new FlxPoint(0, 0);
+		
+		//By default, the button depresses the label by 1 pixel when pressed
+		labelOffsets[FlxButton.HIGHLIGHT].x = 0;
+		labelOffsets[FlxButton.HIGHLIGHT].y = 0;
+		
+		labelOffsets[FlxButton.PRESSED].x = 0;
+		labelOffsets[FlxButton.PRESSED].y = 1;
+		
+		labelOffsets[FlxButton.NORMAL].x = 0;
+		labelOffsets[FlxButton.NORMAL].y = 0;
+		
+		labelAlphas[FlxButton.HIGHLIGHT] = 1;
+		labelAlphas[FlxButton.PRESSED] = 1;
+		labelAlphas[FlxButton.NORMAL] = 1;
+	}
+	
+	public override function update():Void {
+		super.update();
+		
+		// Label positioning
+		if (label != null)
+		{
+			label.x = x;
+			label.y = y;
+			
+			label.x += _centerLabelOffset.x;	//CENTER the label offsets using the private variable
+			label.y += _centerLabelOffset.y;
+			
+			label.x += labelOffsets[status].x;	//apply status-specific user label offset using the public variable
+			label.y += labelOffsets[status].y;
+			
+			label.scrollFactor = scrollFactor;
+		}
+		
+		if (animation != null){
+			// Then pick the appropriate frame of animation
+			if (toggled){
+				animation.frameIndex =  3 + status;
+			}else {
+				animation.frameIndex = status;
+			}
+		}
+	}
+	
 	public function resize(W:Float, H:Float):Void {
 		var old_width:Float = width;
 		var old_height:Float = height;
@@ -58,42 +104,35 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		var old_offx:Float = 0;
 		var old_offy:Float = 0;
 		if (label != null) {
-			//calculate offset delta from center position
-			old_offx = labelOffset.x;				//store old raw offset
-			old_offy = labelOffset.y;
 			autoCenterLabel();						//reset to center position
-			old_offx = (old_offx - labelOffset.x);	//get difference
-			old_offy = (old_offy - labelOffset.y);
 		}
 		
 		if (W == 0) { W = 80; }
 		if (H == 0) { H = 20; }
 		
-		if(_slice9_assets != null){		
-			loadGraphicSlice9(_slice9_assets, cast W, cast H, _slice9_strings,tile,resize_ratio,has_toggle,_src_w,_src_h,_frame_indeces);
+		if(_slice9_assets != null){
+			loadGraphicSlice9(_slice9_assets, Std.int(W), Std.int(H), _slice9_arrays,tile,resize_ratio,has_toggle,_src_w,_src_h,_frame_indeces);
 		} else {
 			if (_no_graphic) {
 				var upB:BitmapData;
 				if(!has_toggle){
-					upB = new BitmapData(cast W, cast (H * 3), true, 0x00000000);				
-				}else {					
-					upB = new BitmapData(cast W, cast (H * 6), true, 0x00000000);
+					upB = new BitmapData(Std.int(W), Std.int(H * 3), true, 0x00000000);
+				}else {
+					upB = new BitmapData(Std.int(W), Std.int(H * 6), true, 0x00000000);
 				}
 				loadGraphicsUpOverDown(upB);
 			}else {
 				//default assets
-				loadGraphicSlice9(null, cast W, cast H, null,tile);
+				loadGraphicSlice9(null, Std.int(W), Std.int(H), null,tile);
 			}
 		}
 		
 		autoCenterLabel();			//center based on new dimensions
-		labelOffset.x += old_offx;	//add delta from center offset
-		labelOffset.y += old_offy;
 		
 		var diff_w:Float = width - old_width;
 		var diff_h:Float = height - old_height;
 		
-		if(resize_point != null){
+		if (resize_point != null){
 			var delta_x:Float = diff_w * resize_point.x;
 			var delta_y:Float = diff_h * resize_point.y;
 			x -= delta_x;
@@ -101,11 +140,6 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		}
 	}
 	
-		
-	public function forceCalcFrame():Void {
-		calcFrame();
-	}
-		
 	/**
 	 * Provide a list of assets, load states from each one
 	 * @param	assets
@@ -114,7 +148,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	public function loadGraphicsMultiple(assets:Array<String>, Key:String = ""):Void {
 		var key:String = "";
-				
+		
 		if (assets.length <= 3) {
 			while (assets.length < 3) { assets.push(null); }
 			if (assets[1] == null) { assets[1] = assets[0]; }
@@ -153,7 +187,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	public function loadGraphicsUpOverDown(asset:Dynamic, for_toggle:Bool=false, ?key:String):Void {
 		_slice9_assets = null;
-		_slice9_strings = null;
+		_slice9_arrays = null;
 		resize_ratio = -1;
 		
 		if (for_toggle) {
@@ -203,7 +237,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	 * @param	assets an array of asset file ids, ready to pass into Assets.getBitmapData();
 	 * @param	W width of button frame
 	 * @param	H height of button frame
-	 * @param	slice9 an array of slice9 strings, ie:"6,6,11,11" that specifies upper-left and bottom-right slice9 pixel points
+	 * @param	slice9 an array of slice9 int-arrays, ie:[6,6,11,11] that specifies upper-left and bottom-right slice9 pixel points
 	 * @param	tile	Whether to tile the middle pieces or stretch them (default is false --> stretch)
 	 * @param	Resize_Ratio ratio to force during resizing (W/H). -1 means ignore
 	 * @param	isToggle whether this is for a toggle button or not
@@ -212,7 +246,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	 * @param	frame_indeces array of which image frames go with which button frames (optional)
 	 */
 	
-	public function loadGraphicSlice9(assets:Array<String>=null,W:Int=80,H:Int=20,slice9:Array<String>=null,Tile:Int=FlxUI9SliceSprite.TILE_NONE,Resize_Ratio:Float=-1,isToggle:Bool=false,src_w:Int=0,src_h:Int=0,frame_indeces:Array<Int>=null):Void{
+	public function loadGraphicSlice9(assets:Array<String>=null,W:Int=80,H:Int=20,slice9:Array<Array<Int>>=null,Tile:Int=FlxUI9SliceSprite.TILE_NONE,Resize_Ratio:Float=-1,isToggle:Bool=false,src_w:Int=0,src_h:Int=0,frame_indeces:Array<Int>=null):Void{
 	
 		if (src_w != 0) {
 			_src_w = src_w;
@@ -228,7 +262,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		resize_ratio = Resize_Ratio;
 		
 		_slice9_assets = assets;
-		_slice9_strings = slice9;
+		_slice9_arrays = slice9;
 		
 		var key:String = null;
 		
@@ -276,16 +310,16 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			//default asset
 			if(!isToggle){
 				assets = [FlxUIAssets.IMG_BUTTON];
-				slice9 = [FlxUIAssets.SLICE9_BUTTON];
+				slice9 = [FlxStringUtil.toIntArray(FlxUIAssets.SLICE9_BUTTON)];
 				temp = Assets.getBitmapData(assets[0]);
-				_src_w = cast temp.width;
-				_src_h = cast temp.height / 3;				//calc default source width/height
+				_src_w = Std.int(temp.width);
+				_src_h = Std.int(temp.height / 3);				//calc default source width/height
 			}else {
 				assets = [FlxUIAssets.IMG_BUTTON_TOGGLE];
-				slice9 = [FlxUIAssets.SLICE9_BUTTON_TOGGLE];
+				slice9 = [FlxStringUtil.toIntArray(FlxUIAssets.SLICE9_BUTTON_TOGGLE)];
 				temp = Assets.getBitmapData(assets[0]);
-				_src_w = cast temp.width;
-				_src_h = cast temp.height / 6;				//calc default source width/height
+				_src_w = Std.int(temp.width);
+				_src_h = Std.int(temp.height / 6);				//calc default source width/height
 			}
 			
 			temp = null;
@@ -317,19 +351,19 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 						arr_bmpData[i] = grabButtonFrame(all, i, has_toggle,_src_w, _src_h);		//get each button frame
 					}
 					
-					if (slice9 != null && slice9[0] != "") {		//9slicesprites
+					if (slice9 != null && slice9[0] != []) {		//9slicesprites
 						
 						//Scale each 9slicesprite
 						for (i in 0...arr_bmpData.length) {
 							arr_flx9[i] = new FlxUI9SliceSprite(0, 0, arr_bmpData[i], _flashRect2, slice9[0], tile, false, assets[0] + ":" + i , resize_ratio);
 							arr_flx9[i].resize_point = resize_point;
 						}
-				
+						
 						//grab the pixel data:
 						for (i in 0...arr_bmpData.length) {
 							arr_bmpData[i] = arr_flx9[i].pixels;
 						}
-							
+						
 						//in case the resize_ratio resulted in different dimensions
 						W = arr_bmpData[0].width;
 						H = arr_bmpData[0].height;
@@ -352,11 +386,11 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			}
 			
 			if (assets[0] != "") {
-				if (slice9 != null && slice9[0] != "") {	//load as 9slicesprites
+				if (slice9 != null && slice9[0] != []) {	//load as 9slicesprites
 						
 					//make at least 3(or 6) long, fill with blanks if necessary
 					while (slice9.length < assets.length) {
-						slice9.push("");
+						slice9.push(null);
 					}
 					
 					arr_flx9[0] = new FlxUI9SliceSprite(0, 0, assets[0],_flashRect2, slice9[0], tile, false,"",resize_ratio);
@@ -432,22 +466,24 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	public function autoCenterLabel():Void {
 		if (label != null) {
-			if (labelOffset == null) {
-				labelOffset = new FlxPoint();
-			}
+			var offX:Float = 0;
+			var offY:Float = 0;
 			
-			labelOffset.x = (width - label.width);
-				
+			offX = (width - label.width);
+			
 			if (Std.is(label, FlxUIText)) {
 				var tlabel:FlxUIText = cast label;
-				//labelOffset.y = (height - tlabel.textHeight()) / 2;	
-				labelOffset.y = (height - tlabel.height) / 2;	
-				//only use textHeight() for FlxText, presumably
-				//if they're using centered text, you want the full
-				//FlxText object width
+				offY = (height - tlabel.height) / 2;
 			}else {
-				labelOffset.x = (width - label.width) / 2;
-				labelOffset.y = (height - label.height)/2;
+				offX = (width - label.width) / 2;
+				offY = (height - label.height)/2;
+			}
+			
+			_centerLabelOffset.x = offX;
+			_centerLabelOffset.y = offY;
+			
+			if (Std.is(label, FlxUIText)) {
+				var t:FlxUIText = cast label;
 			}
 		}
 	}
@@ -472,9 +508,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		var h:Int = src_h;
 		if(h == 0){
 			if (!for_toggle) {
-				h = cast all_frames.height / 3;
+				h = Std.int(all_frames.height / 3);
 			}else {
-				h = cast all_frames.height / 6;
+				h = Std.int(all_frames.height / 6);
 			}
 		}
 		var w:Int = src_w;
@@ -545,137 +581,35 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		return pixels;
 	}
 	
-	/**
-	 * Overriden to allow the user to manually specify where the clickable regions are
-	 * @param	point
-	 * @param	InScreenSpace
-	 * @param	?Camera
-	 * @return
-	 */
-	
-	override public function overlapsPoint(point:FlxPoint, InScreenSpace:Bool = false, ?Camera:FlxCamera):Bool
-	{
-		var mw:Float = width;
-		var mh:Float = height;
-		if (mouse_width != -1) { 
-			mw = mouse_width;
-		}
-		if (mouse_height != -1) {
-			mh = mouse_height;
-		}
-		
-		if (scale.x == 1 && scale.y == 1)
-		{
-			if (!InScreenSpace)
-			{
-				return (point.x > x) && (point.x < x + mw) && (point.y > y) && (point.y < y + mh);
-			}
-			
-			if (Camera == null)
-			{
-				Camera = FlxG.camera;
-			}
-			var X:Float = point.x - Camera.scroll.x;
-			var Y:Float = point.y - Camera.scroll.y;
-			getScreenXY(_point, Camera);
-			return (X > _point.x) && (X < _point.x + mw) && (Y > _point.y) && (Y < _point.y + mh);
-
-		}
-		
-		if (!InScreenSpace)
-		{
-			return (point.x > x - 0.5 * mw * (scale.x - 1)) && (point.x < x + mw + 0.5 * mw * (scale.x - 1)) && (point.y > y - 0.5 * mh * (scale.y - 1)) && (point.y < y + mh + 0.5 * mh * (scale.y - 1));
-		}
-		
-		if (Camera == null)
-		{
-			Camera = FlxG.camera;
-		}
-		var X:Float = point.x - Camera.scroll.x;
-		var Y:Float = point.y - Camera.scroll.y;
-		getScreenXY(_point, Camera);
-		return (X > _point.x - 0.5 * mw * (scale.x - 1)) && (X < _point.x + mw + 0.5 * mw * (scale.x - 1)) && (Y > _point.y - 0.5 * mh * (scale.y - 1)) && (Y < _point.y + mh + 0.5 * mh * (scale.y - 1));
-	}
-	
 	public override function updateButton():Void {
-		super.updateButton();
-				
-		// Then pick the appropriate frame of animation
-		if(toggled){
-			animation.frameIndex =  3 + status;
-		}else {
-			animation.frameIndex = status;
-		}		
+		if (!skipButtonUpdate){
+			super.updateButton();
+		}
 	}
 	
+	override private function onUpHandler():Void
+	{
+		toggled = !toggled;
+		super.onUpHandler();
+		label.color = (toggled) ? up_toggle_color : up_color;
+	}
 	
+	override private function onDownHandler():Void
+	{
+		super.onDownHandler();
+		label.color = (toggled) ? down_toggle_color : down_color;
+	}
 	
-	public override function update():Void {
-		
-		/**Adds more control for coloring text in each state**/
-		
-		super.update();
-		if (label == null) {
-			return;
-		}
-		label.alpha = 1;
-		
-		var old_color:Int = 0xff000000 + label.color;
-		var new_color:Int = 0;
-		var change_color:Bool = false;
-		
-		switch (status)
-		{
-			case FlxButton.HIGHLIGHT:
-				if (!toggled) {					
-					if (old_color != over_color) {
-						new_color = over_color;
-						change_color = true;
-					}
-				}else{
-					if (old_color != over_toggle_color) {
-						new_color = over_toggle_color;						
-						change_color = true;
-					}
-				}
-			case FlxButton.PRESSED:
-				if (animation.frameIndex == FlxButton.PRESSED) {
-					if (!depressOnClick) {
-						label.y--;			//undo the depress movement
-					}
-				}else {
-					if (depressOnClick) {	
-						label.y++;			//b/c FlxButton switches on frame,not status
-					}
-				}
-				if(!toggled){
-					if (old_color != down_color) {
-						new_color = down_color;
-						change_color = true;
-					}
-				}else {
-					if (old_color != down_toggle_color) {
-						new_color = down_toggle_color;						
-						change_color = true;
-					}
-				}
-			default:
-				if(!toggled){
-					if (old_color != up_color) {
-						new_color = up_color;
-						change_color = true;
-					}
-				}else {
-					if (old_color != up_toggle_color) {
-						new_color = up_toggle_color;
-						change_color = true;
-					}
-				}
-		}
-		
-		if (change_color) {
-			label.color = new_color;
-		}
+	override private function onOverHandler():Void
+	{
+		super.onOverHandler();
+		label.color = (toggled) ? over_toggle_color : over_color;
+	}
+	
+	override private function onOutHandler():Void
+	{
+		super.onOutHandler();
+		label.color = (toggled) ? up_toggle_color : up_color;
 	}
 
 	/*********PRIVATE************/
@@ -688,15 +622,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	private var _frame_indeces:Array<Int>;
 	
 	//if you're doing 9-slice resizing:
-	private var _slice9_strings:Array<String>;	//the 9-slice scaling rules for the original assets
-	private var _slice9_assets:Array<String>;	//the asset id's of the original 9-slice scale assets
+	private var _slice9_arrays:Array<Array<Int>>;	//the 9-slice scaling rules for the original assets
+	private var _slice9_assets:Array<String>;		//the asset id's of the original 9-slice scale assets
 	
-	private override function onMouseUp(event:Event):Void
-	{
-		if (!exists || !visible || !active || (status != FlxButton.PRESSED)) {
-			return;
-		}		
-		toggled = !toggled;
-		super.onMouseUp(event);
-	}
+	private var _centerLabelOffset:FlxPoint = null;	//this is the offset necessary to center ALL the labels
 }

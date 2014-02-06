@@ -1,30 +1,24 @@
 package flixel.addons.ui;
-import haxe.xml.Fast;
+
 import flash.display.BitmapData;
 import flash.display.BlendMode;
 import flash.geom.Point;
-import flash.Lib;
-import flash.text.Font;
-import openfl.Assets;
 import flixel.FlxBasic;
 import flixel.FlxG;
-import flixel.group.FlxGroup;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.interfaces.IFlxDestroyable;
+import flixel.util.FlxPoint;
+import haxe.Json;
+import haxe.xml.Fast;
+import openfl.Assets;
 
 /**
  * Utility functions, inlined where possible
  * @author Lars Doucet
  */
-
 class U 
 {
-
-	public function new() 
-	{
-		
-	}	
-	
 	/**
 	 * Safety wrapper for reading a string attribute from xml
 	 * @param	data the Xml object
@@ -64,15 +58,6 @@ class U
 			}
 		}
 		return Math.NaN;
-	}
-	
-	public static function arrayContains(arr:Array<Dynamic>, thing:Dynamic):Bool {
-		for (i in 0...arr.length) {
-			if (arr[i] == thing) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	public static function isStrNum(str:String):Bool {
@@ -163,16 +148,14 @@ class U
 			}else{
 				str = U.gfx(str);
 				if (test) {
-					try{
+					try {
 						var testbmp:BitmapData = Assets.getBitmapData(str);
 						if (testbmp == null) {
 							throw ("couldn't load bmp \""+att+"\"");
 						}
 						testbmp = null;					
-					}catch (msg:String) {
-						#if debug
-						trace("***ERROR*** U.xml_gfx() : " + msg);
-						#end
+					} catch (msg:String) {
+						FlxG.log.error("FlxUI: U.xml_gfx() : " + msg);
 					}
 				}			
 			}
@@ -205,27 +188,6 @@ class U
 			}
 		}return null;
 	}*/
-	
-	
-	/**
-	 * Simple rand function - return an integer in this range
-	 * @param	min	smallest possible value
-	 * @param	max largest possible value
-	 * @return
-	 */
-	
-	public static inline function iRandRange(min:Int, max:Int):Int {
-		/*var n:Float = Math.random();
-		var range:Float = cast(max - min, Float);
-		var i:Int = (n * range) + min;
-		return i;*/
-		
-		//rand = random(0 <= r < 1)
-		//range = 1+(max-min)
-		//result = floor(rand * range) + min
-		
-		return Std.int(Math.random() * cast(1+max-min, Float)) + min;
-	}
 
 	public static inline function test_int(i1:Int, test:String, i2:Int):Bool {
 		var bool:Bool = false;
@@ -292,7 +254,7 @@ class U
 	 */
 	
 	public static inline function padDigits(i:Int, d:Int):String {
-		var f:Float = cast(i, Float);
+		var f:Float = i;
 		var str:String = "";
 		var num_digits:Int = 0;
 		while (f >= 1) {
@@ -350,17 +312,6 @@ class U
 		}
 		
 		return return_val;
-	}
-	
-	public static inline function randomColor(is32Bit:Bool=false):Int {
-		var r:Int = cast (Math.random() * 0xff);
-		var g:Int = cast (Math.random() * 0xff);
-		var b:Int = cast (Math.random() * 0xff);
-		var rgb:Int = rgb2hex(r, g, b);
-		if (is32Bit) {
-			rgb = 0xff000000 | rgb;
-		}
-		return rgb;
 	}
 	
 	/**
@@ -474,23 +425,13 @@ class U
 	}*/
 	
 	
-	public static inline function getLocList(xmin:Int, ymin:Int, xmax:Int, ymax:Int):Array<IntPt> {
-		var list:Array<IntPt> = new Array<IntPt>();
+	public static inline function getLocList(xmin:Int, ymin:Int, xmax:Int, ymax:Int):Array<FlxPoint> {
+		var list:Array<FlxPoint> = new Array<FlxPoint>();
 		for (yy in ymin...ymax + 1) {
 			for (xx in xmin...xmax + 1) {
-				list.push(new IntPt(xx, yy));
+				list.push(new FlxPoint(xx, yy));
 			}
 		}return list;
-	}
-		
-	public static inline function shuffleArray(a:Array<Dynamic>):Array<Dynamic>{		
-		var i:Int = a.length - 1; while (i > 0) {
-			var n:Int = U.iRandRange(0, i);
-			var t:Dynamic = a[n];
-			a[n] = a[i];
-			a[i] = t;
-		}
-		return a;
 	}
 	
 	public static inline function disposeXML(thing:Dynamic):Void {
@@ -523,8 +464,29 @@ class U
 		return xml(id);
 	}
 	
-	public static function xml(str:String, extension:String = "xml",getFast:Bool=true,dir="assets/xml/"):Dynamic{
-		var str:String = Assets.getText(dir + str + "." + extension);
+	public static function json(str:String, extension:String = "json",dir="assets/json/"):Dynamic {
+		var json_str:String = Assets.getText(dir + str + "." + extension);
+		if(json_str != "" && json_str != null){
+			var the_json = Json.parse(json_str);
+			return the_json;
+		}
+		return null;
+	}
+	
+	public static function field(object:Dynamic, field:String, _default:Dynamic = null):Dynamic {
+		if (object == null) return null;
+		if (Reflect.hasField(object, field)) {
+			var thing:Dynamic = Reflect.field(object, field);
+			if (thing == null) {
+				return _default;
+			}
+			return thing;
+		}
+		return _default;
+	}
+	
+	public static function xml(id:String, extension:String = "xml",getFast:Bool=true,dir="assets/xml/"):Dynamic{
+		var str:String = Assets.getText(dir + id + "." + extension);
 		if (str == null) {
 			return null;
 		}
@@ -571,11 +533,10 @@ class U
 	public static function destroyThing(thing:Dynamic):Void {
 		if (thing == null) return;
 		
-		
 		if (Std.is(thing,Array)){
 			clearArray(thing);
-		}else if (Std.is(thing,IDestroyable)) {
-			var idstr:IDestroyable = cast(thing, IDestroyable);
+		}else if (Std.is(thing,IFlxDestroyable)) {
+			var idstr:IFlxDestroyable = cast(thing, IFlxDestroyable);
 			idstr.destroy();
 			idstr = null;
 		}else if (Std.is(thing,FlxBasic)) {
@@ -622,7 +583,62 @@ class U
 	public static function FU(str:String):String {
 		return str.substr(0, 1).toUpperCase() + str.substr(1, str.length - 1);
 	}
-		
+	
+	public static function checkHaxedef(str:String):Bool {
+		str = str.toLowerCase();
+		switch(str) {
+			case "cpp":
+				#if cpp
+					return true;
+				#end
+			case "windows":
+				#if windows
+					return true;
+				#end
+			case "mac":
+				#if mac
+					return true;
+				#end
+			case "linux":
+				#if linux
+					return true;
+				#end
+			case "desktop":
+				#if desktop
+					return true;
+				#end
+			case "mobile":
+				#if mobile
+					return true;
+				#end
+			case "android":
+				#if android
+					return true;
+				#end
+			case "ios":
+				#if ios
+					return true;
+				#end
+			case "flash":
+				#if flash
+					return true;
+				#end
+			case "html5":
+				#if html5
+					return true;
+				#end
+			case "web":
+				#if web
+					return true;
+				#end
+			case "sys":
+				#if sys
+					return true;
+				#end
+		}
+		return false;
+	}
+	
 	public static function copy_shallow_arr(src:Array<Dynamic>):Array<Dynamic> {
 		var arr:Array<Dynamic> = new Array<Dynamic>();
 		var thing:Dynamic;
@@ -750,7 +766,7 @@ class U
 	* 
 	* @param   color_index   The matching color index
 	* 
-	* @return	A comma-separated string containing the level data in a <code>FlxTilemap</code>-friendly format.
+	* @return	A comma-separated string containing the level data in a FlxTilemap-friendly format.
 	*/
    public static function bmpToCSVLayer(color_index:Int, bd:BitmapData):String{
 	   
@@ -826,9 +842,39 @@ class U
 							str_arr.push(i);
 						}
 					}
-				}				
+				}
 			}
-		}			
+		}
+		return str_arr;
+	}
+	
+	/**
+	 * Converts a comma and hyphen list string of numbers to a String array
+	 * @param	str input, ex: "1,2,3", "2-4", "1,2,3,5-10"
+	 * @return int array, ex: [1,2,3], [2,3,4], [1,2,3,5,6,7,8,9,10]
+	 */
+	
+	public static inline function intStr_to_arrStr(str:String):Array<String> {
+		var arr:Array<String> = str.split(",");
+		var str_arr:Array<String> = new Array<String>();
+		for (s in arr) {
+			if(s.indexOf("-") == -1){			//if it's just a number, "5" push it: [5]
+				str_arr.push(Std.string(Std.parseInt(s)));		//validation -- force it to be an int
+			}else {		//if it's a range, say, "5-10", push all: [5,6,7,8,9,10]
+				var range:Array<String> = str.split("-");
+				var lo:Int = -1;
+				var hi:Int = -1;
+				if(range != null && range.length == 2){
+					lo = Std.parseInt(range[0]);
+					hi = Std.parseInt(range[1]) + 1;	//+1 so it's inclusive
+					if(lo >= 0 && hi > lo){
+						for (i in lo...hi) {
+							str_arr.push(Std.string(i));
+						}
+					}
+				}
+			}
+		}
 		return str_arr;
 	}
 	
@@ -851,7 +897,7 @@ class U
 		}return str;
 	}
 	
-	public static inline function obj_direction(a:FlxObject, b:FlxObject):IntPt {
+	public static inline function obj_direction(a:FlxObject, b:FlxObject):FlxPoint {
 		var ax:Float = a.x + (a.width / 2);
 		var ay:Float = a.y + (a.height / 2);
 		
@@ -861,7 +907,7 @@ class U
 		var dx:Float = a.x - b.x;
 		var dy:Float = a.y - b.y;
 		
-		var ipt:IntPt = new IntPt(Std.int(dx / Math.abs(dx)), Std.int(dy / Math.abs(dy)));
+		var ipt = new FlxPoint(Std.int(dx / Math.abs(dx)), Std.int(dy / Math.abs(dy)));
 		return ipt;
 	}
 
@@ -921,14 +967,6 @@ class U
 		
 		return Math.abs(bx2 + bx1 - (ax2 + ax1)) <= (bx2 - bx1 + ax2 - ax1) &&
 		Math.abs(by2 + by1 - (ay2 + ay1)) <= (by2 - by1 + ay2 - ay1);
-	}
-		
-	public static inline function rand(n:Float, n2:Float):Float {
-		var min:Float = n;
-		var max:Float = n2;
-		if (n > n2) { min = n2; max = n;}
-		var diff:Float	= max - min;
-		return (Math.random() * diff)+min;			
 	}
 	
 	/**
@@ -1110,7 +1148,7 @@ class U
 			return s;
 		}
 		
-		static public function formatXml(_xml:Xml):String 
+		public static function formatXml(_xml:Xml):String
 		{
 			var s:String = _xml.toString();
 			
@@ -1147,6 +1185,16 @@ class U
 			}
 			
 			return s;
+		}
+		
+		public static function strCase(str:String, code:String):String {
+			switch(code) {
+				case "u": return str.toUpperCase();		//uppercase
+				case "l": return str.toLowerCase();		//lowercase
+				case "fu": return U.FU(str);			//first letter uppercase
+				case "fu_": return U.FU_(str);			//first letter in each word uppercase
+			}
+			return str;
 		}
 		
 }

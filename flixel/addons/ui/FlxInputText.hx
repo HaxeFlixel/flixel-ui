@@ -1,13 +1,13 @@
 package flixel.addons.ui;
+
 import flash.display.BitmapData;
+import flash.errors.Error;
 import flash.events.KeyboardEvent;
 import flash.geom.Rectangle;
-import flash.text.TextField;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
-import flixel.util.FlxTimer;
 import flixel.util.FlxPoint;
-import flash.errors.Error;
+import flixel.util.FlxTimer;
 	
 /**
  * FlxInputText v1.11, ported to Haxe
@@ -22,7 +22,6 @@ import flash.errors.Error;
  * License: Creative Commons Attribution 3.0 United States
  * @link http://creativecommons.org/licenses/by/3.0/us/
  */
-
 class FlxInputText extends FlxText 
 {		
 	public static inline var NO_FILTER:Int			= 0;
@@ -120,7 +119,7 @@ class FlxInputText extends FlxText
 	private var _fieldBorderColor:Int = 0xFF000000;
 	
 	/**
-	 * Creates a new <code>FlxText</code> object at the specified position.
+	 * Creates a new FlxText object at the specified position.
 	 * @param	X				The X position of the text.
 	 * @param	Y				The Y position of the text.
 	 * @param	Width			The width of the text object (height is determined automatically).
@@ -141,7 +140,7 @@ class FlxInputText extends FlxText
 		caretColor = TextColor;
 			
 		caret = new FlxSprite();
-		caret.makeGraphic(1,cast (size + 2), 0xFFFFFFFF);
+		caret.makeGraphic(1, Std.int(size + 2), 0xFFFFFFFF);
 		caret.color = caretColor;
 		caretIndex = 0;
 		
@@ -190,6 +189,7 @@ class FlxInputText extends FlxText
 	{
 		super.update();
 		
+		#if (!FLX_NO_MOUSE  && !FLX_NO_TOUCH)
 		// Set focus and caretIndex as a response to mouse press
 		if (FlxG.mouse.justPressed) {
 			if (overlapsPoint(new FlxPoint(FlxG.mouse.x, FlxG.mouse.y))) {
@@ -200,6 +200,7 @@ class FlxInputText extends FlxText
 				hasFocus = false;
 			}
 		}
+		#end
 	}
 	
 	/**
@@ -290,8 +291,10 @@ class FlxInputText extends FlxText
 	 */
 	public function getCaretIndexFromPoint(Landing:FlxPoint):Int
 	{
+	#if !FLX_NO_MOUSE	
 		var hit:FlxPoint = new FlxPoint(FlxG.mouse.x - x, FlxG.mouse.y - y);
 		var caretRightOfText:Bool = false;
+		#if !js
 		if (hit.y < 2) hit.y = 2;
 		else if (hit.y > _textField.textHeight + 2) hit.y = _textField.textHeight + 2;
 		if (hit.x < 2) hit.x = 2;
@@ -303,7 +306,7 @@ class FlxInputText extends FlxText
 			hit.x = _textField.getLineMetrics(_textField.numLines - 1).width;
 			caretRightOfText = true;
 		}
-		
+		#end
 		var index:Int = 0;
 		
 		#if flash
@@ -316,21 +319,22 @@ class FlxInputText extends FlxText
 			//Figure something else out instead, or augment openfl-native's TextField
 		#end
 		return index;
+	#else
+		return 0;
+	#end
 	}
 	
 	/**
 	 * Draws the frame of animation for the input text.
+	 * 
+	 * @param	RunOnCpp	Whether the frame should also be recalculated if we're on a non-flash target
 	 */
-	#if flash
-	private override function calcFrame():Void
-	#else
-	private override function calcFrame(AreYouSure:Bool = false):Void
-	#end
+	private override function calcFrame(RunOnCpp:Bool = false):Void
 	{
-		super.calcFrame();
+		super.calcFrame(RunOnCpp);
 		
 		if (fieldBorderSprite != null && fieldBorderThickness > 0) {
-			fieldBorderSprite.makeGraphic(cast (width + fieldBorderThickness * 2), cast (height + fieldBorderThickness * 2), fieldBorderColor);
+			fieldBorderSprite.makeGraphic(Std.int(width + fieldBorderThickness * 2), Std.int(height + fieldBorderThickness * 2), fieldBorderColor);
 			fieldBorderSprite.x = x - fieldBorderThickness;
 			fieldBorderSprite.y = y - fieldBorderThickness;
 		}
@@ -339,7 +343,7 @@ class FlxInputText extends FlxText
 			// Draw background
 		if (background) 
 		{
-			var buffer:BitmapData = new BitmapData(cast width, cast (height * 2), true, backgroundColor); 
+			var buffer:BitmapData = new BitmapData(Std.int(width), Std.int(height * 2), true, backgroundColor); 
 			buffer.draw(framePixels);
 			framePixels = buffer;		
 		}
@@ -515,7 +519,7 @@ class FlxInputText extends FlxText
 	override private function set_size(Size:Float):Float
 	{
 		super.size = Size;		
-		caret.makeGraphic(1, cast (size + 2), 0xFFFFFFFF);
+		caret.makeGraphic(1, Std.int(size + 2), 0xFFFFFFFF);
 		return Size;
 	}
 	

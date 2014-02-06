@@ -1,44 +1,41 @@
 package flixel.addons.ui;
-import flash.display.BitmapData;
-import flash.events.MouseEvent;
-import flash.geom.Rectangle;
-import flixel.FlxCamera;
-import flixel.FlxG;
-import flixel.FlxObject;
-import flixel.system.FlxAssets;
-import flixel.text.FlxText;
-import flixel.util.FlxRect;
-import flixel.util.FlxPoint;
+
+import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.ILabeled;
 import flixel.FlxSprite;
-import flixel.util.FlxMath;
+import flixel.text.FlxText;
+import flixel.ui.FlxButton;
 import flixel.util.FlxTimer;
-import openfl.Assets;
 
 /**
  * @author Lars Doucet
  */
-
-class FlxUICheckBox extends FlxUIGroup implements ILabeled
+class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButton
 {
 	public var box:FlxSprite;
 	public var mark:FlxSprite;
 	public var button:FlxUIButton;
 	public var max_width:Float = -1;
 	
-	public var checked(get_checked, set_checked):Bool;
+	public var checked(default, set):Bool = false;
 	
 	//Set this to false if you just want the checkbox itself to be clickable
 	public var textIsClickable:Bool = true;
 		
 	public var checkbox_dirty:Bool = false;
 	
-	public var textX(get, set):Float;
-	public var textY(get, set):Float;
+	public var textX(default, set):Float = 0;
+	public var textY(default, set):Float = 0;
 	
 	public var box_space:Float = 2;
 	
-	private var _textX:Float = 0;
-	private var _textY:Float = 0;
+	public var skipButtonUpdate(default,set):Bool = false;
+	
+	public function set_skipButtonUpdate(b:Bool):Bool {
+		skipButtonUpdate = b;
+		button.skipButtonUpdate = skipButtonUpdate;
+		return skipButtonUpdate;
+	}
 	
 	public function new(X:Float = 0, Y:Float = 0, ?Box:Dynamic, ?Check:Dynamic, ?Label:String, LabelW:Int=100, ?OnClick:Dynamic, ?params:Array<Dynamic>)
 	{
@@ -52,7 +49,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 		
 		box.loadGraphic(Box, true, false);
 		
-		button = new FlxUIButton(0, 0, Label, _clickCheck);
+		button = new FlxUIButton(0, 0, Label, _clickCheck.bind(null));
 		
 		//set default checkbox label format
 		button.label.setFormat(null, 8, 0xffffff, "left", FlxText.BORDER_OUTLINE);
@@ -65,12 +62,12 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 		
 		//TODO:
 		//the +2 is a magic number, possibly should be a user-set parameter
-		button.loadGraphicSlice9(["", "", ""], Std.int(box.width + 2 + LabelW), cast box.height);
+		button.loadGraphicSlice9(["", "", ""], Std.int(box.width + 2 + LabelW), Std.int(box.height));
 		
 		max_width = Std.int(box.width + box_space + LabelW);
 		
 		setExternalCallback(OnClick);
-		button.setOnUpCallback(_clickCheck, [params]);    //for internal use, check/uncheck box, bubbles up to _externalCallback
+		button.onUp.callback = _clickCheck.bind(params);    //for internal use, check/uncheck box, bubbles up to _externalCallback
 				
 		mark = new FlxSprite();
 		if (Check == null) {
@@ -88,10 +85,20 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 		anchorLabelY();
 		
 		checked = false;
-		button.depressOnClick = false;
+		
+		//set all these to 0
+		button.labelOffsets[FlxButton.NORMAL].x = 0;
+		button.labelOffsets[FlxButton.NORMAL].y = 0;
+		button.labelOffsets[FlxButton.PRESSED].x = 0;
+		button.labelOffsets[FlxButton.PRESSED].y = 0;
+		button.labelOffsets[FlxButton.HIGHLIGHT].x = 0;
+		button.labelOffsets[FlxButton.HIGHLIGHT].y = 0;
 		
 		x = X;
 		y = Y;
+		
+		textX = 0;
+		textY = 0;	//forces anchorLabel() to be called and upate correctly
 	}
 	
 	/**For ILabeled:**/
@@ -109,23 +116,20 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 	}
 	
 	private function anchorTime(f:FlxTimer):Void {
-		trace("ANCHOR TIME");
 		anchorLabelY();
 	}
 	
-	public function get_textX():Float { return _textX;}
 	public function set_textX(n:Float):Float {
-		_textX = n;
+		textX = n;
 		anchorLabelX();
-		return _textX;
+		return textX;
 	}
 	
-	public function get_textY():Float { return _textY;}
 	public function set_textY(n:Float):Float {
-		_textY = n;
-		anchorLabelY();					
-		return _textY;
-	}	
+		textY = n;
+		anchorLabelY();
+		return textY;
+	}
 	
 	public function setExternalCallback(callBack:Dynamic):Void {
 		_externalCallback = callBack;
@@ -133,14 +137,13 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 	
 	public function anchorLabelX():Void {
 		if (button != null) {
-			button.labelOffset.x = (box.width + box_space) + _textX;		
-		}			
+			button.label.offset.x = -((box.width + box_space) + textX);
+		}
 	}
 	
 	public function anchorLabelY():Void{
-		if (button != null) {			
-			button.y = box.y + (box.height - button.height) / 2;
-			button.labelOffset.y = (button.height-button.label.textHeight())/2 + _textY;
+		if (button != null) {
+			button.y = box.y + (box.height - button.height) / 2 + textY;
 		}
 	}
 	
@@ -170,15 +173,19 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 		checkbox_dirty = true;
 		return value;
 	}
-			
+	
 	public override function update():Void{
 		super.update();
 		
-		if (checkbox_dirty) {			
+		if (checkbox_dirty) {
 			if (button.label != null) {
+				if (Std.is(button.label, FlxUIText)) {
+					var ftu:FlxUIText = cast button.label;
+					ftu.drawFrame(); //force update
+				}
 				anchorLabelX();
 				anchorLabelY();
-				button.mouse_width = button.label.textWidth() + button.labelOffset.x;
+				button.width = box.frameWidth + button.label.textField.textWidth + (button.label.x - (button.x + box.frameWidth));
 				checkbox_dirty = false;
 			}
 		}
@@ -186,19 +193,13 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 		
 	/*****GETTER/SETTER***/
 	
-	public function get_checked():Bool { 
-		return _checked; 
-	}
-	
 	public function set_checked(b:Bool):Bool { 
-		_checked = b; 
 		mark.visible = b; 
-		return b; 
+		return checked = b; 
 	}
 	
 	/*****PRIVATE******/
 	
-	private var _checked:Bool;
 	private var _externalCallback:Dynamic;
 	
 	private function _clickCheck(Params:Dynamic = null):Void 
@@ -216,8 +217,8 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled
 			arr = new Array<Dynamic>();
 			arr.push(Params);
 		}
-				
-		if (_checked) {
+		
+		if (checked) {
 			arr.push("checked:true");
 		}else {
 			arr.push("checked:false");

@@ -1,4 +1,6 @@
 package flixel.addons.ui;
+
+import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.util.FlxPoint;
 
 /**
@@ -27,10 +29,10 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	public var scrollFactor(default, set):FlxPoint;
 	public function set_x(Value:Float):Float { return x = Value; }
 	public function set_y(Value:Float):Float { return y = Value; }
-	public function get_width():Float { return width; }
-	public function set_width(Value:Float):Float { return width = Value; }
-	public function set_height(Value:Float):Float { return height = Value; }
-	public function get_height():Float { return height; }
+	public function get_width():Float { return _width; }
+	public function get_height():Float { return _height; }
+	public function set_width(Value:Float):Float { return _width = Value; }
+	public function set_height(Value:Float):Float { return _height = Value; }
 	public function set_angle(Value:Float):Float { return angle = Value; }
 	public function set_alpha(Value:Float):Float { return alpha = Value; }
 	public function set_facing(Value:Int):Int { return facing = Value; }
@@ -42,18 +44,17 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	public function reset(X:Float, Y:Float):Void { setPosition(X, Y); }
 	public function setPosition(X:Float = 0, Y:Float = 0):Void { x = X; y = Y; }
 	
-
 	public var x(default, set):Float=0;
 	public var y(default, set):Float=0;
 	
-		
+	
 	public var alpha(default, set):Float=1;
 	
-
+	public var width(get, set):Float;
+	public var height(get, set):Float;
 	
-	@:isVar public var width(get, set):Float;
-	@:isVar public var height(get, set):Float;
-
+	private var _width:Float = 0;
+	private var _height:Float = 0;
 	
 	/**************************************/
 	
@@ -98,14 +99,15 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	public override function eventResponse(id:String, sender:Dynamic, data:Array<Dynamic>):Void {
 		switch(id) {
 			case "click_button":
-				var i:Int = cast data[0];
-				var label:String = cast data[1];
+				var i:Int = Std.int(data[0]);
+				var label:String = Std.string(data[1]);
 				switch(i) {
-					case 0, 1, 2:   castParent().getEvent("click_popup", this, data);
-									close();
+					case 0, 1, 2:	
+						castParent().getEvent("click_popup", this, data);
+						close();
 				}
 		}
-		super.eventResponse(id, sender, data);				
+		super.eventResponse(id, sender, data);
 	}
 	
 	private var _quickSetupParams:{title:String, body:String, button_labels:Array<String>} = null;

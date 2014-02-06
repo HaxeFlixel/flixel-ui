@@ -1,20 +1,27 @@
 package flixel.addons.ui;
-import flash.display.BitmapData;
-import flixel.FlxObject;
+
+import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.util.FlxPoint;
-import flixel.FlxSprite;
-import openfl.Assets;
 
 /**
  * @author Lars Doucet
  */
-
-class FlxUIRadioGroup extends FlxUIGroup
+class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton
 {
 	public var clickable(get_clickable, set_clickable):Bool;
-	public var selectedId(get_selectedId, set_selectedId):String;	
+	public var selectedId(get_selectedId, set_selectedId):String;
 	public var selectedLabel(get_selectedLabel, set_selectedLabel):String;
 	public var selectedIndex(get_selectedIndex, set_selectedIndex):Int;
+	
+	public var skipButtonUpdate(default, set):Bool;
+	public function set_skipButtonUpdate(b:Bool):Bool {
+		skipButtonUpdate = b;
+		var fcb:FlxUICheckBox;
+		for (fcb in _list_radios) {
+			fcb.skipButtonUpdate = b;
+		}
+		return skipButtonUpdate;
+	}
 	
 	public function new(X:Float, Y:Float, ids_:Array<String>,labels_:Array<String>, callback_:Dynamic, y_space_:Float=25, width_:Int=100, height_:Int=20, label_width_:Int=100):Void {
 		super();

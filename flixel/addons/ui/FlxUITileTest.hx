@@ -1,12 +1,14 @@
 package flixel.addons.ui;
+
 import flash.display.BitmapData;
 import flash.geom.Point;
+import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.addons.ui.interfaces.IResizable;
 
 /**
  * This is mostly just for testing purposes, it is NOT a replacement for FlxTileMap
  * @author 
  */
-
 class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIWidget 
 {
 	public var widthInTiles(get,null):Int;
@@ -38,10 +40,7 @@ class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIW
 		
 		makeTiles(tileWidth,tileHeight,_tilesWide,_tilesTall,_color1,_color2);
 	}
-		
-	//For IResizable
-	override public function get_width():Float { return width; }
-	override public function get_height():Float { return height; }
+
 	
 	private function makeTiles(tileWidth:Int,tileHeight:Int,tilesWide:Int,tilesTall:Int,color1:Int=0xff808080,color2:Int=0xffc4c4c4):Void {
 		makeGraphic(tileWidth * tilesWide, tileHeight * tilesTall, color1);

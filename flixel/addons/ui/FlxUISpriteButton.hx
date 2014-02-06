@@ -1,13 +1,7 @@
 package flixel.addons.ui;
-import flash.events.Event;
-import flixel.FlxG;
+
 import flixel.FlxSprite;
-import flixel.text.FlxText;
-import flixel.ui.FlxButton;
-import flash.display.BitmapData;
-import flixel.util.FlxPoint;
-import flixel.util.FlxTimer;
-import openfl.Assets;
+import flixel.util.FlxColor;
 
 /**
  * This class extends FlxUISpriteButton and has a Sprite "label"
@@ -15,31 +9,36 @@ import openfl.Assets;
  * Like all FlxUITypedButton's, it can work as a toggle button, and load
  * 9-slice sprites for its button images, and be dynamically resized 
  * accordingly.
- * 
- * Furthermore, you have the ability to
  */
-
 class FlxUISpriteButton extends FlxUITypedButton<FlxSprite>
-{
-	public function new(X:Float = 0, Y:Float = 0, ?Asset:FlxSprite, ?OnClick:Dynamic) {
+{	
+	/**
+	 * Creates a new FlxUISpriteButton.
+	 * 
+	 * @param	X				The X position of the button.
+	 * @param	Y				The Y position of the button.
+	 * @param	Label			The text that you want to appear on the button.
+	 * @param	OnClick			The function to call whenever the button is clicked.
+	 */
+	public function new(X:Float = 0, Y:Float = 0, ?Asset:FlxSprite, ?OnClick:Void->Void) 
+	{
 		super(X, Y, null, OnClick);		
-	
+		
 		//Instead of "Label" we have "Asset" which is the id of the asset you want to load
 		//If you're trying to push in a raw BitmapData object, add that to the cache first and pass in the key
 		
-		up_color = over_color = down_color = up_toggle_color = over_toggle_color = down_toggle_color = 0xffffff;	
+		up_color = over_color = down_color = up_toggle_color = over_toggle_color = down_toggle_color = FlxColor.WHITE;	
 		
 		if (Asset != null) {
 			label = Asset;	
 		}
-		autoCenterLabel();
 	}	
 	
 	/**For IResizable:**/
-		
-	public override function resize(W:Float, H:Float):Void {
+	
+	public override function resize(W:Float, H:Float):Void 
+	{
 		super.resize(W, H);
 		autoCenterLabel();
-	}
-		
+	}	
 }

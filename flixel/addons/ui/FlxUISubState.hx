@@ -1,17 +1,10 @@
 package flixel.addons.ui;
-import flixel.FlxCamera;
+
+import flixel.addons.ui.interfaces.IEventGetter;
+import flixel.addons.ui.interfaces.IFireTongue;
+import flixel.FlxG;
 import flixel.FlxSubState;
 import haxe.xml.Fast;
-import flash.display.BitmapData;
-import flash.Lib;
-import flixel.FlxBasic;
-import flixel.ui.FlxButton;
-import flixel.FlxG;
-import flixel.group.FlxGroup;
-import flixel.FlxObject;
-import flixel.FlxSprite;
-import flixel.FlxState;
-import flixel.text.FlxText;
 
 /**
  * This is a simple extension of FlxState that does two things:
@@ -25,7 +18,6 @@ import flixel.text.FlxText;
  * 
  * @author Lars Doucet
  */
-
 class FlxUISubState extends FlxSubState implements IEventGetter
 {
 	public var destroyed:Bool;
@@ -63,17 +55,19 @@ class FlxUISubState extends FlxSubState implements IEventGetter
 			}
 			
 			if (data == null) {
-				trace("ERROR! Could not load _xml_id \"" + _xml_id + "\"");
+			#if debug
+				FlxG.log.error("FlxUISubstate: Could not load _xml_id \"" + _xml_id + "\"");
+			#end
 			}else{			
 				_ui.load(data);
 			}
 		}
 		
-		useMouse = true;
+		FlxG.mouse.visible = true;
 	}
 	
 	public override function onResize(Width:Int,Height:Int):Void {
-		FlxG.resizeGame(Width, Height);	
+		FlxG.resizeGame(Width, Height);
 		_reload_countdown = 5;
 		_reload = true;
 	}	
@@ -86,9 +80,6 @@ class FlxUISubState extends FlxSubState implements IEventGetter
 					_reload_countdown--;
 					if (_reload_countdown == 0) {
 						_reload = false;
-						#if debug
-						trace("RELOAD UI!");
-						#end
 						reloadUI();
 					}
 				}
@@ -108,7 +99,7 @@ class FlxUISubState extends FlxSubState implements IEventGetter
 		super.destroy();
 	}
 		
-	public function getEvent(id:String, sender:Dynamic, data:Dynamic):Void {		
+	public function getEvent(id:String, sender:Dynamic, data:Dynamic):Void {
 		eventResponse(id, sender, processEventData(data));
 	}
 	
@@ -121,6 +112,16 @@ class FlxUISubState extends FlxSubState implements IEventGetter
 		return null;
 	}
 	
+	public function getText(Flag:String,Context:String="ui",Safe:Bool=true):String {
+		if (_tongue != null) {
+			return _tongue.get(Flag, Context, Safe);
+		}
+		if (getTextFallback != null) {
+			return getTextFallback(Flag, Context, Safe);
+		}
+		return Flag;
+	}
+	
 	public function castParent():IEventGetter {
 		if (_parentState != null) {
 			if (Std.is(_parentState, IEventGetter)) {
@@ -130,7 +131,7 @@ class FlxUISubState extends FlxSubState implements IEventGetter
 		return null;
 	}
 	
-	private function reloadUI():Void {		
+	private function reloadUI():Void {
 		if (_ui != null) {
 			remove(_ui, true);
 			_ui.destroy();
@@ -139,7 +140,7 @@ class FlxUISubState extends FlxSubState implements IEventGetter
 		
 		_ui = new FlxUI(null,this,null,_tongue);
 		add(_ui);
-				
+		
 		var data:Fast = U.xml(_xml_id);
 		_ui.load(data);
 		
