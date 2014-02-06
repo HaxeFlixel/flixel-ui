@@ -10,7 +10,7 @@ import flixel.FlxSprite;
  */
 class FlxUISprite extends FlxSprite implements IFlxUIWidget 
 {
-	public var uiEventCallback:UIEventCallback;
+	public var broadcastToFlxUI:Bool = true;
 	
 	//simple string ID, handy for identification, etc
 	public var id:String;
@@ -33,7 +33,6 @@ class FlxUISprite extends FlxSprite implements IFlxUIWidget
 	
 	public override function destroy():Void {
 		ptr_owner = null;
-		uiEventCallback = null;
 		super.destroy();
 	}
 }

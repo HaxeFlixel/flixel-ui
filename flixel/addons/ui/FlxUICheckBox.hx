@@ -34,6 +34,8 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 	
 	public var skipButtonUpdate(default, set):Bool = false;
 	
+	public var callback:Void->Void;
+	
 	public static inline var CLICK_EVENT:String = "click_check_box";
 	
 	public function set_skipButtonUpdate(b:Bool):Bool {
@@ -53,9 +55,11 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 	}
 	
 	
-	public function new(X:Float = 0, Y:Float = 0, ?Box:Dynamic, ?Check:Dynamic, ?Label:String, LabelW:Int=100, ?Params:Array<Dynamic>)
+	public function new(X:Float = 0, Y:Float = 0, ?Box:Dynamic, ?Check:Dynamic, ?Label:String, ?LabelW:Int=100, ?Params:Array<Dynamic>, ?Callback:Void->Void)
 	{
 		super();
+		
+		callback = Callback;
 		
 		params = Params;
 		
@@ -215,10 +219,12 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 	private function _clickCheck():Void 
 	{
 		checked = !checked;
-		if (uiEventCallback == null) {
-			return;
+		if (callback != null) { 
+			callback();
 		}
-		uiEventCallback(CLICK_EVENT, this, checked, params);
+		if(broadcastToFlxUI){
+			FlxUI.event(CLICK_EVENT, this, checked, params);
+		}
 	}
 	
 }

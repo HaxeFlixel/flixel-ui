@@ -28,13 +28,28 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHas
 		return skipButtonUpdate;
 	}
 	
+	public var callback:String->Void;
+	
 	public var params(default, set):Array<Dynamic>;
 	public function set_params(p:Array <Dynamic>):Array<Dynamic>{
 		params = p;
 		return params;
 	}
 	
-	public function new(X:Float, Y:Float, ids_:Array<String>,labels_:Array<String>, callback_:Dynamic, y_space_:Float=25, width_:Int=100, height_:Int=20, label_width_:Int=100):Void {
+	/**
+	 * Creates a set of radio buttons
+	 * @param	X				X location
+	 * @param	Y				Y location
+	 * @param	ids_			list of string identifiers
+	 * @param	labels_			list of string labels for each button (what the user sees)
+	 * @param	callback_		optional callback expecting a string identifier of selected radio button
+	 * @param	y_space_		vertical space between buttons
+	 * @param	width_			maximum width of a button
+	 * @param	height_			height of a button
+	 * @param	label_width_	maximum width of a label
+	 */
+	
+	public function new(X:Float, Y:Float, ids_:Array<String>,labels_:Array<String>, ?callback_:String->Void=null, y_space_:Float=25, width_:Int=100, height_:Int=20, label_width_:Int=100):Void {
 		super();
 		_y_space = y_space_;
 		_width = width_;
@@ -42,6 +57,7 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHas
 		_label_width = label_width_;
 		x = X;
 		y = Y;
+		callback = callback_;
 		_list_radios = new Array<FlxUICheckBox>();
 		updateRadios(ids_, labels_);
 		loadGraphics(null, null);
@@ -242,7 +258,8 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHas
 				}
 			}else {
 				c = new FlxUICheckBox(0, 0, _box_asset, _dot_asset, label, _label_width, [id, false]);
-				c.uiEventCallback = _onCheckBoxEvent;
+				c.broadcastToFlxUI = false;					//internal communication only
+				c.callback = _onCheckBoxEvent.bind(c);
 				c.x = Std.int(xx);
 				c.y = Std.int(yy);
 				
@@ -255,8 +272,8 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHas
 		}
 	}
 	
-	private function _onCheckBoxEvent(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
-		_onClick(cast sender, true);
+	private function _onCheckBoxEvent(checkBox:FlxUICheckBox):Void {
+		_onClick(checkBox, true);
 	}
 	
 	private function _onClick(checkBox:FlxUICheckBox, doCallback:Bool):Bool{
@@ -273,8 +290,12 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHas
 		}
 		
 		if (doCallback) {
-			if (uiEventCallback != null) {
-				uiEventCallback(CLICK_EVENT, this, _ids[_selected], params);
+			if (callback != null) {
+				callback(selectedId);
+			}
+			
+			if (broadcastToFlxUI) {
+				FlxUI.event(CLICK_EVENT, this, _ids[_selected], params);
 			}
 		}
 		return true;

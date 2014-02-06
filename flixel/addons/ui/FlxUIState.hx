@@ -9,7 +9,7 @@ import haxe.xml.Fast;
 
 /**
  * This is a simple extension of FlxState that does two things:
- * 1) It implements the IEventGetter interface
+ * 1) It implements the IFlxUIState interface
  * 2) Automatically creates a FlxUI objects from a single string id
  * 
  * Usage:

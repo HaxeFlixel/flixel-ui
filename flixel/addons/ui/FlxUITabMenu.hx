@@ -15,19 +15,18 @@ import flixel.util.FlxTimer;
 /**
  * @author Lars Doucet
  */
-class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResizable implements IFlxUIButton
+class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUIButton implements IEventGetter
 {
 
-	/***Event Handling***/
-	
-	public function getEvent(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
-		//not yet implemented
+	/**To make IEventGetter happy**/
+	public function getEvent(name:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
+		//donothing
 	}
 	
-	public function getRequest(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Dynamic {
-		//not yet implemented
+	public function getRequest(name:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Dynamic {
+		//donothing
 		return null;
-	}	
+	}
 	
 	/**For IFlxUIButton**/
 	
@@ -146,7 +145,7 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 		var tab:FlxUIButton;
 		for (tab in _tabs) {
 			add(tab);
-			tab.uiEventCallback = _onTabEvent;
+			tab.onUp.callback = _onTabEvent.bind(tab.id);
 			i++;
 		}
 		
@@ -189,12 +188,8 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 		}
 	}
 	
-	private function _onTabEvent(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
-		switch(id) {
-			case "click_button":
-				var tab:FlxUIButton = cast sender;
-				showTabId(tab.id);
-		}
+	private function _onTabEvent(id:String):Void {
+		showTabId(id);
 	}
 	
 	public function showTabId(id:String):Void {

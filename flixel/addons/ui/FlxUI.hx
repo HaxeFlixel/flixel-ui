@@ -15,6 +15,7 @@ import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxPoint;
@@ -68,11 +69,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private var _ptr_tongue:IFireTongue;
 	private var _data:Fast;
-		
-	/*private static var _flashRect:Rectangle;
-	private static var _flashRect2:Rectangle;
-	private static var _flashPoint:Point;
-	private static var _flashPointZero:Point;*/
 	
 	/**
 	 * Make sure to recursively propogate the tongue pointer down to all my members
@@ -91,6 +87,60 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	/***EVENT HANDLING***/
+	
+	/**
+	 * Broadcasts an event to the current FlxUIState/FlxUISubState
+	 * @param	name	string identifier of the event -- each IFlxUIWidget has a set of string constants
+	 * @param	sender	the IFlxUIWidget that sent this event
+	 * @param	data	non-array data (boolean for a checkbox, string for a radiogroup, etc)
+	 * @param	?params	(optional) user-specified array of arbitrary data
+	 */
+	
+	static public function event(name:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
+		var currState:IEventGetter = getLeafUIState();
+		if (currState != null) {
+			currState.getEvent(name, sender, data, params);
+		}else {
+			FlxG.log.error("Warning, FlxUI event not handled, IFlxUIWidgets need to exist within an IFlxUIState");
+		}
+	}
+	
+	/**
+	 * Drill down to the current state or sub-state, and ensure it is an IFlxUIState (FlxUIState or FlxUISubState)
+	 * @return
+	 */
+	
+	static private function getLeafUIState():IEventGetter{
+		var state:FlxState = FlxG.state;
+		if (state != null) {
+			while (state.subState != null) {
+				state = state.subState;
+			}
+		}
+		if (Std.is(state, IEventGetter)) {
+			return cast state;
+		}
+		return null;
+	}
+	
+	/**
+	 * Broadcasts an event to the current FlxUIState/FlxUISubState, and expects data in return
+	 * @param	name	string identifier of the event -- each IFlxUIWidget has a set of string constants
+	 * @param	sender	the IFlxUIWidget that sent this event
+	 * @param	data	non-array data (boolean for a checkbox, string for a radiogroup, etc)
+	 * @param	?params	(optional) user-specified array of arbitrary data
+	 * @return	some sort of arbitrary data from the recipient
+	 */
+	
+	static public function request(name:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Dynamic {
+		var currState:IEventGetter = getLeafUIState();
+		if (currState != null) {
+			return currState.getRequest(name, sender, data, params);
+		}else {
+			FlxG.log.error("Warning, FlxUI event not handled, IFlxUIWidgets need to exist within an IFlxUIState");
+		}
+		return null;
+	}
 	
 	public function callEvent(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
 		getEvent(id, sender, data, params);
@@ -234,7 +284,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (Std.is(asset, FlxUIDropDownMenu)) {
 			var dd:FlxUIDropDownMenu = cast asset;
 			dd.setUIControlCallback(_onClickDropDown_control);
-			dd.uiEventCallback = callEvent;
 		}
 		return true;
 	}
@@ -659,7 +708,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private var _curr_mode:String = "";
 	
-	private var _ptr:IEventGetter;	
+	private var _ptr:IEventGetter;
 
 	private var _superIndexUI:FlxUI;
 	private var _safe_input_delay_elapsed:Float = 0.0;
@@ -1245,7 +1294,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			fti.borderSize = border[2];
 			fti.borderQuality = border[3];
 			fti.drawFrame();
-			fti.uiEventCallback = callEvent;
 			ft = fti;
 		}
 		return ft;
@@ -1332,7 +1380,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		//and FlxUIRadioGroup will default to defaults defined in FlxUIAssets 
 		
 		frg = new FlxUIRadioGroup(0, 0, ids, labels, null, y_space, W, H, labelW);
-		frg.uiEventCallback = callEvent;
 		frg.params = params;
 		
 		if (radio_asset != "" && radio_asset != null) {
@@ -1384,7 +1431,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		fc = new FlxUICheckBox(0, 0, box_asset, check_asset, label, labelW, params);
-		fc.uiEventCallback = callEvent;
 		formatButtonText(data, fc);
 		
 		var text_x:Int = U.xml_i(data.x, "text_x");
@@ -1507,7 +1553,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		var header = new FlxUIDropDownHeader(120, back_asset, label_asset, button_asset);
-		fud = new FlxUIDropDownMenu(0, 0, data_list, header , panel_asset, asset_list, _onClickDropDown_control);
+		fud = new FlxUIDropDownMenu(0, 0, data_list, null, header, panel_asset, asset_list, _onClickDropDown_control);
 		
 		return fud;
 	}
@@ -1693,7 +1739,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var ns:FlxUINumericStepper = new FlxUINumericStepper(0, 0, stepSize, defaultValue, min, max, decimals, FlxUINumericStepper.STACK_HORIZONTAL, theText, buttPlus, buttMinus);
 		
 		if (setCallback) {
-			ns.uiEventCallback = callEvent;
 			var params:Array<Dynamic> = getParams(data);
 			ns.params = params;
 		}
@@ -1742,7 +1787,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		fb.resize_point = resize_point;
 		
 		if (setCallback) {
-			fb.uiEventCallback = callEvent;
 			fb.params = params;
 		}
 		

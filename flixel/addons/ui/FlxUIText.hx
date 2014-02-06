@@ -11,7 +11,7 @@ import flixel.text.FlxText;
  */
 class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget 
 {
-	public var uiEventCallback:UIEventCallback;
+	public var broadcastToFlxUI:Bool = true;
 	
 	public var id:String; 
 	

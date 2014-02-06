@@ -54,10 +54,8 @@ class FlxInputText extends FlxText
 	
 	/**
 	 * A function called whenever the value changes from user input, or enter is pressed
-	 * Returns (text, event)
 	 */
-	public var externalCallback:String->String->Void;
-	 
+	public var callback:String->String->Void;
 	
 	public var params(default, set):Array<Dynamic> = null;
 	
@@ -281,8 +279,8 @@ class FlxInputText extends FlxText
 	}
 	
 	private function onChange(action:String):Void {
-		if (externalCallback != null) {
-			externalCallback(text, action);
+		if (callback != null) {
+			callback(text, action);
 		}
 	}
 	
@@ -402,6 +400,7 @@ class FlxInputText extends FlxText
 	{
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
 		super.destroy();
+		callback = null;
 	}
 	
 	/**

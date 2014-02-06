@@ -26,7 +26,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public var has_toggle:Bool = false;
 	public var toggled:Bool = false;
 	
-	public var uiEventCallback:UIEventCallback;
+	public var broadcastToFlxUI:Bool = true;
 	
 	//Change these to something besides 0 to make the label use that color
 	//when that state is active
@@ -56,7 +56,6 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	}
 	
 	public override function destroy():Void {
-		uiEventCallback = null;
 		resize_point = null;
 		super.destroy();
 	}
@@ -615,8 +614,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		if(label != null){
 			label.color = (toggled) ? up_toggle_color : up_color;
 		}
-		if (uiEventCallback != null) {
-			uiEventCallback(CLICK_EVENT, this, null, params);
+		if (broadcastToFlxUI) {
+			FlxUI.event(CLICK_EVENT, this, null, params);
 		}
 	}
 	
@@ -626,8 +625,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		if(label != null){
 			label.color = (toggled) ? down_toggle_color : down_color;
 		}
-		if (uiEventCallback != null) {
-			uiEventCallback(DOWN_EVENT, this, null, params);
+		if (broadcastToFlxUI) {
+			FlxUI.event(DOWN_EVENT, this, null, params);
 		}
 	}
 	
@@ -637,8 +636,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		if(label != null){
 			label.color = (toggled) ? over_toggle_color : over_color;
 		}
-		if (uiEventCallback != null) {
-			uiEventCallback(OVER_EVENT, this, null, params);
+		if (broadcastToFlxUI) {
+			FlxUI.event(OVER_EVENT, this, null, params);
 		}
 	}
 	
@@ -648,8 +647,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		if(label != null){
 			label.color = (toggled) ? up_toggle_color : up_color;
 		}
-		if (uiEventCallback != null) {
-			uiEventCallback(OUT_EVENT, this, null, params);
+		if (broadcastToFlxUI) {
+			FlxUI.event(OUT_EVENT, this, null, params);
 		}
 	}
 

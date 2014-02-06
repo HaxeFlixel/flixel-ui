@@ -12,7 +12,7 @@ import flixel.util.FlxRandom;
  */
 class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizable
 {
-	public var uiEventCallback:UIEventCallback;
+	public var broadcastToFlxUI:Bool=true;
 	
 	public var id:String;
 	
@@ -27,7 +27,6 @@ class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizabl
 	}
 	
 	public override function destroy():Void {
-		uiEventCallback = null;
 		super.destroy();
 	}
 	

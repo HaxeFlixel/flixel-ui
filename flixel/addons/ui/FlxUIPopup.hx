@@ -1,6 +1,5 @@
 package flixel.addons.ui;
 
-import flixel.addons.ui.FlxUI.UIEventCallback;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.util.FlxPoint;
 
@@ -10,9 +9,9 @@ import flixel.util.FlxPoint;
  */
 class FlxUIPopup extends FlxUISubState implements IFlxUIWidget 
 {
-	public var uiEventCallback:UIEventCallback;
-	
 	public var id:String;
+	
+	public var broadcastToFlxUI:Bool = true;
 	
 	/**STUBS TO MAKE THE INTERFACE HAPPY:**/
 	

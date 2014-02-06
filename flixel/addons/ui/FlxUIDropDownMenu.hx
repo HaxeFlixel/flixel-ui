@@ -47,7 +47,9 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	}
 	
 	public static inline var CLICK_EVENT:String = "click_dropdown";
-		
+	
+	public var callback:String->Void;
+	
 	private var _ui_control_callback:Bool->FlxUIDropDownMenu->Void;
 	
 	/**
@@ -56,14 +58,16 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	 * @param	X					x position of the dropdown menu
 	 * @param	Y					y position of the dropdown menu
 	 * @param	DataList			The data to be displayed
+	 * @param	Callback			Optional Callback
 	 * @param	Header				The header of this dropdown menu
 	 * @param	DropPanel			Optional 9-slice-background for actual drop down menu 
 	 * @param	ButtonList			Optional list of buttons to be used for the corresponding entry in DataList
 	 * @param	UIControlCallback	Used internally by FlxUI
 	 */
-	public function new(X:Float = 0, Y:Float = 0, DataList:Array<StrIdLabel>, ?Header:FlxUIDropDownHeader, ?DropPanel:FlxUI9SliceSprite, ?ButtonList:Array<FlxUIButton>, ?UIControlCallback:Bool->FlxUIDropDownMenu->Void) 
+	public function new(X:Float = 0, Y:Float = 0, DataList:Array<StrIdLabel>, ?Callback:String->Void, ?Header:FlxUIDropDownHeader, ?DropPanel:FlxUI9SliceSprite, ?ButtonList:Array<FlxUIButton>, ?UIControlCallback:Bool->FlxUIDropDownMenu->Void) 
 	{
 		super(X, Y);
+		callback = Callback;
 		
 		header = Header;
 		if (header == null)
@@ -81,6 +85,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 			for (data in DataList) 
 			{
 				var t:FlxUIButton = new FlxUIButton(0, 0, data.label);
+				t.broadcastToFlxUI = false;
 				t.onUp.callback = onClickItem.bind(i);
 				
 				t.id = data.id;
@@ -209,6 +214,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		
 		list = null;
 		_ui_control_callback = null;
+		callback = null;
 	}
 	
 	private function showList(b:Bool):Void 
@@ -236,8 +242,12 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		header.text.text = item.label.text;
 		showList(false);
 		
-		if (uiEventCallback != null) {
-			uiEventCallback(CLICK_EVENT, this, item.id, params);
+		if (callback != null) {
+			callback(item.id);
+		}
+		
+		if(broadcastToFlxUI){
+			FlxUI.event(CLICK_EVENT, this, item.id, params);
 		}
 	}
 	

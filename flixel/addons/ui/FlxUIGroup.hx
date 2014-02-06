@@ -1,6 +1,5 @@
 package flixel.addons.ui;
 
-import flixel.addons.ui.FlxUI.UIEventCallback;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
@@ -14,10 +13,10 @@ class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 {	
 	/***PUBLIC VARS***/
 	
-	public var uiEventCallback:UIEventCallback;
-	
 	//a handy string handler id for this thing
 	public var id:String;
+	
+	public var broadcastToFlxUI:Bool = true;
 	
 	/***PUBLIC GETTER/SETTERS***/
 	
@@ -26,7 +25,6 @@ class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 	
 	public var autoBounds:Bool = true;
 	
-		
 	/***PUBLIC FUNCTIONS***/
 	
 	public function new(X:Float = 0, Y:Float = 0) 
@@ -36,7 +34,6 @@ class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 	
 	public override function destroy():Void {
 		super.destroy();
-		uiEventCallback = null;
 	}
 	
 	public override function add(Object:FlxSprite):FlxSprite {

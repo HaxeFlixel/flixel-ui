@@ -138,10 +138,13 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 		TextField.y = 0;
 		text_field = TextField;
 		text_field.text = Std.string(DefaultValue);
-		if (Std.is(text_field,FlxUIInputText)) {
+		
+		if (Std.is(text_field, FlxUIInputText)) 
+		{
 			var fuit:FlxUIInputText = cast text_field;
 			fuit.lines = 1;
-			fuit.uiEventCallback = _onInputTextEvent;
+			fuit.callback = _onInputTextEvent;		//internal communication only
+			fuit.broadcastToFlxUI = false;
 		}
 		
 		stepSize = StepSize;
@@ -171,13 +174,15 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 		add(button_minus);
 		
 		button_plus.onUp.callback = _onPlus;
+		button_plus.broadcastToFlxUI = false;
+		
 		button_minus.onUp.callback = _onMinus; 
+		button_minus.broadcastToFlxUI = false;
 		
 		stack = Stack;
 	}
 	
-	private function _onInputTextEvent(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
-		var text:String = cast data;
+	private function _onInputTextEvent(text:String, action:String):Void {
 		if (text == "") 
 		{
 			text = Std.string(min);
@@ -199,9 +204,9 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 		_doCallback(CHANGE_EVENT);
 	}
 	
-	private function _doCallback(event:String):Void{
-		if (uiEventCallback != null) {
-			uiEventCallback(event, this, value, params);
+	private function _doCallback(event_name:String):Void {
+		if(broadcastToFlxUI){
+			FlxUI.event(event_name, this, value, params);
 		}
 	}
 }
