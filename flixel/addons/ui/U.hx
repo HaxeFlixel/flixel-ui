@@ -768,7 +768,7 @@ class U
 	* 
 	* @param   color_index   The matching color index
 	* 
-	* @return	A comma-separated string containing the level data in a <code>FlxTilemap</code>-friendly format.
+	* @return	A comma-separated string containing the level data in a FlxTilemap-friendly format.
 	*/
    public static function bmpToCSVLayer(color_index:Int, bd:BitmapData):String{
 	   
@@ -1164,7 +1164,7 @@ class U
 			return s;
 		}
 		
-		static public function formatXml(_xml:Xml):String 
+		public static function formatXml(_xml:Xml):String
 		{
 			var s:String = _xml.toString();
 			

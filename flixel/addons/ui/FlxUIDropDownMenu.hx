@@ -252,7 +252,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	 * @param	UseIndexID		Whether to use the integer index of the current string as ID.
 	 * @return	The StrIDLabel array ready to be used in FlxUIDropDownMenu's constructor
 	 */
-	static public function makeStrIdLabelArray(StringArray:Array<String>, UseIndexID:Bool = false):Array<StrIdLabel>
+	public static function makeStrIdLabelArray(StringArray:Array<String>, UseIndexID:Bool = false):Array<StrIdLabel>
 	{
 		var strIdArray:Array<StrIdLabel> = [];
 		for (i in 0...StringArray.length)
