@@ -92,9 +92,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	/***EVENT HANDLING***/
 	
+	public function callEvent(id:String, sender:Dynamic, data:Dynamic):Void {
+		getEvent(id, sender, data);
+	}
+	
 	public function getEvent(id:String, sender:Dynamic, data:Dynamic):Void {
 		if (_ptr != null) {
-			_ptr.getRequest(id, sender, data);
+			_ptr.getEvent(id, sender, data);
 		}
 	}
 	
@@ -225,7 +229,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			add(cast asset);
 		}
 		
-		_asset_index.set(key,asset);
+		_asset_index.set(key, asset);
+		
+		if (Std.is(asset, FlxUIDropDownMenu)) {
+			var dd:FlxUIDropDownMenu = cast asset;
+			dd.setUIControlCallback(_onClickDropDown_control);
+			dd.uiEventCallback = callEvent;
+		}
 		return true;
 	}
 	
@@ -625,7 +635,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private static inline function _delta(thing:IFlxUIWidget, X:Float=0, Y:Float=0):Void {				
 		thing.x += X;
-		thing.y += Y;		
+		thing.y += Y;
 	}
 		
 	/**
@@ -795,16 +805,17 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			case "tile_test": return _loadTileTest(info);
 			case "sprite": return _loadSprite(info);
 			case "text": return _loadText(info);
-			case "button": return _loadButton(info);
-			case "button_toggle": return _loadButton(info,true,true);
+			case "numeric_stepper": return _loadNumericStepper(info);			//has events, params?
+			case "button": return _loadButton(info);							//has events, params
+			case "button_toggle": return _loadButton(info,true,true);			//has events, params
 			
-			case "tab_menu": return _loadTabMenu(info);
+			case "tab_menu": return _loadTabMenu(info);							//has events, params?
 			
 			case "dropdown_menu", "dropdown",
-			     "pulldown", "pulldown_menu": return _loadDropDownMenu(info);
+			     "pulldown", "pulldown_menu": return _loadDropDownMenu(info);	//has events, params?
 			
-			case "checkbox": return _loadCheckBox(info);
-			case "radio_group": return _loadRadioGroup(info);
+			case "checkbox": return _loadCheckBox(info);						//has events, params
+			case "radio_group": return _loadRadioGroup(info);					//has events, params
 			case "layout", "ui": return _loadLayout(info);
 			case "failure": if (_failure_checks == null) { _failure_checks = new Array<Fast>(); }
 							_failure_checks.push(data);
@@ -1234,8 +1245,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			fti.borderSize = border[2];
 			fti.borderQuality = border[3];
 			fti.drawFrame();
+			fti.uiEventCallback = callEvent;
 			ft = fti;
-		}		
+		}
 		return ft;
 	}
 	
@@ -1319,7 +1331,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		//if radio_src or dot_src are == "", then leave radio_asset/dot_asset == null, 
 		//and FlxUIRadioGroup will default to defaults defined in FlxUIAssets 
 		
-		frg = new FlxUIRadioGroup(0, 0, ids, labels, _onClickRadioGroup, y_space, W, H, labelW);
+		frg = new FlxUIRadioGroup(0, 0, ids, labels, null, y_space, W, H, labelW);
+		frg.uiEventCallback = callEvent;
+		frg.params = params;
 		
 		if (radio_asset != "" && radio_asset != null) {
 			frg.loadGraphics(radio_asset,dot_asset);
@@ -1369,7 +1383,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			check_asset = U.gfx(check_src);
 		}
 		
-		fc = new FlxUICheckBox(0, 0, box_asset, check_asset, label, labelW, _onClickCheckBox, params);
+		fc = new FlxUICheckBox(0, 0, box_asset, check_asset, label, labelW, params);
+		fc.uiEventCallback = callEvent;
 		formatButtonText(data, fc);
 		
 		var text_x:Int = U.xml_i(data.x, "text_x");
@@ -1382,6 +1397,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		return fc;
 	}
+	
 	
 	private function _loadDropDownMenu(data:Fast):FlxUIDropDownMenu{
 		
@@ -1491,7 +1507,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		var header = new FlxUIDropDownHeader(120, back_asset, label_asset, button_asset);
-		fud = new FlxUIDropDownMenu(0, 0, data_list, _onClickDropDown, header , panel_asset, asset_list, _onClickDropDown_control);
+		fud = new FlxUIDropDownMenu(0, 0, data_list, header , panel_asset, asset_list, _onClickDropDown_control);
 		
 		return fud;
 	}
@@ -1640,7 +1656,52 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		return fg;
 	}
-			
+	
+	private function _loadNumericStepper(data:Fast, setCallback:Bool = true):IFlxUIWidget {
+		
+		/*
+		 * <numeric_stepper step="1" value="0" min="1" max="2" decimals="1">
+		 * 		<text/>
+		 * 		<plus/>
+		 * 		<minus/>
+		 * 		<params/>
+		 * </numeric_stepper>
+		 * 
+		 */
+		
+		var stepSize:Float = U.xml_f(data.x, "step", 1);
+		var defaultValue:Float = U.xml_f(data.x, "value", 0);
+		var min:Float = U.xml_f(data.x, "min", 0);
+		var max:Float = U.xml_f(data.x, "max", 10);
+		var decimals:Int = U.xml_i(data.x, "decimals", 0);
+		
+		var theText:FlxText = null;
+		var buttPlus:FlxUITypedButton<FlxSprite> = null;
+		var buttMinus:FlxUITypedButton<FlxSprite> = null;
+		var bkg:FlxUISprite = null;
+		
+		if (data.hasNode.text) {
+			theText = cast _loadText(data.node.text);
+		}
+		if (data.hasNode.plus) {
+			buttPlus = cast _loadButton(data.node.plus);
+		}
+		if (data.hasNode.minus) {
+			buttMinus = cast _loadButton(data.node.minus);
+		}
+		
+		var ns:FlxUINumericStepper = new FlxUINumericStepper(0, 0, stepSize, defaultValue, min, max, decimals, FlxUINumericStepper.STACK_HORIZONTAL, null, theText, buttPlus, buttMinus);
+		
+		var params:Array<Dynamic> = getParams(data);
+		ns.params = params;
+		
+		if (setCallback) {
+			ns.uiEventCallback = callEvent;
+		}
+		
+		return ns;
+	}
+	
 	private function _loadButton(data:Fast, setCallback:Bool = true, isToggle:Bool = false, load_code:String=""):IFlxUIWidget{
 		var src:String = ""; 
 		var fb:Dynamic = null;
@@ -1682,7 +1743,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		fb.resize_point = resize_point;
 		
 		if (setCallback) {
-			fb.onUp.callback = _onClickButton.bind(params);
+			fb.uiEventCallback = callEvent;
+			fb.params = params;
 		}
 		
 		/***Begin graphics loading block***/
@@ -1886,7 +1948,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var bounds: { min_width:Float, min_height:Float, 
 			          max_width:Float, max_height:Float } = calcMaxMinSize(data);
-							  
+		
 		src = U.xml_gfx(data.x, "src");
 		if (src == "") { src = null; }
 		
@@ -2385,8 +2447,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (colorStr == "" && data.x.nodeName == colorName) { 
 			colorStr = U.xml_str(data.x, "value"); 
 		}
-		var color:Int = _default;		
-		if (colorStr != "") { color = U.parseHex(colorStr, true); }		
+		var color:Int = _default;
+		if (colorStr != "") { color = U.parseHex(colorStr, true); }
 		return color;
 	}
 	
@@ -2405,46 +2467,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 	}
 	
-	private function _onClickRadioGroup(params:Dynamic = null):Void {
-		FlxG.log.add("FlxUI._onClickRadioGroup(" + params + ")");
-		if (_ptr != null) {
-			_ptr.getEvent("click_radio_group", this, params);
-		}	
-	}
-	
-	private function _onClickCheckBox(params:Dynamic = null):Void {
-		FlxG.log.add("FlxUI._onClickCheckBox(" + params + ")");
-		if (_ptr != null) {
-			_ptr.getEvent("click_checkbox", this, params);
-		}		
-	}
-	
 	private function _onClickDropDown_control(isActive:Bool, dropdown:FlxUIDropDownMenu):Void {
 		if (isActive) {
 			focus = dropdown;
 		}else {
 			focus = null;
-		}
-	}
-	
-	private function _onClickDropDown(?params:String):Void {
-		FlxG.log.add("FlxUI._onClickDropDown(" + params + ")");
-		if (_ptr != null) {
-			_ptr.getEvent("click_dropdown", this, params);
-		}
-	}
-	
-	private function _onClickButton(params:Array<Dynamic> = null):Void {
-		FlxG.log.add("FlxUI._onClickButton(" + params + ")");
-		if (_ptr != null) {
-			_ptr.getEvent("click_button", this, params);
-		}
-	}
-	
-	private function _onClickButtonToggle(params:Dynamic = null):Void {
-		FlxG.log.add("FlxUI._onClickButtonToggle(" + params + ")");
-		if (_ptr != null) {
-			_ptr.getEvent("click_button_toggle", this, params);
 		}
 	}
 	
@@ -2600,6 +2627,26 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}
 	}
+}
+
+typedef NamedBool = {
+	name:String,
+	value:Bool
+}
+
+typedef NamedInt = {
+	name:String,
+	value:Int
+}
+
+typedef NamedFloat = {
+	name:String,
+	value:Float
+}
+
+typedef NamedString = {
+	name:String,
+	value:String
 }
 
 typedef MaxMinSize = {

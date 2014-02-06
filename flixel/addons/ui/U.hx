@@ -731,9 +731,11 @@ class U
 			id = prefix + id;
 		}
 		
-		id = StringTools.replace(id, "-", "_");// .replace("-", "_");
+		if(id.indexOf("raw:") != 0){
+			id = StringTools.replace(id, "-", "_");// .replace("-", "_");
+		}
 		
-		return get_gfx(id);		
+		return get_gfx(id);
 		
 		//TODO: make mod-compatible
 		
@@ -809,13 +811,27 @@ class U
 	   }
 	   return csv;
    }
-	
-	public static inline function get_gfx(str:String):String{
+   
+	public static function get_gfx(str:String):String {
+		if (str.indexOf("raw:") == 0 || str.indexOf("RAW:") == 0) {
+			str = str.substr(4, str.length - 4);
+			return str + ".png";
+		}
 		return "assets/gfx/" + str + ".png";
 	}
 	
 	public static inline function sfx(str:String):String {
-		return "assets/sfx/" + str + ".mp3";
+		var extension:String = "";
+		#if flash
+			extension = ".mp3";
+		#else
+			extension = ".ogg";
+		#end
+		if (str.indexOf("RAW:") == 0) {
+			str = str.substr(4, str.length - 4);
+			return str + extension;
+		}
+		return "assets/sfx/" + str + extension;
 	}
 	
 	/**

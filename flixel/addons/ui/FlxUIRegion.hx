@@ -11,6 +11,8 @@ import flixel.util.FlxRandom;
  */
 class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizable
 {
+	public var uiEventCallback:String->Dynamic->Dynamic->Void;
+	
 	public var id:String;
 	
 	public function new(X:Float=0,Y:Float=0,W:Float=16,H:Float=16) {

@@ -50,13 +50,12 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	 * @param	X					x position of the dropdown menu
 	 * @param	Y					y position of the dropdown menu
 	 * @param	DataList			The data to be displayed
-	 * @param	Callback			Function to be called when of of the entries of the list was clicked
 	 * @param	Header				The header of this dropdown menu
 	 * @param	DropPanel			Optional 9-slice-background for actual drop down menu 
 	 * @param	ButtonList			Optional list of buttons to be used for the corresponding entry in DataList
 	 * @param	UIControlCallback	Used internally by FlxUI
 	 */
-	public function new(X:Float = 0, Y:Float = 0, DataList:Array<StrIdLabel>, ?Callback:String->Void, ?Header:FlxUIDropDownHeader, ?DropPanel:FlxUI9SliceSprite, ?ButtonList:Array<FlxUIButton>, ?UIControlCallback:Bool->FlxUIDropDownMenu->Void) 
+	public function new(X:Float = 0, Y:Float = 0, DataList:Array<StrIdLabel>, ?Header:FlxUIDropDownHeader, ?DropPanel:FlxUI9SliceSprite, ?ButtonList:Array<FlxUIButton>, ?UIControlCallback:Bool->FlxUIDropDownMenu->Void) 
 	{
 		super(X, Y);
 		
@@ -136,11 +135,44 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 			btn.visible = false;
 		}
 		
-		callback = Callback;
 		_ui_control_callback = UIControlCallback;
 		header.button.onUp.callback = onDropdown;
 		
 		add(header);
+	}
+	
+	public function setUIControlCallback(UIControlCallback:Bool->FlxUIDropDownMenu->Void):Void {
+		_ui_control_callback = UIControlCallback;
+	}
+	
+	public function changeLabelByIndex(i:Int, NewLabel:String):Void {
+		var btn:FlxUIButton = getBtnByIndex(i);
+		if (btn != null && btn.label != null) {
+			btn.label.text = NewLabel;
+		}
+	}
+	
+	public function changeLabelById(id:String, NewLabel:String):Void {
+		var btn:FlxUIButton = getBtnById(id);
+		if (btn != null && btn.label != null) {
+			btn.label.text = NewLabel;
+		}
+	}
+	
+	public function getBtnByIndex(i:Int):FlxUIButton {
+		if (i >= 0 && i < list.length) {
+			return list[i];
+		}
+		return null;
+	}
+	
+	public function getBtnById(id:String):FlxUIButton{
+		for (btn in list) {
+			if (btn.id == id) {
+				return btn;
+			}
+		}
+		return null;
 	}
 	
 	public override function update():Void 

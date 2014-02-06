@@ -4,6 +4,7 @@ import flash.display.BitmapData;
 import flash.errors.Error;
 import flash.events.KeyboardEvent;
 import flash.geom.Rectangle;
+import flixel.addons.ui.FlxUI.NamedString;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxPoint;
@@ -34,6 +35,10 @@ class FlxInputText extends FlxText
 	public static inline var UPPER_CASE:Int			= 1;
 	public static inline var LOWER_CASE:Int			= 2;
 	
+	public static inline var BACKSPACE_ACTION:String = "backspace";		//press backspace
+	public static inline var DELETE_ACTION:String = "delete";			//press delete
+	public static inline var ENTER_ACTION:String = "enter";				//press enter
+	public static inline var INPUT_ACTION:String = "input";				//manually edit
 	/**
 	 * Defines what text to filter. It can be NO_FILTER, ONLY_ALPHA, ONLY_NUMERIC, ONLY_ALPHA_NUMERIC or CUSTOM_FILTER
 	 * (Remember to append "FlxInputText." as a prefix to those constants)
@@ -48,10 +53,13 @@ class FlxInputText extends FlxText
 	public var customFilterPattern:EReg;
 	
 	/**
-	 * A function called when the enter key is pressed on this text box. 
-	 * Function should be formatted "onEnterPressed(text:String)".
+	 * A function called whenever the value changes from user input, or enter is pressed
+	 * Returns (text, event)
 	 */
-	public var enterCallBack:String->Void;
+	public var externalCallback:String->String->Void;
+	 
+	
+	public var params(default, set):Array<Dynamic> = null;
 	
 	/**
 	 * Whether this text box has focus on the screen.
@@ -153,6 +161,14 @@ class FlxInputText extends FlxText
 		calcFrame();
 	}
 	
+	public function set_params(p:Array<Dynamic>):Array<Dynamic> {
+		params = p;
+		if (params == null) { params = [];}
+		var namedValue:NamedString = { name:"value", value:text};
+		params.push(namedValue);
+		return p;
+	}
+	
 	/**
 	 * Draw the caret in addition to the text.
 	 */
@@ -233,22 +249,22 @@ class FlxInputText extends FlxText
 				if (caretIndex > 0) {
 					var s:String;
 					text = text.substring(0, caretIndex - 1) + text.substring(caretIndex);
-					//text = text.slice(0, caretIndex - 1) + text.slice(caretIndex);
 					caretIndex --;
+					onChange(BACKSPACE_ACTION);
 				}
 			}
 			// Delete
 			else if (key == 46)
 			{
 				if (text.length > 0 && caretIndex < text.length) {
-					text = text.substring(0, caretIndex) + text.substring(caretIndex+1);
-					//text = text.slice(0, caretIndex) + text.slice(caretIndex+1);
+					text = text.substring(0, caretIndex) + text.substring(caretIndex + 1);
+					onChange(DELETE_ACTION);
 				}
 			}
 			// Enter
 			else if (key == 13) 
 			{
-				if (enterCallBack != null) enterCallBack(text);
+				onChange(ENTER_ACTION);
 			}
 			// Actually add some text
 			else 
@@ -258,8 +274,15 @@ class FlxInputText extends FlxText
 				if (newText.length > 0 && (maxLength == 0 || (text.length + newText.length) < maxLength)) {
 					text = insertSubstring(text, newText, caretIndex);
 					caretIndex++;
+					onChange(INPUT_ACTION);
 				}
 			}
+		}
+	}
+	
+	private function onChange(action:String):Void {
+		if (externalCallback != null) {
+			externalCallback(text, action);
 		}
 	}
 	
@@ -322,6 +345,20 @@ class FlxInputText extends FlxText
 	#else
 		return 0;
 	#end
+	}
+	
+	public override function set_x(X:Float):Float {
+		if (fieldBorderSprite != null && fieldBorderThickness > 0) {
+			fieldBorderSprite.x = X - fieldBorderThickness;
+		}
+		return super.set_x(X);
+	}
+	
+	public override function set_y(Y:Float):Float {
+		if (fieldBorderSprite != null && fieldBorderThickness > 0) {
+			fieldBorderSprite.y = Y - fieldBorderThickness;
+		}
+		return super.set_y(Y);
 	}
 	
 	/**

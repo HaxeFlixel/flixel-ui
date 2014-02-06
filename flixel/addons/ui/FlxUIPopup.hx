@@ -8,7 +8,9 @@ import flixel.util.FlxPoint;
  * @author 
  */
 class FlxUIPopup extends FlxUISubState implements IFlxUIWidget 
-{	
+{
+	public var uiEventCallback:String->Dynamic->Dynamic->Void;
+	
 	public var id:String;
 	
 	/**STUBS TO MAKE THE INTERFACE HAPPY:**/

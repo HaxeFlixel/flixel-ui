@@ -9,6 +9,8 @@ import flixel.FlxSprite;
  */
 class FlxUISprite extends FlxSprite implements IFlxUIWidget 
 {
+	public var uiEventCallback:String->Dynamic->Dynamic->Void;
+	
 	//simple string ID, handy for identification, etc
 	public var id:String;
 	

@@ -1,6 +1,8 @@
 package flixel.addons.ui;
 
+import flixel.addons.ui.FlxUI.NamedBool;
 import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.ILabeled;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
@@ -10,7 +12,7 @@ import flixel.util.FlxTimer;
 /**
  * @author Lars Doucet
  */
-class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButton
+class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButton implements IHasParams
 {
 	public var box:FlxSprite;
 	public var mark:FlxSprite;
@@ -18,10 +20,11 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 	public var max_width:Float = -1;
 	
 	public var checked(default, set):Bool = false;
+	public var params(default, set):Array<Dynamic>;
 	
 	//Set this to false if you just want the checkbox itself to be clickable
 	public var textIsClickable:Bool = true;
-		
+	
 	public var checkbox_dirty:Bool = false;
 	
 	public var textX(default, set):Float = 0;
@@ -29,17 +32,32 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 	
 	public var box_space:Float = 2;
 	
-	public var skipButtonUpdate(default,set):Bool = false;
+	public var skipButtonUpdate(default, set):Bool = false;
+	
+	public static inline var CLICK_EVENT:String = "click_check_box";
 	
 	public function set_skipButtonUpdate(b:Bool):Bool {
 		skipButtonUpdate = b;
 		button.skipButtonUpdate = skipButtonUpdate;
 		return skipButtonUpdate;
 	}
+	public function set_params(p:Array <Dynamic>):Array<Dynamic>{
+		params = p;
+		if (params == null) 
+		{ 
+			params = [];
+		}
+		var nb:NamedBool = { name:"checked", value:false };
+		params.push(nb);
+		return params;
+	}
 	
-	public function new(X:Float = 0, Y:Float = 0, ?Box:Dynamic, ?Check:Dynamic, ?Label:String, LabelW:Int=100, ?OnClick:Dynamic, ?params:Array<Dynamic>)
+	
+	public function new(X:Float = 0, Y:Float = 0, ?Box:Dynamic, ?Check:Dynamic, ?Label:String, LabelW:Int=100, ?Params:Array<Dynamic>)
 	{
 		super();
+		
+		params = Params;
 		
 		box = new FlxSprite();
 		if (Box == null) {
@@ -49,7 +67,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		
 		box.loadGraphic(Box, true, false);
 		
-		button = new FlxUIButton(0, 0, Label, _clickCheck.bind(null));
+		button = new FlxUIButton(0, 0, Label, _clickCheck);
 		
 		//set default checkbox label format
 		button.label.setFormat(null, 8, 0xffffff, "left", FlxText.BORDER_OUTLINE);
@@ -66,8 +84,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		
 		max_width = Std.int(box.width + box_space + LabelW);
 		
-		setExternalCallback(OnClick);
-		button.onUp.callback = _clickCheck.bind(params);    //for internal use, check/uncheck box, bubbles up to _externalCallback
+		button.onUp.callback = _clickCheck;    //for internal use, check/uncheck box, bubbles up to _externalCallback
 				
 		mark = new FlxSprite();
 		if (Check == null) {
@@ -131,10 +148,6 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		return textY;
 	}
 	
-	public function setExternalCallback(callBack:Dynamic):Void {
-		_externalCallback = callBack;
-	}
-	
 	public function anchorLabelX():Void {
 		if (button != null) {
 			button.label.offset.x = -((box.width + box_space) + textX);
@@ -150,7 +163,6 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 	public override function destroy():Void 
 	{
 		super.destroy();
-		_externalCallback = null;
 		if (mark != null) {
 			mark.destroy();
 			mark= null;
@@ -200,30 +212,17 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 	
 	/*****PRIVATE******/
 	
-	private var _externalCallback:Dynamic;
-	
-	private function _clickCheck(Params:Dynamic = null):Void 
+	private function _clickCheck():Void 
 	{
 		checked = !checked;
-		if (_externalCallback == null) {
+		if (uiEventCallback == null) {
 			return;
 		}
 		
-		var arr:Array<Dynamic>;
-		if (Std.is(Params, Array)) {
-			arr = cast(Params, Array<Dynamic>);
-			arr = U.copy_shallow_arr(arr);
-		}else {
-			arr = new Array<Dynamic>();
-			arr.push(Params);
-		}
+		var nb:NamedBool = cast params[params.length - 1];
+		nb.value = checked;
 		
-		if (checked) {
-			arr.push("checked:true");
-		}else {
-			arr.push("checked:false");
-		}
-		_externalCallback(arr);
+		uiEventCallback(CLICK_EVENT, this, params);
 	}
 	
 }

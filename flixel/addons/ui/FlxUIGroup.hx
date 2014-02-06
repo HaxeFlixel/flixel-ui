@@ -12,7 +12,9 @@ import flixel.group.FlxSpriteGroup;
 class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 {	
 	/***PUBLIC VARS***/
-		
+	
+	public var uiEventCallback:String->Dynamic->Dynamic->Void;
+	
 	//a handy string handler id for this thing
 	public var id:String;
 	

@@ -4,6 +4,7 @@ import flash.display.BitmapData;
 import flash.errors.Error;
 import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -14,7 +15,7 @@ import flixel.util.FlxPoint;
 import flixel.util.FlxStringUtil;
 import openfl.Assets;
 
-class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResizable implements IFlxUIWidget implements IFlxUIButton
+class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResizable implements IFlxUIWidget implements IFlxUIButton implements IHasParams
 {
 	public var id:String; 
 	public var resize_ratio:Float = -1;
@@ -23,6 +24,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	public var has_toggle:Bool = false;
 	public var toggled:Bool = false;
+	
+	public var uiEventCallback:String->Dynamic->Dynamic->Void;
 	
 	//Change these to something besides 0 to make the label use that color
 	//when that state is active
@@ -34,10 +37,21 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public var over_toggle_color:Int = 0;
 	public var down_toggle_color:Int = 0;
 	
+	public static inline var CLICK_EVENT:String = "click_button";
+	public static inline var OVER_EVENT:String = "over_button";
+	public static inline var DOWN_EVENT:String = "down_button";
+	public static inline var OUT_EVENT:String = "out_button";
+	
 	public var skipButtonUpdate(default, set):Bool = false;
 	public function set_skipButtonUpdate(b:Bool):Bool {
 		skipButtonUpdate = b;
 		return skipButtonUpdate;
+	}
+	
+	public var params(default, set):Array<Dynamic>;
+	public function set_params(p:Array <Dynamic>):Array<Dynamic>{
+		params = p;
+		return params;
 	}
 	
 	/**
@@ -558,23 +572,23 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		
 		if (overB != null) {
 			if (downB != null) {
-				pixels = new BitmapData(upB.width, upB.height * 3);						
-			}else {				
-				pixels = new BitmapData(upB.width, upB.height * 2);						
+				pixels = new BitmapData(upB.width, upB.height * 3);
+			}else {
+				pixels = new BitmapData(upB.width, upB.height * 2);
 			}
 		}else {
-			pixels = new BitmapData(upB.width, upB.height);						
+			pixels = new BitmapData(upB.width, upB.height);
 		}
 		
 		pixels.copyPixels(upB, upB.rect, _flashPointZero);
 		
 		if(overB != null){
 			_flashPoint.x = 0;
-			_flashPoint.y = upB.height;		
+			_flashPoint.y = upB.height;
 			pixels.copyPixels(overB, overB.rect, _flashPoint);
 			if (downB != null) {
 				_flashPoint.y = upB.height * 2;
-				pixels.copyPixels(downB, downB.rect, _flashPoint);		
+				pixels.copyPixels(downB, downB.rect, _flashPoint);
 			}
 		}
 		
@@ -591,25 +605,45 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	{
 		toggled = !toggled;
 		super.onUpHandler();
-		label.color = (toggled) ? up_toggle_color : up_color;
+		if(label != null){
+			label.color = (toggled) ? up_toggle_color : up_color;
+		}
+		if (uiEventCallback != null) {
+			uiEventCallback(CLICK_EVENT, this, params);
+		}
 	}
 	
 	override private function onDownHandler():Void
 	{
 		super.onDownHandler();
-		label.color = (toggled) ? down_toggle_color : down_color;
+		if(label != null){
+			label.color = (toggled) ? down_toggle_color : down_color;
+		}
+		if (uiEventCallback != null) {
+			uiEventCallback(DOWN_EVENT, this, params);
+		}
 	}
 	
 	override private function onOverHandler():Void
 	{
 		super.onOverHandler();
-		label.color = (toggled) ? over_toggle_color : over_color;
+		if(label != null){
+			label.color = (toggled) ? over_toggle_color : over_color;
+		}
+		if (uiEventCallback != null) {
+			uiEventCallback(OVER_EVENT, this, params);
+		}
 	}
 	
 	override private function onOutHandler():Void
 	{
 		super.onOutHandler();
-		label.color = (toggled) ? up_toggle_color : up_color;
+		if(label != null){
+			label.color = (toggled) ? up_toggle_color : up_color;
+		}
+		if (uiEventCallback != null) {
+			uiEventCallback(OUT_EVENT, this, params);
+		}
 	}
 
 	/*********PRIVATE************/

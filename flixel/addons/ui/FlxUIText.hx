@@ -10,6 +10,8 @@ import flixel.text.FlxText;
  */
 class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget 
 {
+	public var uiEventCallback:String->Dynamic->Dynamic->Void;
+	
 	public var id:String; 
 	
 	public function resize(w:Float, h:Float):Void {
