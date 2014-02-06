@@ -10,10 +10,11 @@ import flixel.addons.ui.interfaces.IResizable;
 class FlxUIInputText extends FlxInputText implements IResizable implements IFlxUIWidget
 {
 	public var id:String;
-	public var uiEventCallback:String->Dynamic->Dynamic->Void;
+	public var uiEventCallback:String->IFlxUIWidget->Dynamic->Void;
 	
 	public static inline var CHANGE_EVENT:String = "change_input_text";		//change in any way
 	public static inline var ENTER_EVENT:String = "enter_input_text";		//hit enter in this text field
+	public static inline var DELETE_EVENT:String = "delete_input_text";		//delete text in this text field
 	public static inline var INPUT_EVENT:String = "input_input_text";		//input text in this text field
 	
 	public function resize(w:Float, h:Float):Void {
@@ -30,12 +31,13 @@ class FlxUIInputText extends FlxInputText implements IResizable implements IFlxU
 		super.onChange(action);
 		if (uiEventCallback != null) {
 			switch(action) {
-				case ENTER_ACTION:										//press enter
+				case FlxInputText.ENTER_ACTION:										//press enter
 					uiEventCallback(ENTER_EVENT, this, text);
-				case DELETE_ACTION, BACKSPACE_ACTION:					//deleted some text
+				case FlxInputText.DELETE_ACTION, 
+					 FlxInputText.BACKSPACE_ACTION:									//deleted some text
 					uiEventCallback(DELETE_EVENT, this, text);
 					uiEventCallback(CHANGE_EVENT, this, text);
-				case INPUT_ACTION:										//text was input
+				case FlxInputText.INPUT_ACTION:										//text was input
 					uiEventCallback(INPUT_EVENT, this, text);
 					uiEventCallback(CHANGE_EVENT, this, text);
 			}

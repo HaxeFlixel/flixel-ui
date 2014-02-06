@@ -2,6 +2,7 @@ package flixel.addons.ui;
 
 import flixel.addons.ui.interfaces.IEventGetter;
 import flixel.addons.ui.interfaces.IFireTongue;
+import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxG;
 import flixel.FlxSubState;
 import haxe.xml.Fast;
@@ -99,15 +100,15 @@ class FlxUISubState extends FlxSubState implements IEventGetter
 		super.destroy();
 	}
 		
-	public function getEvent(id:String, sender:Dynamic, data:Dynamic):Void {
+	public function getEvent(id:String, sender:IFlxUIWidget, data:Dynamic):Void {
 		eventResponse(id, sender, processEventData(data));
 	}
 	
-	public function eventResponse(id:String, sender:Dynamic, data:Array<Dynamic>):Void {
+	public function eventResponse(id:String, sender:IFlxUIWidget, data:Array<Dynamic>):Void {
 		//define per subclass
 	}
 	
-	public function getRequest(id:String, sender:Dynamic, data:Dynamic):Dynamic {
+	public function getRequest(id:String, sender:IFlxUIWidget, data:Dynamic):Dynamic {
 		//define per subclass
 		return null;
 	}

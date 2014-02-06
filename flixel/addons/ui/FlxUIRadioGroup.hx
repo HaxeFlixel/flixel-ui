@@ -2,6 +2,7 @@ package flixel.addons.ui;
 
 import flixel.addons.ui.FlxUI.NamedBool;
 import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.util.FlxPoint;
 
@@ -254,18 +255,17 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHas
 		}
 	}
 	
-	private function _onCheckBoxEvent(id:String, sender:Dynamic, data:Dynamic):Void {
-		_onClick(sender, true);
+	private function _onCheckBoxEvent(id:String, sender:IFlxUIWidget, data:Dynamic):Void {
+		_onClick(cast sender, true);
 	}
 	
-	private function _onClick(sender:Dynamic, doCallback:Bool):Bool{
+	private function _onClick(checkBox:FlxUICheckBox, doCallback:Bool):Bool{
 		if (!_clickable) { return false; }
 		
 		var i:Int = 0;
-		var checkBox:FlxUICheckBox = cast sender;
 		for (c in _list_radios) {
 			c.checked = false;
-			if (sender == c) {
+			if (checkBox == c) {
 				_selected = i;
 				c.checked = true;
 			}

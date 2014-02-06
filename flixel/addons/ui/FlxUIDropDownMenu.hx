@@ -3,6 +3,7 @@ package flixel.addons.ui;
 import flash.geom.Rectangle;
 import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.addons.ui.interfaces.IHasParams;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
@@ -17,7 +18,7 @@ import flixel.util.FlxStringUtil;
  * larsiusprime
  * @author 
  */
-class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IFlxUIButton
+class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IFlxUIButton implements IHasParams
 {
 	public var skipButtonUpdate(default, set):Bool;
 	public function set_skipButtonUpdate(b:Bool):Bool {
@@ -29,10 +30,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	 * The header of this dropdown menu.
 	 */
 	public var header:FlxUIDropDownHeader;
-	/**
-	 * Function to be called when of of the entries of the list was clicked.
-	 */
-	public var callback:String->Void;
+	
 	/**
 	 * The list of items that is shown when the toggle button is clicked.
 	 */
@@ -42,8 +40,16 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	 */
 	public var dropPanel:FlxUI9SliceSprite;
 	
+	public var params(default, set):Array<Dynamic>;
+	public function set_params(p:Array <Dynamic>):Array<Dynamic>{
+		params = p;
+		return params;
+	}
+	
+	public static inline var CLICK_EVENT:String = "click_dropdown";
+		
 	private var _ui_control_callback:Bool->FlxUIDropDownMenu->Void;
-
+	
 	/**
 	 * This creates a new dropdown menu.
 	 * 
@@ -202,7 +208,6 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		}
 		
 		list = null;
-		callback = null;
 		_ui_control_callback = null;
 	}
 	
@@ -231,8 +236,12 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		header.text.text = item.label.text;
 		showList(false);
 		
-		if (callback != null) {
-			callback(item.id);
+		if (uiEventCallback != null) {
+			if (params != null) {
+				uiEventCallback(CLICK_EVENT, this, [item.id, params]);
+			}else {
+				uiEventCallback(CLICK_EVENT, this, [item.id]);
+			}
 		}
 	}
 	

@@ -11,7 +11,7 @@ import flixel.util.FlxRandom;
  */
 class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizable
 {
-	public var uiEventCallback:String->Dynamic->Dynamic->Void;
+	public var uiEventCallback:String->IFlxUIWidget->Dynamic->Void;
 	
 	public var id:String;
 	
@@ -21,8 +21,13 @@ class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizabl
 		#if debug
 			color = FlxRandom.color();
 		#end
-				
+		
 		resize(W, H);
+	}
+	
+	public override function destroy():Void {
+		uiEventCallback = null;
+		super.destroy();
 	}
 	
 	public function resize(w:Float, h:Float) : Void {

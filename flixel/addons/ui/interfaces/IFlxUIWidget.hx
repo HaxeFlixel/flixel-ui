@@ -12,7 +12,7 @@ interface IFlxUIWidget extends IFlxSprite
 	public var width(get, set):Float;
 	public var height(get, set):Float;
 	
-	public var uiEventCallback:String->Dynamic->Dynamic->Void;
+	public var uiEventCallback:String->IFlxUIWidget->Dynamic->Void;
 	 /*public function onFocusLost():Void;
 	 public function onFocus():Void;*/
 }

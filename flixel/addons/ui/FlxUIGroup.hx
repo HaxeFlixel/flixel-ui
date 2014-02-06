@@ -13,7 +13,7 @@ class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 {	
 	/***PUBLIC VARS***/
 	
-	public var uiEventCallback:String->Dynamic->Dynamic->Void;
+	public var uiEventCallback:String->IFlxUIWidget->Dynamic->Void;
 	
 	//a handy string handler id for this thing
 	public var id:String;
@@ -31,6 +31,11 @@ class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 	public function new(X:Float = 0, Y:Float = 0) 
 	{
 		super(X, Y);
+	}
+	
+	public override function destroy():Void {
+		super.destroy();
+		uiEventCallback = null;
 	}
 	
 	public override function add(Object:FlxSprite):FlxSprite {

@@ -3,6 +3,7 @@ package flixel.addons.ui;
 import flash.geom.Rectangle;
 import flixel.addons.ui.interfaces.IEventGetter;
 import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
@@ -19,11 +20,11 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 
 	/***Event Handling***/
 	
-	public function getEvent(id:String, sender:Dynamic, data:Dynamic):Void {
+	public function getEvent(id:String, sender:IFlxUIWidget, data:Dynamic):Void {
 		//not yet implemented
 	}
 	
-	public function getRequest(id:String, sender:Dynamic, data:Dynamic):Dynamic {
+	public function getRequest(id:String, sender:IFlxUIWidget, data:Dynamic):Dynamic {
 		//not yet implemented
 		return null;
 	}	
@@ -145,7 +146,7 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 		var tab:FlxUIButton;
 		for (tab in _tabs) {
 			add(tab);
-			tab.uiEventCallback = _onClickTab;
+			tab.uiEventCallback = _onTabEvent;
 			i++;
 		}
 		
@@ -188,9 +189,12 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 		}
 	}
 	
-	private function _onClickTab(id:String, sender:Dynamic, data:Dynamic):Void {
-		var tab:FlxUIButton = cast sender;
-		showTabId(tab.id);
+	private function _onTabEvent(id:String, sender:IFlxUIWidget, data:Dynamic):Void {
+		switch(id) {
+			case "click_button":
+				var tab:FlxUIButton = cast sender;
+				showTabId(tab.id);
+		}
 	}
 	
 	public function showTabId(id:String):Void {

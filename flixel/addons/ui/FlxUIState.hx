@@ -2,6 +2,7 @@ package flixel.addons.ui;
 
 import flixel.addons.ui.interfaces.IEventGetter;
 import flixel.addons.ui.interfaces.IFireTongue;
+import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxG;
 import flixel.FlxState;
 import haxe.xml.Fast;

@@ -25,7 +25,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public var has_toggle:Bool = false;
 	public var toggled:Bool = false;
 	
-	public var uiEventCallback:String->Dynamic->Dynamic->Void;
+	public var uiEventCallback:String->IFlxUIWidget->Dynamic->Void;
 	
 	//Change these to something besides 0 to make the label use that color
 	//when that state is active
@@ -52,6 +52,12 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public function set_params(p:Array <Dynamic>):Array<Dynamic>{
 		params = p;
 		return params;
+	}
+	
+	public override function destroy():Void {
+		uiEventCallback = null;
+		resize_point = null;
+		super.destroy();
 	}
 	
 	/**

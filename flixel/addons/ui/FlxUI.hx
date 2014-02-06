@@ -92,17 +92,17 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	/***EVENT HANDLING***/
 	
-	public function callEvent(id:String, sender:Dynamic, data:Dynamic):Void {
+	public function callEvent(id:String, sender:IFlxUIWidget, data:Dynamic):Void {
 		getEvent(id, sender, data);
 	}
 	
-	public function getEvent(id:String, sender:Dynamic, data:Dynamic):Void {
+	public function getEvent(id:String, sender:IFlxUIWidget, data:Dynamic):Void {
 		if (_ptr != null) {
 			_ptr.getEvent(id, sender, data);
 		}
 	}
 	
-	public function getRequest(id:String, sender:Dynamic, data:Dynamic):Dynamic {
+	public function getRequest(id:String, sender:IFlxUIWidget, data:Dynamic):Dynamic {
 		if (_ptr != null) {
 			return _ptr.getRequest(id, sender, data);
 		}
@@ -805,7 +805,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			case "tile_test": return _loadTileTest(info);
 			case "sprite": return _loadSprite(info);
 			case "text": return _loadText(info);
-			case "numeric_stepper": return _loadNumericStepper(info);			//has events, params?
+			case "numeric_stepper": return _loadNumericStepper(info);			//has events, params
 			case "button": return _loadButton(info);							//has events, params
 			case "button_toggle": return _loadButton(info,true,true);			//has events, params
 			
@@ -1690,13 +1690,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			buttMinus = cast _loadButton(data.node.minus);
 		}
 		
-		var ns:FlxUINumericStepper = new FlxUINumericStepper(0, 0, stepSize, defaultValue, min, max, decimals, FlxUINumericStepper.STACK_HORIZONTAL, null, theText, buttPlus, buttMinus);
-		
-		var params:Array<Dynamic> = getParams(data);
-		ns.params = params;
+		var ns:FlxUINumericStepper = new FlxUINumericStepper(0, 0, stepSize, defaultValue, min, max, decimals, FlxUINumericStepper.STACK_HORIZONTAL, theText, buttPlus, buttMinus);
 		
 		if (setCallback) {
 			ns.uiEventCallback = callEvent;
+			var params:Array<Dynamic> = getParams(data);
+			ns.params = params;
 		}
 		
 		return ns;

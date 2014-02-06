@@ -10,7 +10,7 @@ import flixel.text.FlxText;
  */
 class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget 
 {
-	public var uiEventCallback:String->Dynamic->Dynamic->Void;
+	public var uiEventCallback:String->IFlxUIWidget->Dynamic->Void;
 	
 	public var id:String; 
 	

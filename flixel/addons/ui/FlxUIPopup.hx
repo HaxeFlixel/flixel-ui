@@ -9,7 +9,7 @@ import flixel.util.FlxPoint;
  */
 class FlxUIPopup extends FlxUISubState implements IFlxUIWidget 
 {
-	public var uiEventCallback:String->Dynamic->Dynamic->Void;
+	public var uiEventCallback:String->IFlxUIWidget->Dynamic->Void;
 	
 	public var id:String;
 	
@@ -98,7 +98,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 		}
 	}	
 	 
-	public override function eventResponse(id:String, sender:Dynamic, data:Array<Dynamic>):Void {
+	public override function eventResponse(id:String, sender:IFlxUIWidget, data:Array<Dynamic>):Void {
 		switch(id) {
 			case "click_button":
 				var i:Int = Std.int(data[0]);

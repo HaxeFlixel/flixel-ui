@@ -27,8 +27,6 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 	public var value(default, set):Float=0;
 	public var stack(default, set):Int = STACK_HORIZONTAL;
 	
-	public var callback(default, set):Array<Dynamic>->Void;
-	
 	public static inline var STACK_VERTICAL:Int = 0;
 	public static inline var STACK_HORIZONTAL:Int = 1;
 	
@@ -69,11 +67,6 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 		if (i < 0) { decimals = 0;}
 		value = value;
 		return decimals;
-	}
-	
-	public function set_callback(F:Array<Dynamic>->Void):Array<Dynamic>->Void {
-		callback = F;
-		return callback;
 	}
 	
 	public function set_stack(s:Int):Int {
@@ -130,12 +123,11 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 	 * @param	Max					Optional Maximum and Minimum values for the stepper
 	 * @param	Decimals			Optional # of decimal places
 	 * @param	Stack				Stacking method
-	 * @param	Callback			Function to be called when the value changes
 	 * @param	TextField			Optional text field
 	 * @param	ButtonPlus			Optional button to use for plus
 	 * @param	ButtonMinus			Optional button to use for minus
 	 */
-	public function new(X:Float = 0, Y:Float = 0, StepSize:Float=1, DefaultValue:Float=0, Min:Float=-999, Max:Float=999, Decimals:Int=0, Stack:Int=STACK_HORIZONTAL, ?Callback:Int->Void, ?TextField:FlxText, ?ButtonPlus:FlxUITypedButton<FlxSprite>, ?ButtonMinus:FlxUITypedButton<FlxSprite>) 
+	public function new(X:Float = 0, Y:Float = 0, StepSize:Float=1, DefaultValue:Float=0, Min:Float=-999, Max:Float=999, Decimals:Int=0, Stack:Int=STACK_HORIZONTAL, ?TextField:FlxText, ?ButtonPlus:FlxUITypedButton<FlxSprite>, ?ButtonMinus:FlxUITypedButton<FlxSprite>) 
 	{
 		super(X, Y);
 		
@@ -184,7 +176,7 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 		stack = Stack;
 	}
 	
-	private function _onInputTextEvent(id:String, sender:Dynamic, data:Dynamic):Void {
+	private function _onInputTextEvent(id:String, sender:IFlxUIWidget, data:Dynamic):Void {
 		var text:String = cast data;
 		if (text == "") 
 		{
