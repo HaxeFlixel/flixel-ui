@@ -135,7 +135,7 @@ class FlxInputText extends FlxText
 	 */
 	public function new(X:Float, Y:Float, Width:Int=200, Text:String=null, size:Int = 8, TextColor:Int = 0xFF000000, BackgroundColor:Int = 0xFFFFFFFF, EmbeddedFont:Bool=true)
 	{
-		customFilterPattern = ~/[]*/g;
+		customFilterPattern = null;// ~/[]*/g;
 		
 		super(X, Y, Width, Text, size, EmbeddedFont);
 		
@@ -376,11 +376,12 @@ class FlxInputText extends FlxText
 		else if (fieldBorderThickness == 0) 
 			fieldBorderSprite.visible = false;
 			// Draw background
+		
 		if (background) 
 		{
-			var buffer:BitmapData = new BitmapData(Std.int(width), Std.int(height * 2), true, backgroundColor); 
+			var buffer:BitmapData = new BitmapData(Std.int(width), Std.int(height * 2), true, backgroundColor);
 			buffer.draw(framePixels);
-			framePixels = buffer;		
+			framePixels = buffer;
 		}
 	}
 	
