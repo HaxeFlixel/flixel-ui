@@ -101,7 +101,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (currState != null) {
 			currState.getEvent(name, sender, data, params);
 		}else {
-			FlxG.log.warn("could not call getEvent() for FlxUI event \"+"name"+\" because current state is not a FlxUIState.\nSolution: state should extend FlxUIState, implement IEventGetter. Otherwise, set broadcastToFlxUI=false for your IFlxUIWidget to supress the events.");
+			FlxG.log.warn("could not call getEvent() for FlxUI event \"+" + name + "+\" because current state is not a FlxUIState.\nSolution: state should extend FlxUIState, implement IEventGetter. Otherwise, set broadcastToFlxUI=false for your IFlxUIWidget to supress the events.");
 		}
 	}
 	
@@ -2630,7 +2630,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var state_id:String = U.xml_str(textColorNode.x, "id", true);
 				var toggle:Bool = U.xml_bool(textColorNode.x, "toggle");
 				switch(state_id) {
-					case "up", "inactive", "", "up", "normal": 
+					case "up", "inactive", "", "normal": 
 						if (!toggle) {
 							fb.up_color = color; 
 						}else {
