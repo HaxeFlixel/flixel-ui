@@ -2630,7 +2630,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var state_id:String = U.xml_str(textColorNode.x, "id", true);
 				var toggle:Bool = U.xml_bool(textColorNode.x, "toggle");
 				switch(state_id) {
-					case "up", "inactive", "", "up", "normal": 
+					case "up", "inactive", "", "normal": 
 						if (!toggle) {
 							fb.up_color = color; 
 						}else {
