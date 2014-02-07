@@ -24,10 +24,6 @@ class FlxUIInputText extends FlxInputText implements IResizable implements IFlxU
 		calcFrame();
 	}
 	
-	public function forceCalcFrame():Void {
-		calcFrame();
-	}
-	
 	private override function onChange(action:String):Void {
 		super.onChange(action);
 		if(broadcastToFlxUI){
