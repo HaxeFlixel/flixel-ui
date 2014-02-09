@@ -96,7 +96,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @param	?params	(optional) user-specified array of arbitrary data
 	 */
 	
-	static public function event(name:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
+	public static function event(name:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
 		var currState:IEventGetter = getLeafUIState();
 		if (currState != null) {
 			currState.getEvent(name, sender, data, params);
@@ -110,7 +110,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @return
 	 */
 	
-	static private function getLeafUIState():IEventGetter{
+	private static function getLeafUIState():IEventGetter{
 		var state:FlxState = FlxG.state;
 		if (state != null) {
 			while (state.subState != null) {
@@ -132,7 +132,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @return	some sort of arbitrary data from the recipient
 	 */
 	
-	static public function request(name:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Dynamic {
+	public static function request(name:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Dynamic {
 		var currState:IEventGetter = getLeafUIState();
 		if (currState != null) {
 			return currState.getRequest(name, sender, data, params);
