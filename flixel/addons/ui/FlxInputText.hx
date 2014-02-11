@@ -95,6 +95,11 @@ class FlxInputText extends FlxText
 	public var background:Bool = false;
 	
 	/**
+	 * A FlxSPrite representing the background sprite
+	 */
+	private var backgroundSprite:FlxSprite;
+	 
+	/**
 	 * A timer for the flashing caret effect.
 	 */
 	private var caretTimer:FlxTimer;
@@ -152,6 +157,7 @@ class FlxInputText extends FlxText
 		
 		hasFocus = false;
 		fieldBorderSprite = new FlxSprite(X, Y);
+		backgroundSprite = new FlxSprite(X, Y);
 		
 		lines = 1;
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
@@ -173,6 +179,7 @@ class FlxInputText extends FlxText
 	override public function draw():Void 
 	{
 		drawSprite(fieldBorderSprite);
+		drawSprite(backgroundSprite);
 		
 		super.draw();
 		
@@ -349,12 +356,18 @@ class FlxInputText extends FlxText
 		if (fieldBorderSprite != null && fieldBorderThickness > 0) {
 			fieldBorderSprite.x = X - fieldBorderThickness;
 		}
+		if (backgroundSprite != null && background) {
+			backgroundSprite.x = X;
+		}		
 		return super.set_x(X);
 	}
 	
 	public override function set_y(Y:Float):Float {
 		if (fieldBorderSprite != null && fieldBorderThickness > 0) {
 			fieldBorderSprite.y = Y - fieldBorderThickness;
+		}
+		if (backgroundSprite != null && background) {
+			backgroundSprite.y = Y;
 		}
 		return super.set_y(Y);
 	}
@@ -368,20 +381,25 @@ class FlxInputText extends FlxText
 	{
 		super.calcFrame(RunOnCpp);
 		
-		if (fieldBorderSprite != null && fieldBorderThickness > 0) {
-			fieldBorderSprite.makeGraphic(Std.int(width + fieldBorderThickness * 2), Std.int(height + fieldBorderThickness * 2), fieldBorderColor);
-			fieldBorderSprite.x = x - fieldBorderThickness;
-			fieldBorderSprite.y = y - fieldBorderThickness;
+		if(fieldBorderSprite != null){
+			if (fieldBorderThickness > 0) {
+				fieldBorderSprite.makeGraphic(Std.int(width + fieldBorderThickness * 2), Std.int(height + fieldBorderThickness * 2), fieldBorderColor);
+				fieldBorderSprite.x = x - fieldBorderThickness;
+				fieldBorderSprite.y = y - fieldBorderThickness;
+			}else if (fieldBorderThickness == 0){
+				fieldBorderSprite.visible = false;
+			}
 		}
-		else if (fieldBorderThickness == 0) 
-			fieldBorderSprite.visible = false;
-			// Draw background
 		
-		if (background) 
+		if (backgroundSprite != null) 
 		{
-			var buffer:BitmapData = new BitmapData(Std.int(width), Std.int(height * 2), true, backgroundColor);
-			buffer.draw(framePixels);
-			framePixels = buffer;
+			if(background){
+				backgroundSprite.makeGraphic(Std.int(width), Std.int(height), backgroundColor);
+				backgroundSprite.x = x;
+				backgroundSprite.y = y;
+			}else {
+				backgroundSprite.visible = false;
+			}
 		}
 	}
 	
@@ -400,6 +418,14 @@ class FlxInputText extends FlxText
 	override public function destroy():Void 
 	{
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
+		if (backgroundSprite != null) {
+			backgroundSprite.destroy();
+			backgroundSprite = null;
+		}
+		if (fieldBorderSprite != null) {
+			fieldBorderSprite.destroy();
+			fieldBorderSprite = null;
+		}
 		super.destroy();
 		callback = null;
 	}
