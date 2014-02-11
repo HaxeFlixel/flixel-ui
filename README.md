@@ -725,4 +725,4 @@ class FireTongueEx extends FireTongue implements IFireTongue
 ````
 =
 
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/HaxeFlixel/flixel-ui/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+[![Build Status](https://travis-ci.org/HaxeFlixel/flixel-ui.png)](https://travis-ci.org/HaxeFlixel/flixel-ui) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/HaxeFlixel/flixel-ui/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
