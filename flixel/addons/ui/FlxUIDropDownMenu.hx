@@ -84,33 +84,9 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		{ 
 			for (data in DataList) 
 			{
-				var t:FlxUIButton = new FlxUIButton(0, 0, data.label);
-				t.broadcastToFlxUI = false;
-				t.onUp.callback = onClickItem.bind(i);
-				
-				t.id = data.id;
-				
-				t.loadGraphicSlice9([FlxUIAssets.IMG_INVIS, FlxUIAssets.IMG_HILIGHT, FlxUIAssets.IMG_HILIGHT], Std.int(header.background.width),
-									Std.int(header.background.height),[[1,1,3,3],[1,1,3,3],[1,1,3,3]], FlxUI9SliceSprite.TILE_NONE);
-				t.labelOffsets[FlxButton.PRESSED].y -= 1;	// turn off the 1-pixel depress on click
-				
-				t.up_color = FlxColor.BLACK;
-				t.over_color = FlxColor.WHITE;
-				t.down_color = FlxColor.WHITE;
-				
-				t.resize(header.background.width - 2, header.background.height - 1);
-				t.x = 1;
-				
-				t.label.alignment = "left";
-				t.autoCenterLabel();
-				
-				for (offset in t.labelOffsets)
-				{
-					offset.x += 2;
-				}
-				
+				var t:FlxUIButton = makeListButton(i, data.label, data.id);
 				list.push(t);
-				t.y = yoff;
+				t.reset(1, yoff);
 				yoff += Std.int(header.background.height);
 				
 				i++;
@@ -123,7 +99,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 			{
 				list.push(btn);
 				btn.resize(header.background.width, header.background.height);
-				btn.y = yoff;
+				btn.reset(1, yoff);
 				yoff += Std.int(header.background.height);
 				
 				i++;
@@ -150,6 +126,83 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		header.button.onUp.callback = onDropdown;
 		
 		add(header);
+	}
+	
+	/**
+	 * Change the contents with a new data list
+	 * Replaces the old content with the new content
+	 * @param	DataList
+	 */
+	
+	public function setData(DataList:Array<StrIdLabel>):Void {
+		var i:Int = 0;
+		var yoff:Int = Std.int(header.background.y + header.background.height);
+		
+		if (DataList != null) {
+			for (data in DataList) {
+				var recycled:Bool = false;
+				if (list != null) {
+					if (i <= list.length - 1) {								//If buttons exist, try to re-use them
+						
+						var btn:FlxUIButton = list[i];
+						if(btn != null){
+							btn.label.text = data.label;					//Set the label
+							var old_id:String = list[i].id;
+							list[i].id = data.id;							//Replace the id
+							recycled = true;								//we successfully recycled it
+							yoff += Std.int(header.background.height);
+						}
+					}
+				}else {
+					list = [];
+				}
+				if (!recycled) {											//If we couldn't recycle a button, make a fresh one
+					var t:FlxUIButton = makeListButton(i, data.label, data.id);
+					list.push(t);
+					t.reset(header.x + 1, yoff);
+					yoff += Std.int(header.background.height);
+				}
+				i++;
+			}
+			
+			//Remove excess buttons:
+			if (list.length > DataList.length) {				//we have more entries in the original set
+				for (j in list.length-1...DataList.length) {	//start counting from end of list
+					var b:FlxUIButton = list.pop();				//remove last button on list
+					b.destroy();								//destroy it
+				}
+			}
+			
+			header.text.text = DataList[0].label;
+		}
+	}
+	
+	private function makeListButton(i:Int,Label:String,Name:String):FlxUIButton {
+		var t:FlxUIButton = new FlxUIButton(0, 0, Label);
+		t.broadcastToFlxUI = false;
+		t.onUp.callback = onClickItem.bind(i);
+		
+		t.id = Name;
+		
+		t.loadGraphicSlice9([FlxUIAssets.IMG_INVIS, FlxUIAssets.IMG_HILIGHT, FlxUIAssets.IMG_HILIGHT], Std.int(header.background.width),
+							 Std.int(header.background.height),[[1,1,3,3],[1,1,3,3],[1,1,3,3]], FlxUI9SliceSprite.TILE_NONE);
+		t.labelOffsets[FlxButton.PRESSED].y -= 1;	// turn off the 1-pixel depress on click
+		
+		t.up_color = FlxColor.BLACK;
+		t.over_color = FlxColor.WHITE;
+		t.down_color = FlxColor.WHITE;
+		
+		t.resize(header.background.width - 2, header.background.height - 1);
+		
+		t.label.alignment = "left";
+		t.autoCenterLabel();
+		
+		for (offset in t.labelOffsets)
+		{
+			offset.x += 2;
+		}
+		
+		return t;
 	}
 	
 	public function setUIControlCallback(UIControlCallback:Bool->FlxUIDropDownMenu->Void):Void {
@@ -222,6 +275,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		for (button in list) {
 			button.visible = b;
 			button.active = b;
+			trace("button.id = " + button.id + " loc=("+button.x+","+button.y+") visible = " + button.visible + " active = " + button.active);
 		}
 		
 		dropPanel.visible = b;

@@ -852,6 +852,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			case "region": return _loadRegion(info);
 			case "chrome", "nineslicesprite", "nine_slice_sprite", "nineslice", "nine_slice": return _load9SliceSprite(info);
 			case "tile_test": return _loadTileTest(info);
+			case "line": return _loadLine(info);
 			case "sprite": return _loadSprite(info);
 			case "text": return _loadText(info);								//if input has events
 			case "numeric_stepper": return _loadNumericStepper(info);			//has events, params
@@ -2041,10 +2042,48 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return tile;
 	}
 	
-	private function _loadSprite(data:Fast):FlxUISprite{
+	private function _loadLine(data:Fast):FlxUISprite {
 		var src:String = ""; 
 		var fs:FlxUISprite = null;
 		
+		var axis:String = U.xml_str(data.x, "axis", true, "horizontal");
+		var thickness:Int = U.xml_i(data.x, "thickness", 1);
+		
+		var bounds: { min_width:Float, min_height:Float, 
+					  max_width:Float, max_height:Float } = calcMaxMinSize(data);
+		
+		if (bounds == null) {
+			bounds = { min_width:Math.NEGATIVE_INFINITY, min_height:Math.NEGATIVE_INFINITY, max_width:Math.POSITIVE_INFINITY, max_height:Math.POSITIVE_INFINITY };
+		}
+		switch(axis) {
+				case "h", "horz", "horizontal":	bounds.max_height = thickness; bounds.min_height = thickness;
+				case "v", "vert", "vertical":	bounds.max_width = thickness; bounds.min_width = thickness;
+		}
+		
+		var W:Int = Std.int(_loadWidth(data));
+		var H:Int = Std.int(_loadHeight(data));
+		
+		if(bounds != null){
+			if (W < bounds.min_width) { W = Std.int(bounds.min_width); }
+			else if (W > bounds.max_width) { W = Std.int(bounds.max_width); }
+			if (H < bounds.min_height) { H = Std.int(bounds.max_height); }
+			else if (H > bounds.max_height) { H = Std.int(bounds.max_height);}
+		}
+
+		var cstr:String = U.xml_str(data.x, "color", true, "0xff000000");
+		var C:Int = 0;
+		if (cstr != "") {
+			C = U.parseHex(cstr, true);
+		}
+		fs = new FlxUISprite(0, 0);
+		fs.makeGraphic(W, H, C);
+		
+		return fs;
+	}
+	
+	private function _loadSprite(data:Fast):FlxUISprite{
+		var src:String = ""; 
+		var fs:FlxUISprite = null;
 		
 		src = U.xml_gfx(data.x, "src");
 		
@@ -2113,7 +2152,17 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}else {
 					var r:EReg = ~/[\w]+\.[\w]+/;
 					var property:String = "";
+					
 					if (r.match(str)) {
+						var wh:String = "";
+						if (axis == "x") { wh = "w"; }
+						if (axis == "y") { wh = "h"; }
+						var assetValue:Float = _getStretch(1, wh, str);
+						return assetValue;
+					}
+
+					/*if (r.match(str)) {
+						
 						var p: { pos:Int, len:Int }= r.matchedPos();
 						if (p.pos == 0 && p.len == str.length) {
 							var arr:Array<String> = str.split(".");
@@ -2141,7 +2190,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 								default:return other.y;
 							}
 						}
-					}
+					}*/
 				}
 		}
 		return 0;
@@ -2245,7 +2294,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				if (r.match(str)) {
 					var assetValue:Float = _getStretch(1, target, str);
 					return assetValue;
-				}					
+				}
 			}
 		}
 		
@@ -2336,10 +2385,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						if (index == 1) { return_val = other.x; }
 					}else {
 						switch(prop) {
-							case "top", "up": return_val = other.y;
+							case "top", "up", "y": return_val = other.y;
 							case "bottom", "down": return_val = other.y +other.height;
 							case "right": return_val = other.x + other.width;
-							case "left": return_val = other.x;
+							case "left","x": return_val = other.x;
 							case "center": return_val = other.x + (other.width / 2);
 							case "width": return_val = other.width;
 							case "height": return_val = other.height;
@@ -2351,10 +2400,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						if (index == 1) { return_val = other.y; }
 					}else {
 						switch(prop){
-							case "top", "up": return_val = other.y;
+							case "top", "up", "y": return_val = other.y;
 							case "bottom", "down": return_val = other.y +other.height;
 							case "right": return_val = other.x + other.width;
-							case "left": return_val = other.x;
+							case "left","x": return_val = other.x;
 							case "center": return_val = other.y + (other.height / 2);
 							case "height": return_val = other.height;
 							case "width": return_val = other.width;
@@ -2391,13 +2440,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (data.hasNode.anchor) {
 			anchor_x_str = U.xml_str(data.node.anchor.x, "x");
 			anchor_y_str = U.xml_str(data.node.anchor.x, "y");
-						
+			
 			anchor_x = _getAnchorPos(thing, "x", anchor_x_str);
 			anchor_y = _getAnchorPos(thing, "y", anchor_y_str);
 			anchor_x_flush = U.xml_str(data.node.anchor.x, "x-flush",true);
 			anchor_y_flush = U.xml_str(data.node.anchor.x, "y-flush", true);						
 		}
-				
+		
 		//Flush it to the anchored coordinate
 		if (anchor_x_str != "" || anchor_y_str != "") {
 			switch(anchor_x_flush) {

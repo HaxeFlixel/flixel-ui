@@ -11,7 +11,11 @@ import flixel.interfaces.IFlxDestroyable;
 import flixel.util.FlxPoint;
 import haxe.Json;
 import haxe.xml.Fast;
+import haxe.xml.Printer;
 import openfl.Assets;
+import sys.FileSystem;
+import sys.io.File;
+import sys.io.FileOutput;
 
 /**
  * Utility functions, inlined where possible
@@ -455,6 +459,49 @@ class U
 	public static inline function copyXml(data:Xml):Xml {
 		return Xml.parse(data.toString()).firstElement();
 	}
+
+	#if sys
+		public static function readXml(path:String):Xml {
+			if (FileSystem.exists(path)) {
+				var content:String = File.getContent(path);
+				return Xml.parse(content).firstElement();
+			}
+			return null;
+		}
+		
+		public static function readFast(path:String):Fast {
+			var xml:Xml = readXml(path);
+			if(xml != null){
+				return new Fast(xml);
+			}
+			return null;
+		}
+	
+		public static function writeXml(data:Xml, path:String, wrapData:Bool=true, addHeader:Bool=true):Void {
+			var xml:Xml = data;
+			
+			if (FileSystem.exists(path)) {					//if file exists, delete it so we don't crash
+				FileSystem.deleteFile(path);
+			}
+			
+			var xmlString:String = "";
+			
+			var fout:FileOutput = File.write(path, false);					//open file for reading
+			if(addHeader){
+				xmlString = '<?xml version="1.0" encoding="utf-8" ?>\n';	//print the boilerplate header
+			}
+			if (wrapData) {
+				xmlString += '<data>\n';
+			}
+			xmlString += new Printer().print(xml);							//add the xml content
+			if (wrapData) {
+				xmlString += '</data>';
+			}
+			
+			fout.writeString(xmlString);			//write it out
+			fout.close();
+		}
+	#end
 	
 	public static function getXML(str:String, folder:String=""):Dynamic {
 		var id:String = str;
