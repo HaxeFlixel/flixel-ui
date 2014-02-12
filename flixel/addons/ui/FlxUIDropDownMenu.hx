@@ -282,7 +282,6 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		for (button in list) {
 			button.visible = b;
 			button.active = b;
-			trace("button.id = " + button.id + " loc=("+button.x+","+button.y+") visible = " + button.visible + " active = " + button.active);
 		}
 		
 		dropPanel.visible = b;
