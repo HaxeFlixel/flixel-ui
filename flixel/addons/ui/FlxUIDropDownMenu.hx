@@ -86,7 +86,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 			{
 				var t:FlxUIButton = makeListButton(i, data.label, data.id);
 				list.push(t);
-				t.reset(1, yoff);
+				t.y = yoff;
 				yoff += Std.int(header.background.height);
 				
 				i++;
@@ -99,7 +99,8 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 			{
 				list.push(btn);
 				btn.resize(header.background.width, header.background.height);
-				btn.reset(1, yoff);
+				btn.x = 1;
+				btn.y = yoff;
 				yoff += Std.int(header.background.height);
 				
 				i++;
@@ -136,7 +137,8 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	
 	public function setData(DataList:Array<StrIdLabel>):Void {
 		var i:Int = 0;
-		var yoff:Int = Std.int(header.background.y + header.background.height);
+		
+		var yoff:Int = Std.int((y - header.background.y) + header.background.height);
 		
 		if (DataList != null) {
 			for (data in DataList) {
@@ -159,7 +161,9 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 				if (!recycled) {											//If we couldn't recycle a button, make a fresh one
 					var t:FlxUIButton = makeListButton(i, data.label, data.id);
 					list.push(t);
-					t.reset(header.x + 1, yoff);
+					t.y = yoff;
+					add(t);
+					t.visible = false;
 					yoff += Std.int(header.background.height);
 				}
 				i++;
@@ -175,6 +179,8 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 			
 			header.text.text = DataList[0].label;
 		}
+		
+		dropPanel.resize(header.background.width, yoff);
 	}
 	
 	private function makeListButton(i:Int,Label:String,Name:String):FlxUIButton {
@@ -196,6 +202,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		
 		t.label.alignment = "left";
 		t.autoCenterLabel();
+		t.x = 1;
 		
 		for (offset in t.labelOffsets)
 		{
