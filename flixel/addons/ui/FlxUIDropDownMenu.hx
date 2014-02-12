@@ -171,9 +171,13 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 			
 			//Remove excess buttons:
 			if (list.length > DataList.length) {				//we have more entries in the original set
-				for (j in list.length-1...DataList.length) {	//start counting from end of list
+				for (j in DataList.length...list.length) {	//start counting from end of list
 					var b:FlxUIButton = list.pop();				//remove last button on list
+					b.visible = false;
+					b.active = false;
+					remove(b, true);							//remove from widget
 					b.destroy();								//destroy it
+					b = null;
 				}
 			}
 			
