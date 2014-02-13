@@ -13,9 +13,12 @@ import haxe.Json;
 import haxe.xml.Fast;
 import haxe.xml.Printer;
 import openfl.Assets;
+
+#if (cpp || neko)
 import sys.FileSystem;
 import sys.io.File;
 import sys.io.FileOutput;
+#end
 
 /**
  * Utility functions, inlined where possible
