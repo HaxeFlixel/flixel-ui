@@ -496,7 +496,7 @@ class U
 			if (wrapData) {
 				xmlString += '<data>\n';
 			}
-			xmlString += new Printer().print(xml);							//add the xml content
+			xmlString += Printer.print(xml);							//add the xml content
 			if (wrapData) {
 				xmlString += '</data>';
 			}
