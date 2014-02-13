@@ -11,13 +11,16 @@ import flixel.interfaces.IFlxDestroyable;
 import flixel.util.FlxPoint;
 import haxe.Json;
 import haxe.xml.Fast;
-import haxe.xml.Printer;
 import openfl.Assets;
 
 #if (cpp || neko)
 import sys.FileSystem;
 import sys.io.File;
 import sys.io.FileOutput;
+#end
+
+#if haxe 3_10
+import haxe.xml.Printer;
 #end
 
 /**
@@ -480,6 +483,7 @@ class U
 			return null;
 		}
 	
+		#if haxe 3_10
 		public static function writeXml(data:Xml, path:String, wrapData:Bool=true, addHeader:Bool=true):Void {
 			var xml:Xml = data;
 			
@@ -504,6 +508,7 @@ class U
 			fout.writeString(xmlString);			//write it out
 			fout.close();
 		}
+		#end
 	#end
 	
 	public static function getXML(str:String, folder:String=""):Dynamic {
