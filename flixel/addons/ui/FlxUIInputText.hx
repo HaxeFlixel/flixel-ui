@@ -3,6 +3,7 @@ package flixel.addons.ui;
 import flixel.addons.ui.FlxUI.NamedString;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
+import flixel.util.FlxRect;
 
 /**
  * @author Lars Doucet
@@ -17,6 +18,7 @@ class FlxUIInputText extends FlxInputText implements IResizable implements IFlxU
 	public static inline var ENTER_EVENT:String = "enter_input_text";		//hit enter in this text field
 	public static inline var DELETE_EVENT:String = "delete_input_text";		//delete text in this text field
 	public static inline var INPUT_EVENT:String = "input_input_text";		//input text in this text field
+
 	
 	public function resize(w:Float, h:Float):Void {
 		width = w;
