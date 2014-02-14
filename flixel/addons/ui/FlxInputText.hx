@@ -466,6 +466,14 @@ class FlxInputText extends FlxText
 			fieldBorderSprite.destroy();
 			fieldBorderSprite = null;
 		}
+		#if sys
+			if (charBoundaries != null) {
+				while (charBoundaries.length > 0) {
+					charBoundaries.pop();
+				}
+				charBoundaries = null;
+			}
+		#end
 		super.destroy();
 		callback = null;
 	}
