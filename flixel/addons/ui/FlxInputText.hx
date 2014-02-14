@@ -368,7 +368,6 @@ class FlxInputText extends FlxText
 	#if sys
 		//WORKAROUND since this function isn't available for openfl-native TextFields, we just hack it ourselves
 		private function getCharIndexAtPoint(X:Float, Y:Float):Int {
-			trace("charBoundaries = " + charBoundaries);
 			var i:Int = 0;
 			if (charBoundaries != null) {
 				var r:FlxRect = null;
@@ -448,7 +447,7 @@ class FlxInputText extends FlxText
 	 */
 	private function toggleCaret(timer:FlxTimer):Void
 	{
-		caretTimer.loops ++; // Run the timer forever		
+		caretTimer.loops ++; // Run the timer forever
 		caret.visible = !caret.visible;
 	}
 	
@@ -784,9 +783,7 @@ class FlxInputText extends FlxText
 				charBoundaries[i].height = textH;
 				lastW = textW;
 			}
-			trace("text was: " + text);
 			_textField.text = Text;
-			trace("returning: " + text);
 			return return_text;
 		}
 	#end
