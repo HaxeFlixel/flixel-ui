@@ -130,7 +130,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		if (W == 0) { W = 80; }
 		if (H == 0) { H = 20; }
 		
-		if(_slice9_assets != null){
+		if (_slice9_assets != null) {
 			loadGraphicSlice9(_slice9_assets, Std.int(W), Std.int(H), _slice9_arrays,tile,resize_ratio,has_toggle,_src_w,_src_h,_frame_indeces);
 		} else {
 			if (_no_graphic) {

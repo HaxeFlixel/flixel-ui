@@ -694,6 +694,7 @@ class U
 	}
 	
 	public static function copy_shallow_arr(src:Array<Dynamic>):Array<Dynamic> {
+		if (src == null) { return null;}
 		var arr:Array<Dynamic> = new Array<Dynamic>();
 		var thing:Dynamic;
 		if (src == null){ 
@@ -705,7 +706,8 @@ class U
 		return arr;
 	}
 	
-	public static inline function copy_shallow_arr_i(src:Array<Int>):Array<Int> {
+	public static function copy_shallow_arr_i(src:Array<Int>):Array<Int> {
+		if (src == null) { return null;}
 		var arr:Array<Int> = new Array<Int>();
 		var thing:Int;
 		for (thing in src) {
@@ -714,7 +716,8 @@ class U
 		return arr;
 	}
 	
-	public static inline function copy_shallow_arr_str(src:Array<String>):Array<String> {
+	public static function copy_shallow_arr_str(src:Array<String>):Array<String> {
+		if (src == null) { return null;}
 		var arr:Array<String> = new Array<String>();
 		var thing:String;
 		for (thing in src) {

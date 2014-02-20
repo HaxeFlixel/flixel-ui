@@ -58,6 +58,8 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	private var _width:Float = 0;
 	private var _height:Float = 0;
 	
+	public static inline var CLICK_EVENT:String = "click_popup";
+	
 	/**************************************/
 	
 	public override function create():Void {
@@ -96,16 +98,18 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 		if (_created) {		//if it already is created it runs immediately
 			_quickSetup();
 		}
-	}	
+	}
 	 
 	public override function getEvent(id:String, sender:IFlxUIWidget, data:Array<Dynamic>, ?params:Array<Dynamic>):Void {
 		switch(id) {
-			case "click_button":
+			case FlxUITypedButton.CLICK_EVENT:
 				var i:Int = Std.int(params[0]);
 				var label:String = Std.string(params[1]);
 				switch(i) {
 					case 0, 1, 2:
-						castParent().getEvent("click_popup", this, data, params);
+						if (broadcastToFlxUI) {
+							FlxUI.event(CLICK_EVENT, this, data, params);
+						}
 						close();
 				}
 		}
