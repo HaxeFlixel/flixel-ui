@@ -70,8 +70,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 		getTextFallback = myGetTextFallback;
 		
 		super.create();
-		_created = true;
-	
+		
 		if (_quickSetupParams != null) {
 			_quickSetup();
 		}
@@ -103,21 +102,18 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	public override function getEvent(id:String, sender:IFlxUIWidget, data:Array<Dynamic>, ?params:Array<Dynamic>):Void {
 		switch(id) {
 			case FlxUITypedButton.CLICK_EVENT:
-				var i:Int = Std.int(params[0]);
+				var buttonAmount:Int = Std.int(params[0]);
 				var label:String = Std.string(params[1]);
-				switch(i) {
-					case 0, 1, 2:
-						if (broadcastToFlxUI) {
-							FlxUI.event(CLICK_EVENT, this, data, params);
-						}
-						close();
+				if (buttonAmount <= 2)
+				{
+					FlxUI.event(FlxUITypedButton.CLICK_EVENT, this, null, params);
+					close();
 				}
 		}
 		super.getEvent(id, sender, data, params);
 	}
 	
 	private var _quickSetupParams:{title:String, body:String, button_labels:Array<String>} = null;
-	private var _created:Bool = false;
 	
 	//This function is passed into the UI object as a default in case the user is not using FireTongue
 	

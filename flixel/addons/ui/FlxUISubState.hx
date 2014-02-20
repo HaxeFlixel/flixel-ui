@@ -119,15 +119,6 @@ class FlxUISubState extends FlxSubState implements IEventGetter
 		return Flag;
 	}
 	
-	public function castParent():IEventGetter{
-		if (_parentState != null) {
-			if (Std.is(_parentState, IEventGetter)) {
-				return cast _parentState;
-			}
-		}
-		return null;
-	}
-	
 	private function reloadUI():Void {
 		if (_ui != null) {
 			remove(_ui, true);
