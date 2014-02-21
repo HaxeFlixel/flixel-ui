@@ -33,6 +33,11 @@ class FlxUIColorSwatch extends FlxUIButton
 		return super.set_color(color);
 	}
 	
+	public override function destroy():Void {
+		callback = null;
+		super.destroy();
+	}
+	
 	public function set_colors(Colors:SwatchData):SwatchData
 	{
 		_skipRefresh = true;
@@ -192,7 +197,7 @@ class FlxUIColorSwatch extends FlxUIButton
 			}
 		}
 	}
-	
+
 	private function colorKey():String {
 		if (multiColored) {
 			return _origKey + "+" + FlxColorUtil.ARGBtoWebString(hilight) +

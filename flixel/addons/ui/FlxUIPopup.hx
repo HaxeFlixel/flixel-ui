@@ -94,9 +94,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 		 */
 		
 		_quickSetupParams = { title:title, body:body, button_labels:button_labels };
-		if (_created) {		//if it already is created it runs immediately
-			_quickSetup();
-		}
+		_quickSetup();
 	}
 	 
 	public override function getEvent(id:String, sender:IFlxUIWidget, data:Array<Dynamic>, ?params:Array<Dynamic>):Void {

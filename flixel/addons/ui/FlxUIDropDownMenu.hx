@@ -22,6 +22,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 {
 	public var skipButtonUpdate(default, set):Bool;
 	public function set_skipButtonUpdate(b:Bool):Bool {
+		skipButtonUpdate = b;
 		header.button.skipButtonUpdate = b;
 		return b;
 	}
@@ -50,7 +51,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	
 	public var callback:String->Void;
 	
-	private var _ui_control_callback:Bool->FlxUIDropDownMenu->Void;
+	//private var _ui_control_callback:Bool->FlxUIDropDownMenu->Void;
 	
 	/**
 	 * This creates a new dropdown menu.
@@ -123,7 +124,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 			btn.visible = false;
 		}
 		
-		_ui_control_callback = UIControlCallback;
+		//_ui_control_callback = UIControlCallback;
 		header.button.onUp.callback = onDropdown;
 		
 		add(header);
@@ -216,9 +217,9 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		return t;
 	}
 	
-	public function setUIControlCallback(UIControlCallback:Bool->FlxUIDropDownMenu->Void):Void {
+	/*public function setUIControlCallback(UIControlCallback:Bool->FlxUIDropDownMenu->Void):Void {
 		_ui_control_callback = UIControlCallback;
-	}
+	}*/
 	
 	public function changeLabelByIndex(i:Int, NewLabel:String):Void {
 		var btn:FlxUIButton = getBtnByIndex(i);
@@ -277,7 +278,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		}
 		
 		list = null;
-		_ui_control_callback = null;
+		//_ui_control_callback = null;
 		callback = null;
 	}
 	
@@ -290,9 +291,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		
 		dropPanel.visible = b;
 		
-		if(_ui_control_callback != null){
-			_ui_control_callback(b, this);
-		}
+		FlxUI.forceFocus(b, this);			//avoid overlaps
 	}
 	
 	private function onDropdown():Void 

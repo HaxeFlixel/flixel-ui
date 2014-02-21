@@ -2,6 +2,7 @@ package flixel.addons.ui;
 
 import flixel.addons.ui.interfaces.IEventGetter;
 import flixel.addons.ui.interfaces.IFireTongue;
+import flixel.addons.ui.interfaces.IFlxUIState;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxG;
 import flixel.FlxState;
@@ -20,7 +21,7 @@ import haxe.xml.Fast;
  * @author Lars Doucet
  */
 
-class FlxUIState extends FlxState implements IEventGetter
+class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 {
 	public var destroyed:Bool;
 	private var _xml_id:String = "";	//the xml to load
@@ -116,6 +117,21 @@ class FlxUIState extends FlxState implements IEventGetter
 		super.destroy();
 	}
 		
+	public function forceFocus(b:Bool, thing:IFlxUIWidget):Void {
+		trace("forceFocus(" + b + "," + thing + ")");
+		if (_ui != null) 
+		{
+			if (b) 
+			{
+				_ui.focus = thing;
+			}
+			else 
+			{
+				_ui.focus = null;
+			}
+		}
+	}
+	
 	public function getEvent(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>):Void {
 		//define per subclass
 	}

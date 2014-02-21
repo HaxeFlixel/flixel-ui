@@ -19,7 +19,7 @@ import sys.io.File;
 import sys.io.FileOutput;
 #end
 
-#if haxe 3_10
+#if haxe_310
 import haxe.xml.Printer;
 #end
 
@@ -500,7 +500,11 @@ class U
 			if (wrapData) {
 				xmlString += '<data>\n';
 			}
-			xmlString += xml.toString();									//write the xml itself
+			#if haxe_310
+				xmlString += new Printer().print(xml);
+			#else
+				xmlString += xml.toString();									//write the xml itself
+			#end
 			if (wrapData) {
 				xmlString += '\n</data>';
 			}

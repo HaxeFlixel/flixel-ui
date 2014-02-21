@@ -1,5 +1,6 @@
 package flixel.addons.ui;
 import flash.geom.Rectangle;
+import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 
@@ -7,8 +8,22 @@ import flixel.group.FlxSpriteGroup;
  * ...
  * @author larsiusprime
  */
-class FlxUIColorSwatchSelecter extends FlxUIGroup
+class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 {
+	public static inline var CLICK_EVENT:String = "click_color_swatch_selecter";
+	
+	public var skipButtonUpdate(default, set):Bool;
+	public function set_skipButtonUpdate(b:Bool):Bool {
+		skipButtonUpdate = b;
+		for (thing in members) {
+			if (thing != _selectionSprite) {
+				var swatch:FlxUIColorSwatch = cast thing;
+				swatch.skipButtonUpdate = b;
+			}
+		}
+		return b;
+	}
+	
 	/**
 	 * A handy little group for selecting color swatches from
 	 * @param	X					X location
@@ -35,23 +50,25 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup
 		if (list_data != null) {
 			for (data in list_data) {
 				swatch = new FlxUIColorSwatch(0, 0, data);
-				swatch.callback = selectByIndex.bind(i);
+				swatch.callback = selectCallback.bind(i);
 				swatch.broadcastToFlxUI = false;
+				swatch.id = data.name;
 				add(swatch);
 				i++;
 			}
 		}else if (list_colors != null) {
 			for (color in list_colors) {
 				swatch = new FlxUIColorSwatch(0, 0, color);
-				swatch.callback = selectByIndex.bind(i);
+				swatch.callback = selectCallback.bind(i);
 				swatch.broadcastToFlxUI = false;
+				swatch.id = "0x"+StringTools.hex(color, 6);
 				add(swatch);
 				i++;
 			}
 		}else if (list_swatches != null) {
 			for (swatch in list_swatches) {
 				swatch.id = "swatch_" + i;
-				swatch.callback = selectByIndex.bind(i);
+				swatch.callback = selectCallback.bind(i);
 				swatch.broadcastToFlxUI = false;
 				add(swatch);
 				i++;
@@ -96,10 +113,29 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup
 		selectByIndex(0);
 	}
 	
+	public var selectedSwatch(get, null):FlxUIColorSwatch;
+	public function get_selectedSwatch():FlxUIColorSwatch {
+		return _selectedSwatch;
+	}
+	private var destroyed:Bool = false;
 	public override function destroy():Void {
-		super.destroy();
+		destroyed = true;
 		_selectedSwatch = null;
 		_selectionSprite = null;
+		super.destroy();
+	}
+	
+	private function selectCallback(i:Int):Void {
+		selectByIndex(i);
+		if (broadcastToFlxUI) {
+			if (_selectedSwatch != null) {
+				if(_selectedSwatch.multiColored){
+					FlxUI.event(CLICK_EVENT, this, _selectedSwatch.colors);
+				}else {
+					FlxUI.event(CLICK_EVENT, this, _selectedSwatch.color);
+				}
+			}
+		}
 	}
 	
 	public function selectByIndex(i:Int):Void {
