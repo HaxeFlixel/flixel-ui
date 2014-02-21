@@ -3,6 +3,7 @@ package flixel.addons.ui;
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.ILabeled;
 import flixel.FlxSprite;
 
@@ -33,7 +34,6 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled
 		super(X, Y, null, OnClick);
 		if (Label != null) {
 			//create a FlxUIText label
-			//labelOffsets[status].set(-1, 3);
 			label = new FlxUIText(0, 0, 80, Label, 8);
 			label.setFormat(null, 8, 0x333333, "center");
 		}

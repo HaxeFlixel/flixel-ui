@@ -3,6 +3,7 @@ package flixel.addons.ui;
 import flash.geom.Rectangle;
 import flixel.addons.ui.interfaces.IEventGetter;
 import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
@@ -14,19 +15,18 @@ import flixel.util.FlxTimer;
 /**
  * @author Lars Doucet
  */
-class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResizable implements IFlxUIButton
+class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUIButton implements IEventGetter
 {
 
-	/***Event Handling***/
-	
-	public function getEvent(id:String, sender:Dynamic, data:Dynamic):Void {
-		//not yet implemented
+	/**To make IEventGetter happy**/
+	public function getEvent(name:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
+		//donothing
 	}
 	
-	public function getRequest(id:String, sender:Dynamic, data:Dynamic):Dynamic {
-		//not yet implemented
+	public function getRequest(name:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Dynamic {
+		//donothing
 		return null;
-	}	
+	}
 	
 	/**For IFlxUIButton**/
 	
@@ -60,7 +60,7 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 		var fbt = getFirstTab();
 		if (fbt != null) {
 			return (_back.y + _back.height) - fbt.y;
-		}		
+		}
 		return _back.height;
 	}
 	
@@ -90,15 +90,6 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 	public function set_selected_tab_id(str:String):String {
 		showTabId(str);			//this modifies _selected_tab/_selected_tab_id
 		return _selected_tab_id;
-	}
-	
-	
-	private inline function getFirstTab():FlxUIButton{
-		var _the_tab:FlxUIButton = null;
-		if(_tabs != null && _tabs.length > 0){
-			_the_tab = _tabs[0];
-		}
-		return _the_tab;
 	}
 	
 	/***PUBLIC***/
@@ -151,15 +142,120 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 		_stretch_tabs = stretch_tabs;
 		
 		var i:Int = 0;
+		var tab:FlxUIButton;
 		for (tab in _tabs) {
 			add(tab);
-			tab.onUp.callback = showTabId.bind(tab.id);
+			tab.onUp.callback = _onTabEvent.bind(tab.id);
 			i++;
 		}
 		
 		distributeTabs();
 		
 		_tab_groups = new Array<FlxUIGroup>();
+	}
+	
+	public override function destroy():Void {
+		super.destroy();
+		U.clearArray(_tab_groups);
+		U.clearArray(_tabs);
+		_back = null;
+		_tabs = null;
+		_tab_groups = null;
+	}
+
+	public function addGroup(g:FlxUIGroup):Void {
+		if (g == this) {
+			return;			//DO NOT ADD A GROUP TO ITSELF
+		}
+		
+		if (!hasThis(g)) {	//ONLY ADD IF IT DOESN'T EXIST
+			g.y = (_back.y - y);
+			add(g);
+			_tab_groups.push(g);
+		}
+		
+		//hide the new group
+		_showOnlyGroup("");
+		
+		//if this is our first group, show it right now
+		if (_tab_groups.length == 1) {
+			selected_tab = 0;
+		}	
+		
+		//refresh selected tab after group is added
+		if (_selected_tab != -1) {
+			selected_tab = _selected_tab;
+		}
+	}
+	
+	private function _onTabEvent(id:String):Void {
+		showTabId(id);
+	}
+	
+	public function showTabId(id:String):Void {
+		
+		_selected_tab = -1;
+		_selected_tab_id = "";
+		
+		var i:Int = 0;
+		for (tab in _tabs) {
+			tab.toggled = false;
+			if (tab.id == id) {
+				tab.toggled = true;
+				_selected_tab_id = id;
+				_selected_tab = i;
+			}
+			i++;
+		}
+		
+		_showOnlyGroup(id);
+	}
+	
+	/***PRIVATE***/
+	
+	private var _back:FlxSprite;
+	private var _tabs:Array<FlxUIButton>;
+	private var _tab_groups:Array<FlxUIGroup>;
+	private var _stretch_tabs:Bool = false;
+	
+	private var _selected_tab_id:String = "";
+	private var _selected_tab:Int = -1;
+	
+	private function sortTabs(a:FlxUIButton, b:FlxUIButton):Int {
+		if (a.id < b.id) {
+			return -1;
+		}else if (a.id > b.id) {
+			return 1;
+		}
+		return -1;
+	}
+	
+	private function showTabInt(i:Int):Void {
+		if(i >= 0 && _tabs != null && _tabs.length > i){
+			var _tab:FlxUIButton = _tabs[i];
+			var id:String = _tab.id;
+			showTabId(id);
+		}else {
+			showTabId("");
+		}
+	}
+	
+	private function _showOnlyGroup(id:String):Void {
+		for (group in _tab_groups) {
+			if (group.id == id) {
+				group.visible = group.active = true;
+			}else {
+				group.visible = group.active = false;
+			}
+		}
+	}
+	
+	private function getFirstTab():FlxUIButton{
+		var _the_tab:FlxUIButton = null;
+		if(_tabs != null && _tabs.length > 0){
+			_the_tab = _tabs[0];
+		}
+		return _the_tab;
 	}
 	
 	private function distributeTabs():Void {
@@ -205,97 +301,5 @@ class FlxUITabMenu extends FlxUIGroup implements IEventGetter implements IResiza
 		}
 		
 		calcBounds();
-	}
-	
-	private function sortTabs(a:FlxUIButton, b:FlxUIButton):Int {
-		if (a.id < b.id) {
-			return -1;
-		}else if (a.id > b.id) {
-			return 1;
-		}
-		return -1;
-	}
-	
-	public override function destroy():Void {
-		super.destroy();
-		U.clearArray(_tab_groups);
-		U.clearArray(_tabs);
-		_back = null;
-		_tabs = null;
-		_tab_groups = null;
-	}
-
-	public function addGroup(g:FlxUIGroup):Void {
-		if (g == this) {
-			return;			//DO NOT ADD A GROUP TO ITSELF
-		}
-				
-		if (!hasThis(g)) {	//ONLY ADD IF IT DOESN'T EXIST
-			g.y = (_back.y - y);
-			add(g);
-			_tab_groups.push(g);
-		}
-		
-		//hide the new group
-		_showOnlyGroup("");
-		
-		//if this is our first group, show it right now
-		if (_tab_groups.length == 1) {
-			selected_tab = 0;
-		}	
-		
-		//refresh selected tab after group is added
-		if (_selected_tab != -1) {
-			selected_tab = _selected_tab;
-		}
-	}
-	
-	private function showTabInt(i:Int):Void {
-		if(i >= 0 && _tabs != null && _tabs.length > i){
-			var _tab:FlxUIButton = _tabs[i];
-			var id:String = _tab.id;
-			showTabId(id);
-		}else {
-			showTabId("");
-		}
-	}
-	
-	public function showTabId(id:String):Void {
-		
-		_selected_tab = -1;
-		_selected_tab_id = "";
-		
-		var i:Int = 0;
-		for (tab in _tabs) {
-			tab.toggled = false;
-			if (tab.id == id) {
-				tab.toggled = true;
-				_selected_tab_id = id;
-				_selected_tab = i;
-			}
-			i++;
-		}
-		
-		_showOnlyGroup(id);
-	}
-	
-	/***PRIVATE***/
-	
-	private var _back:FlxSprite;
-	private var _tabs:Array<FlxUIButton>;
-	private var _tab_groups:Array<FlxUIGroup>;
-	private var _stretch_tabs:Bool = false;
-	
-	private var _selected_tab_id:String = "";
-	private var _selected_tab:Int = -1;
-	
-	private function _showOnlyGroup(id:String):Void {
-		for (group in _tab_groups) {
-			if (group.id == id) {
-				group.visible = group.active = true;
-			}else {
-				group.visible = group.active = false;
-			}
-		}
 	}
 }

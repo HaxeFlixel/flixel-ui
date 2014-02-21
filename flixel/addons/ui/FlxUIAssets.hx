@@ -20,11 +20,15 @@ class FlxUIAssets
 	public static inline var IMG_TAB_BACK:String = "flixel/flixel-ui/img/tab_back.png";
 	public static inline var IMG_BOX:String = "flixel/flixel-ui/img/box.png";
 	public static inline var IMG_DROPDOWN:String = "flixel/flixel-ui/img/dropdown_mark.png";
+	public static inline var IMG_PLUS:String = "flixel/flixel-ui/img/plus_mark.png";
+	public static inline var IMG_MINUS:String = "flixel/flixel-ui/img/minus_mark.png";
 	public static inline var IMG_HILIGHT:String = "flixel/flixel-ui/img/hilight.png";
 	public static inline var IMG_INVIS:String = "flixel/flixel-ui/img/invis.png";
+	public static inline var IMG_SWATCH:String = "flixel/flixel-ui/img/swatch.png";
 	
 	//slice9 rules
 	public static inline var SLICE9_BUTTON:String = "6,6,11,11";
+	public static inline var SLICE9_BUTTON_THIN:String = "2,2,15,15";
 	public static inline var SLICE9_BUTTON_TOGGLE:String = "6,6,11,11";
 	public static inline var SLICE9_TAB:String = "6,6,11,11";
 		

@@ -8,8 +8,10 @@ import flixel.util.FlxPoint;
  * @author 
  */
 class FlxUIPopup extends FlxUISubState implements IFlxUIWidget 
-{	
+{
 	public var id:String;
+	
+	public var broadcastToFlxUI:Bool = true;
 	
 	/**STUBS TO MAKE THE INTERFACE HAPPY:**/
 	
@@ -56,6 +58,8 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	private var _width:Float = 0;
 	private var _height:Float = 0;
 	
+	public static inline var CLICK_EVENT:String = "click_popup";
+	
 	/**************************************/
 	
 	public override function create():Void {
@@ -66,8 +70,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 		getTextFallback = myGetTextFallback;
 		
 		super.create();
-		_created = true;
-	
+		
 		if (_quickSetupParams != null) {
 			_quickSetup();
 		}
@@ -94,24 +97,23 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 		if (_created) {		//if it already is created it runs immediately
 			_quickSetup();
 		}
-	}	
+	}
 	 
-	public override function eventResponse(id:String, sender:Dynamic, data:Array<Dynamic>):Void {
+	public override function getEvent(id:String, sender:IFlxUIWidget, data:Array<Dynamic>, ?params:Array<Dynamic>):Void {
 		switch(id) {
-			case "click_button":
-				var i:Int = Std.int(data[0]);
-				var label:String = Std.string(data[1]);
-				switch(i) {
-					case 0, 1, 2:	
-						castParent().getEvent("click_popup", this, data);
-						close();
+			case FlxUITypedButton.CLICK_EVENT:
+				var buttonAmount:Int = Std.int(params[0]);
+				var label:String = Std.string(params[1]);
+				if (buttonAmount <= 2)
+				{
+					FlxUI.event(FlxUITypedButton.CLICK_EVENT, this, null, params);
+					close();
 				}
 		}
-		super.eventResponse(id, sender, data);
+		super.getEvent(id, sender, data, params);
 	}
 	
 	private var _quickSetupParams:{title:String, body:String, button_labels:Array<String>} = null;
-	private var _created:Bool = false;
 	
 	//This function is passed into the UI object as a default in case the user is not using FireTongue
 	

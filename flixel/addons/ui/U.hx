@@ -13,6 +13,16 @@ import haxe.Json;
 import haxe.xml.Fast;
 import openfl.Assets;
 
+#if (cpp || neko)
+import sys.FileSystem;
+import sys.io.File;
+import sys.io.FileOutput;
+#end
+
+#if haxe 3_10
+import haxe.xml.Printer;
+#end
+
 /**
  * Utility functions, inlined where possible
  * @author Lars Doucet
@@ -455,6 +465,50 @@ class U
 	public static inline function copyXml(data:Xml):Xml {
 		return Xml.parse(data.toString()).firstElement();
 	}
+
+	#if sys
+		public static function readXml(path:String):Xml {
+			if (FileSystem.exists(path)) {
+				var content:String = File.getContent(path);
+				return Xml.parse(content).firstElement();
+			}
+			return null;
+		}
+		
+		public static function readFast(path:String):Fast {
+			var xml:Xml = readXml(path);
+			if(xml != null){
+				return new Fast(xml);
+			}
+			return null;
+		}
+	
+		
+		public static function writeXml(data:Xml, path:String, wrapData:Bool=true, addHeader:Bool=true):Void {
+			var xml:Xml = data;
+			
+			if (FileSystem.exists(path)) {					//if file exists, delete it so we don't crash
+				FileSystem.deleteFile(path);
+			}
+			
+			var xmlString:String = "";
+			
+			var fout:FileOutput = File.write(path, false);					//open file for reading
+			if(addHeader){
+				xmlString = '<?xml version="1.0" encoding="utf-8" ?>\n';	//print the boilerplate header
+			}
+			if (wrapData) {
+				xmlString += '<data>\n';
+			}
+			xmlString += xml.toString();									//write the xml itself
+			if (wrapData) {
+				xmlString += '\n</data>';
+			}
+			
+			fout.writeString(xmlString);			//write it out
+			fout.close();
+		}
+	#end
 	
 	public static function getXML(str:String, folder:String=""):Dynamic {
 		var id:String = str;
@@ -640,6 +694,7 @@ class U
 	}
 	
 	public static function copy_shallow_arr(src:Array<Dynamic>):Array<Dynamic> {
+		if (src == null) { return null;}
 		var arr:Array<Dynamic> = new Array<Dynamic>();
 		var thing:Dynamic;
 		if (src == null){ 
@@ -651,7 +706,8 @@ class U
 		return arr;
 	}
 	
-	public static inline function copy_shallow_arr_i(src:Array<Int>):Array<Int> {
+	public static function copy_shallow_arr_i(src:Array<Int>):Array<Int> {
+		if (src == null) { return null;}
 		var arr:Array<Int> = new Array<Int>();
 		var thing:Int;
 		for (thing in src) {
@@ -660,7 +716,8 @@ class U
 		return arr;
 	}
 	
-	public static inline function copy_shallow_arr_str(src:Array<String>):Array<String> {
+	public static function copy_shallow_arr_str(src:Array<String>):Array<String> {
+		if (src == null) { return null;}
 		var arr:Array<String> = new Array<String>();
 		var thing:String;
 		for (thing in src) {
@@ -731,9 +788,11 @@ class U
 			id = prefix + id;
 		}
 		
-		id = StringTools.replace(id, "-", "_");// .replace("-", "_");
+		if(id.indexOf("raw:") != 0){
+			id = StringTools.replace(id, "-", "_");// .replace("-", "_");
+		}
 		
-		return get_gfx(id);		
+		return get_gfx(id);
 		
 		//TODO: make mod-compatible
 		
@@ -809,13 +868,27 @@ class U
 	   }
 	   return csv;
    }
-	
-	public static inline function get_gfx(str:String):String{
+   
+	public static function get_gfx(str:String):String {
+		if (str.indexOf("raw:") == 0 || str.indexOf("RAW:") == 0) {
+			str = str.substr(4, str.length - 4);
+			return str + ".png";
+		}
 		return "assets/gfx/" + str + ".png";
 	}
 	
 	public static inline function sfx(str:String):String {
-		return "assets/sfx/" + str + ".mp3";
+		var extension:String = "";
+		#if flash
+			extension = ".mp3";
+		#else
+			extension = ".ogg";
+		#end
+		if (str.indexOf("RAW:") == 0) {
+			str = str.substr(4, str.length - 4);
+			return str + extension;
+		}
+		return "assets/sfx/" + str + extension;
 	}
 	
 	/**

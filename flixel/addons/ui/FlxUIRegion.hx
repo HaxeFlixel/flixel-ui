@@ -1,5 +1,6 @@
 package flixel.addons.ui;
 
+import flixel.addons.ui.FlxUI.UIEventCallback;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxSprite;
@@ -11,6 +12,8 @@ import flixel.util.FlxRandom;
  */
 class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizable
 {
+	public var broadcastToFlxUI:Bool=true;
+	
 	public var id:String;
 	
 	public function new(X:Float=0,Y:Float=0,W:Float=16,H:Float=16) {
@@ -19,8 +22,12 @@ class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizabl
 		#if debug
 			color = FlxRandom.color();
 		#end
-				
+		
 		resize(W, H);
+	}
+	
+	public override function destroy():Void {
+		super.destroy();
 	}
 	
 	public function resize(w:Float, h:Float) : Void {

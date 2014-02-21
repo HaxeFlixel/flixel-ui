@@ -12,9 +12,11 @@ import flixel.group.FlxSpriteGroup;
 class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 {	
 	/***PUBLIC VARS***/
-		
+	
 	//a handy string handler id for this thing
 	public var id:String;
+	
+	public var broadcastToFlxUI:Bool = true;
 	
 	/***PUBLIC GETTER/SETTERS***/
 	
@@ -23,12 +25,15 @@ class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 	
 	public var autoBounds:Bool = true;
 	
-		
 	/***PUBLIC FUNCTIONS***/
 	
 	public function new(X:Float = 0, Y:Float = 0) 
 	{
 		super(X, Y);
+	}
+	
+	public override function destroy():Void {
+		super.destroy();
 	}
 	
 	public override function add(Object:FlxSprite):FlxSprite {

@@ -3,6 +3,7 @@ package flixel.addons.ui;
 import flash.geom.Rectangle;
 import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.addons.ui.interfaces.IHasParams;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
@@ -17,7 +18,7 @@ import flixel.util.FlxStringUtil;
  * larsiusprime
  * @author 
  */
-class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IFlxUIButton
+class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IFlxUIButton implements IHasParams
 {
 	public var skipButtonUpdate(default, set):Bool;
 	public function set_skipButtonUpdate(b:Bool):Bool {
@@ -29,10 +30,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	 * The header of this dropdown menu.
 	 */
 	public var header:FlxUIDropDownHeader;
-	/**
-	 * Function to be called when of of the entries of the list was clicked.
-	 */
-	public var callback:String->Void;
+	
 	/**
 	 * The list of items that is shown when the toggle button is clicked.
 	 */
@@ -42,15 +40,25 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	 */
 	public var dropPanel:FlxUI9SliceSprite;
 	
+	public var params(default, set):Array<Dynamic>;
+	public function set_params(p:Array <Dynamic>):Array<Dynamic>{
+		params = p;
+		return params;
+	}
+	
+	public static inline var CLICK_EVENT:String = "click_dropdown";
+	
+	public var callback:String->Void;
+	
 	private var _ui_control_callback:Bool->FlxUIDropDownMenu->Void;
-
+	
 	/**
 	 * This creates a new dropdown menu.
 	 * 
 	 * @param	X					x position of the dropdown menu
 	 * @param	Y					y position of the dropdown menu
 	 * @param	DataList			The data to be displayed
-	 * @param	Callback			Function to be called when of of the entries of the list was clicked
+	 * @param	Callback			Optional Callback
 	 * @param	Header				The header of this dropdown menu
 	 * @param	DropPanel			Optional 9-slice-background for actual drop down menu 
 	 * @param	ButtonList			Optional list of buttons to be used for the corresponding entry in DataList
@@ -59,6 +67,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	public function new(X:Float = 0, Y:Float = 0, DataList:Array<StrIdLabel>, ?Callback:String->Void, ?Header:FlxUIDropDownHeader, ?DropPanel:FlxUI9SliceSprite, ?ButtonList:Array<FlxUIButton>, ?UIControlCallback:Bool->FlxUIDropDownMenu->Void) 
 	{
 		super(X, Y);
+		callback = Callback;
 		
 		header = Header;
 		if (header == null)
@@ -75,30 +84,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		{ 
 			for (data in DataList) 
 			{
-				var t:FlxUIButton = new FlxUIButton(0, 0, data.label);
-				t.onUp.callback = onClickItem.bind(i);
-				
-				t.id = data.id;
-				
-				t.loadGraphicSlice9([FlxUIAssets.IMG_INVIS, FlxUIAssets.IMG_HILIGHT, FlxUIAssets.IMG_HILIGHT], Std.int(header.background.width),
-									Std.int(header.background.height),[[1,1,3,3],[1,1,3,3],[1,1,3,3]], FlxUI9SliceSprite.TILE_NONE);
-				t.labelOffsets[FlxButton.PRESSED].y -= 1;	// turn off the 1-pixel depress on click
-				
-				t.up_color = FlxColor.BLACK;
-				t.over_color = FlxColor.WHITE;
-				t.down_color = FlxColor.WHITE;
-				
-				t.resize(header.background.width - 2, header.background.height - 1);
-				t.x = 1;
-				
-				t.label.alignment = "left";
-				t.autoCenterLabel();
-				
-				for (offset in t.labelOffsets)
-				{
-					offset.x += 2;
-				}
-				
+				var t:FlxUIButton = makeListButton(i, data.label, data.id);
 				list.push(t);
 				t.y = yoff;
 				yoff += Std.int(header.background.height);
@@ -113,6 +99,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 			{
 				list.push(btn);
 				btn.resize(header.background.width, header.background.height);
+				btn.x = 1;
 				btn.y = yoff;
 				yoff += Std.int(header.background.height);
 				
@@ -136,11 +123,131 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 			btn.visible = false;
 		}
 		
-		callback = Callback;
 		_ui_control_callback = UIControlCallback;
 		header.button.onUp.callback = onDropdown;
 		
 		add(header);
+	}
+	
+	/**
+	 * Change the contents with a new data list
+	 * Replaces the old content with the new content
+	 * @param	DataList
+	 */
+	
+	public function setData(DataList:Array<StrIdLabel>):Void {
+		var i:Int = 0;
+		
+		var yoff:Int = Std.int((y - header.background.y) + header.background.height);
+		
+		if (DataList != null) {
+			for (data in DataList) {
+				var recycled:Bool = false;
+				if (list != null) {
+					if (i <= list.length - 1) {								//If buttons exist, try to re-use them
+						
+						var btn:FlxUIButton = list[i];
+						if(btn != null){
+							btn.label.text = data.label;					//Set the label
+							var old_id:String = list[i].id;
+							list[i].id = data.id;							//Replace the id
+							recycled = true;								//we successfully recycled it
+							yoff += Std.int(header.background.height);
+						}
+					}
+				}else {
+					list = [];
+				}
+				if (!recycled) {											//If we couldn't recycle a button, make a fresh one
+					var t:FlxUIButton = makeListButton(i, data.label, data.id);
+					list.push(t);
+					t.y = yoff;
+					add(t);
+					t.visible = false;
+					yoff += Std.int(header.background.height);
+				}
+				i++;
+			}
+			
+			//Remove excess buttons:
+			if (list.length > DataList.length) {				//we have more entries in the original set
+				for (j in DataList.length...list.length) {	//start counting from end of list
+					var b:FlxUIButton = list.pop();				//remove last button on list
+					b.visible = false;
+					b.active = false;
+					remove(b, true);							//remove from widget
+					b.destroy();								//destroy it
+					b = null;
+				}
+			}
+			
+			header.text.text = DataList[0].label;
+		}
+		
+		dropPanel.resize(header.background.width, yoff);
+	}
+	
+	private function makeListButton(i:Int,Label:String,Name:String):FlxUIButton {
+		var t:FlxUIButton = new FlxUIButton(0, 0, Label);
+		t.broadcastToFlxUI = false;
+		t.onUp.callback = onClickItem.bind(i);
+		
+		t.id = Name;
+		
+		t.loadGraphicSlice9([FlxUIAssets.IMG_INVIS, FlxUIAssets.IMG_HILIGHT, FlxUIAssets.IMG_HILIGHT], Std.int(header.background.width),
+							 Std.int(header.background.height),[[1,1,3,3],[1,1,3,3],[1,1,3,3]], FlxUI9SliceSprite.TILE_NONE);
+		t.labelOffsets[FlxButton.PRESSED].y -= 1;	// turn off the 1-pixel depress on click
+		
+		t.up_color = FlxColor.BLACK;
+		t.over_color = FlxColor.WHITE;
+		t.down_color = FlxColor.WHITE;
+		
+		t.resize(header.background.width - 2, header.background.height - 1);
+		
+		t.label.alignment = "left";
+		t.autoCenterLabel();
+		t.x = 1;
+		
+		for (offset in t.labelOffsets)
+		{
+			offset.x += 2;
+		}
+		
+		return t;
+	}
+	
+	public function setUIControlCallback(UIControlCallback:Bool->FlxUIDropDownMenu->Void):Void {
+		_ui_control_callback = UIControlCallback;
+	}
+	
+	public function changeLabelByIndex(i:Int, NewLabel:String):Void {
+		var btn:FlxUIButton = getBtnByIndex(i);
+		if (btn != null && btn.label != null) {
+			btn.label.text = NewLabel;
+		}
+	}
+	
+	public function changeLabelById(id:String, NewLabel:String):Void {
+		var btn:FlxUIButton = getBtnById(id);
+		if (btn != null && btn.label != null) {
+			btn.label.text = NewLabel;
+		}
+	}
+	
+	public function getBtnByIndex(i:Int):FlxUIButton {
+		if (i >= 0 && i < list.length) {
+			return list[i];
+		}
+		return null;
+	}
+	
+	public function getBtnById(id:String):FlxUIButton{
+		for (btn in list) {
+			if (btn.id == id) {
+				return btn;
+			}
+		}
+		return null;
 	}
 	
 	public override function update():Void 
@@ -170,8 +277,8 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		}
 		
 		list = null;
-		callback = null;
 		_ui_control_callback = null;
+		callback = null;
 	}
 	
 	private function showList(b:Bool):Void 
@@ -201,6 +308,10 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		
 		if (callback != null) {
 			callback(item.id);
+		}
+		
+		if(broadcastToFlxUI){
+			FlxUI.event(CLICK_EVENT, this, item.id, params);
 		}
 	}
 	

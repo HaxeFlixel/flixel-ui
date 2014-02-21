@@ -1,17 +1,22 @@
 package flixel.addons.ui;
 
+import flixel.addons.ui.FlxUI.NamedBool;
 import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.addons.ui.interfaces.IHasParams;
 import flixel.util.FlxPoint;
 
 /**
  * @author Lars Doucet
  */
-class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton
+class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHasParams
 {
 	public var clickable(get_clickable, set_clickable):Bool;
 	public var selectedId(get_selectedId, set_selectedId):String;
 	public var selectedLabel(get_selectedLabel, set_selectedLabel):String;
 	public var selectedIndex(get_selectedIndex, set_selectedIndex):Int;
+	
+	public static inline var CLICK_EVENT:String = "click_radio_group";
 	
 	public var skipButtonUpdate(default, set):Bool;
 	public function set_skipButtonUpdate(b:Bool):Bool {
@@ -23,15 +28,36 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton
 		return skipButtonUpdate;
 	}
 	
-	public function new(X:Float, Y:Float, ids_:Array<String>,labels_:Array<String>, callback_:Dynamic, y_space_:Float=25, width_:Int=100, height_:Int=20, label_width_:Int=100):Void {
+	public var callback:String->Void;
+	
+	public var params(default, set):Array<Dynamic>;
+	public function set_params(p:Array <Dynamic>):Array<Dynamic>{
+		params = p;
+		return params;
+	}
+	
+	/**
+	 * Creates a set of radio buttons
+	 * @param	X				X location
+	 * @param	Y				Y location
+	 * @param	ids_			list of string identifiers
+	 * @param	labels_			list of string labels for each button (what the user sees)
+	 * @param	callback_		optional callback expecting a string identifier of selected radio button
+	 * @param	y_space_		vertical space between buttons
+	 * @param	width_			maximum width of a button
+	 * @param	height_			height of a button
+	 * @param	label_width_	maximum width of a label
+	 */
+	
+	public function new(X:Float, Y:Float, ids_:Array<String>,labels_:Array<String>, ?callback_:String->Void=null, y_space_:Float=25, width_:Int=100, height_:Int=20, label_width_:Int=100):Void {
 		super();
 		_y_space = y_space_;
-		_callback = callback_;
 		_width = width_;
 		_height = height_;
 		_label_width = label_width_;
 		x = X;
 		y = Y;
+		callback = callback_;
 		_list_radios = new Array<FlxUICheckBox>();
 		updateRadios(ids_, labels_);
 		loadGraphics(null, null);
@@ -49,7 +75,7 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton
 			_dot_asset = FlxUIAssets.IMG_RADIO_DOT;
 		}
 		
-		for (c in _list_radios) {			
+		for (c in _list_radios) {
 			c.box.loadGraphic(_box_asset, true, false);
 			c.mark.loadGraphic(_dot_asset);
 		}	
@@ -58,11 +84,10 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton
 	
 	public override function destroy():Void {
 		if (_list_radios != null) {
-			U.clearArray(_list_radios);			
+			U.clearArray(_list_radios);	
 		}
 		_ids = null;
 		_labels = null;
-		_callback = null;
 		super.destroy();
 	}
 	
@@ -196,7 +221,6 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton
 	
 	private var _labels:Array<String>;
 	private var _ids:Array<String>;
-	private var _callback:Dynamic;
 	
 	private var _label_width:Int = 100;
 	private var _width:Int = 100;
@@ -214,7 +238,7 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton
 	
 	private function _refreshRadios():Void {
 		var xx:Float = 0;
-		var yy:Float = 0;		
+		var yy:Float = 0;
 		var i:Int = 0;
 		for(id in _ids) {
 			var label:String = "";
@@ -233,7 +257,9 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton
 					yy = c.y;
 				}
 			}else {
-				c = new FlxUICheckBox(0, 0, _box_asset, _dot_asset, label, _label_width, _onClickDoCallback, [id]);
+				c = new FlxUICheckBox(0, 0, _box_asset, _dot_asset, label, _label_width, [id, false]);
+				c.broadcastToFlxUI = false;					//internal communication only
+				c.callback = _onCheckBoxEvent.bind(c);
 				c.x = Std.int(xx);
 				c.y = Std.int(yy);
 				
@@ -246,31 +272,30 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton
 		}
 	}
 	
-	private function _onClickDoCallback(params_:Array<Dynamic>):Bool {
-		return _onClick(params_, true);
+	private function _onCheckBoxEvent(checkBox:FlxUICheckBox):Void {
+		_onClick(checkBox, true);
 	}
 	
-	private function _onClick(params_:Array<Dynamic>, doCallback:Bool):Bool{
+	private function _onClick(checkBox:FlxUICheckBox, doCallback:Bool):Bool{
 		if (!_clickable) { return false; }
 		
 		var i:Int = 0;
-		for(c in _list_radios) {
-			var id:String = params_[0];
+		for (c in _list_radios) {
 			c.checked = false;
-			if (id == _ids[i]) {
+			if (checkBox == c) {
 				_selected = i;
 				c.checked = true;
-				var check:String = params_[1];
-				if (check.indexOf("checked:") != -1) {
-					params_[1] = "checked:true";
-				}
 			}
 			i++;
 		}
 		
 		if (doCallback) {
-			if (_callback != null) {
-				_callback(params_);
+			if (callback != null) {
+				callback(selectedId);
+			}
+			
+			if (broadcastToFlxUI) {
+				FlxUI.event(CLICK_EVENT, this, _ids[_selected], params);
 			}
 		}
 		return true;
