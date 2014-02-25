@@ -98,6 +98,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	public static function event(name:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
 		var currState:IEventGetter = getLeafUIState();
+		
 		if (currState != null) {
 			currState.getEvent(name, sender, data, params);
 		}else {
@@ -125,12 +126,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private static function getLeafUIState():IFlxUIState{
 		var state:FlxState = FlxG.state;
-		if (state != null) {
-			while (state.subState != null) {
+		if (state != null) 
+		{
+			while (state.subState != null) 
+			{
 				state = state.subState;
 			}
 		}
-		if (Std.is(state, IFlxUIState)) {
+		if (Std.is(state, IFlxUIState)) 
+		{
 			return cast state;
 		}
 		return null;

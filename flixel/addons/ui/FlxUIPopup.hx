@@ -1,5 +1,6 @@
 package flixel.addons.ui;
 
+import flixel.addons.ui.interfaces.IFlxUIState;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.util.FlxPoint;
 
@@ -94,7 +95,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 		 */
 		
 		_quickSetupParams = { title:title, body:body, button_labels:button_labels };
-		_quickSetup();
+		//_quickSetup();
 	}
 	 
 	public override function getEvent(id:String, sender:IFlxUIWidget, data:Array<Dynamic>, ?params:Array<Dynamic>):Void {
@@ -104,7 +105,14 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 				var label:String = Std.string(params[1]);
 				if (buttonAmount <= 2)
 				{
-					FlxUI.event(FlxUITypedButton.CLICK_EVENT, this, null, params);
+					if (Std.is(_parentState, IFlxUIState)) {
+						//This fixes a bug where the event was being sent to this popup rather than the state that created it
+						var fuis:IFlxUIState = cast _parentState;
+						fuis.getEvent(CLICK_EVENT, this, buttonAmount, params);
+					}else {
+						//This is a generic fallback in case something goes wrong
+						FlxUI.event(CLICK_EVENT, this, buttonAmount, params);
+					}
 					close();
 				}
 		}
