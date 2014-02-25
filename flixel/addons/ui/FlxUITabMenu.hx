@@ -18,6 +18,8 @@ import flixel.util.FlxTimer;
 class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUIButton implements IEventGetter
 {
 
+	public static inline var CLICK_EVENT:String = "tab_menu_click";
+	
 	/**To make IEventGetter happy**/
 	public function getEvent(name:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
 		//donothing
@@ -190,6 +192,9 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUIBut
 	
 	private function _onTabEvent(id:String):Void {
 		showTabId(id);
+		if (broadcastToFlxUI) {
+			FlxUI.event(CLICK_EVENT, this, id);
+		}
 	}
 	
 	public function showTabId(id:String):Void {

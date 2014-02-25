@@ -53,7 +53,14 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		params.push(nb);
 		return params;
 	}
-	
+
+	public override function set_color(Value:Int):Int {
+		if (button != null)
+		{
+			button.label.color = Value;
+		}
+		return super.set_color(Value);
+	}
 	
 	public function new(X:Float = 0, Y:Float = 0, ?Box:Dynamic, ?Check:Dynamic, ?Label:String, ?LabelW:Int=100, ?Params:Array<Dynamic>, ?Callback:Void->Void)
 	{

@@ -40,6 +40,19 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 		return params;
 	}
 	
+	public override function set_color(Value:Int):Int {
+		color = Value;
+		button_plus.color = Value;
+		button_minus.color = Value;
+		if (Std.is(text_field, FlxInputText)) {
+			var fit:FlxInputText = cast text_field;
+			fit.backgroundColor = Value;
+		}else {
+			text_field.color = Value;
+		}
+		return Value;
+	}
+	
 	public function set_min(f:Float):Float {
 		min = f; 
 		if (value < min) { value = min; }

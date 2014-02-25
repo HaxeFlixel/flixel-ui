@@ -94,7 +94,12 @@ class FlxInputText extends FlxText
 	/**
 	 * The color of the background of the textbox.
 	 */
-	public var backgroundColor:Int;
+	public var backgroundColor(default, set):Int;
+	public function set_backgroundColor(Value:Int):Int {
+		backgroundColor = Value;
+		calcFrame();
+		return backgroundColor;
+	}
 	
 	/**
 	 * Whether or not the textbox has a background
@@ -737,6 +742,7 @@ class FlxInputText extends FlxText
 		calcFrame();
 		return _fieldBorderColor;
 	}
+	
 	
 	public function get_fieldBorderColor():Int
 	{
