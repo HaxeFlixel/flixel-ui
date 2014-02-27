@@ -19,7 +19,7 @@ class FlxUIColorSwatch extends FlxUIButton
 	public var midtone(default, set):Int;
 	public var shadowMid(default, set):Int;
 	public var shadowDark(default, set):Int;
-	public var colors(get, set):SwatchData;
+	public var colors(default, set):SwatchData;
 	
 	public var callback:Void->Void;
 	
@@ -40,6 +40,11 @@ class FlxUIColorSwatch extends FlxUIButton
 	
 	public function set_colors(Colors:SwatchData):SwatchData
 	{
+		if (colors != null) { 
+			colors.destroy();
+			colors = null;
+		}
+		colors = Colors.copy();
 		_skipRefresh = true;
 		hilight = Colors.hilight;
 		midtone = Colors.midtone;
@@ -48,11 +53,6 @@ class FlxUIColorSwatch extends FlxUIButton
 		_skipRefresh = false;
 		refreshColor();
 		return Colors;
-	}
-	
-	public function get_colors():SwatchData
-	{
-		return new SwatchData(id, hilight, midtone, shadowMid, shadowDark);
 	}
 	
 	/**
@@ -68,23 +68,27 @@ class FlxUIColorSwatch extends FlxUIButton
 	
 	public function set_hilight(i:Int):Int {
 		hilight = i;
+		colors.hilight = hilight;
 		refreshColor();
 		return hilight;
 	}
 	public function set_midtone(i:Int):Int {
 		midtone = i;
+		colors.midtone = midtone;
 		refreshColor();
 		return midtone;
 	}
 	
 	public function set_shadowMid(i:Int):Int {
 		shadowMid = i;
+		colors.shadowMid = shadowMid;
 		refreshColor();
 		return shadowMid;
 	}
 	
 	public function set_shadowDark(i:Int):Int {
 		shadowDark = i;
+		colors.shadowDark = shadowDark;
 		refreshColor();
 		return shadowDark;
 	}
@@ -129,6 +133,13 @@ class FlxUIColorSwatch extends FlxUIButton
 		refreshColor();
 	}
 	
+	public function equalsSwatch(swatch:SwatchData):Bool {
+		return swatch.doColorsEqual(colors);
+	}
+	
+	public function getRawDifferenceSwatch(swatch:SwatchData):Int {
+		return swatch.getRawDifference(colors);
+	}
 	
 	public function refreshColor():Void {
 		if (_skipRefresh) 
@@ -207,4 +218,6 @@ class FlxUIColorSwatch extends FlxUIButton
 		}
 		return _origKey;
 	}
+	
+	
 }

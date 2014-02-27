@@ -54,13 +54,13 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled
 		}
 	}
 	
-	public function addIcon(icon:FlxSprite,center:Bool=true)
+	public function addIcon(icon:FlxSprite,X:Int=0,Y:Int=0,?center:Bool=true)
 	{
 		// Creates a backup of current button image.
 		_noIconGraphicsBkup = cachedGraphics.bitmap.clone();
 		
-		var sx:Int = 0;
-		var sy:Int = 0;
+		var sx:Int = X;
+		var sy:Int = Y;
 		
 		if(center){
 			sx = Std.int((width - icon.width) / 2);

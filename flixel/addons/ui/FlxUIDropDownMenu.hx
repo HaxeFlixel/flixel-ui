@@ -27,6 +27,9 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		return b;
 	}
 	
+	public var selectedId(default, null):String;
+	public var selectedLabel(default, null):String;
+	
 	/**
 	 * The header of this dropdown menu.
 	 */
@@ -92,7 +95,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 				
 				i++;
 			}
-			header.text.text = DataList[0].label;
+			selectSomething(DataList[0].id, DataList[0].label);
 		} 
 		else if (ButtonList != null) 
 		{
@@ -182,10 +185,16 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 				}
 			}
 			
-			header.text.text = DataList[0].label;
+			selectSomething(DataList[0].id, DataList[0].label);
 		}
 		
 		dropPanel.resize(header.background.width, yoff);
+	}
+	
+	private function selectSomething(id:String, label:String):Void {
+		header.text.text = label;
+		selectedId = id;
+		selectedLabel = label;
 	}
 	
 	private function makeListButton(i:Int,Label:String,Name:String):FlxUIButton {
@@ -302,7 +311,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	private function onClickItem(i:Int):Void 
 	{
 		var item:FlxUIButton = list[i];
-		header.text.text = item.label.text;
+		selectSomething(item.id,item.label.text);
 		showList(false);
 		
 		if (callback != null) {

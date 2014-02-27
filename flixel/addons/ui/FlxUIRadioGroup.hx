@@ -11,10 +11,10 @@ import flixel.util.FlxPoint;
  */
 class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHasParams
 {
-	public var clickable(get_clickable, set_clickable):Bool;
-	public var selectedId(get_selectedId, set_selectedId):String;
-	public var selectedLabel(get_selectedLabel, set_selectedLabel):String;
-	public var selectedIndex(get_selectedIndex, set_selectedIndex):Int;
+	public var clickable(get, set):Bool;
+	public var selectedId(get, set):String;
+	public var selectedLabel(get, set):String;
+	public var selectedIndex(get, set):Int;
 	
 	public static inline var CLICK_EVENT:String = "click_radio_group";
 	
@@ -156,7 +156,6 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHas
 			if (_labels[i] == str) {
 				_selected = i;
 				c.checked = true;
-				break;
 			}
 			i++;
 		}
@@ -171,7 +170,6 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHas
 			if (_ids[i] == str) {
 				_selected = i;
 				c.checked = true;
-				break;
 			}
 			i++;
 		}

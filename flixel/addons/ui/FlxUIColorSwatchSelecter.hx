@@ -12,11 +12,36 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 {
 	public static inline var CLICK_EVENT:String = "click_color_swatch_selecter";
 	
+	public var spacingH(default, set):Float;
+	public var spacingV(default, set):Float;
+	public var maxColumns(default, set):Float;
+	
+	public function set_spacingH(f:Float):Float {
+		spacingH = f;
+		_dirtyLayout = true;
+		return f;
+	}
+	
+	public function set_spacingV(f:Float):Float {
+		spacingV = f;
+		_dirtyLayout = true;
+		return f;
+	}
+	
+	public function set_maxColumns(f:Float):Float {
+		maxColumns = f;
+		_dirtyLayout = true;
+		return f;
+	}
+	
 	public var skipButtonUpdate(default, set):Bool;
-	public function set_skipButtonUpdate(b:Bool):Bool {
+	public function set_skipButtonUpdate(b:Bool):Bool
+	{
 		skipButtonUpdate = b;
-		for (thing in members) {
-			if (thing != _selectionSprite) {
+		for (thing in members)
+		{
+			if (thing != _selectionSprite)
+			{
 				var swatch:FlxUIColorSwatch = cast thing;
 				swatch.skipButtonUpdate = b;
 			}
@@ -47,8 +72,10 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 		
 		var i:Int = 0;
 		var swatch:FlxUIColorSwatch;
-		if (list_data != null) {
-			for (data in list_data) {
+		if (list_data != null)
+		{
+			for (data in list_data)
+			{
 				swatch = new FlxUIColorSwatch(0, 0, data);
 				swatch.callback = selectCallback.bind(i);
 				swatch.broadcastToFlxUI = false;
@@ -56,8 +83,10 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 				add(swatch);
 				i++;
 			}
-		}else if (list_colors != null) {
-			for (color in list_colors) {
+		}else if (list_colors != null) 
+		{
+			for (color in list_colors) 
+			{
 				swatch = new FlxUIColorSwatch(0, 0, color);
 				swatch.callback = selectCallback.bind(i);
 				swatch.broadcastToFlxUI = false;
@@ -65,8 +94,10 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 				add(swatch);
 				i++;
 			}
-		}else if (list_swatches != null) {
-			for (swatch in list_swatches) {
+		}else if (list_swatches != null) 
+		{
+			for (swatch in list_swatches) 
+			{
 				swatch.id = "swatch_" + i;
 				swatch.callback = selectCallback.bind(i);
 				swatch.broadcastToFlxUI = false;
@@ -80,8 +111,14 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 		
 		var i:Int = 0;
 		
-		if(_selectionSprite == null){
-			if (members.length >= 1) {
+		spacingH = SpacingH;
+		spacingV = SpacingV;
+		maxColumns = MaxColumns;
+		
+		if (_selectionSprite == null)
+		{
+			if (members.length >= 1) 
+			{
 				var ww:Int = Std.int(members[0].width);
 				var hh:Int = Std.int(members[0].height);
 				_selectionSprite = new FlxSprite();
@@ -96,21 +133,119 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 			}
 		}
 		
+		update();
+		
+		selectByIndex(0);
+	}
+	
+	public override function update():Void {
+		if (_dirtyLayout) {
+			updateLayout();
+			_dirtyLayout = false;
+		}
+		super.update();
+	}
+	
+	public function updateLayout():Void {
+		if (members == null || members.length == 0) {
+			return;
+		}
+		
+		var firstSprite:FlxSprite = members[0];
+		var firstX:Float = x;
+		var firstY:Float = y;
+		if(firstSprite != null){
+			firstX = firstSprite.x;
+			firstY = firstSprite.y;
+		}
+		
+		var xx:Float = firstX;
+		var yy:Float = firstY;
+		var columns:Int = 0;
+		
 		for (sprite in members) {
-			if(sprite != null){
+			if (sprite != null && sprite != _selectionSprite) {
 				sprite.x = xx;
 				sprite.y = yy;
-				xx += sprite.width + SpacingH;
-				i++;
-				if (MaxColumns != -1 && i >= MaxColumns) {
-					i = 0;
-					xx = X;
-					yy += sprite.height + SpacingV;
+				xx += (sprite.width + spacingH);
+				columns++;
+				if (maxColumns != -1 && columns > maxColumns) {
+					columns = 0;
+					xx = firstX;
+					yy += sprite.height + spacingV;
+				}
+			}
+		}
+	}
+	
+	public function changeColors(list:Array<SwatchData>):Void {
+		var swatches:Int = members.length - 1;
+		
+		var swatchForSelect:SwatchData = null;
+		if (selectedSwatch != null) {
+			swatchForSelect = selectedSwatch.colors;
+		}
+		
+		for (thing in members) {
+			if(thing != _selectionSprite){
+				thing.visible = false;
+				thing.active = false;
+			}else {
+				remove(_selectionSprite, true);
+			}
+		}
+		
+		for (i in 0...list.length) {
+			var fuics:FlxUIColorSwatch = null;
+			
+			if (i < members.length) {
+				var sprite = members[i];
+				if(sprite != null){
+					if (Std.is(sprite, FlxUIColorSwatch)) {
+						fuics = cast sprite;
+						if(fuics.equalsSwatch(list[i]) == false){
+							fuics.colors = list[i];
+						}
+					}
+				}
+			}
+			
+			if (fuics == null) {
+				fuics = new FlxUIColorSwatch(0, 0, list[i]);
+				fuics.id = list[i].name;
+				fuics.broadcastToFlxUI = false;
+				fuics.callback = selectCallback.bind(i);
+				add(fuics);
+			}
+			
+			fuics.visible = true;
+			fuics.active = true;
+		}
+		
+		var length:Int = members.length;
+		for (i in 0...length) {
+			var j:Int = (length - 1) - i;
+			var thing:FlxSprite = members[j];
+			if (thing != _selectionSprite) {
+				if (thing == null) {
+					members.splice(j, 1);
+				}else if (thing.visible == false && thing.active == false) {
+					thing.destroy();
+					remove(thing, true);
+					thing = null;
 				}
 			}
 		}
 		
-		selectByIndex(0);
+		_dirtyLayout = true;
+		
+		add(_selectionSprite);
+		
+		if (swatchForSelect != null) {
+			selectByColors(swatchForSelect, false);
+		}else {
+			unselect();
+		}
 	}
 	
 	public var selectedSwatch(get, null):FlxUIColorSwatch;
@@ -144,7 +279,6 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 	}
 	
 	public function selectByColor(Color:Int):Void {
-		
 		_selectedSwatch = null;
 		
 		for (sprite in members) {
@@ -159,7 +293,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 		updateSelected();
 	}
 	
-	public function selectByColors(Data:SwatchData, PickClosest:Bool=true):Void {
+	public function selectByColors(Data:SwatchData, PickClosest:Bool = true):Void {
 		var best_delta:Int = 99999999;
 		var curr_delta:Int = 0;
 		var best_swatch:FlxUIColorSwatch = null;
@@ -167,40 +301,31 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 		_selectedSwatch = null;
 		
 		for (sprite in members) {
-			if (sprite != _selectedSwatch) {
+			if (sprite != _selectedSwatch && sprite.visible == true && sprite.active == true) {
 				var swatch:FlxUIColorSwatch = cast sprite;
 				var swatchData:SwatchData = swatch.colors;
 				if (PickClosest) {
-					curr_delta = 0;
-					
-					curr_delta += getRGBdelta(Data.hilight, swatchData.hilight);
-					curr_delta += getRGBdelta(Data.midtone, swatchData.midtone);
-					curr_delta += getRGBdelta(Data.shadowMid, swatchData.shadowMid);
-					curr_delta += getRGBdelta(Data.shadowDark, swatchData.shadowDark);
+					curr_delta = Data.getRawDifference(swatchData);
 					
 					if (curr_delta < best_delta) {
 						best_swatch = swatch;
+						best_delta = curr_delta;
 					}
 				}else {
-					if ((Data.hilight == swatchData.hilight) && (Data.midtone == swatchData.midtone) &&
-						(Data.shadowMid == swatchData.shadowMid) && (Data.shadowDark == swatchData.shadowDark))
-					{
-						_selectedSwatch = swatch;
+					if (Data.doColorsEqual(swatchData)) {
+						best_swatch = swatch;
 						break;
 					}
 				}
 			}
 		}
 		
-		if (best_swatch != null) {
-			_selectedSwatch = best_swatch;
-		}
+		_selectedSwatch = best_swatch;
 		
 		updateSelected();
 	}
 	
 	public function selectByName(Name:String):Void {
-		
 		_selectedSwatch = null;
 		
 		for (sprite in members) {
@@ -230,28 +355,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 		}
 	}
 	
-	private function getRGBdelta(a:Int, b:Int):Int{
-		var ra:Int = a >> 16 & 0xFF;
-		var ga:Int = a >> 8 & 0xFF;
-		var ba:Int = a & 0xFF;
-		var rb:Int = b >> 16 & 0xFF;
-		var gb:Int = b >> 8 & 0xFF;
-		var bb:Int = b & 0xFF;
-		var diff:Int = 0;
-		var delta:Int = 0;
-		
-		diff = ra - rb; if (diff < 0) { diff *= -1; };
-		delta += diff;
-		
-		diff = ga - gb; if (diff < 0) { diff *= -1; };
-		delta += diff;
-		
-		diff = ba - bb; if (diff < 0) { diff *= -1; };
-		delta += diff;
-		
-		return delta;
-	}
-	
 	private var _selectedSwatch:FlxUIColorSwatch;
 	private var _selectionSprite:FlxSprite;
+	private var _dirtyLayout:Bool = false;
 }

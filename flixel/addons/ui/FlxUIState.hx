@@ -118,7 +118,6 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	}
 		
 	public function forceFocus(b:Bool, thing:IFlxUIWidget):Void {
-		trace("forceFocus(" + b + "," + thing + ")");
 		if (_ui != null) 
 		{
 			if (b) 

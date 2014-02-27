@@ -50,6 +50,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	public var x(default, set):Float=0;
 	public var y(default, set):Float=0;
 	
+	public var params:Array<Dynamic> = null;
 	
 	public var alpha(default, set):Float=1;
 	
@@ -98,25 +99,37 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 		//_quickSetup();
 	}
 	 
-	public override function getEvent(id:String, sender:IFlxUIWidget, data:Array<Dynamic>, ?params:Array<Dynamic>):Void {
+	public override function getEvent(id:String, sender:IFlxUIWidget, data:Array<Dynamic>, ?eventParams:Array<Dynamic>):Void {
+		if (eventParams == null) {
+			if (params != null) {
+				eventParams = [];
+			}
+		}
+		if (params != null) {
+			eventParams = eventParams.concat(params);
+		}
+		
 		switch(id) {
 			case FlxUITypedButton.CLICK_EVENT:
-				var buttonAmount:Int = Std.int(params[0]);
-				var label:String = Std.string(params[1]);
+				var buttonAmount:Int = Std.int(eventParams[0]);
+				var label:String = Std.string(eventParams[1]);
 				if (buttonAmount <= 2)
 				{
 					if (Std.is(_parentState, IFlxUIState)) {
 						//This fixes a bug where the event was being sent to this popup rather than the state that created it
-						var fuis:IFlxUIState = cast _parentState;
-						fuis.getEvent(CLICK_EVENT, this, buttonAmount, params);
+						castParent().getEvent(CLICK_EVENT, this, buttonAmount, eventParams);
 					}else {
 						//This is a generic fallback in case something goes wrong
-						FlxUI.event(CLICK_EVENT, this, buttonAmount, params);
+						FlxUI.event(CLICK_EVENT, this, buttonAmount, eventParams);
 					}
 					close();
 				}
 		}
-		super.getEvent(id, sender, data, params);
+		super.getEvent(id, sender, data, eventParams);
+	}
+	
+	private function castParent():IFlxUIState {
+		return cast _parentState;
 	}
 	
 	private var _quickSetupParams:{title:String, body:String, button_labels:Array<String>} = null;
