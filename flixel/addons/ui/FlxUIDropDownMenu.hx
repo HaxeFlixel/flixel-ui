@@ -27,8 +27,48 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		return b;
 	}
 	
-	public var selectedId(default, null):String;
-	public var selectedLabel(default, null):String;
+	public var selectedId(get, set):String;
+	public var selectedLabel(get, set):String;
+	
+	private var _selectedId:String;
+	private var _selectedLabel:String;
+	
+	public function get_selectedId():String { return _selectedId;}
+	public function set_selectedId(str:String):String {
+		var i:Int = 0;
+		for (btn in list) {
+			if (btn != null && btn.id == str) {
+				var item:FlxUIButton = list[i];
+				_selectedId = str;
+				if(item.label != null){
+					_selectedLabel = item.label.text;
+					header.text.text = item.label.text;
+				}else {
+					_selectedLabel = "";
+					header.text.text = "";
+				}
+				return str;
+			}
+			i++;
+		}
+		return str;
+	}
+	
+	public function get_selectedLabel():String { return _selectedLabel;}
+	public function set_selectedLabel(str:String):String {
+		var i:Int = 0;
+		for (btn in list) {
+			if (btn.label.text == str) {
+				var item:FlxUIButton = list[i];
+				_selectedId = item.id;
+				_selectedLabel = str;
+				header.text.text = str;
+				return str;
+			}
+			i++;
+		}
+		return str;
+	}
 	
 	/**
 	 * The header of this dropdown menu.

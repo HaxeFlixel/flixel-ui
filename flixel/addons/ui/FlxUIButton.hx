@@ -37,6 +37,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled
 			label = new FlxUIText(0, 0, 80, Label, 8);
 			label.setFormat(null, 8, 0x333333, "center");
 		}
+		resize(width, height);	//force it to be "FlxUI style"
 		autoCenterLabel();
 	}
 	

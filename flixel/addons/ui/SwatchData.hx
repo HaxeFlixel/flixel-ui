@@ -17,47 +17,55 @@ class SwatchData implements IFlxDestroyable{
 	public var shadowDark(get, set):Int;
 	
 	/**GETTERs/SETTERS**/
+
+	public function set_color(i:Int, Value:Int):Int {
+		if (colors == null) { colors = [];}
+		colors[i] = Value;
+		return Value;
+	}
 	
-	public function get_hilight():Int {
-		if (colors.length >= 1) {
-			return colors[0];
+	public function get_color(i:Int):Int {
+		if (colors.length >= i) {
+			if (colors[i] == null) {
+				return 0xff000000;
+			}
+			return colors[i];
 		}
 		return 0xff000000;
 	}
+	
+	public function get_hilight():Int {
+		return get_color(0);
+	}
 	public function set_hilight(Value:Int):Int {
+		if (colors == null) { colors = [];}
 		colors[0] = Value;
 		return Value;
 	}
 	
 	public function get_midtone():Int {
-		if (colors.length >= 2) {
-			return colors[1];
-		}
-		return 0xff000000;
+		return get_color(1);
 	}
 	public function set_midtone(Value:Int):Int {
+		if (colors == null) { colors = [];}
 		colors[1] = Value;
 		return Value;
 	}
 	
 	public function get_shadowMid():Int {
-		if (colors.length >= 3) {
-			return colors[2];
-		}
-		return 0xff000000;
+		return get_color(2);
 	}
 	public function set_shadowMid(Value:Int):Int {
+		if (colors == null) { colors = [];}
 		colors[2] = Value;
 		return Value;
 	}
 	
 	public function get_shadowDark():Int {
-		if (colors.length >= 4) {
-			return colors[3];
-		}
-		return 0xff000000;
+		return get_color(3);
 	}
 	public function set_shadowDark(Value:Int):Int {
+		if (colors == null) { colors = [];}
 		colors[3] = Value;
 		return Value;
 	}
@@ -136,7 +144,14 @@ class SwatchData implements IFlxDestroyable{
 		var totalDiff:Int = 0;
 		var i:Int = 0;
 		for (i in 0...smallList.length) {
-			totalDiff += getRGBdelta(bigList[i], smallList[i]);
+			if(bigList[i] != null && smallList[i] != null){						//both are not null
+				totalDiff += getRGBdelta(bigList[i], smallList[i]);				//get raw RGB delta
+			}else {
+				if (false == (bigList[i] == null && smallList[i] == null)) {	//one is null and one is !null
+					totalDiff += 0xFFFFFF;										//counts as maximum difference
+				}
+				//Else: do nothing --> they're both null, and therefore equal, no difference
+			}
 		}
 		
 		var lengthDiff:Int = bigList.length - smallList.length;

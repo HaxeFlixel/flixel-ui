@@ -169,7 +169,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 				sprite.y = yy;
 				xx += (sprite.width + spacingH);
 				columns++;
-				if (maxColumns != -1 && columns > maxColumns) {
+				if (maxColumns != -1 && columns >= maxColumns) {
 					columns = 0;
 					xx = firstX;
 					yy += sprite.height + spacingV;
