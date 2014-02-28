@@ -5,8 +5,10 @@ import flash.errors.Error;
 import flash.events.KeyboardEvent;
 import flash.geom.Rectangle;
 import flixel.addons.ui.FlxUI.NamedString;
+import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
+import flixel.util.FlxColor;
 import flixel.util.FlxPoint;
 import flixel.util.FlxRect;
 import flixel.util.FlxTimer;
@@ -41,22 +43,10 @@ class FlxInputText extends FlxText
 	public static inline var ENTER_ACTION:String = "enter";				//press enter
 	public static inline var INPUT_ACTION:String = "input";				//manually edit
 	
-	//workaround to deal with non-availability of getCharIndexAtPoint or getCharBoundaries on cpp/neko targets
-	#if sys
-		private var charBoundaries:Array<FlxRect> = null;
-	#end
-	
-	/**
-	 * Defines what text to filter. It can be NO_FILTER, ONLY_ALPHA, ONLY_NUMERIC, ONLY_ALPHA_NUMERIC or CUSTOM_FILTER
-	 * (Remember to append "FlxInputText." as a prefix to those constants)
-	 */
-	private var _filterMode:Int = NO_FILTER;
-	
 	/**
 	 * This regular expression will filter out (remove) everything that matches. 
 	 * This is activated by setting filterMode = FlxInputText.CUSTOM_FILTER.
 	 */
-	//public var customFilterPattern:EReg = ~/[]*/g;
 	public var customFilterPattern:EReg;
 	
 	/**
@@ -64,57 +54,79 @@ class FlxInputText extends FlxText
 	 */
 	public var callback:String->String->Void;
 	
-	public var params(default, set):Array<Dynamic> = null;
-	
-	/**
-	 * Whether this text box has focus on the screen.
-	 */
-	private var _hasFocus:Bool;
-	
-	/**
-	 * The position of the selection cursor. An index of 0 means the carat is before the character at index 0.
-	 */
-	public var _caretIndex:Int = -1;
-	
-	/**
-	 * If this is set to true, text typed is forced to be uppercase.
-	 */
-	private var _forceCase:Int = ALL_CASES;
-	
-	/**
-	 * The max amount of characters the textfield can contain.
-	 */
-	private var _maxLength:Int = 0;
-	
-	/**
-	 * The amount of lines allowed in the textfield.
-	 */
-	private var _lines:Int = 1;
-	
-	/**
-	 * The color of the background of the textbox.
-	 */
-	public var backgroundColor(default, set):Int;
-	public function set_backgroundColor(Value:Int):Int {
-		backgroundColor = Value;
-		calcFrame();
-		return backgroundColor;
-	}
-	
 	/**
 	 * Whether or not the textbox has a background
 	 */
 	public var background:Bool = false;
 	
 	/**
-	 * A FlxSPrite representing the background sprite
+	 * The caret's color. Has the same color as the text by default.
+	 */
+	public var caretColor:Int;
+	
+	public var params(default, set):Array<Dynamic>;
+	
+	/**
+	 * Whether or not the textfield is a password textfield
+	 */
+	public var passwordMode(get, set):Bool;
+	
+	/**
+	 * Whether or not the text box is the active object on the screen.
+	 */
+	public var hasFocus(default, set):Bool = false;
+	
+	/**
+	 * The position of the selection cursor. An index of 0 means the carat is before the character at index 0.
+	 */
+	public var caretIndex(default, set):Int = 0;
+	
+	/**
+	 * The Case that's being enforced. Either ALL_CASES, UPPER_CASE or LOWER_CASE.
+	 */
+	public var forceCase(default, set):Int = ALL_CASES;
+	
+	/**
+	 * Set the maximum length for the field (e.g. "3" 
+	 * for Arcade type hi-score initials). 0 means unlimited.
+	 */
+	public var maxLength(default, set):Int = 0;
+	
+	/**
+	 * Change the amount of lines that are allowed.
+	 */
+	public var lines(default, set):Int;
+	
+	/**
+	 * Defines what text to filter. It can be NO_FILTER, ONLY_ALPHA, ONLY_NUMERIC, ONLY_ALPHA_NUMERIC or CUSTOM_FILTER
+	 * (Remember to append "FlxInputText." as a prefix to those constants)
+	 */
+	public var filterMode(default, set):Int = NO_FILTER;
+	
+	/**
+	 * The color of the fieldBorders
+	 */
+	public var fieldBorderColor(default, set):Int;
+	
+	/**
+	 * The thickness of the fieldBorders
+	 */
+	public var fieldBorderThickness(default, set):Int;
+	
+	/**
+	 * The color of the background of the textbox.
+	 */
+	public var backgroundColor(default, set):Int;
+	
+	/**
+	 * A FlxSprite representing the background sprite
 	 */
 	private var backgroundSprite:FlxSprite;
-	 
+
 	/**
 	 * A timer for the flashing caret effect.
 	 */
-	private var caretTimer:FlxTimer;
+	private var _caretTimer:FlxTimer;
 	
 	/**
 	 * A FlxSprite representing the flashing caret when editing text.
@@ -122,27 +134,16 @@ class FlxInputText extends FlxText
 	private var caret:FlxSprite;
 	
 	/**
-	 * The caret's color. Has the same color as the text by default.
-	 */
-	public var caretColor:Int;
-	
-	/**
 	 * A FlxSprite representing the fieldBorders.
 	 */
 	private var fieldBorderSprite:FlxSprite;
 	
-	/**
-	 * The thickness of the borders. 0 to disable.
-	 */
-	private var _fieldBorderThickness:Int = 1;
+	//workaround to deal with non-availability of getCharIndexAtPoint or getCharBoundaries on cpp/neko targets
+	#if sys
+	private var _charBoundaries:Array<FlxRect>;
+	#end
 	
 	/**
-	 * The color of the borders.
-	 */
-	private var _fieldBorderColor:Int = 0xFF000000;
-	
-	/**
-	 * Creates a new FlxText object at the specified position.
 	 * @param	X				The X position of the text.
 	 * @param	Y				The Y position of the text.
 	 * @param	Width			The width of the text object (height is determined automatically).
@@ -150,20 +151,22 @@ class FlxInputText extends FlxText
 	 * @param   size			Initial size of the font	 
 	 * @param	EmbeddedFont	Whether this text field uses embedded fonts or not
 	 */
-	public function new(X:Float, Y:Float, Width:Int=200, Text:String=null, size:Int = 8, TextColor:Int = 0xFF000000, BackgroundColor:Int = 0xFFFFFFFF, EmbeddedFont:Bool=true)
+	public function new(X:Float = 0, Y:Float = 0, Width:Int = 150, ?Text:String, size:Int = 8, TextColor:Int = FlxColor.BLACK, BackgroundColor:Int = FlxColor.WHITE, EmbeddedFont:Bool = true)
 	{
-		customFilterPattern = null;// ~/[]*/g;
-		
 		super(X, Y, Width, Text, size, EmbeddedFont);
 		
 		backgroundColor = BackgroundColor;
-		if (BackgroundColor != 0) background = true;
+		
+		if (BackgroundColor != FlxColor.TRANSPARENT) 
+		{
+			background = true;
+		}
 		
 		color = TextColor;
 		caretColor = TextColor;
-			
+		
 		caret = new FlxSprite();
-		caret.makeGraphic(1, Std.int(size + 2), 0xFFFFFFFF);
+		caret.makeGraphic(1, Std.int(size + 2));
 		caret.color = caretColor;
 		caretIndex = 0;
 		
@@ -172,17 +175,34 @@ class FlxInputText extends FlxText
 		backgroundSprite = new FlxSprite(X, Y);
 		
 		lines = 1;
-		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
+		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 		
 		calcFrame();
 	}
 	
-	public function set_params(p:Array<Dynamic>):Array<Dynamic> {
-		params = p;
-		if (params == null) { params = [];}
-		var namedValue:NamedString = { name:"value", value:text};
-		params.push(namedValue);
-		return p;
+	/**
+	 * Clean up memory
+	 */
+	override public function destroy():Void 
+	{
+		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+		
+		backgroundSprite = FlxG.safeDestroy(backgroundSprite);
+		fieldBorderSprite = FlxG.safeDestroy(fieldBorderSprite);
+		callback = null;
+		
+		#if sys
+		if (_charBoundaries != null) 
+		{
+			while (_charBoundaries.length > 0) 
+			{
+				_charBoundaries.pop();
+			}
+			_charBoundaries = null;
+		}
+		#end
+		
+		super.destroy();
 	}
 	
 	/**
@@ -197,7 +217,9 @@ class FlxInputText extends FlxText
 		
 		// In case caretColor was changed
 		if (caretColor != caret.color || caret.height != size + 2) 
+		{
 			caret.color = caretColor;
+		}
 		
 		drawSprite(caret);
 	}
@@ -208,7 +230,8 @@ class FlxInputText extends FlxText
 	 */
 	private function drawSprite(Sprite:FlxSprite):Void
 	{
-		if (Sprite != null && Sprite.visible) {
+		if (Sprite != null && Sprite.visible) 
+		{
 			Sprite.scrollFactor = scrollFactor;
 			Sprite.cameras = cameras;
 			Sprite.draw();
@@ -222,14 +245,17 @@ class FlxInputText extends FlxText
 	{
 		super.update();
 		
-		#if (!FLX_NO_MOUSE  && !FLX_NO_TOUCH)
+		#if !FLX_NO_MOUSE
 		// Set focus and caretIndex as a response to mouse press
-		if (FlxG.mouse.justPressed) {
-			if (overlapsPoint(new FlxPoint(FlxG.mouse.x, FlxG.mouse.y))) {
-				caretIndex = getCaretIndexFromPoint(new FlxPoint(FlxG.mouse.x, FlxG.mouse.y));
+		if (FlxG.mouse.justPressed) 
+		{
+			if (overlapsPoint(FlxG.mouse)) 
+			{
+				caretIndex = getCaretIndexFromPoint(FlxG.mouse);
 				hasFocus = true;
 			}
-			else {
+			else 
+			{
 				hasFocus = false;
 			}
 		}
@@ -238,13 +264,13 @@ class FlxInputText extends FlxText
 	
 	/**
 	 * Handles keypresses generated on the stage.
-	 * @param	e		The triggering keyboard event.
 	 */
-	private function handleKeyDown(e:KeyboardEvent):Void 
+	private function onKeyDown(e:KeyboardEvent):Void 
 	{
 		var key:Int = e.keyCode;
 		
-		if (hasFocus) {
+		if (hasFocus) 
+		{
 			// Do nothing for Shift, Ctrl and flixel console hotkey
 			if (key == 16 || key == 17 || key == 220) 
 			{
@@ -263,7 +289,8 @@ class FlxInputText extends FlxText
 			// Backspace
 			else if (key == 8) 
 			{
-				if (caretIndex > 0) {
+				if (caretIndex > 0) 
+				{
 					var s:String;
 					text = text.substring(0, caretIndex - 1) + text.substring(caretIndex);
 					caretIndex --;
@@ -273,7 +300,8 @@ class FlxInputText extends FlxText
 			// Delete
 			else if (key == 46)
 			{
-				if (text.length > 0 && caretIndex < text.length) {
+				if (text.length > 0 && caretIndex < text.length) 
+				{
 					text = text.substring(0, caretIndex) + text.substring(caretIndex + 1);
 					onChange(DELETE_ACTION);
 				}
@@ -288,7 +316,8 @@ class FlxInputText extends FlxText
 			{
 				var newText:String = filter(String.fromCharCode(e.charCode));
 				
-				if (newText.length > 0 && (maxLength == 0 || (text.length + newText.length) < maxLength)) {
+				if (newText.length > 0 && (maxLength == 0 || (text.length + newText.length) < maxLength)) 
+				{
 					text = insertSubstring(text, newText, caretIndex);
 					caretIndex++;
 					onChange(INPUT_ACTION);
@@ -297,14 +326,17 @@ class FlxInputText extends FlxText
 		}
 	}
 	
-	private function onChange(action:String):Void {
-		if (callback != null) {
+	private function onChange(action:String):Void 
+	{
+		if (callback != null) 
+		{
 			callback(text, action);
 		}
 	}
 	
 	/**
 	 * Inserts a substring into a string at a specific index
+	 * 
 	 * @param	Insert			The string to have something inserted into
 	 * @param	Insert			The string to insert
 	 * @param	Index			The index to insert at
@@ -312,12 +344,12 @@ class FlxInputText extends FlxText
 	 */
 	private function insertSubstring(Original:String, Insert:String, Index:Int):String 
 	{
-		if (Index != Original.length) {
-			
+		if (Index != Original.length) 
+		{	
 			Original = Original.substring(0, Index) + (Insert) + (Original.substring(Index));
-			//Original = Original.slice(0, Index).concat(Insert).concat(Original.slice(Index));
 		}
-		else {
+		else 
+		{
 			Original = Original + (Insert);
 		}
 		return Original;
@@ -329,7 +361,7 @@ class FlxInputText extends FlxText
 	 * @return					The index of the character hit by the point. 
 	 * 							Returns -1 if the point is not found.
 	 */
-	public function getCaretIndexFromPoint(Landing:FlxPoint):Int
+	private function getCaretIndexFromPoint(Landing:FlxPoint):Int
 	{
 	#if !FLX_NO_MOUSE
 		var hit:FlxPoint = new FlxPoint(FlxG.mouse.x - x, FlxG.mouse.y - y);
@@ -371,50 +403,87 @@ class FlxInputText extends FlxText
 	}
 	
 	#if sys
-		//WORKAROUND since this function isn't available for openfl-native TextFields, we just hack it ourselves
-		private function getCharIndexAtPoint(X:Float, Y:Float):Int {
-			var i:Int = 0;
-			if (charBoundaries != null) {
-				var r:FlxRect = null;
-				for (r in charBoundaries) {
-					if (X >= r.left && X <= r.right && Y >= r.top && Y <= r.bottom) {
-						return i;
-					}
-					i++;
+	//WORKAROUND since this function isn't available for openfl-native TextFields, we just hack it ourselves
+	private function getCharIndexAtPoint(X:Float, Y:Float):Int 
+	{
+		var i:Int = 0;
+		if (_charBoundaries != null) 
+		{
+			for (r in _charBoundaries) 
+			{
+				if (X >= r.left && X <= r.right && Y >= r.top && Y <= r.bottom) 
+				{
+					return i;
 				}
+				i++;
 			}
-			
-			return -1;
 		}
 		
-		private function getCharBoundaries(charIndex:Int):Rectangle {
-			if (charBoundaries != null && charIndex > 0 && charIndex < charBoundaries.length) {
-				var r:Rectangle = new Rectangle();
-				return charBoundaries[charIndex].copyToFlash(r);
+		return -1;
+	}
+	
+	private function getCharBoundaries(charIndex:Int):Rectangle 
+	{
+		if (_charBoundaries != null && charIndex > 0 && charIndex < _charBoundaries.length) 
+		{
+			var r:Rectangle = new Rectangle();
+			return _charBoundaries[charIndex].copyToFlash(r);
+		}
+		return null;
+	}
+	
+	private override function set_text(Text:String):String
+	{
+		var return_text:String = super.set_text(Text);
+		var numChars:Int = Text.length;
+		prepareCharBoundaries(numChars);
+		_textField.text = "";
+		var textH:Float = 0;
+		var textW:Float = 0;
+		var lastW:Float = 0;
+		for (i in 0...numChars) 
+		{
+			_textField.appendText(Text.substr(i, 1));	//add a character
+			textW = _textField.textWidth;				//count up total text width
+			if (i == 0) 
+			{
+				textH = _textField.textHeight;			//count height after first char
 			}
-			return null;
+			_charBoundaries[i].x = lastW;				//place x at end of last character
+			_charBoundaries[i].y = 0;					//place y at zero
+			_charBoundaries[i].width = (textW - lastW);	//place width at (width so far) minus (last char's end point)
+			_charBoundaries[i].height = textH;
+			lastW = textW;
 		}
+		_textField.text = Text;
+		return return_text;
+	}
+	
+	private function prepareCharBoundaries(numChars:Int):Void 
+	{
+		if (_charBoundaries == null) 
+		{
+			_charBoundaries = [];
+		}
+		
+		if (_charBoundaries.length > numChars) 
+		{
+			var diff:Int = _charBoundaries.length - numChars;
+			for (i in 0...diff) 
+			{
+				_charBoundaries.pop();
+			}
+		}
+		
+		for (i in 0...numChars) 
+		{
+			if (_charBoundaries.length - 1 < i) 
+			{
+				_charBoundaries.push(new FlxRect(0, 0, 0, 0));
+			}
+		}
+	}
 	#end
-	
-	public override function set_x(X:Float):Float {
-		if (fieldBorderSprite != null && fieldBorderThickness > 0) {
-			fieldBorderSprite.x = X - fieldBorderThickness;
-		}
-		if (backgroundSprite != null && background) {
-			backgroundSprite.x = X;
-		}		
-		return super.set_x(X);
-	}
-	
-	public override function set_y(Y:Float):Float {
-		if (fieldBorderSprite != null && fieldBorderThickness > 0) {
-			fieldBorderSprite.y = Y - fieldBorderThickness;
-		}
-		if (backgroundSprite != null && background) {
-			backgroundSprite.y = Y;
-		}
-		return super.set_y(Y);
-	}
 	
 	/**
 	 * Draws the frame of animation for the input text.
@@ -425,23 +494,30 @@ class FlxInputText extends FlxText
 	{
 		super.calcFrame(RunOnCpp);
 		
-		if(fieldBorderSprite != null){
-			if (fieldBorderThickness > 0) {
+		if (fieldBorderSprite != null)
+		{
+			if (fieldBorderThickness > 0) 
+			{
 				fieldBorderSprite.makeGraphic(Std.int(width + fieldBorderThickness * 2), Std.int(height + fieldBorderThickness * 2), fieldBorderColor);
 				fieldBorderSprite.x = x - fieldBorderThickness;
 				fieldBorderSprite.y = y - fieldBorderThickness;
-			}else if (fieldBorderThickness == 0){
+			}
+			else if (fieldBorderThickness == 0)
+			{
 				fieldBorderSprite.visible = false;
 			}
 		}
 		
 		if (backgroundSprite != null) 
 		{
-			if(background){
+			if (background)
+			{
 				backgroundSprite.makeGraphic(Std.int(width), Std.int(height), backgroundColor);
 				backgroundSprite.x = x;
 				backgroundSprite.y = y;
-			}else {
+			}
+			else 
+			{
 				backgroundSprite.visible = false;
 			}
 		}
@@ -452,136 +528,131 @@ class FlxInputText extends FlxText
 	 */
 	private function toggleCaret(timer:FlxTimer):Void
 	{
-		caretTimer.loops ++; // Run the timer forever
 		caret.visible = !caret.visible;
-	}
-	
-	/**
-	 * Clean up after ourselves
-	 */
-	override public function destroy():Void 
-	{
-		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
-		if (backgroundSprite != null) {
-			backgroundSprite.destroy();
-			backgroundSprite = null;
-		}
-		if (fieldBorderSprite != null) {
-			fieldBorderSprite.destroy();
-			fieldBorderSprite = null;
-		}
-		#if sys
-			if (charBoundaries != null) {
-				while (charBoundaries.length > 0) {
-					charBoundaries.pop();
-				}
-				charBoundaries = null;
-			}
-		#end
-		super.destroy();
-		callback = null;
 	}
 	
 	/**
 	 * Checks an input string against the current 
 	 * filter and returns a filtered string
-	 * @param	text	Unfiltered text
-	 * @return			Text filtered by the the filter mode of the box
 	 */
 	private function filter(text:String):String
 	{
 		if (forceCase == UPPER_CASE)
+		{
 			text = text.toUpperCase();
+		}
 		else if (forceCase == LOWER_CASE)
+		{
 			text = text.toLowerCase();
-			
-		if (filterMode != NO_FILTER) {
+		}
+		
+		if (filterMode != NO_FILTER) 
+		{
 			var pattern:EReg;
-			switch(filterMode) {
+			switch(filterMode) 
+			{
 				case ONLY_ALPHA:		pattern = ~/[^a-zA-Z]*/g;		
 				case ONLY_NUMERIC:		pattern = ~/[^0-9]*/g;			
 				case ONLY_ALPHANUMERIC:	pattern = ~/[^a-zA-Z0-9]*/g;	
 				case CUSTOM_FILTER:		pattern = customFilterPattern;	
 				default:
-					throw new Error("FlxInputText: Unknown filterMode ("+filterMode+")");
+					throw new Error("FlxInputText: Unknown filterMode (" + filterMode + ")");
 			}
 			pattern.replace(text, "");
-			//text = text.replace(pattern, "");
 		}
 		return text;
 	}
-		
-	public var hasFocus(get, set):Bool;
 	
-	/**
-	 * Whether or not the text box is the active object on the screen.
-	 */
-	public function get_hasFocus():Bool
+	private function set_params(p:Array<Dynamic>):Array<Dynamic> 
 	{
-		return _hasFocus;
+		params = p;
+		if (params == null) 
+		{ 
+			params = [];
+		}
+		var namedValue:NamedString = { name: "value", value: text };
+		params.push(namedValue);
+		return p;
 	}
 	
-	/**
-	 * @private
-	 */
-	public function set_hasFocus(newFocus:Bool):Bool
+	private override function set_x(X:Float):Float 
+	{
+		if ((fieldBorderSprite != null) && fieldBorderThickness > 0) 
+		{
+			fieldBorderSprite.x = X - fieldBorderThickness;
+		}
+		if ((backgroundSprite != null) && background) 
+		{
+			backgroundSprite.x = X;
+		}		
+		return super.set_x(X);
+	}
+	
+	private override function set_y(Y:Float):Float 
+	{
+		if ((fieldBorderSprite != null) && fieldBorderThickness > 0) 
+		{
+			fieldBorderSprite.y = Y - fieldBorderThickness;
+		}
+		if ((backgroundSprite != null) && background) 
+		{
+			backgroundSprite.y = Y;
+		}
+		return super.set_y(Y);
+	}
+	
+	private function set_hasFocus(newFocus:Bool):Bool
 	{
 		if (newFocus) 
 		{
-			if (_hasFocus != newFocus) {
-				caretTimer = FlxTimer.start(0.5, toggleCaret, 4);
+			if (hasFocus != newFocus) 
+			{
+				_caretTimer = FlxTimer.start(0.5, toggleCaret, 0);
 				caret.visible = true;
 				caretIndex = text.length;
 			}
-			
 		}
 		else 
 		{
 			// Graphics
 			caret.visible = false;		
-			if(caretTimer != null){
-				caretTimer.abort();
+			if (_caretTimer != null)
+			{
+				_caretTimer.abort();
 			}
 		}
-		if (newFocus != _hasFocus) calcFrame();
-		_hasFocus = newFocus;
-		return _hasFocus;
-	}
-	
-	public var caretIndex(get, set):Int;
-	
-	/**
-	 * The position of the selection cursor. An index of 0 means the carat is before the character at index 0.
-	 */
-	public function get_caretIndex():Int
-	{
-		return _caretIndex;
-	}
-	
-	/**
-	 * @private
-	 */
-	public function set_caretIndex(newCaretIndex:Int):Int
-	{
 		
-		_caretIndex = newCaretIndex;
+		if (newFocus != hasFocus) 
+		{
+			calcFrame();
+		}
+		return hasFocus = newFocus;
+	}	
+	
+	private function set_caretIndex(newCaretIndex:Int):Int
+	{
+		caretIndex = newCaretIndex;
 		
 		// If caret is too far to the right something is wrong
-		if (_caretIndex > text.length + 1) _caretIndex = -1; 
+		if (caretIndex > (text.length + 1)) 
+		{
+			caretIndex = -1; 
+		}
 		
 		// Caret is OK, proceed to position
-		if (_caretIndex != -1) 
+		if (caretIndex != -1) 
 		{
 			var boundaries:Rectangle;
 			
 			// Caret is not to the right of text
-			if (_caretIndex < text.length) { 
+			if (caretIndex < text.length) { 
 				#if flash
-					boundaries = _textField.getCharBoundaries(_caretIndex);
+				boundaries = _textField.getCharBoundaries(caretIndex);
 				#elseif sys
-					boundaries = getCharBoundaries(_caretIndex);
+				boundaries = getCharBoundaries(caretIndex);
 				#end
-				if (boundaries != null) {
+				if (boundaries != null) 
+				{
 					caret.x = boundaries.left + x;
 					caret.y = boundaries.top + y;
 				}
@@ -589,16 +660,18 @@ class FlxInputText extends FlxText
 			// Caret is to the right of text
 			else { 
 				#if flash
-					boundaries = _textField.getCharBoundaries(_caretIndex - 1);
+				boundaries = _textField.getCharBoundaries(caretIndex - 1);
 				#elseif sys
-					boundaries = getCharBoundaries(_caretIndex - 1);
+				boundaries = getCharBoundaries(caretIndex - 1);
 				#end
-				if (boundaries != null) {
+				if (boundaries != null)
+				{
 					caret.x = boundaries.right + x;
 					caret.y = boundaries.top + y;
 				}
 				// Text box is empty
-				else if (text.length == 0) { 
+				else if (text.length == 0) 
+				{ 
 					// 2 px gutters
 					caret.x = x + 2; 
 					caret.y = y + 2; 
@@ -607,79 +680,43 @@ class FlxInputText extends FlxText
 		}
 		
 		// Make sure the caret doesn't leave the textfield on single-line input texts
-		if (lines == 1 && caret.x + caret.width > x + width) {
+		if ((lines == 1) && (caret.x + caret.width) > (x + width)) 
+		{
 			caret.x = x + width - 2;
 		}
 		
-		return _caretIndex;
+		return caretIndex;
 	}
 	
-	public var forceCase(get, set):Int;
-	
-	/**
-	 * Enforce upper-case or lower-case
-	 * @param	Case		The Case that's being enforced. Either ALL_CASES, UPPER_CASE or LOWER_CASE.
-	 */
-	public function get_forceCase():Int
+	private function set_forceCase(Value:Int):Int
 	{ 
-		return _forceCase;
-	}
-	
-	public function set_forceCase(Case:Int):Int
-	{ 
-		_forceCase = Case;
+		forceCase = Value;
 		text = filter(text);
-		return _forceCase;
+		return forceCase;
 	}
 	
-	
-	//public var size(null, set):Float;
-	
-	override private function set_size(Size:Float):Float
+	override private function set_size(Value:Float):Float
 	{
-		super.size = Size;		
-		caret.makeGraphic(1, Std.int(size + 2), 0xFFFFFFFF);
-		return Size;
+		super.size = Value;		
+		caret.makeGraphic(1, Std.int(size + 2));
+		return Value;
 	}
 	
-	public var maxLength(get, set):Int;
-	
-	/**
-	 * Set the maximum length for the field (e.g. "3" 
-	 * for Arcade type hi-score initials)
-	 * @param	Length		The maximum length. 0 means unlimited.
-	 */
-	public function get_maxLength():Int
+	private function set_maxLength(Value:Int):Int
 	{
-		return _maxLength;
-	}
-	
-	public function set_maxLength(Length:Int):Int
-	{
-		_maxLength = Length;
-		if (text.length > _maxLength){
-			text = text.substring(0, _maxLength);
+		maxLength = Value;
+		if (text.length > maxLength)
+		{
+			text = text.substring(0, maxLength);
 		}
-		return _maxLength;
+		return maxLength;
 	}
 	
-	public var lines(get, set):Int;
-	
-	/**
-	 * Change the amount of lines that are allowed.
-	 * @param	Lines		How many lines are allowed
-	 */
-	
-	public function get_lines():Int
+	private function set_lines(Value:Int):Int
 	{
-		return _lines;
-	}
-	
-	public function set_lines(Lines:Int):Int
-	{
-		if (Lines == 0) return 0;
+		if (Value == 0) return 0;
 		
-		if (Lines > 1) {
+		if (Value > 1) {
 			_textField.wordWrap = true;
 			_textField.multiline = true;
 		}
@@ -688,130 +725,48 @@ class FlxInputText extends FlxText
 			_textField.multiline = false;
 		}
 		
-		_lines = Lines;
+		lines = Value;
 		calcFrame();
-		return _lines;
+		return lines;
 	}
 	
-	public var passwordMode(get, set):Bool;
-	
-	/**
-	 * Whether or not the textfield is a password textfield
-	 * @param	enable		Whether to en- or disable password mode
-	 */
-	public function get_passwordMode():Bool
+	private function get_passwordMode():Bool
 	{
 		return _textField.displayAsPassword;
 	}
 	
-	public function set_passwordMode(enable:Bool):Bool
+	private function set_passwordMode(value:Bool):Bool
 	{
-		_textField.displayAsPassword = enable;
+		_textField.displayAsPassword = value;
 		calcFrame();
-		return enable;
-	}
-
-	public var filterMode(get, set):Int;
-	
-	/**
-	 * Defines what text to filter. It can be NO_FILTER, ONLY_ALPHA, ONLY_NUMERIC, ONLY_ALPHA_NUMERIC or CUSTOM_FILTER
-	 * (Remember to append "FlxInputText." as a prefix to those constants)
-	 * @param	newFilter		The filtering mode
-	 */
-	public function get_filterMode():Int
-	{
-		return _filterMode;
+		return value;
 	}
 	
-	public function set_filterMode(newFilter:Int):Int
+	private function set_filterMode(Value:Int):Int
 	{
-		_filterMode = newFilter;
+		filterMode = Value;
 		text = filter(text);
-		return _filterMode;
+		return filterMode;
 	}
 	
-	public var fieldBorderColor(get, set):Int;
-	
-	/**
-	 * The color of the fieldBorders
-	 * @param	newColor		The new color 
-	 */
-	public function set_fieldBorderColor(newColor:Int):Int
+	private function set_fieldBorderColor(Value:Int):Int
 	{
-		_fieldBorderColor = newColor;
+		fieldBorderColor = Value;
 		calcFrame();
-		return _fieldBorderColor;
+		return fieldBorderColor;
 	}
 	
-	
-	public function get_fieldBorderColor():Int
+	private function set_fieldBorderThickness(Value:Int):Int
 	{
-		return _fieldBorderColor;
-	}
-		
-	public var fieldBorderThickness(get, set):Int;
-	
-	/**
-	 * The thickness of the fieldBorders
-	 * @param	newThickness		The new thickness 
-	 */
-	public function set_fieldBorderThickness(newThickness:Int):Int
-	{
-		_fieldBorderThickness = newThickness;
+		fieldBorderThickness = Value;
 		calcFrame();
-		return _fieldBorderThickness;
+		return fieldBorderThickness;
 	}
 	
-	public function get_fieldBorderThickness():Int
+	private function set_backgroundColor(Value:Int):Int 
 	{
-		return _fieldBorderThickness;
+		backgroundColor = Value;
+		calcFrame();
+		return backgroundColor;
 	}
-	
-	#if sys												//work-around for native targets
-		private override function set_text(Text:String):String
-		{
-			var return_text:String = super.set_text(Text);
-			var numChars:Int = Text.length;
-			prepareCharBoundaries(numChars);
-			_textField.text = "";
-			var textH:Float = 0;
-			var textW:Float = 0;
-			var lastW:Float = 0;
-			for (i in 0...numChars) {
-				_textField.appendText(Text.substr(i, 1));	//add a character
-				textW = _textField.textWidth;				//count up total text width
-				if (i == 0) {
-					textH = _textField.textHeight;			//count height after first char
-				}
-				charBoundaries[i].x = lastW;				//place x at end of last character
-				charBoundaries[i].y = 0;					//place y at zero
-				charBoundaries[i].width = (textW - lastW);	//place width at (width so far) minus (last char's end point)
-				charBoundaries[i].height = textH;
-				lastW = textW;
-			}
-			_textField.text = Text;
-			return return_text;
-		}
-	#end
-	
-	#if sys
-		private function prepareCharBoundaries(numChars:Int):Void {
-			if (charBoundaries == null) {
-				charBoundaries = [];
-			}
-			
-			if (charBoundaries.length > numChars) {
-				var diff:Int = charBoundaries.length - numChars;
-				for (i in 0...diff) {
-					charBoundaries.pop();
-				}
-			}
-			
-			for (i in 0...numChars) {
-				if (charBoundaries.length - 1 < i) {
-					charBoundaries.push(new FlxRect(0, 0, 0, 0));
-				}
-			}
-		}
-	#end
 }
