@@ -121,9 +121,12 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 			{
 				var ww:Int = Std.int(members[0].width);
 				var hh:Int = Std.int(members[0].height);
+				
 				_selectionSprite = new FlxSprite();
 				_selectionSprite.makeGraphic(ww+4, hh+4, 0xFFFFFFFF, false, "selection_sprite_" + ww + "x" + hh + "0xFFFFFFFF");
+				
 				if (_flashRect == null) { _flashRect = new Rectangle();}
+				
 				_flashRect.x = 2;
 				_flashRect.y = 2;
 				_flashRect.width = ww;
@@ -301,7 +304,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 		_selectedSwatch = null;
 		
 		for (sprite in members) {
-			if (sprite != _selectedSwatch && sprite.visible == true && sprite.active == true) {
+			if (sprite != _selectionSprite && sprite != _selectedSwatch && sprite.visible == true && sprite.active == true) {
 				var swatch:FlxUIColorSwatch = cast sprite;
 				var swatchData:SwatchData = swatch.colors;
 				if (PickClosest) {
@@ -350,6 +353,10 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 			_selectionSprite.visible = true;
 			_selectionSprite.x = _selectedSwatch.x + ((_selectedSwatch.width  - _selectionSprite.width) / 2);
 			_selectionSprite.y = _selectedSwatch.y + ((_selectedSwatch.height - _selectionSprite.height) / 2);
+			trace("X/Y = (" + x + "," + y + ")");
+			trace("swatch loc = (" + _selectedSwatch.x + "," + _selectedSwatch.y + ")");
+			trace("select loc = (" + _selectionSprite.x + "," + _selectionSprite.y + ")");
+			trace("_selectionSprite.visible" + _selectionSprite.visible);
 		}else {
 			_selectionSprite.visible = false;
 		}

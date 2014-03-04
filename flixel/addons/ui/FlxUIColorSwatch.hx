@@ -50,10 +50,10 @@ class FlxUIColorSwatch extends FlxUIButton
 		
 		colors = Colors.copy();
 		
-		if(colors.hilight    != null){hilight    = colors.hilight;   }
-		if(colors.midtone    != null){midtone    = colors.midtone;   }
-		if(colors.shadowMid  != null){shadowMid  = colors.shadowMid; }
-		if(colors.shadowDark != null){shadowDark = colors.shadowDark;}
+		hilight    = colors.hilight;
+		midtone    = colors.midtone;
+		shadowMid  = colors.shadowMid;
+		shadowDark = colors.shadowDark;
 		
 		_skipRefresh = false;
 		refreshColor();
@@ -176,10 +176,12 @@ class FlxUIColorSwatch extends FlxUIButton
 					var m:Int = midtone;
 					var sm:Int = shadowMid;
 					var sd:Int = shadowDark;
-					if (h == null) { h = 0xFF000000;}
-					if (m == null) { m = 0xFF000000;}
-					if (sm == null) { sm = 0xFF000000;}
-					if (sd == null) { sd = 0xFF000000;}
+					
+					if(h == 0){h = 0xFF000000;}
+					if(m == 0){m = 0xFF000000;}
+					if(sm == 0){sm = 0xFF000000;}
+					if(sd == 0){sd = 0xFF000000;}
+					
 					makeGraphic(Std.int(width), Std.int(height), 0xFFFFFFFF, true, key);
 					_flashRect.x = 0; _flashRect.y = 0;
 					_flashRect.width = pixels.width;
@@ -239,11 +241,7 @@ class FlxUIColorSwatch extends FlxUIButton
 		if (multiColored) {
 			var str:String = _origKey;
 			for (c in colors.colors) {
-				if (c == null) {
-					str += "+NULL";
-				}else {
-					str += "+" + FlxColorUtil.ARGBtoWebString(c);
-				}
+				str += "+" + FlxColorUtil.ARGBtoWebString(c);
 			}
 			return str;
 		}

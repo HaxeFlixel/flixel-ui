@@ -26,9 +26,6 @@ class SwatchData implements IFlxDestroyable{
 	
 	public function get_color(i:Int):Int {
 		if (colors.length >= i) {
-			if (colors[i] == null) {
-				return 0xff000000;
-			}
 			return colors[i];
 		}
 		return 0xff000000;
@@ -144,14 +141,7 @@ class SwatchData implements IFlxDestroyable{
 		var totalDiff:Int = 0;
 		var i:Int = 0;
 		for (i in 0...smallList.length) {
-			if(bigList[i] != null && smallList[i] != null){						//both are not null
-				totalDiff += getRGBdelta(bigList[i], smallList[i]);				//get raw RGB delta
-			}else {
-				if (false == (bigList[i] == null && smallList[i] == null)) {	//one is null and one is !null
-					totalDiff += 0xFFFFFF;										//counts as maximum difference
-				}
-				//Else: do nothing --> they're both null, and therefore equal, no difference
-			}
+			totalDiff += getRGBdelta(bigList[i], smallList[i]);				//get raw RGB delta
 		}
 		
 		var lengthDiff:Int = bigList.length - smallList.length;
