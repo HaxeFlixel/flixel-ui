@@ -927,7 +927,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadCompass(data:Fast,str:String="resize_point"):FlxPoint {
 		var cs:String = U.xml_str(data.x, str, true, "nw");
-		var fp:FlxPoint = new FlxPoint();
+		var fp:FlxPoint = FlxPoint.get();
 		switch(cs) {
 			case "nw", "ul": fp.x = 0;   fp.y = 0;
 			case "n", "u":   fp.x = 0.5; fp.y = 0;
@@ -998,7 +998,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var spacing:Float = U.xml_f(data.x, "spacing", -1);
 				var resize:Bool = U.xml_bool(data.x, "resize");
 				
-				var bounds:FlxPoint = new FlxPoint(-1,-1);
+				var bounds:FlxPoint = FlxPoint.get(-1,-1);
 				
 				if (axis != "horizontal" && axis != "vertical") {
 					throw new Error("FlxUI._alignThing(): axis must be \"horizontal\" or \"vertical\"!");

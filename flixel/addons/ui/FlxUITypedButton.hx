@@ -72,7 +72,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	{
 		super(X, Y, Label, OnClick);
 		
-		_centerLabelOffset = new FlxPoint(0, 0);
+		_centerLabelOffset = FlxPoint.get(0, 0);
 		
 		//By default, the button depresses the label by 1 pixel when pressed
 		labelOffsets[FlxButton.HIGHLIGHT].x = 0;
