@@ -226,16 +226,16 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			bd = Assets.getBitmapData(asset);
 		}
 		
-		upB = grabButtonFrame(asset, FlxButton.NORMAL, has_toggle);
-		overB = grabButtonFrame(asset, FlxButton.HIGHLIGHT, has_toggle);
-		downB = grabButtonFrame(asset, FlxButton.PRESSED, has_toggle);
+		upB = grabButtonFrame(bd, FlxButton.NORMAL, has_toggle);
+		overB = grabButtonFrame(bd, FlxButton.HIGHLIGHT, has_toggle);
+		downB = grabButtonFrame(bd, FlxButton.PRESSED, has_toggle);
 
 		var normalPixels:BitmapData = assembleButtonFrames(upB, overB, downB);
 		
 		if (has_toggle) {
-			upB = grabButtonFrame(asset, FlxButton.NORMAL + 3, true);
-			overB = grabButtonFrame(asset, FlxButton.HIGHLIGHT + 3, true);
-			downB = grabButtonFrame(asset, FlxButton.PRESSED + 3, true);
+			upB = grabButtonFrame(bd, FlxButton.NORMAL + 3, true);
+			overB = grabButtonFrame(bd, FlxButton.HIGHLIGHT + 3, true);
+			downB = grabButtonFrame(bd, FlxButton.PRESSED + 3, true);
 			
 			var togglePixels:BitmapData = assembleButtonFrames(upB, overB, downB);
 			var combinedPixels:BitmapData = combineToggleBitmaps(normalPixels, togglePixels);
