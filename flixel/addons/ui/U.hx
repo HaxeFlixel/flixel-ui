@@ -439,7 +439,7 @@ class U
 		var list:Array<FlxPoint> = new Array<FlxPoint>();
 		for (yy in ymin...ymax + 1) {
 			for (xx in xmin...xmax + 1) {
-				list.push(new FlxPoint(xx, yy));
+				list.push(FlxPoint.get(xx, yy));
 			}
 		}return list;
 	}
@@ -984,7 +984,7 @@ class U
 		var dx:Float = a.x - b.x;
 		var dy:Float = a.y - b.y;
 		
-		var ipt = new FlxPoint(Std.int(dx / Math.abs(dx)), Std.int(dy / Math.abs(dy)));
+		var ipt = FlxPoint.get(Std.int(dx / Math.abs(dx)), Std.int(dy / Math.abs(dy)));
 		return ipt;
 	}
 

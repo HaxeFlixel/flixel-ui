@@ -364,7 +364,7 @@ class FlxInputText extends FlxText
 	private function getCaretIndexFromPoint(Landing:FlxPoint):Int
 	{
 	#if !FLX_NO_MOUSE
-		var hit:FlxPoint = new FlxPoint(FlxG.mouse.x - x, FlxG.mouse.y - y);
+		var hit:FlxPoint = FlxPoint.get(FlxG.mouse.x - x, FlxG.mouse.y - y);
 		var caretRightOfText:Bool = false;
 		#if !js
 			if (hit.y < 2) hit.y = 2;
@@ -479,7 +479,7 @@ class FlxInputText extends FlxText
 		{
 			if (_charBoundaries.length - 1 < i) 
 			{
-				_charBoundaries.push(new FlxRect(0, 0, 0, 0));
+				_charBoundaries.push(FlxRect.get(0, 0, 0, 0));
 			}
 		}
 	}

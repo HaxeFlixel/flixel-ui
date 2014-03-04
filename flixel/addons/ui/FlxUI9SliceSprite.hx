@@ -41,8 +41,8 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	private static var _staticPointZero:Point = new Point(0, 0);	//ALWAYS 0,0
 	private static var _staticMatrix:Matrix = new Matrix();
 	
-	private static var _staticFlxRect:FlxRect = new FlxRect();
-	private static var _staticFlxRect2:FlxRect = new FlxRect();
+	private static var _staticFlxRect:FlxRect = FlxRect.get();
+	private static var _staticFlxRect2:FlxRect = FlxRect.get();
 	
 	//specialty smoothing modes	
 	public static inline var TILE_NONE:Int = 0x00;
@@ -102,7 +102,7 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	public var resize_point(default, set):FlxPoint;
 	public function set_resize_point(r:FlxPoint):FlxPoint { 
 		if (r != null) { 
-			resize_point = new FlxPoint(); 
+			resize_point = FlxPoint.get(); 
 			resize_point.x = r.x;
 			resize_point.y = r.y;
 		}
@@ -202,7 +202,7 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	 * @param 	raw raw pixels supplied, if any
 	 */
 	
-	public static function paintScale9(g:BitmapData, assetID:String, scale9:Array<Int>, rc:FlxRect, tile:Int=TILE_NONE, smooth:Bool = false, raw:BitmapData=null):Void {
+	public static function paintScale9(g:BitmapData, assetID:String, scale9:Array<Int>, rc:FlxRect, tile:Int=TILE_NONE, smooth:Bool = false, ?raw:BitmapData):Void {
 		if (scale9 != null) { // create parts
 			
 			var w:Int;
@@ -222,15 +222,15 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 
 			if (_staticRects == null) {
 				_staticRects = new Map<String,FlxRect>();
-				_staticRects.set("top.left", new FlxRect());
-				_staticRects.set("top", new FlxRect());
-				_staticRects.set("top.right", new FlxRect());
-				_staticRects.set("left", new FlxRect());
-				_staticRects.set("middle", new FlxRect());
-				_staticRects.set("right", new FlxRect());
-				_staticRects.set("bottom.left", new FlxRect());
-				_staticRects.set("bottom", new FlxRect());
-				_staticRects.set("bottom.right", new FlxRect());
+				_staticRects.set("top.left", FlxRect.get());
+				_staticRects.set("top", FlxRect.get());
+				_staticRects.set("top.right", FlxRect.get());
+				_staticRects.set("left", FlxRect.get());
+				_staticRects.set("middle", FlxRect.get());
+				_staticRects.set("right", FlxRect.get());
+				_staticRects.set("bottom.left", FlxRect.get());
+				_staticRects.set("bottom", FlxRect.get());
+				_staticRects.set("bottom.right", FlxRect.get());
 			}
 			
 			_staticRects.get("top.left").set(0, 0, x1, y1);
@@ -247,17 +247,17 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 			
 			/*var rects:Map<String,FlxRect> = new Map<String,FlxRect>();
 
-			rects.set("top.left", new FlxRect(0, 0, x1, y1));
-			rects.set("top", new FlxRect(x1, 0, x2 - x1, y1));
-			rects.set("top.right", new FlxRect(x2, 0, w - x2, y1));
+			rects.set("top.left", FlxRect.get(0, 0, x1, y1));
+			rects.set("top", FlxRect.get(x1, 0, x2 - x1, y1));
+			rects.set("top.right", FlxRect.get(x2, 0, w - x2, y1));
 
-			rects.set("left", new FlxRect(0, y1, x1, y2 - y1));
-			rects.set("middle", new FlxRect(x1, y1, x2 - x1, y2 - y1));
-			rects.set("right", new FlxRect(x2, y1, w - x2, y2 - y1));
+			rects.set("left", FlxRect.get(0, y1, x1, y2 - y1));
+			rects.set("middle", FlxRect.get(x1, y1, x2 - x1, y2 - y1));
+			rects.set("right", FlxRect.get(x2, y1, w - x2, y2 - y1));
 
-			rects.set("bottom.left", new FlxRect(0, y2, x1, h - y2));
-			rects.set("bottom", new FlxRect(x1, y2, x2 - x1, h - y2));
-			rects.set("bottom.right", new FlxRect(x2, y2, w - x2, h - y2));
+			rects.set("bottom.left", FlxRect.get(0, y2, x1, h - y2));
+			rects.set("bottom", FlxRect.get(x1, y2, x2 - x1, h - y2));
+			rects.set("bottom.right", FlxRect.get(x2, y2, w - x2, h - y2));
 			*/
 			
 			paintCompoundBitmap(g, assetID, _staticRects, rc, tile, smooth, raw);

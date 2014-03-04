@@ -205,7 +205,7 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHas
 			}
 			i++;
 		}
-		return new FlxPoint(more_above, more_below);
+		return FlxPoint.get(more_above, more_below);
 	}
 	
 	/***GETTER / SETTER***/
