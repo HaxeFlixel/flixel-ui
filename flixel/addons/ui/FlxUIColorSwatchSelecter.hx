@@ -309,11 +309,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 				var swatch:FlxUIColorSwatch = cast sprite;
 				var swatchData:SwatchData = swatch.colors;
 				if (PickClosest) {
-					trace("comparing...");
-					trace("...A=" + Data);
-					trace("...B=" + swatchData);
 					curr_delta = Data.getRawDifference(swatchData);
-					trace("......DELTA=" + curr_delta + " VS " + best_delta);
 					
 					if (curr_delta < best_delta) {
 						best_swatch = swatch;
