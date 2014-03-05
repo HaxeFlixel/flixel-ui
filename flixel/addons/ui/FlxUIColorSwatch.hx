@@ -276,7 +276,7 @@ class FlxUIColorSwatch extends FlxUIButton
 		}
 	}
 
-	private function colorKey():String {
+	public function colorKey():String {
 		if (multiColored) {
 			var str:String = _origKey;
 			for (c in colors.colors) {

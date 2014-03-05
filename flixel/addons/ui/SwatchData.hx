@@ -112,30 +112,34 @@ class SwatchData implements IFlxDestroyable{
 
 	//Get the total raw difference in colors from another color swatch
 	
-	public function getRawDifference(?other:SwatchData,?otherColors:Array<Int>):Int {
-		var bigList:Array<Int> = colors;
+	public function getRawDifference(?other:SwatchData, ?otherColors:Array<Int>):Int {
+		var listA:Array<Int> = colors;
 		if (colors != null) {
-			bigList = colors;
+			listA = colors;
 		}else {
-			bigList = [];
+			listA = [];
 		}
 		
-		var smallList:Array<Int> = null;
+		var listB:Array<Int> = null;
 		if (other != null) {
-			smallList = other.colors;
+			listB = other.colors;
 		}else {
 			if (otherColors != null) {
-				smallList = otherColors;
+				listB = otherColors;
 			}else{
-				smallList = [];
+				listB = [];
 			}
 		}
 		
-		if (bigList.length < smallList.length) {
-			var temp = bigList;
-			smallList = bigList;
-			bigList = temp;
-			temp = null;
+		var bigList:Array<Int>;
+		var smallList:Array<Int>;
+		
+		if (listA.length < listB.length) {
+			bigList = listB;
+			smallList = listA;
+		}else {
+			bigList = listA;
+			smallList = listB;
 		}
 		
 		var totalDiff:Int = 0;
@@ -148,6 +152,7 @@ class SwatchData implements IFlxDestroyable{
 		if(lengthDiff != 0){
 			totalDiff += ((3 * 0xFF) * lengthDiff);
 		}
+		
 		return totalDiff;
 	}
 	
