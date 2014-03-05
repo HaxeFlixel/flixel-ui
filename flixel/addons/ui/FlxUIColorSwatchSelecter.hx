@@ -185,7 +185,8 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 		var swatches:Int = members.length - 1;
 		
 		var swatchForSelect:SwatchData = null;
-		if (selectedSwatch != null) {
+		
+		if (_selectedSwatch != null) {
 			swatchForSelect = selectedSwatch.colors;
 		}
 		
@@ -245,7 +246,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 		add(_selectionSprite);
 		
 		if (swatchForSelect != null) {
-			selectByColors(swatchForSelect, false);
+			selectByColors(swatchForSelect, true);
 		}else {
 			unselect();
 		}
@@ -353,10 +354,6 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 			_selectionSprite.visible = true;
 			_selectionSprite.x = _selectedSwatch.x + ((_selectedSwatch.width  - _selectionSprite.width) / 2);
 			_selectionSprite.y = _selectedSwatch.y + ((_selectedSwatch.height - _selectionSprite.height) / 2);
-			trace("X/Y = (" + x + "," + y + ")");
-			trace("swatch loc = (" + _selectedSwatch.x + "," + _selectedSwatch.y + ")");
-			trace("select loc = (" + _selectionSprite.x + "," + _selectionSprite.y + ")");
-			trace("_selectionSprite.visible" + _selectionSprite.visible);
 		}else {
 			_selectionSprite.visible = false;
 		}

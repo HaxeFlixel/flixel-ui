@@ -121,7 +121,7 @@ class FlxUIColorSwatch extends FlxUIButton
 	 * @param	?Callback		Function to call when clicked
 	 */
 	
-	public function new(X:Float, Y:Float, ?Color:Int = 0xFFFFFF, ?Colors:SwatchData, ?Asset:Dynamic, ?Callback:Void->Void) 
+	public function new(X:Float, Y:Float, ?Color:Int = 0xFFFFFF, ?Colors:SwatchData, ?Asset:Dynamic, ?Callback:Void->Void, ?Width:Int=-1, ?Height:Int=-1) 
 	{
 		super(X, Y, onClick);
 		
@@ -129,7 +129,9 @@ class FlxUIColorSwatch extends FlxUIButton
 		
 		_skipRefresh = true;
 		
-		if(Asset != null){
+		if (Width != -1 && Height != -1) {
+			makeGraphic(Width, Height, FlxColor.WHITE, true, "Swatch" + Width + "x" + Height);
+		}else if(Asset != null){
 			loadGraphic(Asset);					//load custom asset if provided
 		}else {
 			loadGraphic(FlxUIAssets.IMG_SWATCH);//load default monochrome swatch
@@ -172,6 +174,41 @@ class FlxUIColorSwatch extends FlxUIButton
 			if(cachedGraphics.key != key){
 				if (FlxG.bitmap.checkCache(key) == false) 			//draw the swatch dynamically from supplied color values
 				{
+					makeGraphic(Std.int(width), Std.int(height), 0xFFFFFFFF, true, key);
+					_flashRect.x = 0; _flashRect.y = 0;
+					_flashRect.width = pixels.width;
+					_flashRect.height = pixels.height;
+					pixels.fillRect(_flashRect, 0xFF000000);		//start with black outline
+					
+					var tempCols:Array<Int> = [];
+					
+					for (i in 0...colors.colors.length) {
+						var col:Int = colors.colors[i];
+						if (col != 0) {
+							tempCols.push(col);
+						}
+					}
+					
+					var thickW:Int = Std.int(Std.int((width-2) / 2) / tempCols.length);
+					var thickH:Int = Std.int(Std.int((height-2) / 2) / tempCols.length);
+					
+					_flashRect.x += 1;
+					_flashRect.y += 1;
+					_flashRect.width -= 2;
+					_flashRect.height -= 2;
+					for (i in 0...tempCols.length) {
+						var col:Int = tempCols[(tempCols.length-1)-i];
+						pixels.fillRect(_flashRect, col);
+						_flashRect.width -= (thickW*2);
+						_flashRect.height -= (thickH*2);
+						_flashRect.x += thickW;
+						_flashRect.y += thickH;
+					}
+					
+					U.clearArray(tempCols);
+					tempCols = null;
+					
+					/*
 					var h:Int = hilight;
 					var m:Int = midtone;
 					var sm:Int = shadowMid;
@@ -204,6 +241,8 @@ class FlxUIColorSwatch extends FlxUIButton
 					_flashRect.width = 4;
 					_flashRect.height = 4;
 					pixels.fillRect(_flashRect, h);		//hilight
+					*/
+					
 					calcFrame();
 				}else{
 					loadGraphic(key);
