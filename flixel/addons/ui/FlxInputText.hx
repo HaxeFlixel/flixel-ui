@@ -106,7 +106,7 @@ class FlxInputText extends FlxText
 	/**
 	 * The color of the fieldBorders
 	 */
-	public var fieldBorderColor(default, set):Int = 0xFF000000;
+	public var fieldBorderColor(default, set):Int = FlxColor.BLACK;
 	
 	/**
 	 * The thickness of the fieldBorders
@@ -116,7 +116,7 @@ class FlxInputText extends FlxText
 	/**
 	 * The color of the background of the textbox.
 	 */
-	public var backgroundColor(default, set):Int = 0xFFFFFFFF;
+	public var backgroundColor(default, set):Int = FlxColor.WHITE;
 	
 	/**
 	 * A FlxSprite representing the background sprite
