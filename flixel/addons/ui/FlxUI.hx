@@ -570,6 +570,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 */
 	
 	public function setMode(mode_id:String,target_id:String=""):Void {
+		if (_curr_mode == mode_id)
+		{
+			return;					//no sense in setting the same mode twice!
+		}
 		var mode:Fast = getMode(mode_id);
 		_curr_mode = mode_id;
 		var id:String = "";

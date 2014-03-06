@@ -74,7 +74,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 		super.create();
 		
 		if (_quickSetupParams != null) {
-			_quickSetup();
+			_doQuickSetup();
 		}
 	}
 	
@@ -93,10 +93,10 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	public function quickSetup(title:String, body:String, button_labels:Array<String>):Void {
 		/* if this sub state isn't active yet, it just stores the params and then
 		 * does the real work as soon as it's created.
+		 * So call this, then activate it!
 		 */
 		
 		_quickSetupParams = { title:title, body:body, button_labels:button_labels };
-		//_quickSetup();
 	}
 	 
 	public override function getEvent(id:String, sender:IFlxUIWidget, data:Array<Dynamic>, ?eventParams:Array<Dynamic>):Void {
@@ -149,7 +149,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	}
 	
 	
-	private function _quickSetup():Void {
+	private function _doQuickSetup():Void {
 		
 		if (_ui.hasAsset("title")) {
 			var text_title:FlxUIText = cast _ui.getAsset("title");
@@ -160,6 +160,15 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 			text_body.text = _quickSetupParams.body;
 		}
 		
+		_doQuickSetupButtons();
+		
+		//cleanup
+		_quickSetupParams.button_labels = null;
+		_quickSetupParams = null;
+	}
+	
+	private function _doQuickSetupButtons():Void 
+	{
 		var arr:Array<String> = ["btn0", "btn1", "btn2"];
 		var i:Int = 0;
 		
@@ -193,11 +202,6 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 			}
 			i++;
 		}
-		
-		//cleanup
-		_quickSetupParams.button_labels = null;
-		_quickSetupParams = null;
 	}
-	
 	
 }
