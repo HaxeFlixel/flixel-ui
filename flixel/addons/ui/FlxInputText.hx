@@ -642,7 +642,7 @@ class FlxInputText extends FlxText
 		// Caret is OK, proceed to position
 		if (caretIndex != -1) 
 		{
-			var boundaries:Rectangle;
+			var boundaries:Rectangle = null;
 			
 			// Caret is not to the right of text
 			if (caretIndex < text.length) { 

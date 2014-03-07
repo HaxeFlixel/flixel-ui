@@ -56,6 +56,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	}
 	
 	public override function destroy():Void {
+		resize_point.put();
 		resize_point = null;
 		super.destroy();
 	}
