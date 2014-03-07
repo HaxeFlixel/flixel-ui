@@ -44,13 +44,13 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public static inline var OUT_EVENT:String = "out_button";
 	
 	public var skipButtonUpdate(default, set):Bool = false;
-	public function set_skipButtonUpdate(b:Bool):Bool {
+	private function set_skipButtonUpdate(b:Bool):Bool {
 		skipButtonUpdate = b;
 		return skipButtonUpdate;
 	}
 	
 	public var params(default, set):Array<Dynamic>;
-	public function set_params(p:Array <Dynamic>):Array<Dynamic>{
+	private function set_params(p:Array <Dynamic>):Array<Dynamic>{
 		params = p;
 		return params;
 	}

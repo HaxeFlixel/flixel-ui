@@ -16,8 +16,8 @@ class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIW
 	public var tileWidth(default, null):Int;
 	public var tileHeight(default, null):Int;
 	
-	public function get_widthInTiles():Int { return _tilesWide; }
-	public function get_heightInTiles():Int { return _tilesTall; }
+	private function get_widthInTiles():Int { return _tilesWide; }
+	private function get_heightInTiles():Int { return _tilesTall; }
 	
 	private var _tilesWide:Int=2;
 	private var _tilesTall:Int=2;

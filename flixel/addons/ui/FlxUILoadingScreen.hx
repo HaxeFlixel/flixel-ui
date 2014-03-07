@@ -23,14 +23,14 @@ class FlxUILoadingScreen extends FlxUIPopup
 	public var invisibleTime:Float = 0;			//if I have been alive less time than this, I am invisible
 	
 	public var body(get, set):String;
-	public function get_body():String {
+	private function get_body():String {
 		if (_body != null)
 		{ 
 			return _body.text; 
 		}
 		return _body_temp_txt;
 	}
-	public function set_body(str:String):String {
+	private function set_body(str:String):String {
 		if (_body != null)
 		{
 			_body.text = str; 
@@ -40,7 +40,7 @@ class FlxUILoadingScreen extends FlxUIPopup
 	}
 	
 	public var title(get, set):String;
-	public function get_title():String 
+	private function get_title():String 
 	{
 		if (_title != null)
 		{ 
@@ -49,7 +49,7 @@ class FlxUILoadingScreen extends FlxUIPopup
 		return _title_temp_txt;
 	}
 	
-	public function set_title(str:String):String {
+	private function set_title(str:String):String {
 		if (_title != null)
 		{
 			_title.text = str;
@@ -59,7 +59,7 @@ class FlxUILoadingScreen extends FlxUIPopup
 	}
 	
 	public var canCancel(default, set):Bool;
-	public function set_canCancel(b:Bool):Bool
+	private function set_canCancel(b:Bool):Bool
 	{
 		canCancel = b;
 		if (_ui != null) {
@@ -76,8 +76,8 @@ class FlxUILoadingScreen extends FlxUIPopup
 	}
 	
 	public var progress(get, set):Float;
-	public function get_progress():Float { return _progress; }
-	public function set_progress(f:Float):Float
+	private function get_progress():Float { return _progress; }
+	private function set_progress(f:Float):Float
 	{
 		if (f < 0) { f = 0; }
 		if (f > 1) { f = 1; }

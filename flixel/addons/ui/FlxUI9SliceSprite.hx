@@ -97,10 +97,10 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	}
 	
 	public var resize_ratio(default, set):Float;
-	public function set_resize_ratio(r:Float):Float { resize_ratio = r; return r;}
+	private function set_resize_ratio(r:Float):Float { resize_ratio = r; return r;}
 
 	public var resize_point(default, set):FlxPoint;
-	public function set_resize_point(r:FlxPoint):FlxPoint { 
+	private function set_resize_point(r:FlxPoint):FlxPoint { 
 		if (r != null) { 
 			resize_point = FlxPoint.get(); 
 			resize_point.x = r.x;

@@ -7,7 +7,7 @@ import flixel.util.FlxColorUtil;
  */
 class SwatchData implements IFlxDestroyable{
 
-	public var name : String;
+	public var name:String;
 	public var colors:Array<Int>;
 	
 	//The "main four" are now getter/setters so you can have an underlying colors array with arbitrary # of colors
@@ -18,50 +18,50 @@ class SwatchData implements IFlxDestroyable{
 	
 	/**GETTERs/SETTERS**/
 
-	public function set_color(i:Int, Value:Int):Int {
+	private function set_color(i:Int, Value:Int):Int {
 		if (colors == null) { colors = [];}
 		colors[i] = Value;
 		return Value;
 	}
 	
-	public function get_color(i:Int):Int {
+	private function get_color(i:Int):Int {
 		if (colors.length >= i) {
 			return colors[i];
 		}
 		return 0xff000000;
 	}
 	
-	public function get_hilight():Int {
+	private function get_hilight():Int {
 		return get_color(0);
 	}
-	public function set_hilight(Value:Int):Int {
+	private function set_hilight(Value:Int):Int {
 		if (colors == null) { colors = [];}
 		colors[0] = Value;
 		return Value;
 	}
 	
-	public function get_midtone():Int {
+	private function get_midtone():Int {
 		return get_color(1);
 	}
-	public function set_midtone(Value:Int):Int {
+	private function set_midtone(Value:Int):Int {
 		if (colors == null) { colors = [];}
 		colors[1] = Value;
 		return Value;
 	}
 	
-	public function get_shadowMid():Int {
+	private function get_shadowMid():Int {
 		return get_color(2);
 	}
-	public function set_shadowMid(Value:Int):Int {
+	private function set_shadowMid(Value:Int):Int {
 		if (colors == null) { colors = [];}
 		colors[2] = Value;
 		return Value;
 	}
 	
-	public function get_shadowDark():Int {
+	private function get_shadowDark():Int {
 		return get_color(3);
 	}
-	public function set_shadowDark(Value:Int):Int {
+	private function set_shadowDark(Value:Int):Int {
 		if (colors == null) { colors = [];}
 		colors[3] = Value;
 		return Value;
@@ -76,7 +76,7 @@ class SwatchData implements IFlxDestroyable{
 		}
 	}
 	
-	public function new(Name:String, Colors:Array<Int> = null)
+	public function new(Name:String, ?Colors:Array<Int>)
 	{
 		if (Colors == null) {
 			Colors = [0xffffffff, 0xff888888, 0xff444444, 0xff000000];
@@ -85,13 +85,13 @@ class SwatchData implements IFlxDestroyable{
 		colors = Colors;
 	}
 
-	public function copy() : SwatchData 
+	public function copy():SwatchData 
 	{
 		var colorsCopy:Array<Int> = colors != null ? colors.copy() : null;
 		return new SwatchData(name, colorsCopy);
 	}
 
-	public function toString() : String 
+	public function toString():String 
 	{
 		var str:String = "(" + name + ",";
 		var i:Int = 0;
@@ -205,4 +205,3 @@ class SwatchData implements IFlxDestroyable{
 		return delta;
 	}
 }
-

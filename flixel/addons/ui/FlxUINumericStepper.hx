@@ -35,12 +35,12 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 	public static inline var CHANGE_EVENT:String = "change_numeric_stepper";	//do either of the above
 	
 	public var params(default, set):Array<Dynamic>;
-	public function set_params(p:Array <Dynamic>):Array<Dynamic>{
+	private function set_params(p:Array <Dynamic>):Array<Dynamic>{
 		params = p;
 		return params;
 	}
 	
-	public override function set_color(Value:Int):Int {
+	private override function set_color(Value:Int):Int {
 		color = Value;
 		button_plus.color = Value;
 		button_minus.color = Value;
@@ -53,19 +53,19 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 		return Value;
 	}
 	
-	public function set_min(f:Float):Float {
+	private function set_min(f:Float):Float {
 		min = f; 
 		if (value < min) { value = min; }
 		return min;
 	}
 	
-	public function set_max(f:Float):Float {
+	private function set_max(f:Float):Float {
 		max = f; 
 		if (value > max) { value = max; }
 		return max;
 	}
 	
-	public function set_value(f:Float):Float {
+	private function set_value(f:Float):Float {
 		value = f;
 		if (value < min) { value = min; }
 		if (value > max) { value = max; }
@@ -75,14 +75,14 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 		return value;
 	}
 	
-	public function set_decimals(i:Int):Int {
+	private function set_decimals(i:Int):Int {
 		decimals = i;
 		if (i < 0) { decimals = 0;}
 		value = value;
 		return decimals;
 	}
 	
-	public function set_stack(s:Int):Int {
+	private function set_stack(s:Int):Int {
 		stack = s;
 		var btnSize:Int = 10;
 		var offsetX:Int = 0;

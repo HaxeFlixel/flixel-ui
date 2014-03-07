@@ -17,7 +17,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	/**STUBS TO MAKE THE INTERFACE HAPPY:**/
 	
 	public var immovable(default, set):Bool;
-	public function set_immovable(Immovable:Bool):Bool { return immovable; }
+	private function set_immovable(Immovable:Bool):Bool { return immovable; }
 
 	public var angle(default, set):Float;
 	public var facing(default, set):Int;
@@ -30,16 +30,16 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	public var acceleration:FlxPoint;
 	public var drag:FlxPoint;
 	public var scrollFactor(default, set):FlxPoint;
-	public function set_x(Value:Float):Float { return x = Value; }
-	public function set_y(Value:Float):Float { return y = Value; }
-	public function get_width():Float { return _width; }
-	public function get_height():Float { return _height; }
-	public function set_width(Value:Float):Float { return _width = Value; }
-	public function set_height(Value:Float):Float { return _height = Value; }
-	public function set_angle(Value:Float):Float { return angle = Value; }
-	public function set_alpha(Value:Float):Float { return alpha = Value; }
-	public function set_facing(Value:Int):Int { return facing = Value; }
-	public function set_moves(Value:Bool):Bool { return moves = Value; }
+	private function set_x(Value:Float):Float { return x = Value; }
+	private function set_y(Value:Float):Float { return y = Value; }
+	private function get_width():Float { return _width; }
+	private function get_height():Float { return _height; }
+	private function set_width(Value:Float):Float { return _width = Value; }
+	private function set_height(Value:Float):Float { return _height = Value; }
+	private function set_angle(Value:Float):Float { return angle = Value; }
+	private function set_alpha(Value:Float):Float { return alpha = Value; }
+	private function set_facing(Value:Int):Int { return facing = Value; }
+	private function set_moves(Value:Bool):Bool { return moves = Value; }
 	private function set_offset(Value:FlxPoint):FlxPoint { return offset = Value; }
 	private function set_origin(Value:FlxPoint):FlxPoint { return origin = Value; }
 	private function set_scale(Value:FlxPoint):FlxPoint { return scale = Value; }
