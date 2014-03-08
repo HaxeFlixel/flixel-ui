@@ -10,6 +10,7 @@ import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxPoint;
 import flixel.util.FlxRect;
 import flixel.util.FlxStringUtil;
@@ -319,11 +320,11 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	{
 		super.destroy();
 		
-		dropPanel = FlxG.safeDestroy(dropPanel);
+		dropPanel = FlxDestroyUtil.destroy(dropPanel);
 		
 		for (button in list)
 		{
-			button = FlxG.safeDestroy(button);
+			button = FlxDestroyUtil.destroy(button);
 		}
 		
 		list = null;
@@ -457,8 +458,8 @@ class FlxUIDropDownHeader extends FlxUIGroup
 	{
 		super.destroy();
 		
-		background = FlxG.safeDestroy(background);
-		text = FlxG.safeDestroy(text);
-		button = FlxG.safeDestroy(button);
+		background = FlxDestroyUtil.destroy(background);
+		text = FlxDestroyUtil.destroy(text);
+		button = FlxDestroyUtil.destroy(button);
 	}
 }

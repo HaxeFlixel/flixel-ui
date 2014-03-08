@@ -12,6 +12,7 @@ import flixel.FlxSprite;
 import flixel.ui.FlxButton;
 import flixel.ui.FlxTypedButton;
 import flixel.util.FlxArrayUtil;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxPoint;
 import flixel.util.FlxStringUtil;
 import openfl.Assets;
@@ -56,7 +57,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	}
 	
 	public override function destroy():Void {
-		resize_point = FlxG.safePut(resize_point);
+		resize_point = FlxDestroyUtil.put(resize_point);
 		super.destroy();
 	}
 	
