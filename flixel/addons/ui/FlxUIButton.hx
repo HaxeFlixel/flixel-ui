@@ -6,6 +6,7 @@ import flash.geom.Rectangle;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.ILabeled;
 import flixel.FlxSprite;
+import flixel.util.FlxDestroyUtil;
 
 /**
  * This class extends FlxUITypedButton and has a Text label, and is thus
@@ -98,11 +99,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled
 	
 	override public function destroy():Void
 	{
-		if (_noIconGraphicsBkup != null)
-		{
-			_noIconGraphicsBkup.dispose();
-		}
-		
+		_noIconGraphicsBkup = FlxDestroyUtil.dispose(_noIconGraphicsBkup);
 		super.destroy();
 	}
 	

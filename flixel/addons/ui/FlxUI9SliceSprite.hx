@@ -7,6 +7,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxPoint;
 import flixel.util.FlxRect;
 import openfl.Assets;
@@ -485,8 +486,7 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 		g.copyPixels(final_pixels, final_pixels.rect, _staticPoint);
 		
 		//now that the pixels have been copied, trash the temporary bitmap data:
-		final_pixels.dispose();
-		final_pixels = null;
+		final_pixels = FlxDestroyUtil.dispose(final_pixels);
 	}
 }
 
