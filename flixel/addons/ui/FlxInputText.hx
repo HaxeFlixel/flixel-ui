@@ -9,6 +9,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxPoint;
 import flixel.util.FlxRect;
 import flixel.util.FlxTimer;
@@ -187,8 +188,8 @@ class FlxInputText extends FlxText
 	{
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 		
-		backgroundSprite = FlxG.safeDestroy(backgroundSprite);
-		fieldBorderSprite = FlxG.safeDestroy(fieldBorderSprite);
+		backgroundSprite = FlxDestroyUtil.destroy(backgroundSprite);
+		fieldBorderSprite = FlxDestroyUtil.destroy(fieldBorderSprite);
 		callback = null;
 		
 		#if sys
@@ -642,7 +643,7 @@ class FlxInputText extends FlxText
 		// Caret is OK, proceed to position
 		if (caretIndex != -1) 
 		{
-			var boundaries:Rectangle;
+			var boundaries:Rectangle = null;
 			
 			// Caret is not to the right of text
 			if (caretIndex < text.length) { 

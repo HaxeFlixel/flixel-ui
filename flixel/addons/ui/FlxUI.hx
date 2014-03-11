@@ -44,8 +44,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	public var failed_by:Float = 0;
 	
 	public var tongue(get, set):IFireTongue;
-	public function get_tongue():IFireTongue { return _ptr_tongue; }
-	public function set_tongue(t:IFireTongue):IFireTongue 
+	private function get_tongue():IFireTongue { return _ptr_tongue; }
+	private function set_tongue(t:IFireTongue):IFireTongue 
 	{
 		_ptr_tongue = t;
 		_tongueSet(members, t);
@@ -53,7 +53,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	public var focus(default, set):IFlxUIWidget;	//set focused object
-	public function set_focus(widget:IFlxUIWidget):IFlxUIWidget {
+	private function set_focus(widget:IFlxUIWidget):IFlxUIWidget {
 		if (focus != null) {
 			onFocusLost(focus);
 		}
@@ -560,8 +560,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	public var currMode(get, set):String;
-	public function get_currMode():String { return _curr_mode; }
-	public function set_currMode(m:String):String { setMode(m); return _curr_mode;}
+	private function get_currMode():String { return _curr_mode; }
+	private function set_currMode(m:String):String { setMode(m); return _curr_mode;}
 	
 	/**
 	 * Set a mode for this UI. This lets you show/hide stuff basically. 

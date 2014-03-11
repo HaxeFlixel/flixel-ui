@@ -33,7 +33,7 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUIBut
 	/**For IFlxUIButton**/
 	
 	public var skipButtonUpdate(default, set):Bool;
-	public function set_skipButtonUpdate(b:Bool):Bool {
+	private function set_skipButtonUpdate(b:Bool):Bool {
 		skipButtonUpdate = b;
 		var tab:FlxUIButton;
 		for (tab in _tabs) {
@@ -54,11 +54,11 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUIBut
 	
 	/**For IResizable**/
 	
-	public override function get_width():Float {
+	private override function get_width():Float {
 		return _back.width;
 	}
 	
-	public override function get_height():Float {
+	private override function get_height():Float {
 		var fbt = getFirstTab();
 		if (fbt != null) {
 			return (_back.y + _back.height) - fbt.y;
@@ -81,15 +81,15 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUIBut
 	}
 	
 	public var selected_tab(get, set):Int;
-	public function get_selected_tab():Int { return _selected_tab; }
-	public function set_selected_tab(i:Int):Int { 
+	private function get_selected_tab():Int { return _selected_tab; }
+	private function set_selected_tab(i:Int):Int { 
 		showTabInt(i);			//this modifies _selected_tab/_selected_tab_id
 		return _selected_tab; 
 	}
 	
 	public var selected_tab_id(get, set):String;
-	public function get_selected_tab_id():String { return _selected_tab_id; }
-	public function set_selected_tab_id(str:String):String {
+	private function get_selected_tab_id():String { return _selected_tab_id; }
+	private function set_selected_tab_id(str:String):String {
 		showTabId(str);			//this modifies _selected_tab/_selected_tab_id
 		return _selected_tab_id;
 	}

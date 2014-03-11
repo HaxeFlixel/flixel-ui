@@ -7,6 +7,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxPoint;
 import flixel.util.FlxRect;
 import openfl.Assets;
@@ -97,10 +98,10 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	}
 	
 	public var resize_ratio(default, set):Float;
-	public function set_resize_ratio(r:Float):Float { resize_ratio = r; return r;}
+	private function set_resize_ratio(r:Float):Float { resize_ratio = r; return r;}
 
 	public var resize_point(default, set):FlxPoint;
-	public function set_resize_point(r:FlxPoint):FlxPoint { 
+	private function set_resize_point(r:FlxPoint):FlxPoint { 
 		if (r != null) { 
 			resize_point = FlxPoint.get(); 
 			resize_point.x = r.x;
@@ -485,8 +486,7 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 		g.copyPixels(final_pixels, final_pixels.rect, _staticPoint);
 		
 		//now that the pixels have been copied, trash the temporary bitmap data:
-		final_pixels.dispose();
-		final_pixels = null;
+		final_pixels = FlxDestroyUtil.dispose(final_pixels);
 	}
 }
 

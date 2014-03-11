@@ -19,7 +19,7 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHas
 	public static inline var CLICK_EVENT:String = "click_radio_group";
 	
 	public var skipButtonUpdate(default, set):Bool;
-	public function set_skipButtonUpdate(b:Bool):Bool {
+	private function set_skipButtonUpdate(b:Bool):Bool {
 		skipButtonUpdate = b;
 		var fcb:FlxUICheckBox;
 		for (fcb in _list_radios) {
@@ -31,7 +31,7 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHas
 	public var callback:String->Void;
 	
 	public var params(default, set):Array<Dynamic>;
-	public function set_params(p:Array <Dynamic>):Array<Dynamic>{
+	private function set_params(p:Array <Dynamic>):Array<Dynamic>{
 		params = p;
 		return params;
 	}
@@ -125,8 +125,8 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHas
 	
 	/***GETTER / SETTER***/
 	
-	public function get_clickable():Bool { return _clickable; }
-	public function set_clickable(b:Bool):Bool { 
+	private function get_clickable():Bool { return _clickable; }
+	private function set_clickable(b:Bool):Bool { 
 		_clickable = b;
 		for(c in _list_radios) {
 			c.active = b;
@@ -134,8 +134,8 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHas
 		return _clickable;
 	}
 	
-	public function get_selectedIndex():Int { return _selected; }
-	public function set_selectedIndex(i:Int):Int {
+	private function get_selectedIndex():Int { return _selected; }
+	private function set_selectedIndex(i:Int):Int {
 		_selected = i;
 		var j:Int = 0;
 		for(c in _list_radios) {
@@ -148,8 +148,8 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHas
 		return _selected;
 	}
 	
-	public function get_selectedLabel():String { return _labels[_selected]; }
-	public function set_selectedLabel(str:String):String {
+	private function get_selectedLabel():String { return _labels[_selected]; }
+	private function set_selectedLabel(str:String):String {
 		var i:Int = 0;
 		for(c in _list_radios) {
 			c.checked = false;
@@ -162,8 +162,8 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHas
 		return _labels[_selected];
 	}
 	
-	public function get_selectedId():String { return _ids[_selected]; }
-	public function set_selectedId(str:String):String {
+	private function get_selectedId():String { return _ids[_selected]; }
+	private function set_selectedId(str:String):String {
 		var i:Int = 0;
 		for(c in _list_radios) {
 			c.checked = false;

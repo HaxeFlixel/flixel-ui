@@ -22,7 +22,7 @@ import flixel.util.FlxStringUtil;
 class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IFlxUIButton implements IHasParams
 {
 	public var skipButtonUpdate(default, set):Bool;
-	public function set_skipButtonUpdate(b:Bool):Bool {
+	private function set_skipButtonUpdate(b:Bool):Bool {
 		skipButtonUpdate = b;
 		header.button.skipButtonUpdate = b;
 		return b;
@@ -34,8 +34,8 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	private var _selectedId:String;
 	private var _selectedLabel:String;
 	
-	public function get_selectedId():String { return _selectedId;}
-	public function set_selectedId(str:String):String {
+	private function get_selectedId():String { return _selectedId;}
+	private function set_selectedId(str:String):String {
 		var i:Int = 0;
 		for (btn in list) {
 			if (btn != null && btn.id == str) {
@@ -55,8 +55,8 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		return str;
 	}
 	
-	public function get_selectedLabel():String { return _selectedLabel;}
-	public function set_selectedLabel(str:String):String {
+	private function get_selectedLabel():String { return _selectedLabel;}
+	private function set_selectedLabel(str:String):String {
 		var i:Int = 0;
 		for (btn in list) {
 			if (btn.label.text == str) {
@@ -86,7 +86,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	public var dropPanel:FlxUI9SliceSprite;
 	
 	public var params(default, set):Array<Dynamic>;
-	public function set_params(p:Array <Dynamic>):Array<Dynamic>{
+	private function set_params(p:Array <Dynamic>):Array<Dynamic>{
 		params = p;
 		return params;
 	}

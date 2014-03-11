@@ -16,26 +16,26 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 	public var spacingV(default, set):Float;
 	public var maxColumns(default, set):Float;
 	
-	public function set_spacingH(f:Float):Float {
+	private function set_spacingH(f:Float):Float {
 		spacingH = f;
 		_dirtyLayout = true;
 		return f;
 	}
 	
-	public function set_spacingV(f:Float):Float {
+	private function set_spacingV(f:Float):Float {
 		spacingV = f;
 		_dirtyLayout = true;
 		return f;
 	}
 	
-	public function set_maxColumns(f:Float):Float {
+	private function set_maxColumns(f:Float):Float {
 		maxColumns = f;
 		_dirtyLayout = true;
 		return f;
 	}
 	
 	public var skipButtonUpdate(default, set):Bool;
-	public function set_skipButtonUpdate(b:Bool):Bool
+	private function set_skipButtonUpdate(b:Bool):Bool
 	{
 		skipButtonUpdate = b;
 		for (thing in members)
@@ -253,7 +253,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
 	}
 	
 	public var selectedSwatch(get, null):FlxUIColorSwatch;
-	public function get_selectedSwatch():FlxUIColorSwatch {
+	private function get_selectedSwatch():FlxUIColorSwatch {
 		return _selectedSwatch;
 	}
 	private var destroyed:Bool = false;

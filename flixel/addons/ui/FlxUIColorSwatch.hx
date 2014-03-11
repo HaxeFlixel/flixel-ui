@@ -27,7 +27,7 @@ class FlxUIColorSwatch extends FlxUIButton
 	
 	/**SETTERS**/
 	
-	public override function set_color(Color:Int):Int
+	private override function set_color(Color:Int):Int
 	{
 		midtone = Color; 				//color does double duty for midtone
 		return super.set_color(color);
@@ -38,7 +38,7 @@ class FlxUIColorSwatch extends FlxUIButton
 		super.destroy();
 	}
 	
-	public function set_colors(Colors:SwatchData):SwatchData
+	private function set_colors(Colors:SwatchData):SwatchData
 	{
 		if (colors != null)
 		{ 
@@ -62,16 +62,14 @@ class FlxUIColorSwatch extends FlxUIButton
 	
 	/**
 	 * If true, the swatch will draw itself dynamically based on the four colors provided
-	 * @param	b
-	 * @return
 	 */
-	public function set_multiColored(b:Bool):Bool {
+	private function set_multiColored(b:Bool):Bool {
 		multiColored = b;
 		refreshColor();
 		return multiColored;
 	}
 	
-	public function set_colorAtIndex(Color:Int, index:Int):Void{
+	private function set_colorAtIndex(Color:Int, index:Int):Void{
 		_skipRefresh = true;
 		switch(index) {
 			case 0: hilight = Color;
@@ -84,27 +82,28 @@ class FlxUIColorSwatch extends FlxUIButton
 		refreshColor();
 	}
 	
-	public function set_hilight(i:Int):Int {
+	private function set_hilight(i:Int):Int {
 		hilight = i;
 		colors.hilight = hilight;
 		refreshColor();
 		return hilight;
 	}
-	public function set_midtone(i:Int):Int {
+	
+	private function set_midtone(i:Int):Int {
 		midtone = i;
 		colors.midtone = midtone;
 		refreshColor();
 		return midtone;
 	}
 	
-	public function set_shadowMid(i:Int):Int {
+	private function set_shadowMid(i:Int):Int {
 		shadowMid = i;
 		colors.shadowMid = shadowMid;
 		refreshColor();
 		return shadowMid;
 	}
 	
-	public function set_shadowDark(i:Int):Int {
+	private function set_shadowDark(i:Int):Int {
 		shadowDark = i;
 		colors.shadowDark = shadowDark;
 		refreshColor();
