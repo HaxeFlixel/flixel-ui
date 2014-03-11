@@ -1946,7 +1946,17 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var graphic_ids:Array<String> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
 				var slice9_tab:Array<Int> = FlxStringUtil.toIntArray(FlxUIAssets.SLICE9_TAB);
 				var slice9_ids:Array<Array<Int>> = [slice9_tab, slice9_tab, slice9_tab, slice9_tab, slice9_tab, slice9_tab];
-				fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);
+				
+				//These is/cast checks are here to avoid weeeeird bugs on neko target, which suggests they might also crop up elsewhere
+				if (Std.is(fb, FlxUIButton)) {
+					var fbui:FlxUIButton = cast fb;
+					fbui.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);
+				}else if (Std.is(fb, FlxUISpriteButton)) {
+					var fbuis:FlxUISpriteButton = cast fb;
+					fbuis.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);
+				}else {
+					fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);
+				}
 			}else{
 				//load default graphics
 				if(W > 0 && H > 0){
