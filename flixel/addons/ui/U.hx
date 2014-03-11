@@ -19,9 +19,7 @@ import sys.io.File;
 import sys.io.FileOutput;
 #end
 
-#if haxe_310
 import haxe.xml.Printer;
-#end
 
 /**
  * Utility functions, inlined where possible
@@ -487,7 +485,8 @@ class U
 		public static function writeXml(data:Xml, path:String, wrapData:Bool=true, addHeader:Bool=true):Void {
 			var xml:Xml = data;
 			
-			if (FileSystem.exists(path)) {					//if file exists, delete it so we don't crash
+			if (FileSystem.exists(path))									//if file exists, delete it so we don't crash
+			{
 				FileSystem.deleteFile(path);
 			}
 			
@@ -500,13 +499,11 @@ class U
 			if (wrapData) {
 				xmlString += '<data>\n';
 			}
-			#if haxe_310
-				xmlString += new Printer().print(xml);
-			#else
-				xmlString += xml.toString();									//write the xml itself
-			#end
+			
+			xmlString += Printer.print(xml);
+			
 			if (wrapData) {
-				xmlString += '\n</data>';
+				xmlString += '</data>';
 			}
 			
 			fout.writeString(xmlString);			//write it out
