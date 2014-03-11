@@ -96,7 +96,7 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUIBut
 	
 	/***PUBLIC***/
 	
-	public function new(back_:FlxSprite,?tabs_:Array<FlxUIButton>,?tab_ids_and_labels_:Array<{id:String,label:String}>,stretch_tabs:Bool=false) 
+	public function new(?back_:FlxSprite,?tabs_:Array<FlxUIButton>,?tab_ids_and_labels_:Array<{id:String,label:String}>,?stretch_tabs:Bool=false) 
 	{
 		super();
 		
