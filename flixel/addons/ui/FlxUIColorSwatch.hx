@@ -38,6 +38,26 @@ class FlxUIColorSwatch extends FlxUIButton
 		super.destroy();
 	}
 	
+	
+	/**
+	 * Set a color at a specific index in the swatch
+	 * @param	Color
+	 * @param	index
+	 */
+	
+	public function setColorAtIndex(Color:Int, index:Int):Void{
+		_skipRefresh = true;
+		switch(index) {
+			case 0: hilight = Color;
+			case 1: midtone = Color;
+			case 2: shadowMid = Color;
+			case 3: shadowDark = Color;
+			default:colors.colors[index] = Color;
+		}
+		_skipRefresh = false;
+		refreshColor();
+	}
+	
 	private function set_colors(Colors:SwatchData):SwatchData
 	{
 		if (colors != null)
@@ -67,19 +87,6 @@ class FlxUIColorSwatch extends FlxUIButton
 		multiColored = b;
 		refreshColor();
 		return multiColored;
-	}
-	
-	private function set_colorAtIndex(Color:Int, index:Int):Void{
-		_skipRefresh = true;
-		switch(index) {
-			case 0: hilight = Color;
-			case 1: midtone = Color;
-			case 2: shadowMid = Color;
-			case 3: shadowDark = Color;
-			default:colors.colors[index] = Color;
-		}
-		_skipRefresh = false;
-		refreshColor();
 	}
 	
 	private function set_hilight(i:Int):Int {
