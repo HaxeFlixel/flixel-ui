@@ -32,7 +32,7 @@ class SwatchData implements IFlxDestroyable{
 	/**GETTERs/SETTERS**/
 
 	private function get_hilight():Int {
-		return get_color(0);
+		return getColor(0);
 	}
 	private function set_hilight(Value:Int):Int {
 		if (colors == null) { colors = [];}
@@ -41,7 +41,7 @@ class SwatchData implements IFlxDestroyable{
 	}
 	
 	private function get_midtone():Int {
-		return get_color(1);
+		return getColor(1);
 	}
 	private function set_midtone(Value:Int):Int {
 		if (colors == null) { colors = [];}
@@ -50,7 +50,7 @@ class SwatchData implements IFlxDestroyable{
 	}
 	
 	private function get_shadowMid():Int {
-		return get_color(2);
+		return getColor(2);
 	}
 	private function set_shadowMid(Value:Int):Int {
 		if (colors == null) { colors = [];}
@@ -59,7 +59,7 @@ class SwatchData implements IFlxDestroyable{
 	}
 	
 	private function get_shadowDark():Int {
-		return get_color(3);
+		return getColor(3);
 	}
 	private function set_shadowDark(Value:Int):Int {
 		if (colors == null) { colors = [];}

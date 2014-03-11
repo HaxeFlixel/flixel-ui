@@ -619,7 +619,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	override private function onUpHandler():Void
 	{
-		toggled = !toggled;
+		if(has_toggle){
+			toggled = !toggled;
+		}
 		super.onUpHandler();
 		if(label != null){
 			label.color = (toggled) ? up_toggle_color : up_color;
