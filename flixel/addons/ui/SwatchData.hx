@@ -16,21 +16,21 @@ class SwatchData implements IFlxDestroyable{
 	public var shadowMid(get, set):Int;
 	public var shadowDark(get, set):Int;
 	
-	/**GETTERs/SETTERS**/
-
-	private function set_color(i:Int, Value:Int):Int {
+	public function setColor(i:Int, Value:Int):Int {
 		if (colors == null) { colors = [];}
 		colors[i] = Value;
 		return Value;
 	}
 	
-	private function get_color(i:Int):Int {
+	public function getColor(i:Int):Int {
 		if (colors.length >= i) {
 			return colors[i];
 		}
 		return 0xff000000;
 	}
 	
+	/**GETTERs/SETTERS**/
+
 	private function get_hilight():Int {
 		return get_color(0);
 	}
