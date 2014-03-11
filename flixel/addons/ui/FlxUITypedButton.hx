@@ -39,6 +39,10 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public var over_toggle_color:Int = 0;
 	public var down_toggle_color:Int = 0;
 	
+	//If this is true, the label object's actual coordinates are rounded to the nearest pixel
+	//you can still use floats for _centerLabelOffset and labelOffets, it's rounded as the very last step in placement
+	public var round_labels:Bool = true;
+	
 	public static inline var CLICK_EVENT:String = "click_button";
 	public static inline var OVER_EVENT:String = "over_button";
 	public static inline var DOWN_EVENT:String = "down_button";
@@ -104,6 +108,11 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			
 			label.x += labelOffsets[status].x;	//apply status-specific user label offset using the public variable
 			label.y += labelOffsets[status].y;
+			
+			if (round_labels) {
+				label.x = Std.int(label.x + 0.5);
+				label.y = Std.int(label.y + 0.5);
+			}
 			
 			label.scrollFactor = scrollFactor;
 		}
