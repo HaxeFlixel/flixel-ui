@@ -391,8 +391,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 */
 	
 	public function load(data:Fast):Void {
-		var time:Int = Lib.getTimer();
-		
 		_group_index = new Map<String,FlxUIGroup>();
 		_asset_index = new Map<String,IFlxUIWidget>();
 		_definition_index = new Map<String,Fast>();
@@ -456,7 +454,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 			}
 			
-			trace("begin time = " + (Lib.getTimer() - time));
 			if (data.x.firstElement() != null) {
 				//Load the actual things
 				var node:Xml;
@@ -496,11 +493,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 			
 			
-			trace("load time = " + (Lib.getTimer() - time));
-			
 			_postLoad(data);
-			
-			trace("post load time = " + (Lib.getTimer() - time));
 			
 		}else {
 			_onFinishLoad();
