@@ -51,7 +51,6 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			_tongue = static_tongue;
 		}
 		
-		
 		if(_xml_id != null && _xml_id != ""){
 			_ui = new FlxUI(null,this,null,_tongue);
 			add(_ui);

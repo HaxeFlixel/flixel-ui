@@ -4,6 +4,7 @@ import flash.display.BitmapData;
 import flash.errors.Error;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flash.Lib;
 import flixel.addons.ui.FlxUI.MaxMinSize;
 import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.addons.ui.interfaces.IEventGetter;
@@ -11,6 +12,7 @@ import flixel.addons.ui.interfaces.IFireTongue;
 import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIState;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.ILabeled;
 import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxG;
@@ -389,6 +391,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 */
 	
 	public function load(data:Fast):Void {
+		var time:Int = Lib.getTimer();
 		
 		_group_index = new Map<String,FlxUIGroup>();
 		_asset_index = new Map<String,IFlxUIWidget>();
@@ -450,31 +453,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					group.id = id;
 					_group_index.set(id, group);
 					add(group);
-					
-					FlxG.log.add("Creating group (" + id + ")");
 				}
 			}
 			
-			
-			#if debug
-				//Useful debugging info, make sure things go in the right group:
-				FlxG.log.add("Member list...");
-				for (fb in members) {
-					if(fb != null){
-						if (Std.is(fb, FlxUIGroup)) {
-							var g:FlxUIGroup = cast(fb, FlxUIGroup);
-							FlxG.log.add("-->Group(" + g.id + "), length="+g.members.length);
-							for (fbb in g.members) {
-								FlxG.log.add("---->Member(" + fbb + ")");
-							}
-						}else {
-							FlxG.log.add("-->Thing(" + fb + ")");
-						}
-					}
-				}
-			#end
-			
-			
+			trace("begin time = " + (Lib.getTimer() - time));
 			if (data.x.firstElement() != null) {
 				//Load the actual things
 				var node:Xml;
@@ -493,7 +475,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						group_id = obj.att.group; 
 						group = getGroup(group_id);
 					}
-					
 					
 					//Make the thing
 					var thing = _loadThing(type, obj);
@@ -514,7 +495,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 			}
 			
+			
+			trace("load time = " + (Lib.getTimer() - time));
+			
 			_postLoad(data);
+			
+			trace("post load time = " + (Lib.getTimer() - time));
 			
 		}else {
 			_onFinishLoad();
@@ -946,6 +932,25 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return fp;
 	}
 	
+	private function _changeParamsThing(data:Fast):Void {
+		var id:String = U.xml_str(data.x, "id", true);
+		var thing:IFlxUIWidget = getAsset(id);
+		if (thing == null) {
+			return;
+		}
+		
+		if (!Std.is(thing, IHasParams)) {
+			return;
+		}
+		
+		var i:Int = 0;
+		if (Std.is(thing, IHasParams)) {
+			
+		}
+		var ihp:IHasParams = cast thing;
+		ihp.params = getParams(data);
+	}
+	
 	private function _changeThing(data:Fast):Void {
 		var id:String = U.xml_str(data.x, "id", true);
 		var thing = getAsset(id);
@@ -986,6 +991,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				if (new_width == -1) { new_width = ir.width; }
 				if (new_height == -1) { new_height = ir.height; }
 				ir.resize(new_width, new_height);
+			}
+		}
+		
+		if (data.hasNode.param) {
+			if (Std.is(thing, IHasParams)) {
+				var ihp:IHasParams = cast thing;
+				ihp.params = getParams(data);
 			}
 		}
 	}
