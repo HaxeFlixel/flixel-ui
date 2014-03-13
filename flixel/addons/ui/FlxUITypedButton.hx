@@ -3,6 +3,7 @@ package flixel.addons.ui;
 import flash.display.BitmapData;
 import flash.errors.Error;
 import flixel.addons.ui.FlxUI.UIEventCallback;
+import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
@@ -17,7 +18,7 @@ import flixel.util.FlxPoint;
 import flixel.util.FlxStringUtil;
 import openfl.Assets;
 
-class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResizable implements IFlxUIWidget implements IFlxUIButton implements IHasParams
+class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResizable implements IFlxUIWidget implements IFlxUIButton implements IHasParams implements ICursorPointable
 {
 	public var id:String; 
 	public var resize_ratio:Float = -1;

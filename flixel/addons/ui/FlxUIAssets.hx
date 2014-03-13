@@ -27,6 +27,9 @@ class FlxUIAssets
 	public static inline var IMG_INVIS:String = "flixel/flixel-ui/img/invis.png";
 	public static inline var IMG_SWATCH:String = "flixel/flixel-ui/img/swatch.png";
 	
+	public static inline var IMG_FINGER_SMALL:String = "flixel/flixel-ui/img/finger_small.png";
+	public static inline var IMG_FINGER_BIG:String = "flixel/flixel-ui/img/finger_big.png";
+	
 	//slice9 rules
 	public static inline var SLICE9_BUTTON:String = "6,6,11,11";
 	public static inline var SLICE9_BUTTON_THIN:String = "2,2,15,15";
