@@ -306,10 +306,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		_asset_index.set(key, asset);
 		
-		/*if (Std.is(asset, FlxUIDropDownMenu)) {
-			var dd:FlxUIDropDownMenu = cast asset;
-			dd.setUIControlCallback(_onClickDropDown_control);
-		}*/
 		return true;
 	}
 	
@@ -1016,8 +1012,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				
 				if (data.hasNode.bounds) {
 					var bound_range:Float = -1;
-					
-					var reg:String = U.xml_str(data.node.bounds.x, "left");
 					
 					if (axis == "horizontal") {
 						bounds.x = _getDataSize("w", U.xml_str(data.node.bounds.x, "left"), -1);

@@ -1,6 +1,7 @@
 package flixel.addons.ui;
 
 import flixel.addons.ui.FlxUI.NamedBool;
+import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.ILabeled;
@@ -12,7 +13,7 @@ import flixel.util.FlxTimer;
 /**
  * @author Lars Doucet
  */
-class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButton implements IHasParams
+class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButton implements IHasParams implements ICursorPointable
 {
 	public var box:FlxSprite;
 	public var mark:FlxSprite;

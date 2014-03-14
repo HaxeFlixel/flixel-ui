@@ -1,6 +1,7 @@
 package flixel.addons.ui;
 import flash.geom.Rectangle;
 import flixel.addons.ui.FlxUISprite;
+import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
