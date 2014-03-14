@@ -56,19 +56,6 @@ You can compare this to [State_DefaultTest](https://github.com/HaxeFlixel/flixel
 
 Flixel-UI has a default set of assets (see [FlxUIAssets](https://github.com/HaxeFlixel/flixel-ui/blob/master/flixel/addons/ui/FlxUIAssets.hx) and the [assets folder](https://github.com/HaxeFlixel/flixel-ui/tree/master/assets)) for basic skinning. If you provide incomplete data and/or definitions for your widgets, FlxUI will automatically attempt to fall back on the default assets. 
 
-#####Demo Assets
-
-If you want to use the demo assets, make sure you get them from the [demo project](https://github.com/HaxeFlixel/flixel-demos/tree/master/User%20Interface/RPG%20Interface) in [flixel-demos](https://github.com/HaxeFlixel/flixel-demos).
-
-Install Flixel-demos:
-````
-haxelib git https://github.com/haxeflixel/flixel-demos
-````
-
-Then inside flixel-demos navigate to the _User Interface / RPG Interface /_ directory. Copy the contents of the "assets" folder into your own project's "assets" directory (you probably won't need the "locales" folder, FYI).
-
-The default skins won't show up automatically - you'll have to feed them into your xml specifications like any other asset. You can follow the example in the RPG Interface demo, or keep reading here for basic documentation.
-
 #####Custom Assets
 
 If you want to provide your own assets, you should put them in your project's "assets" folder, using the same structure you see in the demo project.
