@@ -9,6 +9,9 @@ import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.input.mouse.FlxMouse;
+import flixel.util.FlxDestroyUtil;
+import flixel.util.FlxMath;
 import flixel.util.FlxPoint;
 
 /**
@@ -19,6 +22,8 @@ import flixel.util.FlxPoint;
 class FlxUICursor extends FlxUISprite
 {
 	public var callback:String->IFlxUIWidget->Void;		//callback to notify whoever's listening that I did something(presumably a FlxUI object)
+	
+	public var wrap:Bool=true;	//when cycling through values, loop from back to front or stop at "edges?"
 	
 	public var location(default, set):Int = -1;			//which object the cursor is pointing to (-1 means nothing)
 	private function set_location(i:Int):Int{
@@ -62,8 +67,8 @@ class FlxUICursor extends FlxUISprite
 	/**
 	 * Creates a cursor that can be controlled with the keyboard or gamepad
 	 * @param	Callback		callback to notify listener about when something happens
-	 * @param	InputMethod		bit-flag, accepts INPUT_KEYS, INPUT_GAMEPAD, or both using "&" operator
-	 * @param	DefaultKeys		default hotkey layouts, accepts KEYS_DEFAULT_TAB, ..._WASD, etc, combine using "&" operator
+	 * @param	InputMethod		bit-flag, accepts INPUT_KEYS, INPUT_GAMEPAD, or both using "|" operator
+	 * @param	DefaultKeys		default hotkey layouts, accepts KEYS_DEFAULT_TAB, ..._WASD, etc, combine using "|" operator
 	 * @param	Asset			visual asset for the cursor. If not supplied, uses default
 	 */
 	
@@ -84,6 +89,45 @@ class FlxUICursor extends FlxUISprite
 		anchor = new Anchor( -5, 0, Anchor.LEFT, Anchor.CENTER, Anchor.RIGHT, Anchor.CENTER);
 		setDefaultKeys(DefaultKeys);
 		callback = Callback;
+		
+		if (FlxG.mouse != null && Std.is(FlxG.mouse, FlxUIMouse) == false) 
+		{
+			_newMouse = new FlxUIMouse(FlxG.mouse.cursorContainer);
+			FlxG.mouse.cursorContainer = null;
+			FlxG.mouse = _newMouse;
+		}
+		else
+		{
+			_newMouse = cast FlxG.mouse;
+		}
+	}
+	
+	public override function destroy():Void {
+		super.destroy();
+		
+		if (FlxG.mouse == _newMouse)
+		{
+			//remove the local pointer, but allow the replaced mouse object to carry on, it won't hurt anything
+			_newMouse = null;
+		}
+		
+		FlxDestroyUtil.destroyArray(keysUp);
+		FlxDestroyUtil.destroyArray(keysDown);
+		FlxDestroyUtil.destroyArray(keysLeft);
+		FlxDestroyUtil.destroyArray(keysRight);
+		FlxDestroyUtil.destroyArray(keysClick);
+		
+		keysUp = null;
+		keysDown = null;
+		keysLeft = null;
+		keysRight = null;
+		keysClick = null;
+		
+		anchor.destroy();
+		anchor = null;
+		
+		U.clearArraySoft(_widgets);
+		_widgets = null;
 	}
 	
 	public override function update():Void {
@@ -124,7 +168,7 @@ class FlxUICursor extends FlxUISprite
 	
 	/**
 	 * Set the default key layout quickly using a constant. 
-	 * @param	code	KEYS_DEFAULT_TAB, ..._WASD, etc, combine with "&" operator
+	 * @param	code	KEYS_DEFAULT_TAB, ..._WASD, etc, combine with "|" operator
 	 */
 	
 	public function setDefaultKeys(code:Int):Void {
@@ -161,6 +205,8 @@ class FlxUICursor extends FlxUISprite
 	/****PRIVATE****/
 	
 	private var _widgets:Array<IFlxUIWidget>;			//master list of widgets under cursor's control
+	private var _newMouse:FlxUIMouse;
+	private var _clickPressed:Bool = false;
 	
 	private function _sortXY(a:IFlxUIWidget, b:IFlxUIWidget):Int {
 		if (a.y < b.y) return -1;
@@ -230,18 +276,30 @@ class FlxUICursor extends FlxUISprite
 			}
 		}
 		for (key in keysClick) {
-			if (key.justPressed()) {
-				_doClick();
+			if (key.justPressed()) {			//JUST PRESSED: send a press event only the first time it's pressed
+				_clickPressed = true;
+				_doPress();
 				break;
+			}
+			if (key.pressed()) {				//STILL PRESSED: keep the cursor in that position while the key is down
+				_clickPressed = true;
+				_doMouseMove();
+				break;
+			}else {								//NOT PRESSED:
+				if (_clickPressed) {				//if we were previously just pressed...
+					_clickPressed = false;			//count this as "just released"
+					_doRelease();					//do the release action
+					break;
+				}
 			}
 		}
 	}
 	
-	private function _doClick():Void {
+	private function _getWidgetPoint():FlxPoint {
 		//get the widget;
 		var currWidget:IFlxUIWidget = _widgets[location];
 		if (currWidget == null) {
-			return;
+			return null;
 		}
 		
 		var fo:FlxObject;
@@ -251,7 +309,7 @@ class FlxUICursor extends FlxUISprite
 		if (Std.is(currWidget, FlxObject)) {
 			fo = cast currWidget;
 			//success! Get ScreenXY, to deal with any possible scrolling/camera craziness
-			widgetPoint = fo.getScreenXY(FlxPoint.weak(fo.x, fo.y));
+			widgetPoint = fo.getScreenXY(FlxPoint.get(fo.x, fo.y));
 		}else {
 			//otherwise just make your best guess from current raw position
 			widgetPoint = FlxPoint.get(currWidget.x, currWidget.y);
@@ -261,25 +319,115 @@ class FlxUICursor extends FlxUISprite
 		widgetPoint.x += currWidget.width / 2;
 		widgetPoint.y += currWidget.height / 2;
 		
-		if(dispatchEvents){
+		return widgetPoint;
+	}
+	
+	private function _doMouseMove(pt:FlxPoint=null):Void {
+		var dispose:Bool = false;
+		if (pt == null) {
+			pt = _getWidgetPoint();
+			if (pt == null)
+			{
+				return;
+			}
+			dispose = true;
+		}
+		if (dispatchEvents) {
 			//dispatch a low-level mouse event to the FlxG.stage object itself
 			
 			//Force the mouse to this location
-			FlxG.mouse.x = widgetPoint.x;
-			FlxG.mouse.y = widgetPoint.y;
+			FlxG.mouse.x = pt.x;
+			FlxG.mouse.y = pt.y;
+			
+			var rawMouseX:Float = pt.x * FlxG.camera.zoom;
+			var rawMouseY:Float = pt.y * FlxG.camera.zoom;
 			
 			//REALLY force it to this location
-			FlxG.mouse.setGlobalScreenPositionUnsafe(widgetPoint.x, widgetPoint.y);
+			FlxG.mouse.setGlobalScreenPositionUnsafe(rawMouseX, rawMouseY);
+			if (_newMouse != null)
+			{
+				_newMouse.updateGlobalScreenPosition = false;	//don't low-level-update the mouse while I'm overriding the mouse position
+			}
 			
-			FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_MOVE, true, false, widgetPoint.x, widgetPoint.y, FlxG.stage, FlxG.keys.pressed.CONTROL, FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
-			FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN, true, false, widgetPoint.x, widgetPoint.y, FlxG.stage, FlxG.keys.pressed.CONTROL, FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
-			FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP, true, false, widgetPoint.x, widgetPoint.y, FlxG.stage, FlxG.keys.pressed.CONTROL, FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
-			FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.CLICK, true, false, widgetPoint.x, widgetPoint.y, FlxG.stage, FlxG.keys.pressed.CONTROL, FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
+			FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_MOVE, true, false, rawMouseX, rawMouseY, FlxG.stage, FlxG.keys.pressed.CONTROL, FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
+		}
+		if (dispose) {
+			pt.put();
+		}
+	}
+	
+	private function _doPress(pt:FlxPoint=null):Void {
+		var currWidget:IFlxUIWidget = _widgets[location];
+		if (currWidget == null) {
+			return null;
 		}
 		
+		var dispose:Bool = false;
+		if (pt == null) {
+			pt = _getWidgetPoint();
+			if (pt == null)
+			{
+				return;
+			}
+			dispose = true;
+		}
+		
+		var rawMouseX:Float = pt.x * FlxG.camera.zoom;
+		var rawMouseY:Float = pt.y * FlxG.camera.zoom;
+		
+		if (dispatchEvents) {
+			//dispatch a low-level mouse event to the FlxG.stage object itself
+			FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN, true, false, rawMouseX, rawMouseY, FlxG.stage, FlxG.keys.pressed.CONTROL, FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
+		}
+		if (callback != null) {
+			//notify the listener that we just "pressed" the widget
+			callback("cursor_down", currWidget);
+		}
+		if (dispose) {
+			pt.put();
+		}
+	}
+	
+	private function _doRelease(pt:FlxPoint=null):Void {
+		var currWidget:IFlxUIWidget = _widgets[location];
+		if (currWidget == null) {
+			return null;
+		}
+		
+		var dispose:Bool = false;
+		if (pt == null) {
+			pt = _getWidgetPoint();
+			if (pt == null)
+			{
+				return;
+			}
+			dispose = true;
+		}
+		
+		var rawMouseX:Float = pt.x * FlxG.camera.zoom;
+		var rawMouseY:Float = pt.y * FlxG.camera.zoom;
+		
+		if (dispatchEvents)
+		{
+			//dispatch a low-level mouse event to the FlxG.stage object itself
+			FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP, true, false, rawMouseX, rawMouseY, FlxG.stage, FlxG.keys.pressed.CONTROL, FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
+			if (_clickPressed)
+			{
+				FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.CLICK, true, false, rawMouseX, rawMouseY, FlxG.stage, FlxG.keys.pressed.CONTROL, FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
+			}
+		}
 		if (callback != null) {
 			//notify the listener that we just "clicked" the widget
 			callback("cursor_click", currWidget);
+		}
+		if (dispose) {
+			pt.put();
+		}
+		
+		if (_newMouse != null)
+		{
+			_newMouse.updateGlobalScreenPosition = true;	//resume low-level-mouse updating now that I'm done overriding it
+			_newMouse.setGlobalScreenPositionUnsafe(FlxG.game.mouseX, FlxG.game.mouseY);
 		}
 	}
 	
@@ -288,10 +436,16 @@ class FlxUICursor extends FlxUISprite
 		
 		if (Y == 0) {											//just move back/forth
 			//Easy: go to the next index in the array, loop around if needed
-			if (location + X < 0) {	
-				location = (location + X) + _widgets.length;
+			if (location + X < 0) {
+				if (wrap) 
+				{
+					location = (location + X) + _widgets.length;
+				}
 			}else if (location + X >= _widgets.length){
-				location = (location + X) - _widgets.length;
+				if (wrap)
+				{
+					location = (location + X) - _widgets.length;
+				}
 			}else{
 				location = location + X;
 			}
@@ -300,40 +454,98 @@ class FlxUICursor extends FlxUISprite
 			//Harder: iterate through array, looking for widget with higher or lower y value
 			
 			currWidget = _widgets[location];
-			var nextWidget:IFlxUIWidget = currWidget;
 			
-			var done:Bool = false;
-			var failsafe:Int = _widgets.length;
+			var nextWidget:IFlxUIWidget = null;
 			
-			//This assumes that the widgets are properly sorted according to X and Y location
-			while(!done && failsafe > 0){
-				
-				//Use local variable because we don't want to hard-set location yet
-				var loc:Int = location;
-				
-				//Loop around if needed
-				if (loc + Y < 0) {
-					loc = (loc + Y) + _widgets.length;
-				}else if (loc + Y >= _widgets.length){
-					loc = (loc + Y) - _widgets.length;
-				}else {
-					loc = loc + Y;
+			var dx:Float = Math.POSITIVE_INFINITY;
+			var dy:Float = Math.POSITIVE_INFINITY;
+			
+			var bestdx:Float = dx;
+			var bestdy:Float = dy;
+			
+			var bestWidget:IFlxUIWidget = null;
+			var besti:Int = -1;
+			
+			//DESIRED BEHAVIOR: Jump to the CLOSEST OBJECT that ALSO:
+			//is located ABOVE/BELOW me (depending on Y's sign)
+			
+			for (i in 0..._widgets.length)
+			{
+				if (i != location)
+				{
+					nextWidget = _widgets[i];							//Check each widget
+					dy = nextWidget.y - currWidget.y;					//Get y distance
+					if (FlxMath.sameSign(dy, Y) && dy != 0)				//If it's in the right direction, and not at same Y, consider it
+					{
+						dy = Math.abs(dy);
+						if (dy < bestdy)								//If abs. y distance is closest so far
+						{
+							bestdy = dy;
+							bestdx = Math.abs(currWidget.x-nextWidget.x);	//reset this every time a better dy is found
+							besti = i;
+						}
+						else if (dy == bestdy)
+						{
+							dx = Math.abs(currWidget.x - nextWidget.x);		//If abs. x distance is closest so far
+							if (dx < bestdx)
+							{
+								bestdx = dx;
+								besti = i;
+							}
+						}
+					}
 				}
-				
-				//If y's don't match, this means it's properly higher or lower, because it's sorted that way
-				if (nextWidget.y != currWidget.y) {
-					location = loc;
-					done = true;
+			}
+			
+			if (besti != -1)
+			{
+				location = besti;
+				currWidget = _widgets[besti];
+			}
+			else						//didn't find anything
+			{
+				if (wrap)				//try wrapping around
+				{
+					bestdx = Math.POSITIVE_INFINITY;
+					bestdy = 0;							//Now we want the FURTHEST object from us
+					for (i in 0..._widgets.length)
+					{
+						if (i != location)
+						{
+							nextWidget = _widgets[i];
+							dy = nextWidget.y - currWidget.y;
+							if (FlxMath.sameSign(dy, Y) == false && dy != 0) {	//I want the WRONG direction this time
+								dy = Math.abs(dy);
+								if (dy > bestdy)
+								{
+									bestdy = dy;
+									bestdx = Math.abs(currWidget.x - nextWidget.x);
+									besti = i;
+								}
+								else if (dy == bestdy)
+								{
+									dx = Math.abs(currWidget.x - nextWidget.x);
+									if (dx < bestdx)
+									{
+										bestdx = dx;
+										besti = i;
+									}
+								}
+							}
+						}
+					}
 				}
-				
-				//never trust while loops
-				failsafe--;
+				if (besti != -1)
+				{
+					location = besti;
+					currWidget = _widgets[besti];
+				}
 			}
 		}
 		
 		if (callback != null) {
 			//notify the listener that the cursor has moved
-			callback("cursor_move", currWidget);
+			callback("cursor_jump", currWidget);
 		}
 	}
 	

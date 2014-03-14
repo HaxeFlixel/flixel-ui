@@ -55,7 +55,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			_tongue = static_tongue;
 		}
 		
-		if (_makeCursor = true) {
+		if (_makeCursor == true) {
 			cursor = new FlxUICursor(onCursorEvent);
 		}
 		
@@ -79,9 +79,8 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			}
 		}
 		
-		//THE CURSOR NEVER GETS ADDED because it must be the FIRST object in the group to update, but the LAST object rendered, so we do that manually
-		
-		if (cursor != null) {
+		if (cursor != null) {			//Cursor goes on top, of course
+			add(cursor);
 			var widget:IFlxUIWidget;
 			for (widget in _ui.members) {
 				if (Std.is(widget, ICursorPointable) || Std.is(widget, FlxUIGroup))//if it's directly pointable or a group
@@ -110,11 +109,6 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	}
 	
 	public override function update():Void {
-		if (cursor != null) {
-			cursor.update();
-			//Cursor must update FIRST so that it can temporarily override FlxG.mouse.x/y values for this update loop,
-			//But it must still render LAST, so we call update() and draw() manually
-		}
 		super.update();
 		#if debug
 			if (_reload) {
@@ -127,14 +121,6 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 				}
 			}
 		#end
-	}
-	
-	public override function draw():Void {
-		super.draw();
-		if (cursor != null) {
-			//See note for cursor in update()
-			cursor.draw();
-		}
 	}
 	
 	public override function destroy():Void {

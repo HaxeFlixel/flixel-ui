@@ -1,11 +1,13 @@
 package flixel.addons.ui;
 import flixel.FlxG;
+import flixel.interfaces.IFlxDestroyable;
+import flixel.util.FlxDestroyUtil;
 
 /**
  * Makes it easier to check if, say, SHIFT+Tab is being pressed rather than just Tab by itself
  * @author 
  */
-class MultiKey
+class MultiKey implements IFlxDestroyable
 {
 	public var key:Int;					//the keycode for the main key itself, ie, tab
 	public var combos:Array<Int>;		//any other keys that must be pressed at the same time, ie, shift, alt, etc
@@ -20,8 +22,16 @@ class MultiKey
 		forbiddens = Forbiddens;
 	}
 	
+	public function destroy():Void
+	{
+		U.clearArraySoft(combos);
+		U.clearArraySoft(forbiddens);
+		combos = null;
+		forbiddens = null;
+	}
+	
 	/**
-	 * Was the main key JUST pressed, and ARE all of the combo keys currently pressed? (and none of the forbiddens?)
+	 * Was the main key JUST pressed, AND are all of the combo keys currently pressed? (and none of the forbiddens?)
 	 * @return
 	 */
 	
@@ -31,6 +41,19 @@ class MultiKey
 			return false;
 		}
 		return passCombosAndForbiddens();
+	}
+	
+	/**
+	 * Was the main key JUST released, AND are no forbidden keys currently pressed? (Ignore whether combos were just released)
+	 * @return
+	 */
+	
+	public function justReleased():Bool {
+		 if (FlxG.keys.justReleased.check(key) == false)
+		{
+			return false;
+		}
+		return checkForbiddens(false);
 	}
 	
 	/**
@@ -76,28 +99,40 @@ class MultiKey
 		return true;
 	}
 	
+	/*********PRIVATE*********/
+	
+	private var _justReleased:Bool = false;
+	
 	/**
-	 * Are all of the combo keys pressed, AND are none of the forbidden keys pressed?
+	 * Check Combo/Forbidden values. Default--are combos all pressed, AND are forbiddens all NOT pressed?
 	 * @return
 	 */
 	
-	private function passCombosAndForbiddens():Bool
+	private function passCombosAndForbiddens(comboValue:Bool=true,forbiddenValue:Bool=false):Bool
 	{
+		return checkCombos(comboValue) && checkForbiddens(forbiddenValue);
+	}
+	
+	private function checkCombos(value:Bool):Bool {
 		if (combos != null)
 		{
 			for (otherKey in combos) 
 			{
-				if (FlxG.keys.pressed.check(otherKey) == false)
+				if (FlxG.keys.pressed.check(otherKey) != value)
 				{
 					return false;
 				}
 			}
 		}
+		return true;
+	}
+	
+	private function checkForbiddens(value:Bool):Bool {
 		if (forbiddens != null)
 		{
 			for (forbiddenKey in forbiddens)
 			{
-				if (FlxG.keys.pressed.check(forbiddenKey) == true)
+				if (FlxG.keys.pressed.check(forbiddenKey) != value)
 				{
 					return false;
 				}
