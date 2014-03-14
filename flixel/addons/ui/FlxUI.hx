@@ -1438,6 +1438,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var context:String = U.xml_str(data.x, "context", true, "ui");
 		var code:String = U.xml_str(data.x, "code", true, "");
 		
+		var checked:Bool = U.xml_bool(data.x, "checked", false);
+		
 		label = getText(label,context,true,code);
 		
 		var labelW:Int = cast _loadWidth(data, 100, "label_width");
@@ -1467,6 +1469,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		fc.textY = text_y;
 		
 		fc.text = label;
+		
+		fc.checked = checked;
 		
 		return fc;
 	}

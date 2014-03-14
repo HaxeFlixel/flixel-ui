@@ -70,7 +70,7 @@ class MultiKey implements IFlxDestroyable
 	}
 	
 	public function equals(other:MultiKey):Bool {
-		if (key != key)
+		if (key != other.key)
 		{
 			return false;
 		}

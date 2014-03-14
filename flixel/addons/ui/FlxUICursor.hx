@@ -86,7 +86,7 @@ class FlxUICursor extends FlxUISprite
 		
 		inputMethod = InputMethod;
 		_widgets = [];
-		anchor = new Anchor( -5, 0, Anchor.LEFT, Anchor.CENTER, Anchor.RIGHT, Anchor.CENTER);
+		anchor = new Anchor( -2, 0, Anchor.LEFT, Anchor.CENTER, Anchor.RIGHT, Anchor.CENTER);
 		setDefaultKeys(DefaultKeys);
 		callback = Callback;
 		
@@ -189,8 +189,8 @@ class FlxUICursor extends FlxUISprite
 		if (code & KEYS_DEFAULT_WASD == KEYS_DEFAULT_WASD) {
 			_addToKeys(keysRight, new MultiKey(FlxG.keys.getKeyCode("D")));
 			_addToKeys(keysLeft, new MultiKey(FlxG.keys.getKeyCode("A")));
-			_addToKeys(keysDown, new MultiKey(FlxG.keys.getKeyCode("W")));
-			_addToKeys(keysUp, new MultiKey(FlxG.keys.getKeyCode("S")));
+			_addToKeys(keysDown, new MultiKey(FlxG.keys.getKeyCode("S")));
+			_addToKeys(keysUp, new MultiKey(FlxG.keys.getKeyCode("W")));
 			_addToKeys(keysClick, new MultiKey(FlxG.keys.getKeyCode("ENTER")));
 		}
 		if (code & KEYS_DEFAULT_NUMPAD == KEYS_DEFAULT_NUMPAD) {
