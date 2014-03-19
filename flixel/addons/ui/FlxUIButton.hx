@@ -3,6 +3,7 @@ package flixel.addons.ui;
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.ILabeled;
 import flixel.FlxSprite;
@@ -19,7 +20,7 @@ import flixel.util.FlxDestroyUtil;
  * Furthermore, you have the ability to set the text's coloring for each
  * state just by adjusting a few public variables
  */
-class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled
+class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implements IFlxUIButton
 {
 	private var _noIconGraphicsBkup:BitmapData;
 	

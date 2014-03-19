@@ -141,10 +141,12 @@ class U
 		if (data.get(att) != null) {
 			var str:String = data.get(att);
 			str = str.toLowerCase();
-			if (str == "true") return true;
-			if (str == "1") return true;
-			return false;
-		}return default_;
+			if (str == "true" || str == "1") {		//only "true" or "1" return TRUE
+				return true;
+			}
+			return false;							//any other value returns FALSE
+		}
+		return default_;							//if the attribute does not EXIST, return the DEFAULT VALUE
 	}
 	
 	public static inline function xml_gfx(data:Xml, att:String, test:Bool=true):String {

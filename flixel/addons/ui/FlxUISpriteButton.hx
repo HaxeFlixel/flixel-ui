@@ -1,6 +1,8 @@
 package flixel.addons.ui;
 
+import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.FlxSprite;
+import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxColor;
 
 /**
@@ -10,7 +12,7 @@ import flixel.util.FlxColor;
  * 9-slice sprites for its button images, and be dynamically resized 
  * accordingly.
  */
-class FlxUISpriteButton extends FlxUITypedButton<FlxSprite>
+class FlxUISpriteButton extends FlxUITypedButton<FlxSprite> implements IFlxUIButton
 {	
 	/**
 	 * Creates a new FlxUISpriteButton.
@@ -41,4 +43,27 @@ class FlxUISpriteButton extends FlxUITypedButton<FlxSprite>
 		super.resize(W, H);
 		autoCenterLabel();
 	}	
+	
+	public override function autoCenterLabel():Void {
+		if (label != null) {
+			if (Std.is(label, FlxSpriteGroup)) {
+				var g:FlxSpriteGroup = cast label;
+				for (sprite in g.group.members) {				//line up all their center points at 0,0
+					sprite.x = ( -sprite.width / 2);
+					sprite.y = (-sprite.height / 2);
+				}
+				
+				//Now we should have a stable width/height for the group
+				
+				var W:Float = g.width;
+				var H:Float = g.height;
+				
+				for (sprite in g.members) {						//center them all based on the stable width/height of group
+					sprite.x = (W - sprite.width)/2;
+					sprite.y = (H - sprite.height)/2;
+				}
+			}
+			super.autoCenterLabel();					//center the label object itself
+		}
+	}
 }

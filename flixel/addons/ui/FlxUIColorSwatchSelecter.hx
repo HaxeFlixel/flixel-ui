@@ -1,6 +1,6 @@
 package flixel.addons.ui;
 import flash.geom.Rectangle;
-import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 
@@ -8,7 +8,7 @@ import flixel.group.FlxSpriteGroup;
  * ...
  * @author larsiusprime
  */
-class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIButton
+class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 {
 	public static inline var CLICK_EVENT:String = "click_color_swatch_selecter";
 	

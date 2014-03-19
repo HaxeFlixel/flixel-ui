@@ -1,7 +1,7 @@
 package flixel.addons.ui;
 
 import flixel.addons.ui.FlxUI.NamedBool;
-import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.util.FlxPoint;
@@ -9,7 +9,7 @@ import flixel.util.FlxPoint;
 /**
  * @author Lars Doucet
  */
-class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIButton implements IHasParams
+class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements IHasParams
 {
 	public var clickable(get, set):Bool;
 	public var selectedId(get, set):String;

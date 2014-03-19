@@ -1,7 +1,7 @@
 package flixel.addons.ui;
 
 import flash.geom.Rectangle;
-import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.FlxG;
@@ -19,7 +19,7 @@ import flixel.util.FlxStringUtil;
  * larsiusprime
  * @author 
  */
-class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IFlxUIButton implements IHasParams
+class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IFlxUIClickable implements IHasParams
 {
 	public var skipButtonUpdate(default, set):Bool;
 	private function set_skipButtonUpdate(b:Bool):Bool {

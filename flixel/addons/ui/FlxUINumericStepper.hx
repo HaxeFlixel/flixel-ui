@@ -1,7 +1,7 @@
 package flixel.addons.ui;
 import flixel.addons.ui.FlxUI.NamedFloat;
+import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
-import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
@@ -13,7 +13,7 @@ import flixel.util.FlxStringUtil;
  * ...
  * @author 
  */
-class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements IHasParams
+class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements IFlxUIClickable implements IHasParams
 {
 
 	private var button_plus:FlxUITypedButton<FlxSprite>;
@@ -38,6 +38,15 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 	private function set_params(p:Array <Dynamic>):Array<Dynamic>{
 		params = p;
 		return params;
+	}
+	
+	public var skipButtonUpdate(default, set):Bool;
+	private function set_skipButtonUpdate(b:Bool):Bool {
+		skipButtonUpdate = b;
+		button_plus.skipButtonUpdate = b;
+		button_minus.skipButtonUpdate = b;
+		//TODO: Handle input text
+		return b;
 	}
 	
 	private override function set_color(Value:Int):Int {

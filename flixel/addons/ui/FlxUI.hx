@@ -10,6 +10,7 @@ import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.addons.ui.interfaces.IEventGetter;
 import flixel.addons.ui.interfaces.IFireTongue;
 import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.addons.ui.interfaces.IFlxUIState;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
@@ -19,6 +20,7 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxPoint;
@@ -206,7 +208,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	private function setWidgetSuppression(asset:FlxSprite,butNotThisOne:IFlxUIWidget,suppressed:Bool=true):Void {
-		if (Std.is(asset, IFlxUIButton)) {
+		if (Std.is(asset, IFlxUIClickable)) {
 			var skip:Bool = false;
 			if (Std.is(asset, FlxUIDropDownMenu)) {
 				var ddasset:FlxUIDropDownMenu = cast asset;
@@ -215,7 +217,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 			}
 			if(!skip){
-				var ibtn:IFlxUIButton = cast asset;
+				var ibtn:IFlxUIClickable = cast asset;
 				ibtn.skipButtonUpdate = suppressed;			//skip button updates until further notice
 			}
 		}else if (Std.is(asset, FlxUIGroup)) {
@@ -1779,7 +1781,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadButton(data:Fast, setCallback:Bool = true, isToggle:Bool = false, load_code:String=""):IFlxUIWidget{
 		var src:String = ""; 
-		var fb:Dynamic = null;
+		var fb:IFlxUIButton = null;
 		
 		var resize_ratio:Float = U.xml_f(data.x, "resize_ratio", -1);
 		var resize_point:FlxPoint = _loadCompass(data, "resize_point");
@@ -1789,14 +1791,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var sprite:FlxUISprite = null;
 		
-		//TODO:
-			//currently you can only have a text label OR a sprite icon
-			//once this issue: (https://github.com/HaxeFlixel/flixel/issues/614) is resolved
-			//we can have both, but for now we enforce one or the other
-		if (label == "") {
-			if (data.hasNode.sprite) {
-				sprite = cast _loadThing("sprite",data.node.sprite);
-			}
+		if (data.hasNode.sprite) {
+			sprite = cast _loadThing("sprite",data.node.sprite);
 		}
 		
 		var context:String = U.xml_str(data.x, "context", true, "ui");
@@ -1812,7 +1808,25 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if(sprite == null){
 			fb = new FlxUIButton(0, 0, label);
 		}else {
-			fb = new FlxUISpriteButton(0, 0, sprite);
+			var group:FlxSpriteGroup = null;
+			
+			if (label != "") {
+				//We have a Sprite AND a Label, so we package it up in a group
+				
+				var labelTxt = new FlxUIText(0, 0, 80, label, 8);
+				labelTxt.setFormat(null, 8, 0x333333, "center");
+				
+				group = new FlxSpriteGroup();
+				
+				group.add(sprite);
+				group.add(labelTxt);
+				
+				fb = new FlxUISpriteButton(0, 0, group);
+			}
+			else
+			{
+				fb = new FlxUISpriteButton(0, 0, sprite);
+			}
 		}
 		fb.resize_ratio = resize_ratio;
 		fb.resize_point = resize_point;
@@ -1916,7 +1930,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 								}
 							}
 					}
-	
+					
 					if (graphic_ids[0] != "") {
 						if (graphic_ids.length >= 3) {
 							if (graphic_ids[1] == "") {		//"over" is undefined, grab "up"
@@ -1989,6 +2003,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}
 		
+		if (sprite != null && label != "") {
+			if(data != null && data.hasNode.text){
+				formatButtonText(data, fb);
+			}
+		}
+		
 		var text_x:Int = 0;
 		var text_y:Int = 0;
 		if (data.x.get("text_x") != null) {
@@ -2002,9 +2022,28 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			text_y = U.xml_i(data.x, "label_y");
 		}
 		
-		//label offset has already been 'centered,' this adjust from there:
-		fb.label.offset.x -= text_x;
-		fb.label.offset.y -= text_y;
+		if (Std.is(fb, FlxUISpriteButton))
+		{
+			var fbs:FlxUISpriteButton = cast fb;
+			var g:FlxSpriteGroup = cast fbs.label;
+			for (sprite in g.group.members) 
+			{
+				if (Std.is(sprite, FlxUIText)) 
+				{
+					//label offset has already been 'centered,' this adjust from there:
+					sprite.offset.x -= text_x;
+					sprite.offset.y -= text_y;
+					break;
+				}
+			}
+		}
+		else
+		{
+			var fbu:FlxUIButton = cast fb;
+			//label offset has already been 'centered,' this adjust from there:
+			fbu.label.offset.x -= text_x;
+			fbu.label.offset.y -= text_y;
+		}
 		
 		fb.visible = isVis;
 		
@@ -2677,31 +2716,63 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			var size:Int = U.xml_i(info.x, "size"); if (size == 0) { size = 8;}
 			var color:Int = _loadColor(info);
 			
+			var labelWidth:Float = U.xml_f(info.x, "width");
+			
 			var border:Array<Dynamic> = _loadBorder(info);
 			
 			var align:String = U.xml_str(info.x, "align", true); if (align == "") { align = null;}
 			
 			var the_label:FlxText=null;
 			var fb:FlxUIButton = null;
+			var fsb:FlxUISpriteButton = null;
 			var cb:FlxUICheckBox = null;
+			var ifb:IFlxUIButton = null;
 			
-			if (Std.is(button, FlxUIButton)) {
-				fb = cast button;
+			if (Std.is(button, FlxUICheckBox) == false) {
+				ifb = cast button;
 				if (align == "" || align == null) {
 					align = "center";
 				}
-			}else if (Std.is(button, FlxUICheckBox)) {
+			}else {
 				var cb:FlxUICheckBox = cast button;
-				fb = cb.button;
+				ifb = cb.button;
 				align = "left";			//force this for check boxes
 			}
 			
-			the_label = fb.label;
-			fb.up_color = color;
-			fb.down_color = 0;
-			fb.over_color = 0;
+			if (ifb != null) {
+				if (Std.is(ifb, FlxUIButton)) 
+				{
+					fb = cast ifb;
+					the_label = fb.label;
+				}
+				else if (Std.is(ifb, FlxUISpriteButton)) {
+					fsb = cast ifb;
+					if (Std.is(fsb.label, FlxText)) 				//if label is text, just grab it
+					{
+						the_label = cast fsb.label;
+					}
+					else if (Std.is(fsb.label, FlxSpriteGroup))		//if label is group, look for first flxtext label
+					{
+						var fsg:FlxSpriteGroup = cast fsb.label;
+						for (fs in fsg.group.members) {
+							if (Std.is(fs, FlxText)) {
+								the_label = cast fs;				//grab it!
+								break;
+							}
+						}
+					}
+				}
+				
+				ifb.up_color = color;
+				ifb.down_color = 0;
+				ifb.over_color = 0;
+			}
 			
 			if (the_label != null) {
+				if (labelWidth != 0) {
+					the_label.width = labelWidth;
+				}
+				
 				the_label.setFormat(the_font, size, color, align);
 				
 				the_label.borderStyle = border[0];
@@ -2714,51 +2785,68 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					ftu.drawFrame();
 				}
 				
-				fb.autoCenterLabel();
-			}	
+				if(fb != null){
+					fb.autoCenterLabel();
+				}
+				if (fsb != null) {
+					fsb.autoCenterLabel();
+				}
+			}
 			
 			for (textColorNode in info.nodes.color) {
 				var color:Int = _loadColor(textColorNode);
+				var vis:Bool = U.xml_bool(textColorNode.x, "visible", true);
 				var state_id:String = U.xml_str(textColorNode.x, "id", true);
 				var toggle:Bool = U.xml_bool(textColorNode.x, "toggle");
 				switch(state_id) {
 					case "up", "inactive", "", "normal": 
 						if (!toggle) {
-							fb.up_color = color; 
+							ifb.up_color = color; 
+							ifb.up_visible = vis;
 						}else {
-							fb.up_toggle_color = color;
+							ifb.up_toggle_color = color;
+							ifb.up_toggle_visible = vis;
 						}
 					case "active", "hilight", "over", "hover": 
 						if(!toggle){
-							fb.over_color = color; 
+							ifb.over_color = color; 
+							ifb.over_visible = vis;
 						}else {
-							fb.over_toggle_color = color;
+							ifb.over_toggle_color = color;
+							ifb.over_toggle_visible = vis;
 						}
 					case "down", "pressed", "pushed": 
 						if(!toggle){
-							fb.down_color = color; 
+							ifb.down_color = color; 
+							ifb.down_visible = vis;
 						}else {
-							fb.down_toggle_color = color;
+							ifb.down_toggle_color = color;
+							ifb.down_toggle_visible = vis;
 						}
 				}
 			}
 			
-			if (fb.over_color == 0) {			//if no over color, match up color
-				fb.over_color = fb.up_color;
+			if (ifb.over_color == 0) {			//if no over color, match up color
+				ifb.over_color = ifb.up_color;
 			}
-			if (fb.down_color == 0) {			//if no down color, match over color
-				fb.down_color = fb.over_color;
+			if (ifb.down_color == 0) {			//if no down color, match over color
+				ifb.down_color = ifb.over_color;
 			}
 			
 			//if toggles are undefined, match them to the normal versions
-			if (fb.up_toggle_color == 0) {
-				fb.up_toggle_color = fb.up_color;
+			if (ifb.up_toggle_color == 0) {
+				ifb.up_toggle_color = ifb.up_color;
 			}
-			if (fb.over_toggle_color == 0) {
-				fb.over_toggle_color = fb.over_color;
+			if (ifb.over_toggle_color == 0) {
+				ifb.over_toggle_color = ifb.over_color;
 			}
-			if (fb.down_toggle_color == 0) {
-				fb.down_toggle_color = fb.down_color;
+			if (ifb.down_toggle_color == 0) {
+				ifb.down_toggle_color = ifb.down_color;
+			}
+			
+			if (the_label != null) {
+				the_label.visible = ifb.up_visible;
+				the_label.color = ifb.up_color;
 			}
 		}
 	}

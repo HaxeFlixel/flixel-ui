@@ -2,7 +2,7 @@ package flixel.addons.ui;
 
 import flash.geom.Rectangle;
 import flixel.addons.ui.interfaces.IEventGetter;
-import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxSprite;
@@ -15,7 +15,7 @@ import flixel.util.FlxTimer;
 /**
  * @author Lars Doucet
  */
-class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUIButton implements IEventGetter
+class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUIClickable implements IEventGetter
 {
 
 	public static inline var CLICK_EVENT:String = "tab_menu_click";
@@ -30,7 +30,7 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUIBut
 		return null;
 	}
 	
-	/**For IFlxUIButton**/
+	/**For IFlxUIClickable**/
 	
 	public var skipButtonUpdate(default, set):Bool;
 	private function set_skipButtonUpdate(b:Bool):Bool {
@@ -43,8 +43,8 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUIBut
 		for (group in _tab_groups) {
 			var sprite:FlxSprite;
 			for (sprite in group.members) {
-				if (Std.is(sprite, IFlxUIButton)) {
-					var widget:IFlxUIButton = cast sprite;
+				if (Std.is(sprite, IFlxUIClickable)) {
+					var widget:IFlxUIClickable = cast sprite;
 					widget.skipButtonUpdate = b;
 				}
 			}
