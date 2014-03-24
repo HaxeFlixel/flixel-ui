@@ -445,10 +445,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					
 					//Create FlxUIGroup's for each group we define
 					var id:String = group_data.att.id;
-					var group:FlxUIGroup = new FlxUIGroup();
-					group.id = id;
-					_group_index.set(id, group);
-					add(group);
+					var tempGroup:FlxUIGroup = new FlxUIGroup();
+					tempGroup.id = id;
+					_group_index.set(id, tempGroup);
+					add(tempGroup);
 				}
 			}
 			
@@ -461,22 +461,22 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					type.toLowerCase();
 					var obj:Fast = new Fast(node);
 					var group_id:String="";
-					var group:FlxUIGroup = null;
+					var tempGroup:FlxUIGroup = null;
 					
 					var thing_id:String = U.xml_str(obj.x, "id", true);
 					
 					//If it belongs to a group, get that information ready:
 					if (obj.has.group) { 
 						group_id = obj.att.group; 
-						group = getGroup(group_id);
+						tempGroup = getGroup(group_id);
 					}
 					
 					//Make the thing
 					var thing = _loadThing(type, obj);
 					
 					if (thing != null) {
-						if (group != null) {
-							group.add(cast thing);
+						if (tempGroup != null) {
+							tempGroup.add(cast thing);
 						}else {
 							add(cast thing);
 						}
@@ -621,11 +621,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	/******UTILITY FUNCTIONS**********/
 	
 	public function getGroup(key:String, recursive:Bool=true):FlxUIGroup{
-		var group:FlxUIGroup = _group_index.get(key);
-		if (group == null && recursive && _superIndexUI != null) {
+		var tempGroup:FlxUIGroup = _group_index.get(key);
+		if (tempGroup == null && recursive && _superIndexUI != null) {
 			return _superIndexUI.getGroup(key, recursive);
 		}
-		return group;
+		return tempGroup;
 	}
 	
 	public function getFlxText(key:String, recursive:Bool = true):FlxText {
@@ -731,16 +731,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		if(_group_index != null){
 			for (key in _group_index.keys()) {
-				var group:FlxUIGroup = _group_index.get(key);
-				if (group.members != null) {
+				var tempGroup:FlxUIGroup = _group_index.get(key);
+				if (tempGroup.members != null) {
 					var i:Int = 0;
-					for (member in group.members) {
+					for (member in tempGroup.members) {
 						if(member != null){
 							if (member == original) {
-								group.members[i] = replace;
+								tempGroup.members[i] = replace;
 								if (replace == null) {
 									if (splice) {
-										group.members.splice(i, 1);
+										tempGroup.members.splice(i, 1);
 										i--;
 									}
 								}
@@ -1808,7 +1808,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if(sprite == null){
 			fb = new FlxUIButton(0, 0, label);
 		}else {
-			var group:FlxSpriteGroup = null;
+			var tempGroup:FlxSpriteGroup = null;
 			
 			if (label != "") {
 				//We have a Sprite AND a Label, so we package it up in a group
@@ -1816,12 +1816,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var labelTxt = new FlxUIText(0, 0, 80, label, 8);
 				labelTxt.setFormat(null, 8, 0x333333, "center");
 				
-				group = new FlxSpriteGroup();
+				tempGroup = new FlxSpriteGroup();
 				
-				group.add(sprite);
-				group.add(labelTxt);
+				tempGroup.add(sprite);
+				tempGroup.add(labelTxt);
 				
-				fb = new FlxUISpriteButton(0, 0, group);
+				fb = new FlxUISpriteButton(0, 0, tempGroup);
 			}
 			else
 			{

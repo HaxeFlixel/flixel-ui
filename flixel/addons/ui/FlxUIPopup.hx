@@ -69,6 +69,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 			_xml_id = FlxUIAssets.XML_DEFAULT_POPUP_ID;
 		}
 		
+		scrollFactor = FlxPoint.get(0, 0);
 		getTextFallback = myGetTextFallback;
 		
 		super.create();

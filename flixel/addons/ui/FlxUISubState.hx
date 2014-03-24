@@ -4,8 +4,10 @@ import flixel.addons.ui.interfaces.IEventGetter;
 import flixel.addons.ui.interfaces.IFireTongue;
 import flixel.addons.ui.interfaces.IFlxUIState;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxSubState;
+import flixel.util.FlxPoint;
 import haxe.xml.Fast;
 
 /**
@@ -38,6 +40,18 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 	public function new() 
 	{
 		super();
+	}
+	
+	public function forceScrollFactor(X:Float,Y:Float):Void {
+		if (_ui != null) {
+			var w:IFlxUIWidget; 
+			for (w in _ui.group.members) {
+				w.scrollFactor.set(X, Y);
+			}
+			if (_ui.scrollFactor != null) {
+				_ui.scrollFactor.set(X, Y);
+			}
+		}
 	}
 	
 	public function forceFocus(b:Bool, thing:IFlxUIWidget):Void {
