@@ -107,6 +107,20 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public override function update():Void {
 		super.update();
 		
+		// Label positioning
+		if (label != null)
+		{
+			label.x = x + _centerLabelOffset.x + labelOffsets[status].x;
+			label.y = y + _centerLabelOffset.y + labelOffsets[status].y;
+			
+			if (round_labels) {
+				label.x = Std.int(label.x + 0.5);
+				label.y = Std.int(label.y + 0.5);
+			}
+			
+			label.scrollFactor = scrollFactor;
+		}
+		
 		if (animation != null){
 			// Then pick the appropriate frame of animation
 			if (toggled){
