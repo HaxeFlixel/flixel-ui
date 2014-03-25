@@ -4,6 +4,10 @@ class FlxUIAssets
 {
 	//images	
 	public static inline var IMG_BUTTON:String = "flixel/flixel-ui/img/button.png";
+	public static inline var IMG_BUTTON_ARROW_DOWN:String = "flixel/flixel-ui/img/button_arrow_down.png";
+	public static inline var IMG_BUTTON_ARROW_LEFT:String = "flixel/flixel-ui/img/button_arrow_left.png";
+	public static inline var IMG_BUTTON_ARROW_RIGHT:String = "flixel/flixel-ui/img/button_arrow_right.png";
+	public static inline var IMG_BUTTON_ARROW_UP:String = "flixel/flixel-ui/img/button_arrow_up.png";
 	public static inline var IMG_BUTTON_THIN:String = "flixel/flixel-ui/img/button_thin.png";
 	public static inline var IMG_BUTTON_TOGGLE:String = "flixel/flixel-ui/img/button_toggle.png";
 

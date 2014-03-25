@@ -104,6 +104,17 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		labelAlphas[FlxButton.NORMAL] = 1;
 	}
 	
+	/**
+	 * Set all 3 sets of labelOffsets at once
+	 * @param	X
+	 * @param	Y
+	 */
+	
+	public function setAllLabelOffsets(X:Float, Y:Float):Void {
+		labelOffsets[FlxButton.HIGHLIGHT].x = labelOffsets[FlxButton.PRESSED].x = labelOffsets[FlxButton.NORMAL].x = X;
+		labelOffsets[FlxButton.HIGHLIGHT].y = labelOffsets[FlxButton.PRESSED].y = labelOffsets[FlxButton.NORMAL].y = Y;
+	}
+	
 	public override function update():Void {
 		super.update();
 		
@@ -520,6 +531,14 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			if (Std.is(label, FlxUIText)) {
 				var t:FlxUIText = cast label;
 			}
+		}
+	}
+	
+	public function forceStateHandler(event:String):Void {
+		switch(event) {
+			case OUT_EVENT:		onOutHandler();
+			case OVER_EVENT:	onOverHandler();
+			case DOWN_EVENT:	onDownHandler();
 		}
 	}
 	

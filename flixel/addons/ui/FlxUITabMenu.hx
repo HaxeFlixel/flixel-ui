@@ -9,6 +9,7 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxArrayUtil;
+import flixel.util.FlxPoint;
 import flixel.util.FlxStringUtil;
 import flixel.util.FlxTimer;
 
@@ -19,6 +20,9 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 {
 
 	public static inline var CLICK_EVENT:String = "tab_menu_click";
+	
+	public static inline var STACK_FRONT:String = "front";		//button goes in front of backing
+	public static inline var STACK_BACK:String = "back";		//buton goes behind backing
 	
 	/**To make IEventGetter happy**/
 	public function getEvent(name:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
@@ -96,7 +100,7 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 	
 	/***PUBLIC***/
 	
-	public function new(?back_:FlxSprite,?tabs_:Array<FlxUIButton>,?tab_ids_and_labels_:Array<{id:String,label:String}>,?stretch_tabs:Bool=false) 
+	public function new(?back_:FlxSprite,?tabs_:Array<FlxUIButton>,?tab_ids_and_labels_:Array<{id:String,label:String}>,?tab_offset:FlxPoint,?stretch_tabs:Bool=false,?tab_spacing:Null<Float>=null,?tab_stacking:Array<String>=null) 
 	{
 		super();
 		
@@ -142,6 +146,12 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 		
 		_tabs = tabs_;
 		_stretch_tabs = stretch_tabs;
+		_tab_spacing = tab_spacing;
+		_tab_stacking = tab_stacking;
+		if (_tab_stacking == null) {
+			_tab_stacking = [STACK_FRONT, STACK_BACK];
+		}
+		_tab_offset = tab_offset;
 		
 		var i:Int = 0;
 		var tab:FlxUIButton;
@@ -164,7 +174,40 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 		_tabs = null;
 		_tab_groups = null;
 	}
-
+	
+	public function getTab(?id:String, ?index:Null<Int>):FlxUIButton{
+		if (id != null) {
+			for (tab in _tabs) {
+				if (tab.id == id) {
+					return tab;
+				}
+			}
+		}
+		if (index != null) {
+			if (index < _tabs.length) {
+				return _tabs[index];
+			}
+		}
+		return null;
+	}
+	
+	public function getTabGroup(?id:String, ?index:Null<Int>):FlxUIGroup {
+		var tabGroup:FlxUIGroup;
+		if (id != null) {
+			for (tabGroup in _tab_groups) {
+				if (tabGroup.id == id) {
+					return tabGroup;
+				}
+			}
+		}
+		if (index != null) {
+			if (index < _tab_groups.length) {
+				return _tab_groups[index];
+			}
+		}
+		return null;
+	}
+	
 	public function addGroup(g:FlxUIGroup):Void {
 		if (g == this) {
 			return;			//DO NOT ADD A GROUP TO ITSELF
@@ -205,6 +248,7 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 		var i:Int = 0;
 		for (tab in _tabs) {
 			tab.toggled = false;
+			tab.forceStateHandler(FlxUITypedButton.OUT_EVENT);
 			if (tab.id == id) {
 				tab.toggled = true;
 				_selected_tab_id = id;
@@ -214,6 +258,7 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 		}
 		
 		_showOnlyGroup(id);
+		stackTabs();
 	}
 	
 	/***PRIVATE***/
@@ -222,9 +267,53 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 	private var _tabs:Array<FlxUIButton>;
 	private var _tab_groups:Array<FlxUIGroup>;
 	private var _stretch_tabs:Bool = false;
+	private var _tab_spacing:Null<Float> = null;
+	private var _tab_stacking:Array<String> = null;
+	private var _tab_offset:FlxPoint = null;
 	
 	private var _selected_tab_id:String = "";
 	private var _selected_tab:Int = -1;
+	
+	private function stackTabs():Void {
+		var _backx:Float = _back.x;
+		var _backy:Float = _back.y;
+		
+		var _tabPts:Array<FlxPoint> = [];
+		
+		remove(_back, true);
+		
+		for (tab in _tabs) {
+			if (tab.toggled) {
+				_tabPts.push(FlxPoint.get(tab.x, tab.y));
+				remove(tab, true);
+			}
+		}
+		
+		add(_back);
+		
+		for (tab in _tabs) {
+			if (tab.toggled) {
+				add(tab);
+				tab.x = _tabPts[0].x;
+				tab.y = _tabPts[0].y;
+				_tabPts[0].put();
+				_tabPts.splice(0, 1);
+			}
+		}
+		
+		//Put tab groups back on top
+		for (group in _tab_groups) {
+			var tempX:Float = group.x;
+			var tempY:Float = group.y;
+			remove(group, true);
+			add(group);
+			group.x = tempX;
+			group.y = tempY;
+		}
+		
+		_back.x = _backx;
+		_back.y = _backy;
+	}
 	
 	private function sortTabs(a:FlxUIButton, b:FlxUIButton):Int {
 		if (a.id < b.id) {
@@ -284,25 +373,34 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 			tab.x = x + xx;
 			tab.y = y + 0;
 			
+			if (_tab_offset != null) {
+				tab.x += _tab_offset.x;
+				tab.y += _tab_offset.y;
+			}
+			
 			if (_stretch_tabs) {
 				if(diff_size > 0){
 					tab.resize(tab_width + 1, tab.get_height());
 					xx += (Std.int(tab_width)+1);
-					diff_size-1;
+					diff_size -= 1;
 				}else {
 					tab.resize(tab_width, tab.get_height());
 					xx += Std.int(tab_width);
 				}
-				
-				//this is to avoid small rounding errors
-				//(this guarantees we'll use up the whole space)
-			}else{
-				xx += tab.width;
+			}else {
+				if(_tab_spacing != null){
+					xx += tab.width + _tab_spacing;
+				}else {
+					xx += tab.width;
+				}
 			}
-		}		
+		}
 		
 		if (_tabs != null && _tabs.length > 0 && _tabs[0] != null) {
 			_back.y = _tabs[0].y + _tabs[0].height - 2;
+			if (_tab_offset != null) {
+				_back.y -= _tab_offset.y;
+			}
 		}
 		
 		calcBounds();

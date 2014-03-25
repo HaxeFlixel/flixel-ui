@@ -1,4 +1,7 @@
 package flixel.addons.ui.interfaces;
+import flash.display.BitmapData;
+import flixel.addons.ui.FlxUI9SliceSprite;
+import flixel.addons.ui.FlxUIText;
 import flixel.FlxSprite;
 import flixel.interfaces.IFlxDestroyable;
 import flixel.util.FlxPoint;
@@ -31,5 +34,8 @@ interface IFlxUIButton extends IFlxUIWidget extends IHasParams extends IFlxDestr
 	
 	public function autoCenterLabel():Void;
 	public function loadGraphicSlice9(assets:Array<String> = null, W:Int = 80, H:Int = 20, slice9:Array<Array<Int>> = null, Tile:Int = FlxUI9SliceSprite.TILE_NONE, Resize_Ratio:Float = -1, isToggle:Bool = false, src_w:Int = 0, src_h:Int = 0, frame_indeces:Array<Int> = null):Void;
+	public function loadGraphicsMultiple(assets:Array<String>, Key:String = ""):Void;
+	public function loadGraphicsUpOverDown(asset:Dynamic, for_toggle:Bool = false, ?key:String):Void;
+	public function forceStateHandler(event:String):Void;
 	
 }

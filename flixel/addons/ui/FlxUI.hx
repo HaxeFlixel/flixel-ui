@@ -1663,6 +1663,25 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var stretch_tabs:Bool = U.xml_bool(data.x, "stretch_tabs",false);
 		
+		var stackToggled:String = "front";
+		var stackUntoggled:String = "back";
+		
+		if (data.hasNode.stacking) {
+			stackToggled = U.xml_str(data.node.stacking.x, "toggled", true, "front");
+			stackUntoggled = U.xml_str(data.node.stacking.x, "untoggled", true, "back");
+		}
+		
+		var tab_spacing_str:String = U.xml_str(data.x, "spacing", true, "");
+		var tab_spacing:Null<Float> = null;
+		if (tab_spacing_str != "") {
+			tab_spacing = Std.parseFloat(tab_spacing_str);
+		}
+		
+		//x/y offsets for tabs
+		var tab_x:Float = U.xml_f(data.x, "tab_x", 0);
+		var tab_y:Float = U.xml_f(data.x, "tab_y", 0);
+		var tab_offset = FlxPoint.get(tab_x, tab_y);
+		
 		var tab_def_str:String = "";
 		
 		if (data.hasNode.tab) {
@@ -1717,7 +1736,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}
 		
-		var fg:FlxUITabMenu = new FlxUITabMenu(back,list_tabs,stretch_tabs);
+		var tab_stacking:Array<String> = [stackToggled, stackUntoggled];
+		
+		var fg:FlxUITabMenu = new FlxUITabMenu(back,list_tabs,tab_offset,stretch_tabs,tab_spacing,tab_stacking);
 		
 		if (data.hasNode.group) {
 			for (group_node in data.nodes.group) {
