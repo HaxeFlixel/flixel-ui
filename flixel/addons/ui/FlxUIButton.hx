@@ -3,10 +3,12 @@ package flixel.addons.ui;
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flixel.addons.ui.FlxUIButton.LabelStyle;
 import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.ILabeled;
 import flixel.FlxSprite;
+import flixel.text.FlxText;
 import flixel.util.FlxDestroyUtil;
 
 /**
@@ -23,6 +25,15 @@ import flixel.util.FlxDestroyUtil;
 class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implements IFlxUIButton
 {
 	private var _noIconGraphicsBkup:BitmapData;
+	
+	public var up_style:LabelStyle = null;
+	public var over_style:LabelStyle = null;
+	public var down_style:LabelStyle = null;
+	
+	public var up_toggle_style:LabelStyle = null;
+	public var over_toggle_style:LabelStyle = null;
+	public var down_toggle_style:LabelStyle = null;
+	
 	
 	/**
 	 * Creates a new FlxUIButton.
@@ -118,5 +129,82 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 			label.width = label.frameWidth = Std.int(width);
 			label.size = label.size;
 		}
+	}
+	
+	override private function onDownHandler():Void
+	{
+		super.onDownHandler();
+		if (label != null) {
+			if (toggled && down_toggle_style != null) {
+				label.color = down_toggle_style.color;
+				label.borderStyle = down_toggle_style.borderStyle;
+				label.borderColor = down_toggle_style.borderColor;
+			}else if (!toggled && down_style != null) {
+				label.color = down_style.color;
+				label.borderStyle = down_style.borderStyle;
+				label.borderColor = down_style.borderColor;
+			}
+		}
+	}
+	
+	override private function onOverHandler():Void
+	{
+		super.onOverHandler();
+		if (label != null) {
+			if (toggled && over_toggle_style != null) {
+				label.color = over_toggle_style.color;
+				label.borderStyle = over_toggle_style.borderStyle;
+				label.borderColor = over_toggle_style.borderColor;
+			}else if (!toggled && over_style != null) {
+				label.color = over_style.color;
+				label.borderStyle = over_style.borderStyle;
+				label.borderColor = over_style.borderColor;
+			}
+		}
+	}
+	
+	override private function onOutHandler():Void
+	{
+		super.onOutHandler();
+		if (label != null) {
+			if (toggled && up_toggle_style != null) {
+				label.color = up_toggle_style.color;
+				label.borderStyle = up_toggle_style.borderStyle;
+				label.borderColor = up_toggle_style.borderColor;
+			}else if (!toggled && up_style != null) {
+				label.color = up_style.color;
+				label.borderStyle = up_style.borderStyle;
+				label.borderColor = up_style.borderColor;
+			}
+		}
+	}
+	
+	override private function onUpHandler():Void
+	{
+		super.onUpHandler();
+		if (label != null) {
+			if (toggled && up_toggle_style != null) {
+				label.color = up_toggle_style.color;
+				label.borderStyle = up_toggle_style.borderStyle;
+				label.borderColor = up_toggle_style.borderColor;
+			}else if (!toggled && up_style != null) {
+				label.color = up_style.color;
+				label.borderStyle = up_style.borderStyle;
+				label.borderColor = up_style.borderColor;
+			}
+		}
+	}
+}
+
+class LabelStyle 
+{
+	public var color:Int;
+	public var borderStyle:Int;
+	public var borderColor:Int;
+	
+	public function new(Color:Int, BorderStyle:Int, BorderColor:Int) {
+		color = Color;
+		borderStyle = BorderStyle;
+		borderColor = BorderColor;
 	}
 }

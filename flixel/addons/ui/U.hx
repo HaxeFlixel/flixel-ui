@@ -626,7 +626,10 @@ class U
 				case "bold-italic", "bolditalic", "italic-bold", "italicbold", "ibold", "boldi", "ib", "bi", "z":suffix = "z";
 			}
 			
-			return "assets/fonts/" + str + suffix;
+			if(str.indexOf("assets/fonts/") != 0){
+				return "assets/fonts/" + str + suffix;
+			}
+			return str + suffix;
 		}
 	
 	public static inline function fsx(data:Dynamic):FlxUISprite {
