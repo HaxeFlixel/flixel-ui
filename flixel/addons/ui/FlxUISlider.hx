@@ -1,4 +1,4 @@
-package ;
+package flixel.addons.ui;
 import flixel.addons.ui.FlxSlider;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 
