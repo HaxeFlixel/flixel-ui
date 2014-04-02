@@ -518,11 +518,11 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			
 			if (Std.is(label, FlxUIText)) {
 				var tlabel:FlxUIText = cast label;
-				offX = (width - tlabel.width) / 2;
+				offX = (width - tlabel.fieldWidth) / 2;
 				offY = (height - tlabel.height) / 2;
 			}else {
 				offX = (width - label.width) / 2;
-				offY = (height - label.height)/2;
+				offY = (height - label.height) / 2;
 			}
 			
 			_centerLabelOffset.x = offX;
