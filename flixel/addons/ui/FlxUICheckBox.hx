@@ -1,7 +1,9 @@
 package flixel.addons.ui;
 
 import flixel.addons.ui.FlxUI.NamedBool;
+import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.ILabeled;
 import flixel.FlxSprite;
@@ -12,7 +14,7 @@ import flixel.util.FlxTimer;
 /**
  * @author Lars Doucet
  */
-class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButton implements IHasParams
+class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIClickable implements IHasParams implements ICursorPointable
 {
 	public var box:FlxSprite;
 	public var mark:FlxSprite;
@@ -38,12 +40,12 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 	
 	public static inline var CLICK_EVENT:String = "click_check_box";
 	
-	public function set_skipButtonUpdate(b:Bool):Bool {
+	private function set_skipButtonUpdate(b:Bool):Bool {
 		skipButtonUpdate = b;
 		button.skipButtonUpdate = skipButtonUpdate;
 		return skipButtonUpdate;
 	}
-	public function set_params(p:Array <Dynamic>):Array<Dynamic>{
+	private function set_params(p:Array <Dynamic>):Array<Dynamic>{
 		params = p;
 		if (params == null) 
 		{ 
@@ -53,7 +55,14 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		params.push(nb);
 		return params;
 	}
-	
+
+	private override function set_color(Value:Int):Int {
+		if (button != null)
+		{
+			button.label.color = Value;
+		}
+		return super.set_color(Value);
+	}
 	
 	public function new(X:Float = 0, Y:Float = 0, ?Box:Dynamic, ?Check:Dynamic, ?Label:String, ?LabelW:Int=100, ?Params:Array<Dynamic>, ?Callback:Void->Void)
 	{
@@ -89,7 +98,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		max_width = Std.int(box.width + box_space + LabelW);
 		
 		button.onUp.callback = _clickCheck;    //for internal use, check/uncheck box, bubbles up to _externalCallback
-				
+		
 		mark = new FlxSprite();
 		if (Check == null) {
 			//if null load from default assets:
@@ -127,8 +136,6 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 	public function set_label(t:FlxUIText):FlxUIText { if (button == null) { return null;} button.label = t; return button.label; }
 	public function get_label():FlxUIText { if (button == null) { return null;} return button.label; }
 	
-	/**/
-	
 	private override function set_visible(Value:Bool):Bool
 	{
 		//don't cascade to my members
@@ -140,13 +147,13 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		anchorLabelY();
 	}
 	
-	public function set_textX(n:Float):Float {
+	private function set_textX(n:Float):Float {
 		textX = n;
 		anchorLabelX();
 		return textX;
 	}
 	
-	public function set_textY(n:Float):Float {
+	private function set_textY(n:Float):Float {
 		textY = n;
 		anchorLabelY();
 		return textY;
@@ -182,8 +189,8 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 	}
 	
 	public var text(get, set):String;
-	public function get_text():String { return button.label.text;}
-	public function set_text(value:String):String
+	private function get_text():String { return button.label.text;}
+	private function set_text(value:String):String
 	{
 		button.label.text = value;
 		checkbox_dirty = true;
@@ -209,7 +216,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIButt
 		
 	/*****GETTER/SETTER***/
 	
-	public function set_checked(b:Bool):Bool { 
+	private function set_checked(b:Bool):Bool { 
 		mark.visible = b; 
 		return checked = b; 
 	}

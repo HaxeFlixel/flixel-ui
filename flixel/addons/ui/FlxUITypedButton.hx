@@ -3,7 +3,9 @@ package flixel.addons.ui;
 import flash.display.BitmapData;
 import flash.errors.Error;
 import flixel.addons.ui.FlxUI.UIEventCallback;
+import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.IResizable;
@@ -12,11 +14,12 @@ import flixel.FlxSprite;
 import flixel.ui.FlxButton;
 import flixel.ui.FlxTypedButton;
 import flixel.util.FlxArrayUtil;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxPoint;
 import flixel.util.FlxStringUtil;
 import openfl.Assets;
 
-class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResizable implements IFlxUIWidget implements IFlxUIButton implements IHasParams
+class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResizable implements IFlxUIWidget implements IFlxUIClickable implements IHasParams implements ICursorPointable
 {
 	public var id:String; 
 	public var resize_ratio:Float = -1;
@@ -38,25 +41,37 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public var over_toggle_color:Int = 0;
 	public var down_toggle_color:Int = 0;
 	
+	public var up_visible:Bool = true;
+	public var over_visible:Bool = true;
+	public var down_visible:Bool = true;
+	
+	public var up_toggle_visible:Bool = true;
+	public var over_toggle_visible:Bool = true;
+	public var down_toggle_visible:Bool = true;
+	
+	//If this is true, the label object's actual coordinates are rounded to the nearest pixel
+	//you can still use floats for _centerLabelOffset and labelOffets, it's rounded as the very last step in placement
+	public var round_labels:Bool = true;
+	
 	public static inline var CLICK_EVENT:String = "click_button";
 	public static inline var OVER_EVENT:String = "over_button";
 	public static inline var DOWN_EVENT:String = "down_button";
 	public static inline var OUT_EVENT:String = "out_button";
 	
 	public var skipButtonUpdate(default, set):Bool = false;
-	public function set_skipButtonUpdate(b:Bool):Bool {
+	private function set_skipButtonUpdate(b:Bool):Bool {
 		skipButtonUpdate = b;
 		return skipButtonUpdate;
 	}
 	
 	public var params(default, set):Array<Dynamic>;
-	public function set_params(p:Array <Dynamic>):Array<Dynamic>{
+	private function set_params(p:Array <Dynamic>):Array<Dynamic>{
 		params = p;
 		return params;
 	}
 	
 	public override function destroy():Void {
-		resize_point = null;
+		resize_point = FlxDestroyUtil.put(resize_point);
 		super.destroy();
 	}
 	
@@ -72,7 +87,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	{
 		super(X, Y, Label, OnClick);
 		
-		_centerLabelOffset = new FlxPoint(0, 0);
+		_centerLabelOffset = FlxPoint.get(0, 0);
 		
 		//By default, the button depresses the label by 1 pixel when pressed
 		labelOffsets[FlxButton.HIGHLIGHT].x = 0;
@@ -89,20 +104,30 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		labelAlphas[FlxButton.NORMAL] = 1;
 	}
 	
+	/**
+	 * Set all 3 sets of labelOffsets at once
+	 * @param	X
+	 * @param	Y
+	 */
+	
+	public function setAllLabelOffsets(X:Float, Y:Float):Void {
+		labelOffsets[FlxButton.HIGHLIGHT].x = labelOffsets[FlxButton.PRESSED].x = labelOffsets[FlxButton.NORMAL].x = X;
+		labelOffsets[FlxButton.HIGHLIGHT].y = labelOffsets[FlxButton.PRESSED].y = labelOffsets[FlxButton.NORMAL].y = Y;
+	}
+	
 	public override function update():Void {
 		super.update();
 		
 		// Label positioning
 		if (label != null)
 		{
-			label.x = x;
-			label.y = y;
+			label.x = x + _centerLabelOffset.x + labelOffsets[status].x;
+			label.y = y + _centerLabelOffset.y + labelOffsets[status].y;
 			
-			label.x += _centerLabelOffset.x;	//CENTER the label offsets using the private variable
-			label.y += _centerLabelOffset.y;
-			
-			label.x += labelOffsets[status].x;	//apply status-specific user label offset using the public variable
-			label.y += labelOffsets[status].y;
+			if (round_labels) {
+				label.x = Std.int(label.x + 0.5);
+				label.y = Std.int(label.y + 0.5);
+			}
 			
 			label.scrollFactor = scrollFactor;
 		}
@@ -226,22 +251,22 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			bd = Assets.getBitmapData(asset);
 		}
 		
-		upB = grabButtonFrame(asset, FlxButton.NORMAL, has_toggle);
-		overB = grabButtonFrame(asset, FlxButton.HIGHLIGHT, has_toggle);
-		downB = grabButtonFrame(asset, FlxButton.PRESSED, has_toggle);
+		upB = grabButtonFrame(bd, FlxButton.NORMAL, has_toggle);
+		overB = grabButtonFrame(bd, FlxButton.HIGHLIGHT, has_toggle);
+		downB = grabButtonFrame(bd, FlxButton.PRESSED, has_toggle);
 
 		var normalPixels:BitmapData = assembleButtonFrames(upB, overB, downB);
 		
 		if (has_toggle) {
-			upB = grabButtonFrame(asset, FlxButton.NORMAL + 3, true);
-			overB = grabButtonFrame(asset, FlxButton.HIGHLIGHT + 3, true);
-			downB = grabButtonFrame(asset, FlxButton.PRESSED + 3, true);
+			upB = grabButtonFrame(bd, FlxButton.NORMAL + 3, true);
+			overB = grabButtonFrame(bd, FlxButton.HIGHLIGHT + 3, true);
+			downB = grabButtonFrame(bd, FlxButton.PRESSED + 3, true);
 			
 			var togglePixels:BitmapData = assembleButtonFrames(upB, overB, downB);
 			var combinedPixels:BitmapData = combineToggleBitmaps(normalPixels, togglePixels);
 			
-			normalPixels.dispose(); normalPixels = null;
-			togglePixels.dispose(); togglePixels = null;
+			normalPixels = FlxDestroyUtil.dispose(normalPixels);
+			togglePixels = FlxDestroyUtil.dispose(togglePixels);
 			
 			loadGraphic(combinedPixels, true, false, upB.width, upB.height, false, key);
 		}else {
@@ -461,10 +486,10 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 															   arr_bmpData[frame_indeces[5]]);
 															   
 			var combinedPixels:BitmapData = combineToggleBitmaps(normalPixels, togglePixels);
-						
+			
 			//cleanup
-			normalPixels.dispose(); normalPixels = null;
-			togglePixels.dispose(); togglePixels = null;
+			normalPixels = FlxDestroyUtil.dispose(normalPixels);
+			togglePixels = FlxDestroyUtil.dispose(togglePixels);
 			
 			loadGraphic(combinedPixels, true, false, W, H);
 		}
@@ -493,6 +518,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			
 			if (Std.is(label, FlxUIText)) {
 				var tlabel:FlxUIText = cast label;
+				offX = (width - tlabel.width) / 2;
 				offY = (height - tlabel.height) / 2;
 			}else {
 				offX = (width - label.width) / 2;
@@ -505,6 +531,14 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			if (Std.is(label, FlxUIText)) {
 				var t:FlxUIText = cast label;
 			}
+		}
+	}
+	
+	public function forceStateHandler(event:String):Void {
+		switch(event) {
+			case OUT_EVENT:		onOutHandler();
+			case OVER_EVENT:	onOverHandler();
+			case DOWN_EVENT:	onDownHandler();
 		}
 	}
 	
@@ -609,10 +643,13 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	override private function onUpHandler():Void
 	{
-		toggled = !toggled;
+		if(has_toggle){
+			toggled = !toggled;
+		}
 		super.onUpHandler();
 		if(label != null){
 			label.color = (toggled) ? up_toggle_color : up_color;
+			label.visible = (toggled) ? up_toggle_visible : up_visible;
 		}
 		if (broadcastToFlxUI) {
 			FlxUI.event(CLICK_EVENT, this, null, params);
@@ -624,6 +661,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		super.onDownHandler();
 		if(label != null){
 			label.color = (toggled) ? down_toggle_color : down_color;
+			label.visible = (toggled) ? down_toggle_visible : down_visible;
 		}
 		if (broadcastToFlxUI) {
 			FlxUI.event(DOWN_EVENT, this, null, params);
@@ -635,6 +673,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		super.onOverHandler();
 		if(label != null){
 			label.color = (toggled) ? over_toggle_color : over_color;
+			label.visible = (toggled) ? over_toggle_visible : over_visible;
 		}
 		if (broadcastToFlxUI) {
 			FlxUI.event(OVER_EVENT, this, null, params);
@@ -646,12 +685,43 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		super.onOutHandler();
 		if(label != null){
 			label.color = (toggled) ? up_toggle_color : up_color;
+			label.visible = (toggled) ? up_toggle_visible : up_visible;
 		}
 		if (broadcastToFlxUI) {
 			FlxUI.event(OUT_EVENT, this, null, params);
 		}
 	}
 
+	private override function set_x(NewX:Float):Float 
+	{
+		super.set_x(NewX);
+		
+		if (label != null)
+		{
+			label.x = x + _centerLabelOffset.x + labelOffsets[status].x;
+			
+			if (round_labels) {
+				label.x = Std.int(label.x + 0.5);
+			}
+		}
+		
+		return NewX;
+	}
+	
+	private override function set_y(NewY:Float):Float 
+	{
+		super.set_y(NewY);
+		
+		if (label != null)
+		{
+			label.y = y + _centerLabelOffset.y + labelOffsets[status].y;
+			
+			if (round_labels) {
+				label.y = Std.int(label.y + 0.5);
+			}
+		}
+		return NewY;
+	}
 	/*********PRIVATE************/
 	
 	private var _no_graphic:Bool = false;

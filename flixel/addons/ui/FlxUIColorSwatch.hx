@@ -1,6 +1,7 @@
 package flixel.addons.ui;
 import flash.geom.Rectangle;
 import flixel.addons.ui.FlxUISprite;
+import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
@@ -19,7 +20,7 @@ class FlxUIColorSwatch extends FlxUIButton
 	public var midtone(default, set):Int;
 	public var shadowMid(default, set):Int;
 	public var shadowDark(default, set):Int;
-	public var colors(get, set):SwatchData;
+	public var colors(default, set):SwatchData;
 	
 	public var callback:Void->Void;
 	
@@ -27,7 +28,7 @@ class FlxUIColorSwatch extends FlxUIButton
 	
 	/**SETTERS**/
 	
-	public override function set_color(Color:Int):Int
+	private override function set_color(Color:Int):Int
 	{
 		midtone = Color; 				//color does double duty for midtone
 		return super.set_color(color);
@@ -38,53 +39,81 @@ class FlxUIColorSwatch extends FlxUIButton
 		super.destroy();
 	}
 	
-	public function set_colors(Colors:SwatchData):SwatchData
-	{
+	
+	/**
+	 * Set a color at a specific index in the swatch
+	 * @param	Color
+	 * @param	index
+	 */
+	
+	public function setColorAtIndex(Color:Int, index:Int):Void{
 		_skipRefresh = true;
-		hilight = Colors.hilight;
-		midtone = Colors.midtone;
-		shadowMid = Colors.shadowMid;
-		shadowDark = Colors.shadowDark;
+		switch(index) {
+			case 0: hilight = Color;
+			case 1: midtone = Color;
+			case 2: shadowMid = Color;
+			case 3: shadowDark = Color;
+			default:colors.colors[index] = Color;
+		}
+		_skipRefresh = false;
+		refreshColor();
+	}
+	
+	private function set_colors(Colors:SwatchData):SwatchData
+	{
+		if (colors != null)
+		{ 
+			colors.destroy();
+			colors = null;
+		}
+		
+		_skipRefresh = true;
+		
+		colors = Colors.copy();
+		
+		hilight    = colors.hilight;
+		midtone    = colors.midtone;
+		shadowMid  = colors.shadowMid;
+		shadowDark = colors.shadowDark;
+		
 		_skipRefresh = false;
 		refreshColor();
 		return Colors;
 	}
 	
-	public function get_colors():SwatchData
-	{
-		return new SwatchData(id, hilight, midtone, shadowMid, shadowDark);
-	}
-	
 	/**
 	 * If true, the swatch will draw itself dynamically based on the four colors provided
-	 * @param	b
-	 * @return
 	 */
-	public function set_multiColored(b:Bool):Bool {
+	private function set_multiColored(b:Bool):Bool {
 		multiColored = b;
 		refreshColor();
 		return multiColored;
 	}
 	
-	public function set_hilight(i:Int):Int {
+	private function set_hilight(i:Int):Int {
 		hilight = i;
+		colors.hilight = hilight;
 		refreshColor();
 		return hilight;
 	}
-	public function set_midtone(i:Int):Int {
+	
+	private function set_midtone(i:Int):Int {
 		midtone = i;
+		colors.midtone = midtone;
 		refreshColor();
 		return midtone;
 	}
 	
-	public function set_shadowMid(i:Int):Int {
+	private function set_shadowMid(i:Int):Int {
 		shadowMid = i;
+		colors.shadowMid = shadowMid;
 		refreshColor();
 		return shadowMid;
 	}
 	
-	public function set_shadowDark(i:Int):Int {
+	private function set_shadowDark(i:Int):Int {
 		shadowDark = i;
+		colors.shadowDark = shadowDark;
 		refreshColor();
 		return shadowDark;
 	}
@@ -99,7 +128,7 @@ class FlxUIColorSwatch extends FlxUIButton
 	 * @param	?Callback		Function to call when clicked
 	 */
 	
-	public function new(X:Float, Y:Float, ?Color:Int = 0xFFFFFF, ?Colors:SwatchData, ?Asset:Dynamic, ?Callback:Void->Void) 
+	public function new(X:Float, Y:Float, ?Color:Int = 0xFFFFFF, ?Colors:SwatchData, ?Asset:Dynamic, ?Callback:Void->Void, ?Width:Int=-1, ?Height:Int=-1) 
 	{
 		super(X, Y, onClick);
 		
@@ -107,7 +136,9 @@ class FlxUIColorSwatch extends FlxUIButton
 		
 		_skipRefresh = true;
 		
-		if(Asset != null){
+		if (Width != -1 && Height != -1) {
+			makeGraphic(Width, Height, FlxColor.WHITE, true, "Swatch" + Width + "x" + Height);
+		}else if(Asset != null){
 			loadGraphic(Asset);					//load custom asset if provided
 		}else {
 			loadGraphic(FlxUIAssets.IMG_SWATCH);//load default monochrome swatch
@@ -129,6 +160,13 @@ class FlxUIColorSwatch extends FlxUIButton
 		refreshColor();
 	}
 	
+	public function equalsSwatch(swatch:SwatchData):Bool {
+		return swatch.doColorsEqual(colors);
+	}
+	
+	public function getRawDifferenceSwatch(swatch:SwatchData):Int {
+		return swatch.getRawDifference(colors);
+	}
 	
 	public function refreshColor():Void {
 		if (_skipRefresh) 
@@ -147,24 +185,71 @@ class FlxUIColorSwatch extends FlxUIButton
 					_flashRect.x = 0; _flashRect.y = 0;
 					_flashRect.width = pixels.width;
 					_flashRect.height = pixels.height;
+					pixels.fillRect(_flashRect, 0xFF000000);		//start with black outline
+					
+					var tempCols:Array<Int> = [];
+					
+					for (i in 0...colors.colors.length) {
+						var col:Int = colors.colors[i];
+						if (col != 0) {
+							tempCols.push(col);
+						}
+					}
+					
+					var thickW:Int = Std.int(Std.int((width-2) / 2) / tempCols.length);
+					var thickH:Int = Std.int(Std.int((height-2) / 2) / tempCols.length);
+					
+					_flashRect.x += 1;
+					_flashRect.y += 1;
+					_flashRect.width -= 2;
+					_flashRect.height -= 2;
+					for (i in 0...tempCols.length) {
+						var col:Int = tempCols[(tempCols.length-1)-i];
+						pixels.fillRect(_flashRect, col);
+						_flashRect.width -= (thickW*2);
+						_flashRect.height -= (thickH*2);
+						_flashRect.x += thickW;
+						_flashRect.y += thickH;
+					}
+					
+					U.clearArray(tempCols);
+					tempCols = null;
+					
+					/*
+					var h:Int = hilight;
+					var m:Int = midtone;
+					var sm:Int = shadowMid;
+					var sd:Int = shadowDark;
+					
+					if(h == 0){h = 0xFF000000;}
+					if(m == 0){m = 0xFF000000;}
+					if(sm == 0){sm = 0xFF000000;}
+					if(sd == 0){sd = 0xFF000000;}
+					
+					makeGraphic(Std.int(width), Std.int(height), 0xFFFFFFFF, true, key);
+					_flashRect.x = 0; _flashRect.y = 0;
+					_flashRect.width = pixels.width;
+					_flashRect.height = pixels.height;
 					pixels.fillRect(_flashRect, 0xFF000000);		//outline
 					_flashRect.x = 1; _flashRect.y = 1;
 					_flashRect.width -= 2;
 					_flashRect.height -= 2;
-					pixels.fillRect(_flashRect, shadowDark);		//dark shadow
+					pixels.fillRect(_flashRect, sd);		//dark shadow
 					_flashRect.x = 2; _flashRect.y = 1;
 					_flashRect.width -= 1;
 					_flashRect.height -= 1;
-					pixels.fillRect(_flashRect, shadowMid);		//mid shadow
+					pixels.fillRect(_flashRect, sm);		//mid shadow
 					_flashRect.x = 4; _flashRect.y = 2;
 					_flashRect.width -= 3;
 					_flashRect.height -= 3;
-					pixels.fillRect(_flashRect, midtone);		//midtone
+					pixels.fillRect(_flashRect, m);		//midtone
 					_flashRect.x = pixels.width - 7; 
 					_flashRect.y = 3;
 					_flashRect.width = 4;
 					_flashRect.height = 4;
-					pixels.fillRect(_flashRect, hilight);		//hilight
+					pixels.fillRect(_flashRect, h);		//hilight
+					*/
+					
 					calcFrame();
 				}else{
 					loadGraphic(key);
@@ -198,13 +283,16 @@ class FlxUIColorSwatch extends FlxUIButton
 		}
 	}
 
-	private function colorKey():String {
+	public function colorKey():String {
 		if (multiColored) {
-			return _origKey + "+" + FlxColorUtil.ARGBtoWebString(hilight) +
-							  "+" + FlxColorUtil.ARGBtoWebString(midtone) +
-							  "+" + FlxColorUtil.ARGBtoWebString(shadowMid) +
-							  "+" + FlxColorUtil.ARGBtoWebString(shadowDark);
+			var str:String = _origKey;
+			for (c in colors.colors) {
+				str += "+" + FlxColorUtil.ARGBtoWebString(c);
+			}
+			return str;
 		}
 		return _origKey;
 	}
+	
+	
 }

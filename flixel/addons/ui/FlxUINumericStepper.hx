@@ -1,7 +1,7 @@
 package flixel.addons.ui;
 import flixel.addons.ui.FlxUI.NamedFloat;
+import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
-import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
@@ -13,7 +13,7 @@ import flixel.util.FlxStringUtil;
  * ...
  * @author 
  */
-class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements IHasParams
+class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements IFlxUIClickable implements IHasParams
 {
 
 	private var button_plus:FlxUITypedButton<FlxSprite>;
@@ -35,24 +35,46 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 	public static inline var CHANGE_EVENT:String = "change_numeric_stepper";	//do either of the above
 	
 	public var params(default, set):Array<Dynamic>;
-	public function set_params(p:Array <Dynamic>):Array<Dynamic>{
+	private function set_params(p:Array <Dynamic>):Array<Dynamic>{
 		params = p;
 		return params;
 	}
 	
-	public function set_min(f:Float):Float {
+	public var skipButtonUpdate(default, set):Bool;
+	private function set_skipButtonUpdate(b:Bool):Bool {
+		skipButtonUpdate = b;
+		button_plus.skipButtonUpdate = b;
+		button_minus.skipButtonUpdate = b;
+		//TODO: Handle input text
+		return b;
+	}
+	
+	private override function set_color(Value:Int):Int {
+		color = Value;
+		button_plus.color = Value;
+		button_minus.color = Value;
+		if (Std.is(text_field, FlxInputText)) {
+			var fit:FlxInputText = cast text_field;
+			fit.backgroundColor = Value;
+		}else {
+			text_field.color = Value;
+		}
+		return Value;
+	}
+	
+	private function set_min(f:Float):Float {
 		min = f; 
 		if (value < min) { value = min; }
 		return min;
 	}
 	
-	public function set_max(f:Float):Float {
+	private function set_max(f:Float):Float {
 		max = f; 
 		if (value > max) { value = max; }
 		return max;
 	}
 	
-	public function set_value(f:Float):Float {
+	private function set_value(f:Float):Float {
 		value = f;
 		if (value < min) { value = min; }
 		if (value > max) { value = max; }
@@ -62,14 +84,14 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 		return value;
 	}
 	
-	public function set_decimals(i:Int):Int {
+	private function set_decimals(i:Int):Int {
 		decimals = i;
 		if (i < 0) { decimals = 0;}
 		value = value;
 		return decimals;
 	}
 	
-	public function set_stack(s:Int):Int {
+	private function set_stack(s:Int):Int {
 		stack = s;
 		var btnSize:Int = 10;
 		var offsetX:Int = 0;

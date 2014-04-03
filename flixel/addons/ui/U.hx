@@ -19,9 +19,7 @@ import sys.io.File;
 import sys.io.FileOutput;
 #end
 
-#if haxe_310
 import haxe.xml.Printer;
-#end
 
 /**
  * Utility functions, inlined where possible
@@ -143,10 +141,12 @@ class U
 		if (data.get(att) != null) {
 			var str:String = data.get(att);
 			str = str.toLowerCase();
-			if (str == "true") return true;
-			if (str == "1") return true;
-			return false;
-		}return default_;
+			if (str == "true" || str == "1") {		//only "true" or "1" return TRUE
+				return true;
+			}
+			return false;							//any other value returns FALSE
+		}
+		return default_;							//if the attribute does not EXIST, return the DEFAULT VALUE
 	}
 	
 	public static inline function xml_gfx(data:Xml, att:String, test:Bool=true):String {
@@ -439,7 +439,7 @@ class U
 		var list:Array<FlxPoint> = new Array<FlxPoint>();
 		for (yy in ymin...ymax + 1) {
 			for (xx in xmin...xmax + 1) {
-				list.push(new FlxPoint(xx, yy));
+				list.push(FlxPoint.get(xx, yy));
 			}
 		}return list;
 	}
@@ -487,7 +487,8 @@ class U
 		public static function writeXml(data:Xml, path:String, wrapData:Bool=true, addHeader:Bool=true):Void {
 			var xml:Xml = data;
 			
-			if (FileSystem.exists(path)) {					//if file exists, delete it so we don't crash
+			if (FileSystem.exists(path))									//if file exists, delete it so we don't crash
+			{
 				FileSystem.deleteFile(path);
 			}
 			
@@ -500,13 +501,11 @@ class U
 			if (wrapData) {
 				xmlString += '<data>\n';
 			}
-			#if haxe_310
-				xmlString += new Printer().print(xml);
-			#else
-				xmlString += xml.toString();									//write the xml itself
-			#end
+			
+			xmlString += Printer.print(xml);
+			
 			if (wrapData) {
-				xmlString += '\n</data>';
+				xmlString += '</data>';
 			}
 			
 			fout.writeString(xmlString);			//write it out
@@ -627,7 +626,10 @@ class U
 				case "bold-italic", "bolditalic", "italic-bold", "italicbold", "ibold", "boldi", "ib", "bi", "z":suffix = "z";
 			}
 			
-			return "assets/fonts/" + str + suffix;
+			if(str.indexOf("assets/fonts/") != 0){
+				return "assets/fonts/" + str + suffix;
+			}
+			return str + suffix;
 		}
 	
 	public static inline function fsx(data:Dynamic):FlxUISprite {
@@ -984,7 +986,7 @@ class U
 		var dx:Float = a.x - b.x;
 		var dy:Float = a.y - b.y;
 		
-		var ipt = new FlxPoint(Std.int(dx / Math.abs(dx)), Std.int(dy / Math.abs(dy)));
+		var ipt = FlxPoint.get(Std.int(dx / Math.abs(dx)), Std.int(dy / Math.abs(dy)));
 		return ipt;
 	}
 

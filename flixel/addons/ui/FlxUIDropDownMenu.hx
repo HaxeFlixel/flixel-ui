@@ -1,7 +1,7 @@
 package flixel.addons.ui;
 
 import flash.geom.Rectangle;
-import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.FlxG;
@@ -10,6 +10,7 @@ import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxPoint;
 import flixel.util.FlxRect;
 import flixel.util.FlxStringUtil;
@@ -18,13 +19,56 @@ import flixel.util.FlxStringUtil;
  * larsiusprime
  * @author 
  */
-class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IFlxUIButton implements IHasParams
+class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IFlxUIClickable implements IHasParams
 {
 	public var skipButtonUpdate(default, set):Bool;
-	public function set_skipButtonUpdate(b:Bool):Bool {
+	private function set_skipButtonUpdate(b:Bool):Bool {
 		skipButtonUpdate = b;
 		header.button.skipButtonUpdate = b;
 		return b;
+	}
+	
+	public var selectedId(get, set):String;
+	public var selectedLabel(get, set):String;
+	
+	private var _selectedId:String;
+	private var _selectedLabel:String;
+	
+	private function get_selectedId():String { return _selectedId;}
+	private function set_selectedId(str:String):String {
+		var i:Int = 0;
+		for (btn in list) {
+			if (btn != null && btn.id == str) {
+				var item:FlxUIButton = list[i];
+				_selectedId = str;
+				if(item.label != null){
+					_selectedLabel = item.label.text;
+					header.text.text = item.label.text;
+				}else {
+					_selectedLabel = "";
+					header.text.text = "";
+				}
+				return str;
+			}
+			i++;
+		}
+		return str;
+	}
+	
+	private function get_selectedLabel():String { return _selectedLabel;}
+	private function set_selectedLabel(str:String):String {
+		var i:Int = 0;
+		for (btn in list) {
+			if (btn.label.text == str) {
+				var item:FlxUIButton = list[i];
+				_selectedId = item.id;
+				_selectedLabel = str;
+				header.text.text = str;
+				return str;
+			}
+			i++;
+		}
+		return str;
 	}
 	
 	/**
@@ -42,7 +86,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	public var dropPanel:FlxUI9SliceSprite;
 	
 	public var params(default, set):Array<Dynamic>;
-	public function set_params(p:Array <Dynamic>):Array<Dynamic>{
+	private function set_params(p:Array <Dynamic>):Array<Dynamic>{
 		params = p;
 		return params;
 	}
@@ -92,7 +136,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 				
 				i++;
 			}
-			header.text.text = DataList[0].label;
+			selectSomething(DataList[0].id, DataList[0].label);
 		} 
 		else if (ButtonList != null) 
 		{
@@ -182,10 +226,16 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 				}
 			}
 			
-			header.text.text = DataList[0].label;
+			selectSomething(DataList[0].id, DataList[0].label);
 		}
 		
 		dropPanel.resize(header.background.width, yoff);
+	}
+	
+	private function selectSomething(id:String, label:String):Void {
+		header.text.text = label;
+		selectedId = id;
+		selectedLabel = label;
 	}
 	
 	private function makeListButton(i:Int,Label:String,Name:String):FlxUIButton {
@@ -270,11 +320,11 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	{
 		super.destroy();
 		
-		dropPanel = FlxG.safeDestroy(dropPanel);
+		dropPanel = FlxDestroyUtil.destroy(dropPanel);
 		
 		for (button in list)
 		{
-			button = FlxG.safeDestroy(button);
+			button = FlxDestroyUtil.destroy(button);
 		}
 		
 		list = null;
@@ -302,7 +352,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	private function onClickItem(i:Int):Void 
 	{
 		var item:FlxUIButton = list[i];
-		header.text.text = item.label.text;
+		selectSomething(item.id,item.label.text);
 		showList(false);
 		
 		if (callback != null) {
@@ -408,8 +458,8 @@ class FlxUIDropDownHeader extends FlxUIGroup
 	{
 		super.destroy();
 		
-		background = FlxG.safeDestroy(background);
-		text = FlxG.safeDestroy(text);
-		button = FlxG.safeDestroy(button);
+		background = FlxDestroyUtil.destroy(background);
+		text = FlxDestroyUtil.destroy(text);
+		button = FlxDestroyUtil.destroy(button);
 	}
 }

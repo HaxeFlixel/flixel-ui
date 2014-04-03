@@ -1,5 +1,6 @@
 package flixel.addons.ui.interfaces;
 
+import flixel.addons.ui.FlxUIText;
 import flixel.text.FlxText;
 
 /**

@@ -1,5 +1,6 @@
 package flixel.addons.ui;
 
+import flixel.addons.ui.interfaces.IFlxUIState;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.util.FlxPoint;
 
@@ -16,7 +17,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	/**STUBS TO MAKE THE INTERFACE HAPPY:**/
 	
 	public var immovable(default, set):Bool;
-	public function set_immovable(Immovable:Bool):Bool { return immovable; }
+	private function set_immovable(Immovable:Bool):Bool { return immovable; }
 
 	public var angle(default, set):Float;
 	public var facing(default, set):Int;
@@ -29,16 +30,16 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	public var acceleration:FlxPoint;
 	public var drag:FlxPoint;
 	public var scrollFactor(default, set):FlxPoint;
-	public function set_x(Value:Float):Float { return x = Value; }
-	public function set_y(Value:Float):Float { return y = Value; }
-	public function get_width():Float { return _width; }
-	public function get_height():Float { return _height; }
-	public function set_width(Value:Float):Float { return _width = Value; }
-	public function set_height(Value:Float):Float { return _height = Value; }
-	public function set_angle(Value:Float):Float { return angle = Value; }
-	public function set_alpha(Value:Float):Float { return alpha = Value; }
-	public function set_facing(Value:Int):Int { return facing = Value; }
-	public function set_moves(Value:Bool):Bool { return moves = Value; }
+	private function set_x(Value:Float):Float { return x = Value; }
+	private function set_y(Value:Float):Float { return y = Value; }
+	private function get_width():Float { return _width; }
+	private function get_height():Float { return _height; }
+	private function set_width(Value:Float):Float { return _width = Value; }
+	private function set_height(Value:Float):Float { return _height = Value; }
+	private function set_angle(Value:Float):Float { return angle = Value; }
+	private function set_alpha(Value:Float):Float { return alpha = Value; }
+	private function set_facing(Value:Int):Int { return facing = Value; }
+	private function set_moves(Value:Bool):Bool { return moves = Value; }
 	private function set_offset(Value:FlxPoint):FlxPoint { return offset = Value; }
 	private function set_origin(Value:FlxPoint):FlxPoint { return origin = Value; }
 	private function set_scale(Value:FlxPoint):FlxPoint { return scale = Value; }
@@ -49,6 +50,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	public var x(default, set):Float=0;
 	public var y(default, set):Float=0;
 	
+	public var params:Array<Dynamic> = null;
 	
 	public var alpha(default, set):Float=1;
 	
@@ -67,12 +69,13 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 			_xml_id = FlxUIAssets.XML_DEFAULT_POPUP_ID;
 		}
 		
+		scrollFactor = FlxPoint.get(0, 0);
 		getTextFallback = myGetTextFallback;
 		
 		super.create();
 		
 		if (_quickSetupParams != null) {
-			_quickSetup();
+			_doQuickSetup();
 		}
 	}
 	
@@ -91,24 +94,43 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	public function quickSetup(title:String, body:String, button_labels:Array<String>):Void {
 		/* if this sub state isn't active yet, it just stores the params and then
 		 * does the real work as soon as it's created.
+		 * So call this, then activate it!
 		 */
 		
 		_quickSetupParams = { title:title, body:body, button_labels:button_labels };
-		_quickSetup();
 	}
 	 
-	public override function getEvent(id:String, sender:IFlxUIWidget, data:Array<Dynamic>, ?params:Array<Dynamic>):Void {
+	public override function getEvent(id:String, sender:IFlxUIWidget, data:Array<Dynamic>, ?eventParams:Array<Dynamic>):Void {
+		if (eventParams == null) {
+			if (params != null) {
+				eventParams = [];
+			}
+		}
+		if (params != null) {
+			eventParams = eventParams.concat(params);
+		}
+		
 		switch(id) {
 			case FlxUITypedButton.CLICK_EVENT:
-				var buttonAmount:Int = Std.int(params[0]);
-				var label:String = Std.string(params[1]);
+				var buttonAmount:Int = Std.int(eventParams[0]);
+				var label:String = Std.string(eventParams[1]);
 				if (buttonAmount <= 2)
 				{
-					FlxUI.event(FlxUITypedButton.CLICK_EVENT, this, null, params);
+					if (Std.is(_parentState, IFlxUIState)) {
+						//This fixes a bug where the event was being sent to this popup rather than the state that created it
+						castParent().getEvent(CLICK_EVENT, this, buttonAmount, eventParams);
+					}else {
+						//This is a generic fallback in case something goes wrong
+						FlxUI.event(CLICK_EVENT, this, buttonAmount, eventParams);
+					}
 					close();
 				}
 		}
-		super.getEvent(id, sender, data, params);
+		super.getEvent(id, sender, data, eventParams);
+	}
+	
+	private function castParent():IFlxUIState {
+		return cast _parentState;
 	}
 	
 	private var _quickSetupParams:{title:String, body:String, button_labels:Array<String>} = null;
@@ -128,7 +150,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	}
 	
 	
-	private function _quickSetup():Void {
+	private function _doQuickSetup():Void {
 		
 		if (_ui.hasAsset("title")) {
 			var text_title:FlxUIText = cast _ui.getAsset("title");
@@ -139,6 +161,15 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 			text_body.text = _quickSetupParams.body;
 		}
 		
+		_doQuickSetupButtons();
+		
+		//cleanup
+		_quickSetupParams.button_labels = null;
+		_quickSetupParams = null;
+	}
+	
+	private function _doQuickSetupButtons():Void 
+	{
 		var arr:Array<String> = ["btn0", "btn1", "btn2"];
 		var i:Int = 0;
 		
@@ -172,11 +203,6 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 			}
 			i++;
 		}
-		
-		//cleanup
-		_quickSetupParams.button_labels = null;
-		_quickSetupParams = null;
 	}
-	
 	
 }

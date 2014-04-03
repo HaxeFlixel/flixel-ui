@@ -56,22 +56,9 @@ You can compare this to [State_DefaultTest](https://github.com/HaxeFlixel/flixel
 
 Flixel-UI has a default set of assets (see [FlxUIAssets](https://github.com/HaxeFlixel/flixel-ui/blob/master/flixel/addons/ui/FlxUIAssets.hx) and the [assets folder](https://github.com/HaxeFlixel/flixel-ui/tree/master/assets)) for basic skinning. If you provide incomplete data and/or definitions for your widgets, FlxUI will automatically attempt to fall back on the default assets. 
 
-#####Demo Assets
-
-If you want to use the demo assets, make sure you get them from the [demo project](https://github.com/HaxeFlixel/flixel-demos/tree/master/User%20Interface/RPG%20Interface) in [flixel-demos](https://github.com/HaxeFlixel/flixel-demos).
-
-Install Flixel-demos:
-````
-haxelib git https://github.com/haxeflixel/flixel-demos
-````
-
-Then inside flixel-demos navigate to the _User Interface / RPG Interface /_ directory. Copy the contents of the "assets" folder into your own project's "assets" directory (you probably won't need the "locales" folder, FYI).
-
-The default skins won't show up automatically - you'll have to feed them into your xml specifications like any other asset. You can follow the example in the RPG Interface demo, or keep reading here for basic documentation.
-
 #####Custom Assets
 
-If you want to provide your own assets, you should put them in your project's "assets" folder, using the same structure you see in the demo project.
+If you want to provide your own assets, you should put them in your project's "assets" folder, using the same structure you see in the [demo project](https://github.com/HaxeFlixel/flixel-demos/tree/master/User%20Interface/RPG%20Interface).
 
 ##FlxUI public functions
 
@@ -291,6 +278,9 @@ The only tags available in a **\<mode>** element are \<hide> and \<show>, which 
 * **Text, input** (FlxUIInputText) - \<text>
 * **Radio button group** (FlxUIRadioGroup) - \<radio_group>
 * **Tabbed menu** (FlxUITabMenu) - \<tab_menu>
+* **Line** (FlxUISprite) - \<line>
+* **Numeric Stepper** (FlxUINumericStepper) - \<numeric_stepper>
+* **Dropdown/Pulldown Menu** (FlxUIDropDownMenu) - \<dropdown_menu>
 
 Lets go over these one by one.
 
@@ -318,6 +308,7 @@ Attributes:
 * width/height
 * slice9 - string, two points that define the slice9 grid, format "x1,y1,x2,y2". For example, "6,6,12,12" works well for the 12x12 chrome images in the demo project.
 * tile - bool, optional (assumes false if not exist). If true, uses tiling rather than scaling for stretching 9-slice cells. Boolean true == "true", not "True" or "TRUE", or "T".
+* smooth - bool, optional (assumes false if not exist). If ture, ensures the scaling uses smooth interpolation rather than nearest-neighbor (stretched blocky pixels).
 
 ###3. Button (FlxUIButton)
 **\<button>**
@@ -349,10 +340,10 @@ A **\<param>** tag takes two attributes: **type** and **value**.
 </button>
 ````
 
-You can add as many <param> tags as you want. When you click this button, it will by default call FlxUI's internal private button callback:
+You can add as many <param> tags as you want. When you click this button, it will by default call FlxUI's internal public static event callback:
 
 ````
-_onClickButton(params:Array<Dynamic>=null):Void
+FlxUI.event(CLICK_EVENT, this, null, params);
 ````
 
 This, in turn, will call getEvent() on whatever IEventGetter "owns" this FlxUI object. In the default setup, this is your FlxStateX. So extend this function in your FlxStateX:
@@ -360,10 +351,11 @@ This, in turn, will call getEvent() on whatever IEventGetter "owns" this FlxUI o
 ````
 getEvent(id:String,sender:Dynamic,data:Dynamic):Void
 ````
-The "sender" parameter will always be this FlxUI instance. On a FlxUIButton click, the other parameters will be:
+The "sender" parameter will be the widget that originated the event -- in this case, the button. On a FlxUIButton click, the other parameters will be:
 
-* **event id**: "click_button"
-* **data**: an **Array\<Dynamic>** containing all the parameters you've defined.
+* **event id**: "click_button" (ie, FlxUITypedButton.CLICK_EVENT)
+* **data**: null
+* **params**: an **Array\<Dynamic>** containing all the parameters you've defined.
 
 Some other interactive widgets can take parameters, and they work in basically the same way.
 
