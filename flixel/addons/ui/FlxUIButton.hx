@@ -65,6 +65,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		super.resize(W, H);
 		if(label != null){
 			label.width = W;
+			label.fieldWidth = W;
 		}
 	}
 	
@@ -127,6 +128,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		if (label != null)
 		{
 			label.width = label.frameWidth = Std.int(width);
+			label.fieldWidth = label.width;
 			label.size = label.size;
 		}
 	}
