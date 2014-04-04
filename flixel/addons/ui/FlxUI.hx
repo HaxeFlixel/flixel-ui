@@ -985,6 +985,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}
 		
+		if (Std.is(thing, FlxUIButton)) {
+			var btn:FlxUIButton = cast thing;
+			if (btn.label != null) {
+				btn.autoCenterLabel();
+			}
+		}
+		
 		if (data.hasNode.param) {
 			if (Std.is(thing, IHasParams)) {
 				var ihp:IHasParams = cast thing;

@@ -510,11 +510,10 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	 */
 	
 	public function autoCenterLabel():Void {
+		
 		if (label != null) {
 			var offX:Float = 0;
 			var offY:Float = 0;
-			
-			offX = (width - label.width);
 			
 			if (Std.is(label, FlxUIText)) {
 				var tlabel:FlxUIText = cast label;

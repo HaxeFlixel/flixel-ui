@@ -46,10 +46,8 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Void->Void) {
 		super(X, Y, null, OnClick);
 		if (Label != null) {
-			
 			//create a FlxUIText label
-			label = new FlxUIText(0, 0, 90, Label, 8);
-			label.wordWrap = false;
+			label = new FlxUIText(0, 0, -1, Label, 8);
 			label.setFormat(null, 8, 0x333333, "center");
 		}
 		resize(width, height);	//force it to be "FlxUI style"
@@ -58,7 +56,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	
 	/**For ILabeled:**/
 	
-	public function set_label(t:FlxUIText):FlxUIText { label = t; return label;}
+	public function set_label(t:FlxUIText):FlxUIText { label = t; return label; }
 	public function get_label():FlxUIText { return label;}	
 	
 	/**For IResizable:**/
