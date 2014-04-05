@@ -517,6 +517,10 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			
 			if (Std.is(label, FlxUIText)) {
 				var tlabel:FlxUIText = cast label;
+				
+				// updates label width to match text width. Fixes rare bug for cpp target.
+				tlabel.width = tlabel.fieldWidth;
+				
 				offX = (width - tlabel.fieldWidth) / 2;
 				offY = (height - tlabel.height) / 2;
 			}else {
@@ -527,9 +531,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			_centerLabelOffset.x = offX;
 			_centerLabelOffset.y = offY;
 			
-			if (Std.is(label, FlxUIText)) {
-				var t:FlxUIText = cast label;
-			}
+			
 		}
 	}
 	
