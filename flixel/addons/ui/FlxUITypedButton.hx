@@ -534,6 +534,11 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		}
 	}
 	
+	public function setCenterLabelOffset(X:Float, Y:Float):Void {
+		_centerLabelOffset.x = X;
+		_centerLabelOffset.y = Y;
+	}
+	
 	public function forceStateHandler(event:String):Void {
 		switch(event) {
 			case OUT_EVENT:		onOutHandler();
