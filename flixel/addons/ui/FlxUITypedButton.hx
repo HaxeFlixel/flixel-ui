@@ -543,6 +543,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			case OUT_EVENT:		onOutHandler();
 			case OVER_EVENT:	onOverHandler();
 			case DOWN_EVENT:	onDownHandler();
+			case CLICK_EVENT:	onUpHandler();
 		}
 	}
 	
