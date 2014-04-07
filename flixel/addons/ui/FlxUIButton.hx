@@ -44,7 +44,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	 * @param	OnClick		The function to call whenever the button is clicked.
 	 */
 	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Void->Void) {
-		super(X, Y, null, OnClick);
+		super(X, Y, OnClick);
 		if (Label != null) {
 			//create a FlxUIText label
 			label = new FlxUIText(0, 0, 80, Label, 8);
