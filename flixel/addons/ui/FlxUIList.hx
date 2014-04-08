@@ -55,19 +55,19 @@ class FlxUIList extends FlxUIGroup
 	 * Creates a scrollable list of widgets
 	 * @param	X			X position of the list
 	 * @param	Y			Y position of the list
+	 * @param	?Widgets	List of widgets themselves (optional)
 	 * @param	W			Width of the invisible "canvas" available for putting widgets in before we have to scroll to see more
 	 * @param	H			Height of the invisible "canvas" available for putting widgets in before we have to scroll to see more
-	 * @param	MoreString	String that says "<X> more..." in your language (must use <X> variable!)
-	 * @param	Stacking	How to stack the widgets? STACK_HORIZONTAL or STACK_VERTICAL
-	 * @param	Spacing		Space between widgets
-	 * @param	?Widgets	List of widgets themselves
-	 * @param	PrevButton	Button to Scroll -
-	 * @param	NextButton	Button to Scroll +
+	 * @param	?MoreString	String that says "<X> more..." in your language (must use <X> variable!)
+	 * @param	?Stacking	How to stack the widgets? STACK_HORIZONTAL or STACK_VERTICAL
+	 * @param	?Spacing	Space between widgets 
 	 * @param	PrevButtonOffset	Offset for Scroll - Button
 	 * @param	NextButtonOffset	Offset for Scroll + Button
+	 * @param	PrevButton	Button to Scroll -
+	 * @param	NextButton	Button to Scroll +
 	 */
 	
-	public function new(X:Float=0,Y:Float=0,?Widgets:Array<IFlxUIWidget>=null,W:Float=0,H:Float=0,?MoreString:String="<X> more...",Stacking:Int=STACK_VERTICAL,Spacing:Float=0,PrevButton:IFlxUIButton=null,NextButton:IFlxUIButton=null,PrevButtonOffset:FlxPoint=null,NextButtonOffset:FlxPoint=null) 
+	public function new(X:Float=0,Y:Float=0,?Widgets:Array<IFlxUIWidget>=null,W:Float=0,H:Float=0,?MoreString:String="<X> more...",?Stacking:Int=STACK_VERTICAL,?Spacing:Float=0,PrevButtonOffset:FlxPoint=null,NextButtonOffset:FlxPoint=null,PrevButton:IFlxUIButton=null,NextButton:IFlxUIButton=null) 
 	{
 		_skipRefresh = true;
 		super(X, Y);
@@ -89,19 +89,17 @@ class FlxUIList extends FlxUIGroup
 			var pButton = new FlxUIButton(0, 0, " ", onClick.bind( -1));
 			if(stacking == STACK_HORIZONTAL){
 				pButton.loadGraphicsUpOverDown(FlxUIAssets.IMG_BUTTON_ARROW_LEFT);
-				pButton.autoCenterLabel();
-				pButton.label.width = 100;
+				pButton.label.width = pButton.label.fieldWidth = 100;
 				pButton.label.text = getMoreString(0);
+				
 				pButton.setAllLabelOffsets(pButton.width - pButton.label.width,
 										   pButton.height + 2);
 				pButton.label.alignment = "right";
 			}else {
 				pButton.loadGraphicsUpOverDown(FlxUIAssets.IMG_BUTTON_ARROW_UP);
-				pButton.autoCenterLabel();
-				pButton.label.width = 100;
+				pButton.label.width = pButton.label.fieldWidth = 100;
 				pButton.label.text = getMoreString(0);
-				pButton.setAllLabelOffsets(pButton.width + 2,
-										   pButton.height - pButton.label.height);
+				pButton.setCenterLabelOffset(pButton.width+2, pButton.height - pButton.label.height);
 				pButton.label.alignment = "left";
 			}
 			prevButton = pButton;
@@ -110,17 +108,17 @@ class FlxUIList extends FlxUIGroup
 			var nButton = new FlxUIButton(0, 0, " ", onClick.bind( 1));
 			if(stacking == STACK_HORIZONTAL){
 				nButton.loadGraphicsUpOverDown(FlxUIAssets.IMG_BUTTON_ARROW_RIGHT);
-				nButton.autoCenterLabel();
-				nButton.label.width = 100;
+				nButton.label.width = nButton.label.fieldWidth = 100;
+				//nButton.autoCenterLabel();
 				nButton.label.text = getMoreString(0);
 				nButton.setAllLabelOffsets(0, nButton.height + 2);
 				nButton.label.alignment = "left";
 			}else {
 				nButton.loadGraphicsUpOverDown(FlxUIAssets.IMG_BUTTON_ARROW_DOWN);
-				nButton.autoCenterLabel();
-				nButton.label.width = 100;
+				nButton.label.width = nButton.label.fieldWidth = 100;
+				//nButton.autoCenterLabel();
 				nButton.label.text = getMoreString(0);
-				nButton.setAllLabelOffsets(nButton.width + 2, 0);
+				nButton.setCenterLabelOffset(nButton.width+2, 0);
 				nButton.label.alignment = "left";
 			}
 			nextButton = nButton;
