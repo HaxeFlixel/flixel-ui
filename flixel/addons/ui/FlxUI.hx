@@ -6,7 +6,10 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.Lib;
 import flixel.addons.ui.FlxUI.MaxMinSize;
+import flixel.addons.ui.FlxUIButton.ButtonLabelStyle;
 import flixel.addons.ui.FlxUIDropDownMenu;
+import flixel.addons.ui.FlxUIText.BorderDef;
+import flixel.addons.ui.FlxUIText.FontDef;
 import flixel.addons.ui.interfaces.IEventGetter;
 import flixel.addons.ui.interfaces.IFireTongue;
 import flixel.addons.ui.interfaces.IFlxUIButton;
@@ -663,6 +666,18 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		return mode;
 	}
+
+	public function getLabelStyleFromDefinition(key:String, recursive:Bool = true):ButtonLabelStyle{
+		var definition:Fast = getDefinition(key, recursive);
+		if (definition != null) {
+			var fontDef:FontDef = _loadFontDef(definition);
+			var align:String = U.xml_str(definition.x, "align"); if (align == "") { align = null;}
+			var color:Int = _loadColor(definition);
+			var border:BorderDef = _loadBorder(definition);
+			return new ButtonLabelStyle(fontDef, align, color, border);
+		}
+		return null;
+	}
 	
 	public function getDefinition(key:String,recursive:Bool=true):Fast{
 		var definition:Fast = _definition_index.get(key);
@@ -1302,26 +1317,19 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var size:Int = U.xml_i(data.x, "size"); if (size == 0) { size = 8;}
 		var color:Int = _loadColor(data);
 		
-		var border:Array<Dynamic> = _loadBorder(data);
+		var border:BorderDef = _loadBorder(data);
 		
 		var ft:IFlxUIWidget;
 		if(input == false){
 			var ftu:FlxUIText = new FlxUIText(0, 0, W, text, size);
 			ftu.setFormat(the_font, size, color, align);
-			ftu.borderStyle = border[0];
-			ftu.borderColor = border[1];
-			ftu.borderSize = border[2];
-			ftu.borderQuality = border[3];
-
+			border.apply(ftu);
 			ftu.drawFrame();
 			ft = ftu;
 		}else {
 			var fti:FlxUIInputText = new FlxUIInputText(0, 0, W, text);
 			fti.setFormat(the_font, size, color, align);
-			fti.borderStyle = border[0];
-			fti.borderColor = border[1];
-			fti.borderSize = border[2];
-			fti.borderQuality = border[3];
+			border.apply(fti);
 			fti.drawFrame();
 			ft = fti;
 		}
@@ -2599,41 +2607,43 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		_delta(thing, X, Y);
 	}	
 	
-	private function _loadBorder(data:Fast):Array<Dynamic>
+	private function _loadBorder(data:Fast):BorderDef
 	{
 		var border_str:String = U.xml_str(data.x, "border");
 		var border_style:Int = FlxText.BORDER_NONE;
 		var border_color:Int = _loadColor(data, "border_color", 0);
 		var border_size:Int = U.xml_i(data.x, "border_size", 1);
 		var border_quality:Float = U.xml_f(data.x, "border_quality", 0);
+
+		var borderDef:BorderDef = new BorderDef(border_style, border_color, border_size, border_quality);
 		
 		switch(border_str) {
-			case "shadow": border_style = FlxText.BORDER_SHADOW;
-			case "outline": border_style = FlxText.BORDER_OUTLINE;
-			case "outline_fast": border_style = FlxText.BORDER_OUTLINE_FAST;
+			case "shadow": borderDef.style = FlxText.BORDER_SHADOW;
+			case "outline": borderDef.style = FlxText.BORDER_OUTLINE;
+			case "outline_fast": borderDef.style = FlxText.BORDER_OUTLINE_FAST;
 			case "":
 				//no "border" value, check for shortcuts:
 				//try "outline"
 				border_str = U.xml_str(data.x, "shadow", true, "");
 				if (border_str != "") {
-					border_style = FlxText.BORDER_SHADOW;
-					border_color = U.parseHex(border_str, false, true);
+					borderDef.style = FlxText.BORDER_SHADOW;
+					borderDef.color = U.parseHex(border_str, false, true);
 				}else{
 					border_str = U.xml_str(data.x, "outline", true, "");
 					if (border_str != "") {
-						border_style = FlxText.BORDER_OUTLINE;
-						border_color = U.parseHex(border_str, false, true);
+						borderDef.style = FlxText.BORDER_OUTLINE;
+						borderDef.color = U.parseHex(border_str, false, true);
 					}else{
 						border_str = U.xml_str(data.x, "outline_fast");
 						if (border_str != "") {
-							border_style = FlxText.BORDER_OUTLINE_FAST;
-							border_color = U.parseHex(border_str, false, true);
+							borderDef.style = FlxText.BORDER_OUTLINE_FAST;
+							borderDef.color = U.parseHex(border_str, false, true);
 						}
 					}
 				}	
 		}	
 		
-		return [border_style, border_color, border_size, border_quality];
+		return borderDef;
 	}
 	
 	private function _loadColor(data:Fast,colorName:String="color",_default:Int=0xffffffff):Int {
@@ -2644,6 +2654,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var color:Int = _default;
 		if (colorStr != "") { color = U.parseHex(colorStr, true); }
 		return color;
+	}
+	
+	private function _loadFontDef(data:Fast):FontDef{
+		var fontFace:String = _loadFontFace(data);
+		var fontStyle:String = U.xml_str(data.x, "style");
+		var fontSize:Int = U.xml_i(data.x, "size", 8);
+		return new FontDef(fontFace, fontSize, fontStyle);
 	}
 	
 	private function _loadFontFace(data:Fast):String{
@@ -2739,7 +2756,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 			var labelWidth:Float = U.xml_f(info.x, "width");
 			
-			var border:Array<Dynamic> = _loadBorder(info);
+			var border:BorderDef = _loadBorder(info);
 			
 			var align:String = U.xml_str(info.x, "align", true); if (align == "") { align = null;}
 			
@@ -2796,10 +2813,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				
 				the_label.setFormat(the_font, size, color, align);
 				
-				the_label.borderStyle = border[0];
-				the_label.borderColor = border[1];
-				the_label.borderSize = border[2];
-				the_label.borderQuality = border[3];
+				the_label.borderStyle = border.style;
+				the_label.borderColor = border.color;
+				the_label.borderSize = border.size;
+				the_label.borderQuality = border.quality;
 				
 				if (Std.is(the_label, FlxUIText)) {
 					var ftu:FlxUIText = cast the_label;

@@ -3,7 +3,8 @@ package flixel.addons.ui;
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import flixel.addons.ui.FlxUIButton.LabelStyle;
+import flixel.addons.ui.FlxUIText.BorderDef;
+import flixel.addons.ui.FlxUIText.FontDef;
 import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.ILabeled;
@@ -26,14 +27,13 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 {
 	private var _noIconGraphicsBkup:BitmapData;
 	
-	public var up_style:LabelStyle = null;
-	public var over_style:LabelStyle = null;
-	public var down_style:LabelStyle = null;
+	public var up_style:ButtonLabelStyle = null;
+	public var over_style:ButtonLabelStyle = null;
+	public var down_style:ButtonLabelStyle = null;
 	
-	public var up_toggle_style:LabelStyle = null;
-	public var over_toggle_style:LabelStyle = null;
-	public var down_toggle_style:LabelStyle = null;
-	
+	public var up_toggle_style:ButtonLabelStyle = null;
+	public var over_toggle_style:ButtonLabelStyle = null;
+	public var down_toggle_style:ButtonLabelStyle = null;
 	
 	/**
 	 * Creates a new FlxUIButton.
@@ -139,12 +139,20 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		if (label != null) {
 			if (toggled && down_toggle_style != null) {
 				label.color = down_toggle_style.color;
-				label.borderStyle = down_toggle_style.borderStyle;
-				label.borderColor = down_toggle_style.borderColor;
+				if (down_toggle_style != null) {
+					label.borderStyle = down_toggle_style.border.style;
+					label.borderColor = down_toggle_style.border.color;
+					label.borderSize = down_toggle_style.border.size;
+					label.borderQuality = down_toggle_style.border.quality;
+				}
 			}else if (!toggled && down_style != null) {
 				label.color = down_style.color;
-				label.borderStyle = down_style.borderStyle;
-				label.borderColor = down_style.borderColor;
+				if(down_style != null){
+					label.borderStyle = down_style.border.style;
+					label.borderColor = down_style.border.color;
+					label.borderSize = down_style.border.size;
+					label.borderQuality = down_style.border.quality;
+				}
 			}
 		}
 	}
@@ -155,12 +163,20 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		if (label != null) {
 			if (toggled && over_toggle_style != null) {
 				label.color = over_toggle_style.color;
-				label.borderStyle = over_toggle_style.borderStyle;
-				label.borderColor = over_toggle_style.borderColor;
+				if(over_toggle_style != null){
+					label.borderStyle = over_toggle_style.border.style;
+					label.borderColor = over_toggle_style.border.color;
+					label.borderSize = over_toggle_style.border.size;
+					label.borderQuality = over_toggle_style.border.quality;
+				}
 			}else if (!toggled && over_style != null) {
 				label.color = over_style.color;
-				label.borderStyle = over_style.borderStyle;
-				label.borderColor = over_style.borderColor;
+				if(over_style != null){
+					label.borderStyle = over_style.border.style;
+					label.borderColor = over_style.border.color;
+					label.borderSize = over_style.border.size;
+					label.borderQuality = over_style.border.quality;
+				}
 			}
 		}
 	}
@@ -171,12 +187,20 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		if (label != null) {
 			if (toggled && up_toggle_style != null) {
 				label.color = up_toggle_style.color;
-				label.borderStyle = up_toggle_style.borderStyle;
-				label.borderColor = up_toggle_style.borderColor;
+				if(up_toggle_style.border != null){
+					label.borderStyle = up_toggle_style.border.style;
+					label.borderColor = up_toggle_style.border.color;
+					label.borderSize = up_toggle_style.border.size;
+					label.borderQuality = up_toggle_style.border.quality;
+				}
 			}else if (!toggled && up_style != null) {
 				label.color = up_style.color;
-				label.borderStyle = up_style.borderStyle;
-				label.borderColor = up_style.borderColor;
+				if(up_style.border != null){
+					label.borderStyle = up_style.border.style;
+					label.borderColor = up_style.border.color;
+					label.borderSize = up_style.border.size;
+					label.borderQuality = up_style.border.quality;
+				}
 			}
 		}
 	}
@@ -187,26 +211,51 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		if (label != null) {
 			if (toggled && up_toggle_style != null) {
 				label.color = up_toggle_style.color;
-				label.borderStyle = up_toggle_style.borderStyle;
-				label.borderColor = up_toggle_style.borderColor;
+				if(up_toggle_style.border != null){
+					label.borderStyle = up_toggle_style.border.style;
+					label.borderColor = up_toggle_style.border.color;
+					label.borderSize = up_toggle_style.border.size;
+					label.borderQuality = up_toggle_style.border.quality;
+				}
 			}else if (!toggled && up_style != null) {
 				label.color = up_style.color;
-				label.borderStyle = up_style.borderStyle;
-				label.borderColor = up_style.borderColor;
+				if(up_style.border != null){
+					label.borderStyle = up_style.border.style;
+					label.borderColor = up_style.border.color;
+					label.borderSize = up_style.border.size;
+					label.borderQuality = up_style.border.quality;
+				}
 			}
 		}
 	}
 }
 
-class LabelStyle 
+class ButtonLabelStyle 
 {
-	public var color:Int;
-	public var borderStyle:Int;
-	public var borderColor:Int;
+	public var font:FontDef;
+	public var border:BorderDef;
+	public var color:Null<Int>;	
+	public var align:String;
 	
-	public function new(Color:Int, BorderStyle:Int, BorderColor:Int) {
-		color = Color;
-		borderStyle = BorderStyle;
-		borderColor = BorderColor;
+	public function new(?Font:FontDef, ?Align:String, ?Color:Int, ?Border:BorderDef) {
+		font = Font;
+		border = Border;
+		color = Color;		
+		align = Align;
+	}
+	
+	public function apply(f:FlxText):Void {
+		if (font != null) {
+			font.apply(f);
+		}
+		if (border != null) {
+			border.apply(f);
+		}
+		if (color != null) {
+			f.color = color;
+		}
+		if (align != null) {
+			f.alignment = align;
+		}
 	}
 }

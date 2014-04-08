@@ -21,3 +21,40 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget
 		calcFrame();
 	}
 }
+
+class FontDef
+{
+	public var name:String;
+	public var size:Int;
+	public var style:String;
+	
+	public function new(Name:String, Size:Int, Style:String) {
+		name = Name;
+		size = Size;
+		style = Style;
+	}
+	
+	public function apply(f:FlxText):Void {
+		f.text = name;
+		f.size = size;
+	}
+}
+
+class BorderDef
+{
+	public var style:Int; 
+	public var color:Int; 
+	public var size:Int;
+	public var quality:Float;
+	
+	public function new(Style:Int, Color:Int, Size:Int=1, Quality:Float=1) {
+		style = Style;
+		color = Color;
+		size = Size;
+		quality = Quality;
+	}
+	
+	public function apply(f:FlxText):Void {
+		f.setBorderStyle(style, color, size, quality);
+	}
+}
