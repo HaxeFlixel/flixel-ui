@@ -133,8 +133,8 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIClic
 	
 	/**For ILabeled:**/
 	
-	public function set_label(t:FlxUIText):FlxUIText { if (button == null) { return null;} button.label = t; return button.label; }
-	public function get_label():FlxUIText { if (button == null) { return null;} return button.label; }
+	public function setLabel(t:FlxUIText):FlxUIText { if (button == null) { return null;} button.label = t; return button.label; }
+	public function getLabel():FlxUIText { if (button == null) { return null;} return button.label; }
 	
 	private override function set_visible(Value:Bool):Bool
 	{

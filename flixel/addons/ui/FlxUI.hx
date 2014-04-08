@@ -970,7 +970,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 							  label = getText(label, context, true, code);
 							  if (Std.is(thing, ILabeled)) {
 								  var b:ILabeled = cast thing;
-								  b.get_label().text = label;
+								  b.getLabel().text = label;
 							  }
 				case "width": new_width = _loadWidth(data);
 				case "height": new_height = _loadHeight(data);
