@@ -56,8 +56,8 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	
 	/**For ILabeled:**/
 	
-	public function set_label(t:FlxUIText):FlxUIText { label = t; return label;}
-	public function get_label():FlxUIText { return label;}	
+	public function setLabel(t:FlxUIText):FlxUIText { label = t; return label;}
+	public function getLabel():FlxUIText { return label;}	
 	
 	/**For IResizable:**/
 	
