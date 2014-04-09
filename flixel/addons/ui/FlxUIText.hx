@@ -24,18 +24,18 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget
 
 class FontDef
 {
-	public var name:String;
-	public var size:Int;
-	public var style:String;
+	public var name:String=null;
+	public var size:Null<Int>=null;
+	public var style:String=null;
 	
-	public function new(Name:String, Size:Int, Style:String) {
+	public function new(Name:String, ?Size:Null<Int>, ?Style:String) {
 		name = Name;
 		size = Size;
 		style = Style;
 	}
 	
 	public function apply(f:FlxText):Void {
-		f.text = name;
+		f.font = name;
 		f.size = size;
 	}
 }

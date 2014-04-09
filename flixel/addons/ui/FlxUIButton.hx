@@ -232,15 +232,15 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 
 class ButtonLabelStyle 
 {
-	public var font:FontDef;
-	public var border:BorderDef;
-	public var color:Null<Int>;	
-	public var align:String;
+	public var font:FontDef=null;
+	public var border:BorderDef=null;
+	public var color:Null<Int>=null;
+	public var align:String=null;
 	
 	public function new(?Font:FontDef, ?Align:String, ?Color:Int, ?Border:BorderDef) {
 		font = Font;
 		border = Border;
-		color = Color;		
+		color = Color;
 		align = Align;
 	}
 	
