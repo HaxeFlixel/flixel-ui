@@ -63,7 +63,21 @@ class FlxInputText extends FlxText
 	/**
 	 * The caret's color. Has the same color as the text by default.
 	 */
-	public var caretColor:Int;
+	public var caretColor(default, set):Int;
+	public function set_caretColor(i:Int):Int 
+	{
+		caretColor = i;
+		dirty = true;
+		return caretColor;
+	}
+	
+	public var caretWidth(default, set):Int = 1;
+	public function set_caretWidth(i:Int):Int
+	{
+		caretWidth = i;
+		dirty = true;
+		return caretWidth;
+	}
 	
 	public var params(default, set):Array<Dynamic>;
 	
@@ -150,6 +164,8 @@ class FlxInputText extends FlxText
 	 * @param	Width			The width of the text object (height is determined automatically).
 	 * @param	Text			The actual text you would like to display initially.
 	 * @param   size			Initial size of the font	 
+	 * @param	TextColor		The color of the text
+	 * @param	BackgroundColor	The color of the background (FlxColor.TRANSPARENT for no background color)
 	 * @param	EmbeddedFont	Whether this text field uses embedded fonts or not
 	 */
 	public function new(X:Float = 0, Y:Float = 0, Width:Int = 150, ?Text:String, size:Int = 8, TextColor:Int = FlxColor.BLACK, BackgroundColor:Int = FlxColor.WHITE, EmbeddedFont:Bool = true)
@@ -167,13 +183,14 @@ class FlxInputText extends FlxText
 		caretColor = TextColor;
 		
 		caret = new FlxSprite();
-		caret.makeGraphic(1, Std.int(size + 2));
-		caret.color = caretColor;
+		caret.makeGraphic(caretWidth, Std.int(size + 2));
 		caretIndex = 0;
 		
 		hasFocus = false;
-		fieldBorderSprite = new FlxSprite(X, Y);
-		backgroundSprite = new FlxSprite(X, Y);
+		if(background){
+			fieldBorderSprite = new FlxSprite(X, Y);
+			backgroundSprite = new FlxSprite(X, Y);
+		}
 		
 		lines = 1;
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
@@ -294,7 +311,8 @@ class FlxInputText extends FlxText
 				{
 					var s:String;
 					text = text.substring(0, caretIndex - 1) + text.substring(caretIndex);
-					caretIndex --;
+					caretIndex--;
+					dirty = true;
 					onChange(BACKSPACE_ACTION);
 				}
 			}
@@ -522,6 +540,54 @@ class FlxInputText extends FlxText
 				backgroundSprite.visible = false;
 			}
 		}
+		
+		if (caret != null)
+		{
+			//Generate the properly sized caret and also draw a border that matches that of the textfield (if a border style is set)
+			//borderQuality can be safely ignored since the caret is always a rectangle
+			
+			var cw:Int = caretWidth;		//Basic size of the caret
+			var ch:Int = Std.int(size+2);
+			
+			//Make sure alpha channels are correctly set
+			var borderC:Int = (0xff000000 | (borderColor & 0x00ffffff));
+			var caretC:Int = (0xff000000 | (caretColor & 0x00ffffff));
+			
+			//Generate unique key for the caret so we don't cause weird bugs if someone makes some random flxsprite of this size and color
+			var caretKey:String = "caret" + cw + "x" + ch + "c:" + caretC + "b:" + borderStyle+"," + borderSize+"," + borderC;
+			switch(borderStyle) 
+			{
+				case FlxText.BORDER_NONE:
+					//No border, just make the caret
+					caret.makeGraphic(cw, ch, caretC,false,caretKey);
+					caret.offset.x = caret.offset.y = 0;
+				case FlxText.BORDER_SHADOW:
+					//Shadow offset to the lower-right
+					cw += Std.int(borderSize);
+					ch += Std.int(borderSize);		//expand canvas on one side for shadow
+					caret.makeGraphic(cw, ch, FlxColor.TRANSPARENT,false, caretKey);	//start with transparent canvas
+					var r:Rectangle = new Rectangle(borderSize, borderSize, caretWidth, Std.int(size+2));
+					caret.pixels.fillRect(r, borderC);	//draw shadow
+					r.x = r.y = 0;
+					caret.pixels.fillRect(r, caretC);	//draw caret
+					caret.offset.x = caret.offset.y = 0;
+				case FlxText.BORDER_OUTLINE_FAST,FlxText.BORDER_OUTLINE:
+					//Border all around it
+					cw += Std.int(borderSize * 2);
+					ch += Std.int(borderSize * 2);	//expand canvas on both sides
+					caret.makeGraphic(cw, ch, borderC, false, caretKey);	//start with borderColor canvas
+					var r:Rectangle = new Rectangle(borderSize, borderSize, caretWidth, Std.int(size+2));
+					r.setTo(borderSize, borderSize, caretWidth, Std.int(size+2));
+					caret.pixels.fillRect(r, caretC);	//draw caret
+					//we need to offset caret's drawing position since the caret is now larger than normal
+					caret.offset.x = caret.offset.y = borderSize;
+			}
+			//Update width/height so caret's dimensions match its pixels
+			caret.width = cw;
+			caret.height = ch;
+			
+			caretIndex = caretIndex;	//force this to update
+		}
 	}
 	
 	/**
@@ -632,6 +698,19 @@ class FlxInputText extends FlxText
 	
 	private function set_caretIndex(newCaretIndex:Int):Int
 	{
+		var offx:Float = 0;
+		
+		var alignStr:String = "left";
+		if (_defaultFormat != null && _defaultFormat.align != null) {
+			alignStr = alignment;
+		}
+		
+		switch(alignStr) {
+			case "right"	: offx = _textField.width - _textField.textWidth;
+			case "center"	: offx = (_textField.width - _textField.textWidth) / 2;
+			default			: offx = 0;
+		}
+		
 		caretIndex = newCaretIndex;
 		
 		// If caret is too far to the right something is wrong
@@ -654,7 +733,7 @@ class FlxInputText extends FlxText
 				#end
 				if (boundaries != null) 
 				{
-					caret.x = boundaries.left + x;
+					caret.x = offx + boundaries.left + x;
 					caret.y = boundaries.top + y;
 				}
 			}
@@ -667,14 +746,18 @@ class FlxInputText extends FlxText
 				#end
 				if (boundaries != null)
 				{
-					caret.x = boundaries.right + x;
+					caret.x = offx + boundaries.right + x;
 					caret.y = boundaries.top + y;
+					
+					trace("text length = " + text.length);
+					trace("caretIndex = " + caretIndex);
+					trace("boundaries.right = " + boundaries.right);
 				}
 				// Text box is empty
 				else if (text.length == 0) 
 				{ 
 					// 2 px gutters
-					caret.x = x + 2; 
+					caret.x = x + offx + 2; 
 					caret.y = y + 2; 
 				}
 			}

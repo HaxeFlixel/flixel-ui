@@ -26,6 +26,7 @@ import flixel.FlxState;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxArrayUtil;
+import flixel.util.FlxColor;
 import flixel.util.FlxPoint;
 import flixel.util.FlxStringUtil;
 import haxe.xml.Fast;
@@ -1319,6 +1320,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var border:BorderDef = _loadBorder(data);
 		
+		var backgroundColor:Int = U.parseHex(U.xml_str(data.x, "background", true, "0x00000000"), true, true, 0x00000000);
+		
 		var ft:IFlxUIWidget;
 		if(input == false){
 			var ftu:FlxUIText = new FlxUIText(0, 0, W, text, size);
@@ -1327,7 +1330,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			ftu.drawFrame();
 			ft = ftu;
 		}else {
-			var fti:FlxUIInputText = new FlxUIInputText(0, 0, W, text);
+			var fti:FlxUIInputText = new FlxUIInputText(0, 0, W, text, size, color, backgroundColor);
 			fti.setFormat(the_font, size, color, align);
 			border.apply(fti);
 			fti.drawFrame();
