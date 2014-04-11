@@ -706,7 +706,7 @@ class FlxInputText extends FlxText
 		}
 		
 		switch(alignStr) {
-			case "right"	: offx = _textField.width - _textField.textWidth;
+			case "right"	: offx = 0;
 			case "center"	: offx = (_textField.width - _textField.textWidth) / 2;
 			default			: offx = 0;
 		}
@@ -759,6 +759,9 @@ class FlxInputText extends FlxText
 					// 2 px gutters
 					caret.x = x + offx + 2; 
 					caret.y = y + 2; 
+					if (alignStr == "right") {
+						caret.x = x + _textField.width - 2;
+					}
 				}
 			}
 		}
