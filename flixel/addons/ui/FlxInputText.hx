@@ -748,10 +748,6 @@ class FlxInputText extends FlxText
 				{
 					caret.x = offx + boundaries.right + x;
 					caret.y = boundaries.top + y;
-					
-					trace("text length = " + text.length);
-					trace("caretIndex = " + caretIndex);
-					trace("boundaries.right = " + boundaries.right);
 				}
 				// Text box is empty
 				else if (text.length == 0) 
