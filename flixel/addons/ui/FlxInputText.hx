@@ -333,6 +333,10 @@ class FlxInputText extends FlxText
 			// Actually add some text
 			else 
 			{
+				if (e.charCode == 0)  // non-printable characters crash String.fromCharCode
+				{
+					return;
+				}
 				var newText:String = filter(String.fromCharCode(e.charCode));
 				
 				if (newText.length > 0 && (maxLength == 0 || (text.length + newText.length) < maxLength)) 
