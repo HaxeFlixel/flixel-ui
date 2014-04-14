@@ -153,6 +153,11 @@ class FlxInputText extends FlxText
 	 */
 	private var fieldBorderSprite:FlxSprite;
 	
+	/**
+	 * The left- and right- most fully visible character indeces
+	 */
+	private var _scrollBoundIndeces:{ left:Int, right:Int }={left:0,right:0};
+	
 	//workaround to deal with non-availability of getCharIndexAtPoint or getCharBoundaries on cpp/neko targets
 	#if sys
 	private var _charBoundaries:Array<FlxRect>;
@@ -194,6 +199,8 @@ class FlxInputText extends FlxText
 		
 		lines = 1;
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+		
+		text = Text;		//ensure set_text is called to avoid bugs (like not preparing _charBoundaries on sys target, making it impossible to click)
 		
 		calcFrame();
 	}
@@ -421,6 +428,67 @@ class FlxInputText extends FlxText
 	#end
 	}
 	
+	
+	private function getCharBoundaries(charIndex:Int):Rectangle 
+	#if flash
+	{
+		return _textField.getCharBoundaries(charIndex);
+	}
+	#elseif sys
+	{
+		if (_charBoundaries != null && charIndex >= 0 && charIndex < _charBoundaries.length) 
+		{
+			var r:Rectangle = new Rectangle();
+			_charBoundaries[charIndex].copyToFlash(r);
+			return r;
+		}
+		return null;
+	}
+	#end
+	
+	private override function set_text(Text:String):String
+	#if flash
+	{
+		var return_text:String = super.set_text(Text);
+		onSetTextCheck();
+		return return_text;
+	}
+	#elseif sys
+	{
+		var return_text:String = super.set_text(Text);
+		var numChars:Int = Text.length;
+		prepareCharBoundaries(numChars);
+		_textField.text = "";
+		var textH:Float = 0;
+		var textW:Float = 0;
+		var lastW:Float = 0;
+		
+		//Flash textFields have a "magic number" 2 pixel gutter all around
+		//It does not seem to vary with font, size, border, etc, and does not seem to be customizable.
+		//We simply reproduce this behavior here
+		var magicX:Float = 2;
+		var magicY:Float = 2;
+		
+		for (i in 0...numChars) 
+		{
+			_textField.appendText(Text.substr(i, 1));	//add a character
+			textW = _textField.textWidth;				//count up total text width
+			if (i == 0) 
+			{
+				textH = _textField.textHeight;			//count height after first char
+			}
+			_charBoundaries[i].x = magicX + lastW;			//place x at end of last character
+			_charBoundaries[i].y = magicY;					//place y at zero
+			_charBoundaries[i].width = (textW - lastW);	//place width at (width so far) minus (last char's end point)
+			_charBoundaries[i].height = textH;
+			lastW = textW;
+		}
+		_textField.text = Text;
+		onSetTextCheck();
+		return return_text;
+	}
+	#end
+	
 	#if sys
 	//WORKAROUND since this function isn't available for openfl-native TextFields, we just hack it ourselves
 	private function getCharIndexAtPoint(X:Float, Y:Float):Int 
@@ -439,43 +507,6 @@ class FlxInputText extends FlxText
 		}
 		
 		return -1;
-	}
-	
-	private function getCharBoundaries(charIndex:Int):Rectangle 
-	{
-		if (_charBoundaries != null && charIndex > 0 && charIndex < _charBoundaries.length) 
-		{
-			var r:Rectangle = new Rectangle();
-			return _charBoundaries[charIndex].copyToFlash(r);
-		}
-		return null;
-	}
-	
-	private override function set_text(Text:String):String
-	{
-		var return_text:String = super.set_text(Text);
-		var numChars:Int = Text.length;
-		prepareCharBoundaries(numChars);
-		_textField.text = "";
-		var textH:Float = 0;
-		var textW:Float = 0;
-		var lastW:Float = 0;
-		for (i in 0...numChars) 
-		{
-			_textField.appendText(Text.substr(i, 1));	//add a character
-			textW = _textField.textWidth;				//count up total text width
-			if (i == 0) 
-			{
-				textH = _textField.textHeight;			//count height after first char
-			}
-			_charBoundaries[i].x = lastW;				//place x at end of last character
-			_charBoundaries[i].y = 0;					//place y at zero
-			_charBoundaries[i].width = (textW - lastW);	//place width at (width so far) minus (last char's end point)
-			_charBoundaries[i].height = textH;
-			lastW = textW;
-		}
-		_textField.text = Text;
-		return return_text;
 	}
 	
 	private function prepareCharBoundaries(numChars:Int):Void 
@@ -503,6 +534,58 @@ class FlxInputText extends FlxText
 		}
 	}
 	#end
+	
+	/**
+	 * Called every time the text is changed (for both flash/cpp) to update scrolling, etc
+	 */
+	
+	private function onSetTextCheck():Void {
+		var boundary:Rectangle = null;
+		if (caretIndex == -1) {
+			boundary = getCharBoundaries(text.length - 1);
+		}else {
+			boundary = getCharBoundaries(caretIndex);
+		}
+		
+		if (boundary != null) {
+			var alignStr:String = getAlignStr();
+			
+			//Check to see if the text is visually overflowing
+			var diffW:Int = Std.int((_textField.width - 2) - boundary.right); //Flash supplies 4px magic # padding to text field size: boundary.right is already offset by 2
+			
+			_textField.scrollH = 0;
+			
+			switch(alignStr) {
+				case "center":
+					_textField.scrollH = diffW;
+					//for center case, we will need to offset by (-diffW/2) in calcFrame() 
+					calcFrame(true);
+				case "left":
+					_textField.scrollH = diffW;
+					calcFrame(true);
+				case "right":
+					//do nothing
+			}
+		}
+		
+		_scrollBoundIndeces.left = 9999999;
+		_scrollBoundIndeces.right = -1;
+		
+		for (i in 0...text.length) {
+			boundary = getCharBoundaries(i);
+			if (i < _scrollBoundIndeces.left) {
+				if (boundary.left - _textField.scrollH > 0) {
+					_scrollBoundIndeces.left = i;
+				}
+			}
+			if (i > _scrollBoundIndeces.right) {
+				if (boundary.right - _textField.scrollH < _textField.width) {
+					_scrollBoundIndeces.right = i;
+				}
+			}
+		}
+		trace("_scrollBoundIndeces = L:" + _scrollBoundIndeces.left + ", R:" + _scrollBoundIndeces.right);
+	}
 	
 	/**
 	 * Draws the frame of animation for the input text.
@@ -696,14 +779,23 @@ class FlxInputText extends FlxText
 		return hasFocus = newFocus;
 	}	
 	
-	private function set_caretIndex(newCaretIndex:Int):Int
-	{
-		var offx:Float = 0;
-		
+	private function getAlignStr():String {
 		var alignStr:String = "left";
 		if (_defaultFormat != null && _defaultFormat.align != null) {
 			alignStr = alignment;
 		}
+		return alignStr;
+	}
+	
+	private function set_caretIndex(newCaretIndex:Int):Int
+	{
+		
+		#if sys
+			text = text;	//force it to redraw so the character boundaries are correctly calculated
+		#end
+		var offx:Float = 0;
+		
+		var alignStr:String = getAlignStr();
 		
 		switch(alignStr) {
 			case "right"	: offx = 0;
@@ -726,11 +818,7 @@ class FlxInputText extends FlxText
 			
 			// Caret is not to the right of text
 			if (caretIndex < text.length) { 
-				#if flash
-				boundaries = _textField.getCharBoundaries(caretIndex);
-				#elseif sys
 				boundaries = getCharBoundaries(caretIndex);
-				#end
 				if (boundaries != null) 
 				{
 					caret.x = offx + boundaries.left + x;
@@ -739,19 +827,11 @@ class FlxInputText extends FlxText
 			}
 			// Caret is to the right of text
 			else { 
-				#if flash
-				boundaries = _textField.getCharBoundaries(caretIndex - 1);
-				#elseif sys
 				boundaries = getCharBoundaries(caretIndex - 1);
-				#end
 				if (boundaries != null)
 				{
 					caret.x = offx + boundaries.right + x;
 					caret.y = boundaries.top + y;
-					
-					trace("text length = " + text.length);
-					trace("caretIndex = " + caretIndex);
-					trace("boundaries.right = " + boundaries.right);
 				}
 				// Text box is empty
 				else if (text.length == 0) 
@@ -765,6 +845,8 @@ class FlxInputText extends FlxText
 				}
 			}
 		}
+		
+		caret.x -= _textField.scrollH;
 		
 		// Make sure the caret doesn't leave the textfield on single-line input texts
 		if ((lines == 1) && (caret.x + caret.width) > (x + width)) 
