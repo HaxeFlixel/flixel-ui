@@ -46,9 +46,15 @@ class FlxInputText extends FlxText
 	
 	/**
 	 * This regular expression will filter out (remove) everything that matches. 
-	 * This is activated by setting filterMode = FlxInputText.CUSTOM_FILTER.
-	 */
-	public var customFilterPattern:EReg;
+	* Automatically sets filterMode = FlxInputText.CUSTOM_FILTER.
+	*/
+	public var customFilterPattern(default,set):EReg;
+	public function set_customFilterPattern(cfp:EReg)
+	{
+		customFilterPattern = cfp;
+		filterMode = CUSTOM_FILTER;
+		return customFilterPattern;
+	}
 	
 	/**
 	 * A function called whenever the value changes from user input, or enter is pressed
