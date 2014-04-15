@@ -680,6 +680,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return null;
 	}
 	
+	public function getLabelStyleFromData(data:Fast):ButtonLabelStyle {
+		var fontDef:FontDef = _loadFontDef(data);
+		var align:String = U.xml_str(data.x, "align"); if (align == "") { align = null; }
+		var color:Int = _loadColor(data);
+		var border:BorderDef = _loadBorder(data);
+		return new ButtonLabelStyle(fontDef, align, color, border);
+	}
+	
 	public function getDefinition(key:String,recursive:Bool=true):Fast{
 		var definition:Fast = _definition_index.get(key);
 		if (definition == null && recursive && _superIndexUI != null) {
@@ -970,6 +978,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var context:String = "";
 		var code:String = "";
+		
+		var labelStyleChanged:Bool = false;
 		
 		for (attribute in data.x.attributes()) {
 			switch(attribute) {
@@ -1331,7 +1341,30 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			ft = ftu;
 		}else {
 			var fti:FlxUIInputText = new FlxUIInputText(0, 0, W, text, size, color, backgroundColor);
+			
+			var force_case:String = U.xml_str(data.x, "force_case", true, "");
+			var forceCase:Int;
+			switch(force_case) {
+				case "u", "upper", "upper_case", "uppercase": forceCase = FlxInputText.UPPER_CASE;
+				case "l", "lower", "lower_case", "lowercase": forceCase = FlxInputText.LOWER_CASE;
+				default: forceCase = FlxInputText.ALL_CASES;
+			}
+			
+			var filter:String = U.xml_str(data.x, "filter", true, "");
+			var filterMode:Int;
+			while (filter.indexOf("_") != -1) {
+				filter = StringTools.replace(filter, "_", "");	//strip out any underscores
+			}
+			switch(filter) {
+				case "a", "alpha", "onlyalpha": filterMode = FlxInputText.ONLY_ALPHA;
+				case "n", "num", "numeric", "onlynumeric": filterMode = FlxInputText.ONLY_NUMERIC;
+				case "an", "alphanum", "alphanumeric", "onlyalphanumeric": filterMode = FlxInputText.ONLY_ALPHANUMERIC;
+				default: filterMode = FlxInputText.NO_FILTER;
+			}
+			
 			fti.setFormat(the_font, size, color, align);
+			fti.forceCase = forceCase;
+			fti.filterMode = filterMode;
 			border.apply(fti);
 			fti.drawFrame();
 			ft = fti;

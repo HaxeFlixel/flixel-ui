@@ -588,7 +588,6 @@ class FlxInputText extends FlxText
 				}
 			}
 		}
-		trace("_scrollBoundIndeces = L:" + _scrollBoundIndeces.left + ", R:" + _scrollBoundIndeces.right);
 	}
 	
 	/**
