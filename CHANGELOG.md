@@ -15,6 +15,7 @@
     * Added "round_labels" parameter for better bitmap font rendering, true by default
     * Fixed bug where non-toggling buttons still had toggling behavior
     * Fixed "first frame flutter" where label correctly positions only after first update()
+    * Newly constructed unstyled instances use default flixel-ui assets immediately
 * FlxUIButton
     * Resizing now updates label's width AND fieldWidth
 * FlxInputText/FlxUIInputText:
