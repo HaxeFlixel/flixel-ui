@@ -189,8 +189,8 @@ class FlxInputText extends FlxText
 		
 		caret = new FlxSprite();
 		caret.makeGraphic(caretWidth, Std.int(size + 2));
-		caretIndex = 0;
 		
+		caretIndex = 0;
 		hasFocus = false;
 		if(background){
 			fieldBorderSprite = new FlxSprite(X, Y);
@@ -792,10 +792,6 @@ class FlxInputText extends FlxText
 	
 	private function set_caretIndex(newCaretIndex:Int):Int
 	{
-		
-		#if sys
-			text = text;	//force it to redraw so the character boundaries are correctly calculated
-		#end
 		var offx:Float = 0;
 		
 		var alignStr:String = getAlignStr();

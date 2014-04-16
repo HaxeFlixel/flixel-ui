@@ -468,7 +468,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					var tempGroup:FlxUIGroup = null;
 					
 					var thing_id:String = U.xml_str(obj.x, "id", true);
-					
 					//If it belongs to a group, get that information ready:
 					if (obj.has.group) { 
 						group_id = obj.att.group; 
