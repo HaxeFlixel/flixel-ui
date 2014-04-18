@@ -90,10 +90,9 @@ class FlxUICursor extends FlxUISprite
 		setDefaultKeys(DefaultKeys);
 		callback = Callback;
 		
-		if (FlxG.mouse != null && Std.is(FlxG.mouse, FlxUIMouse) == false) 
+		if (FlxG.mouse != null && Std.is(FlxG.mouse, FlxUIMouse) == false)
 		{
 			_newMouse = new FlxUIMouse(FlxG.mouse.cursorContainer);
-			FlxG.mouse.cursorContainer = null;
 			FlxG.mouse = _newMouse;
 		}
 		else
