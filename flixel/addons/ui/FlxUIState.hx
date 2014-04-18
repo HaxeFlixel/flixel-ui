@@ -110,7 +110,8 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	
 	public override function update():Void {
 		super.update();
-		#if debug
+		//This was causing bugs so I'm commenting out for now and will probably eventually remove:
+		/*#if debug
 			if (_reload) {
 				if (_reload_countdown > 0) {
 					_reload_countdown--;
@@ -120,7 +121,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 					}
 				}
 			}
-		#end
+		#end*/
 	}
 	
 	public override function destroy():Void {
