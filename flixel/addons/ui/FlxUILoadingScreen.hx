@@ -144,7 +144,7 @@ class FlxUILoadingScreen extends FlxUIPopup
 				{
 					if (_currTimer != null)
 					{
-						_currTimer.abort();
+						_currTimer.cancel();
 						_currTimer = null;
 					}
 					castParent().getEvent(CANCELLED, this, null);

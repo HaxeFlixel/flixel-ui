@@ -689,7 +689,7 @@ class FlxInputText extends FlxText
 			caret.visible = false;		
 			if (_caretTimer != null)
 			{
-				_caretTimer.abort();
+				_caretTimer.cancel();
 			}
 		}
 		
