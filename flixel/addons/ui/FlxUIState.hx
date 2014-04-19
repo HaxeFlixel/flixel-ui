@@ -69,7 +69,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			
 			var data:Fast = U.xml(_xml_id);
 			if (data == null) {
-				data = U.xml(_xml_id, ".xml", true, "");	//try again without default directory prepend
+				data = U.xml(_xml_id, "xml", true, "");	//try again without default directory prepend
 			}
 			
 			if (data == null) {
