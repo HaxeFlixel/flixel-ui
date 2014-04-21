@@ -191,6 +191,7 @@ class FlxInputText extends FlxText
 		caret = new FlxSprite();
 		caret.makeGraphic(caretWidth, Std.int(size + 2));
 		caretIndex = 0;
+		_caretTimer = new FlxTimer();
 		
 		hasFocus = false;
 		if(background){
@@ -684,7 +685,7 @@ class FlxInputText extends FlxText
 		{
 			if (hasFocus != newFocus) 
 			{
-				_caretTimer = FlxTimer.start(0.5, toggleCaret, 0);
+				_caretTimer.start(0.5, toggleCaret, 0);
 				caret.visible = true;
 				caretIndex = text.length;
 			}
