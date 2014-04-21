@@ -76,7 +76,7 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 		}
 		
 		for (c in _list_radios) {
-			c.box.loadGraphic(_box_asset, true, false);
+			c.box.loadGraphic(_box_asset, true);
 			c.mark.loadGraphic(_dot_asset);
 		}	
 		_refreshRadios();

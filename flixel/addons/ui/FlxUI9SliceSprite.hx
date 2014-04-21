@@ -151,7 +151,7 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 		//for caching purposes:		
 		var key:String = _asset_id + "_" + _slice9.join(",") + "_" + iw + "x" + ih + "_"+_tile+"_"+_smooth;
 		
-		loadGraphic(_bmpCanvas, false, false, _bmpCanvas.width, _bmpCanvas.height, false, key);
+		loadGraphic(_bmpCanvas, false, _bmpCanvas.width, _bmpCanvas.height, false, key);
 		
 		var diff_w:Float = width - old_width;
 		var diff_h:Float = height - old_height;
