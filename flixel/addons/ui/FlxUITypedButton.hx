@@ -416,7 +416,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 					for (i in 0...arr_bmpData.length) {
 						arr_bmpData[i] = grabButtonFrame(all, i, has_toggle, _src_w, _src_h);		//get each button frame
 						if (has_toggle) {
-							FlxG.bmpLog.add(arr_bmpData[i]);
+							//FlxG.bmpLog.add(arr_bmpData[i]);
 						}
 					}
 					
