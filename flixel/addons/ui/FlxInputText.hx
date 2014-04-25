@@ -165,7 +165,7 @@ class FlxInputText extends FlxText
 	private var _scrollBoundIndeces:{ left:Int, right:Int }={left:0,right:0};
 	
 	//workaround to deal with non-availability of getCharIndexAtPoint or getCharBoundaries on cpp/neko targets
-	#if sys
+	#if !flash
 	private var _charBoundaries:Array<FlxRect>;
 	#end
 	
@@ -445,12 +445,10 @@ class FlxInputText extends FlxText
 	
 	
 	private function getCharBoundaries(charIndex:Int):Rectangle 
-	#if flash
 	{
+		#if flash
 		return _textField.getCharBoundaries(charIndex);
-	}
-	#elseif sys
-	{
+		#else
 		if (_charBoundaries != null && charIndex >= 0 && charIndex < _charBoundaries.length) 
 		{
 			var r:Rectangle = new Rectangle();
@@ -458,18 +456,16 @@ class FlxInputText extends FlxText
 			return r;
 		}
 		return null;
+		#end
 	}
-	#end
 	
 	private override function set_text(Text:String):String
-	#if flash
 	{
+		#if flash
 		var return_text:String = super.set_text(Text);
 		onSetTextCheck();
 		return return_text;
-	}
-	#elseif sys
-	{
+		#else
 		var return_text:String = super.set_text(Text);
 		var numChars:Int = Text.length;
 		prepareCharBoundaries(numChars);
@@ -501,10 +497,10 @@ class FlxInputText extends FlxText
 		_textField.text = Text;
 		onSetTextCheck();
 		return return_text;
+		#end
 	}
-	#end
 	
-	#if sys
+	#if !flash
 	//WORKAROUND since this function isn't available for openfl-native TextFields, we just hack it ourselves
 	private function getCharIndexAtPoint(X:Float, Y:Float):Int 
 	{
@@ -555,6 +551,7 @@ class FlxInputText extends FlxText
 	 */
 	
 	private function onSetTextCheck():Void {
+		#if !js
 		var boundary:Rectangle = null;
 		if (caretIndex == -1) {
 			boundary = getCharBoundaries(text.length - 1);
@@ -599,6 +596,7 @@ class FlxInputText extends FlxText
 				}
 			}
 		}
+		#end
 	}
 	
 	/**
@@ -856,7 +854,9 @@ class FlxInputText extends FlxText
 			}
 		}
 		
+		#if !js
 		caret.x -= _textField.scrollH;
+		#end
 		
 		// Make sure the caret doesn't leave the textfield on single-line input texts
 		if ((lines == 1) && (caret.x + caret.width) > (x + width)) 
