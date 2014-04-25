@@ -26,6 +26,7 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 	public var max(default, set):Float=10;
 	public var value(default, set):Float=0;
 	public var stack(default, set):Int = STACK_HORIZONTAL;
+	public var isPercent(default, set):Bool = false;
 	
 	public static inline var STACK_VERTICAL:Int = 0;
 	public static inline var STACK_HORIZONTAL:Int = 1;
@@ -79,7 +80,13 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 		if (value < min) { value = min; }
 		if (value > max) { value = max; }
 		if (text_field != null) {
-			text_field.text = decimalize(value, decimals);
+			var displayValue:Float = value;
+			if (isPercent) {
+				displayValue *= 100;
+				text_field.text = Std.string(decimalize(displayValue, decimals))+"%";
+			}else {
+				text_field.text = decimalize(displayValue, decimals);
+			}
 		}
 		return value;
 	}
@@ -89,6 +96,12 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 		if (i < 0) { decimals = 0;}
 		value = value;
 		return decimals;
+	}
+	
+	private function set_isPercent(b:Bool):Bool {
+		isPercent = b;
+		value = value;
+		return isPercent;
 	}
 	
 	private function set_stack(s:Int):Int {
@@ -148,8 +161,9 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 	 * @param	TextField			Optional text field
 	 * @param	ButtonPlus			Optional button to use for plus
 	 * @param	ButtonMinus			Optional button to use for minus
+	 * @param	IsPercent			Whether to portray the number as a percentage
 	 */
-	public function new(X:Float = 0, Y:Float = 0, StepSize:Float=1, DefaultValue:Float=0, Min:Float=-999, Max:Float=999, Decimals:Int=0, Stack:Int=STACK_HORIZONTAL, ?TextField:FlxText, ?ButtonPlus:FlxUITypedButton<FlxSprite>, ?ButtonMinus:FlxUITypedButton<FlxSprite>) 
+	public function new(X:Float = 0, Y:Float = 0, StepSize:Float=1, DefaultValue:Float=0, Min:Float=-999, Max:Float=999, Decimals:Int=0, Stack:Int=STACK_HORIZONTAL, ?TextField:FlxText, ?ButtonPlus:FlxUITypedButton<FlxSprite>, ?ButtonMinus:FlxUITypedButton<FlxSprite>, IsPercent:Bool=false) 
 	{
 		super(X, Y);
 		
@@ -174,6 +188,7 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 		min = Min;
 		max = Max;
 		value = DefaultValue;
+		isPercent = IsPercent;
 		
 		var btnSize:Int = 1 + cast TextField.height;
 		

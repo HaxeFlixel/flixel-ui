@@ -24,7 +24,7 @@ class FlxUISpriteButton extends FlxUITypedButton<FlxSprite> implements IFlxUIBut
 	 */
 	public function new(X:Float = 0, Y:Float = 0, ?Asset:FlxSprite, ?OnClick:Void->Void) 
 	{
-		super(X, Y, OnClick);		
+		super(X, Y, OnClick);
 		
 		//Instead of "Label" we have "Asset" which is the id of the asset you want to load
 		//If you're trying to push in a raw BitmapData object, add that to the cache first and pass in the key
@@ -32,9 +32,9 @@ class FlxUISpriteButton extends FlxUITypedButton<FlxSprite> implements IFlxUIBut
 		up_color = over_color = down_color = up_toggle_color = over_toggle_color = down_toggle_color = FlxColor.WHITE;	
 		
 		if (Asset != null) {
-			label = Asset;	
+			label = Asset;
 		}
-	}	
+	}
 	
 	/**For IResizable:**/
 	

@@ -608,11 +608,13 @@ class U
 		return _font(str, style);
 	}	
 	
- 	public static inline function font(str:String, style:String = ""):String {
-		/*#if flash
-			return _font(str,style);
-		#end*/
-		return _font(str,style) + ".ttf";
+ 	public static function font(str:String, style:String = ""):String {
+		var str:String = _font(str, style);
+		if (str.indexOf(".ttf") == -1) {
+			str = str + ".ttf";
+		}
+		return str;
+		//return _font(str,style) + ".ttf";
 	}
 	
 		//inline that does the work:
@@ -823,6 +825,31 @@ class U
 		return c;*/
 	}
 	
+	public static function bmpToArrayIntLayer(color_index:Int, bd:BitmapData):Array<Int>{
+		//Walk image and export pixel values
+	   var p:Int;
+	   var last_p:Int = -1;
+	   var arr:Array<Int> = [];
+	   var w:Int = bd.width;
+	   var h:Int = bd.height;
+	   for(r in 0...h){
+		   for(c in 0...w){
+			   //Decide if this pixel/tile is solid (1) or not (0)
+			   p = bd.getPixel(c, r);
+			   
+			   if(p == color_index) //it matches our color
+				   p = 1;			 //solid tile
+			   else {				//some other color, ignore it
+				   p = 0;
+			   }
+				   
+			   //Write the result to the string
+			   arr.push(p);
+		   }
+	   }
+	   return arr;
+	}
+	
 	/**
 	* Converts a PNG file to a comma-separated string.
 	* pixels that match color_index are flagged
@@ -863,13 +890,7 @@ class U
 			   }
 			   else{
 				   csv += ", " + p;
-				   if (c == w - 1) {
-					   if (last_p != -1) {
-						   csv += ", " + last_p;
-					   }
-				   }
 			   }
-			   last_p = p;
 		   }
 	   }
 	   return csv;

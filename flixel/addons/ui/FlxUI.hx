@@ -641,6 +641,22 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return null;
 	}
 	
+	public function getAllAssets():Array<IFlxUIWidget> {
+		var arr:Array<IFlxUIWidget> = [];
+		for (key in _asset_index.keys()) {
+			arr.push(getAsset(key));
+		}
+		return arr;
+	}
+	
+	public function getAssetKeys():Array<String> {
+		var arr:Array<String> = [];
+		for (key in _asset_index.keys()) {
+			arr.push(key);
+		}
+		return arr;
+	}
+	
 	public function hasAsset(key:String, recursive:Bool = true):Bool {
 		if (_asset_index.exists(key)) {
 			return true;
@@ -1817,6 +1833,22 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var min:Float = U.xml_f(data.x, "min", 0);
 		var max:Float = U.xml_f(data.x, "max", 10);
 		var decimals:Int = U.xml_i(data.x, "decimals", 0);
+		var percent:Bool = U.xml_bool(data.x, "percent");
+		var stack:String = U.xml_str(data.x, "stack",true,"");
+		if (stack == "") {
+			stack = U.xml_str(data.x, "stacking",true,"");
+		}
+		stack = stack.toLowerCase();
+		var stacking:Int;
+		
+		switch(stack) {
+			case "horizontal", "h", "horz":
+				stacking = FlxUINumericStepper.STACK_HORIZONTAL;
+			case "vertical", "v", "vert":
+				stacking = FlxUINumericStepper.STACK_VERTICAL;
+			default:
+				stacking = FlxUINumericStepper.STACK_HORIZONTAL;
+		}
 		
 		var theText:FlxText = null;
 		var buttPlus:FlxUITypedButton<FlxSprite> = null;
@@ -1824,16 +1856,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var bkg:FlxUISprite = null;
 		
 		if (data.hasNode.text) {
-			theText = cast _loadText(data.node.text);
+			theText = cast _loadThing("text", data.node.text);
 		}
 		if (data.hasNode.plus) {
-			buttPlus = cast _loadButton(data.node.plus);
+			buttPlus = cast _loadThing("button", data.node.plus);
 		}
 		if (data.hasNode.minus) {
-			buttMinus = cast _loadButton(data.node.minus);
+			buttMinus = cast _loadThing("button", data.node.minus);
 		}
 		
-		var ns:FlxUINumericStepper = new FlxUINumericStepper(0, 0, stepSize, defaultValue, min, max, decimals, FlxUINumericStepper.STACK_HORIZONTAL, theText, buttPlus, buttMinus);
+		var ns:FlxUINumericStepper = new FlxUINumericStepper(0, 0, stepSize, defaultValue, min, max, decimals, stacking, theText, buttPlus, buttMinus, percent);
 		
 		if (setCallback) {
 			var params:Array<Dynamic> = getParams(data);
@@ -1854,9 +1886,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var label:String = U.xml_str(data.x, "label");
 		
 		var sprite:FlxUISprite = null;
-		
+		var toggleSprite:FlxUISprite = null;
 		if (data.hasNode.sprite) {
-			sprite = cast _loadThing("sprite",data.node.sprite);
+			for(spriteNode in data.nodes.sprite){
+				var forToggle:Bool = isToggle && U.xml_bool(spriteNode.x, "toggle");
+				if(forToggle){
+					toggleSprite = cast _loadThing("sprite", spriteNode);
+				}else {
+					sprite = cast _loadThing("sprite", spriteNode);
+				}
+			}
 		}
 		
 		var context:String = U.xml_str(data.x, "context", true, "ui");
@@ -1869,11 +1908,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var params:Array<Dynamic> = getParams(data);
 		
-		if(sprite == null){
+		if (sprite == null) {
 			fb = new FlxUIButton(0, 0, label);
 		}else {
 			var tempGroup:FlxSpriteGroup = null;
-			
 			if (label != "") {
 				//We have a Sprite AND a Label, so we package it up in a group
 				
@@ -2021,7 +2059,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				//load 9-slice
 				fb.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, tile, resize_ratio, isToggle, src_w, src_h, frames);
 			}
-		}else {			
+		}else {
 			if (load_code == "tab_menu"){
 				//load default tab menu graphics
 				var graphic_ids:Array<String> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
@@ -2065,6 +2103,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					fb.autoCenterLabel();
 				}
 			}
+		}else {
+			fb.autoCenterLabel();
 		}
 		
 		if (sprite != null && label != "") {
@@ -2089,15 +2129,24 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (Std.is(fb, FlxUISpriteButton))
 		{
 			var fbs:FlxUISpriteButton = cast fb;
-			var g:FlxSpriteGroup = cast fbs.label;
-			for (sprite in g.group.members) 
-			{
-				if (Std.is(sprite, FlxUIText)) 
+			if(Std.is(fbs.label,FlxSpriteGroup)){
+				var g:FlxSpriteGroup = cast fbs.label;
+				for (sprite in g.group.members) 
 				{
-					//label offset has already been 'centered,' this adjust from there:
-					sprite.offset.x -= text_x;
-					sprite.offset.y -= text_y;
-					break;
+					if (Std.is(sprite, FlxUIText)) 
+					{
+						//label offset has already been 'centered,' this adjust from there:
+						sprite.offset.x -= text_x;
+						sprite.offset.y -= text_y;
+						break;
+					}
+				}
+			}else {
+				fbs.label.offset.x -= text_x;
+				fbs.label.offset.y -= text_y;
+				if (toggleSprite != null) {
+					toggleSprite.offset.x -= text_x;
+					toggleSprite.offset.y -= text_y;
 				}
 			}
 		}
@@ -2107,6 +2156,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			//label offset has already been 'centered,' this adjust from there:
 			fbu.label.offset.x -= text_x;
 			fbu.label.offset.y -= text_y;
+		}
+		
+		if (sprite != null && toggleSprite != null) {
+			fb.toggle_label = toggleSprite;
 		}
 		
 		fb.visible = isVis;

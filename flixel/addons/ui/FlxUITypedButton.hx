@@ -49,6 +49,15 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public var over_toggle_visible:Bool = true;
 	public var down_toggle_visible:Bool = true;
 	
+	public var toggle_label(default, set):FlxSprite;
+	public function set_toggle_label(f:FlxSprite):FlxSprite {
+		if(label != null){
+			toggle_label = f;
+			return toggle_label;
+		}
+		return null;
+	}
+	
 	//If this is true, the label object's actual coordinates are rounded to the nearest pixel
 	//you can still use floats for _centerLabelOffset and labelOffets, it's rounded as the very last step in placement
 	public var round_labels:Bool = true;
@@ -120,15 +129,16 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		// Label positioning
 		if (label != null)
 		{
-			label.x = x + _centerLabelOffset.x + labelOffsets[status].x;
-			label.y = y + _centerLabelOffset.y + labelOffsets[status].y;
+			var theLabel = fetchAndShowCorrectLabel();
+			theLabel.x = x + _centerLabelOffset.x + labelOffsets[status].x;
+			theLabel.y = y + _centerLabelOffset.y + labelOffsets[status].y;
 			
 			if (round_labels) {
-				label.x = Std.int(label.x + 0.5);
-				label.y = Std.int(label.y + 0.5);
+				theLabel.x = Std.int(theLabel.x + 0.5);
+				theLabel.y = Std.int(theLabel.y + 0.5);
 			}
 			
-			label.scrollFactor = scrollFactor;
+			theLabel.scrollFactor = scrollFactor;
 		}
 		
 		if (animation != null){
@@ -138,6 +148,18 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			}else {
 				animation.frameIndex = status;
 			}
+		}
+	}
+	
+	/**
+	 * Just draws the button graphic and text label to the screen.
+	 */
+	override public function draw():Void
+	{
+		super.draw();
+		if (has_toggle && toggled && toggle_label != null && toggle_label.visible == true) {
+			toggle_label.cameras = cameras;
+			toggle_label.draw();
 		}
 	}
 	
@@ -392,7 +414,10 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			
 				if(all.height > _src_h){						//looks like a multi-frame graphic
 					for (i in 0...arr_bmpData.length) {
-						arr_bmpData[i] = grabButtonFrame(all, i, has_toggle,_src_w, _src_h);		//get each button frame
+						arr_bmpData[i] = grabButtonFrame(all, i, has_toggle, _src_w, _src_h);		//get each button frame
+						if (has_toggle) {
+							FlxG.bmpLog.add(arr_bmpData[i]);
+						}
 					}
 					
 					if (slice9 != null && slice9[0] != []) {		//9slicesprites
@@ -516,7 +541,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			offX = (width - label.width);
 			
 			if (Std.is(label, FlxUIText)) {
-				var tlabel:FlxUIText = cast label;				
+				var tlabel:FlxUIText = cast label;
 				offX = (width - tlabel.fieldWidth) / 2;
 				offY = (height - tlabel.height) / 2;
 			}else {
@@ -526,10 +551,6 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			
 			_centerLabelOffset.x = offX;
 			_centerLabelOffset.y = offY;
-			
-			if (Std.is(label, FlxUIText)) {
-				var t:FlxUIText = cast label;
-			}
 		}
 	}
 	
@@ -580,7 +601,19 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		_flashRect.x = 0;
 		_flashRect.y = button_state * h;
 		_flashRect.width = w;
-		_flashRect.height = h;		
+		_flashRect.height = h;
+		if (_flashRect.y >= all_frames.height) {
+			//we're off the bitmap, start making educated guesses
+			var framesHigh:Int = Std.int(all_frames.height / h);
+			if (framesHigh == 4) {
+				//we have exactly 4 frames, assume "up","over","down","down_over"
+				if (button_state == FlxButton.HIGHLIGHT + 3) {		//toggle-hilight
+					_flashRect.y = (3) * h;								//show "down_over"
+				}else if (button_state == FlxButton.PRESSED + 3) {	//toggle-pressed
+					_flashRect.y = (2) * h;								//show "down"
+				}
+			}
+		}
 		pixels.copyPixels(all_frames, _flashRect, _flashPointZero);
 		return pixels;
 	}
@@ -646,15 +679,33 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		}
 	}
 	
+	private function fetchAndShowCorrectLabel():FlxSprite {
+		if (has_toggle) {
+			if (toggled && toggle_label != null) {
+				label.visible = false;
+				toggle_label.visible = true;
+				return toggle_label;
+			}else {
+				if(toggle_label != null){
+					toggle_label.visible = false;
+				}
+				label.visible = true;
+				return label;
+			}
+		}
+		return label;
+	}
+	
 	override private function onUpHandler():Void
 	{
 		if(has_toggle){
 			toggled = !toggled;
 		}
 		super.onUpHandler();
-		if(label != null){
-			label.color = (toggled) ? up_toggle_color : up_color;
-			label.visible = (toggled) ? up_toggle_visible : up_visible;
+		if (label != null) {
+			var theLabel = fetchAndShowCorrectLabel();
+			theLabel.color = (toggled) ? up_toggle_color : up_color;
+			theLabel.visible = (toggled) ? up_toggle_visible : up_visible;
 		}
 		if (broadcastToFlxUI) {
 			FlxUI.event(CLICK_EVENT, this, null, params);
@@ -664,9 +715,10 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	override private function onDownHandler():Void
 	{
 		super.onDownHandler();
-		if(label != null){
-			label.color = (toggled) ? down_toggle_color : down_color;
-			label.visible = (toggled) ? down_toggle_visible : down_visible;
+		if (label != null) {
+			var theLabel = fetchAndShowCorrectLabel();
+			theLabel.color = (toggled) ? down_toggle_color : down_color;
+			theLabel.visible = (toggled) ? down_toggle_visible : down_visible;
 		}
 		if (broadcastToFlxUI) {
 			FlxUI.event(DOWN_EVENT, this, null, params);
@@ -676,9 +728,10 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	override private function onOverHandler():Void
 	{
 		super.onOverHandler();
-		if(label != null){
-			label.color = (toggled) ? over_toggle_color : over_color;
-			label.visible = (toggled) ? over_toggle_visible : over_visible;
+		if (label != null) {
+			var theLabel = fetchAndShowCorrectLabel();
+			theLabel.color = (toggled) ? over_toggle_color : over_color;
+			theLabel.visible = (toggled) ? over_toggle_visible : over_visible;
 		}
 		if (broadcastToFlxUI) {
 			FlxUI.event(OVER_EVENT, this, null, params);
@@ -688,9 +741,10 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	override private function onOutHandler():Void
 	{
 		super.onOutHandler();
-		if(label != null){
-			label.color = (toggled) ? up_toggle_color : up_color;
-			label.visible = (toggled) ? up_toggle_visible : up_visible;
+		if (label != null) {
+			var theLabel = fetchAndShowCorrectLabel();
+			theLabel.color = (toggled) ? up_toggle_color : up_color;
+			theLabel.visible = (toggled) ? up_toggle_visible : up_visible;
 		}
 		if (broadcastToFlxUI) {
 			FlxUI.event(OUT_EVENT, this, null, params);
@@ -708,6 +762,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			if (round_labels) {
 				label.x = Std.int(label.x + 0.5);
 			}
+			if (has_toggle && toggle_label != null) {
+				toggle_label.x = label.x;
+			}
 		}
 		
 		return NewX;
@@ -723,6 +780,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			
 			if (round_labels) {
 				label.y = Std.int(label.y + 0.5);
+			}
+			if (has_toggle && toggle_label != null) {
+				toggle_label.y = label.y;
 			}
 		}
 		return NewY;

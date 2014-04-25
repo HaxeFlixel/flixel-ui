@@ -32,10 +32,14 @@ interface IFlxUIButton extends IFlxUIWidget extends IHasParams extends IFlxDestr
 	public var resize_ratio:Float;
 	public var resize_point:FlxPoint;
 	
+	public var has_toggle:Bool;
+	public var toggled:Bool;
+	
+	public var toggle_label(default,set):FlxSprite;
+	
 	public function autoCenterLabel():Void;
 	public function loadGraphicSlice9(assets:Array<String> = null, W:Int = 80, H:Int = 20, slice9:Array<Array<Int>> = null, Tile:Int = FlxUI9SliceSprite.TILE_NONE, Resize_Ratio:Float = -1, isToggle:Bool = false, src_w:Int = 0, src_h:Int = 0, frame_indeces:Array<Int> = null):Void;
 	public function loadGraphicsMultiple(assets:Array<String>, Key:String = ""):Void;
 	public function loadGraphicsUpOverDown(asset:Dynamic, for_toggle:Bool = false, ?key:String):Void;
 	public function forceStateHandler(event:String):Void;
-	
 }

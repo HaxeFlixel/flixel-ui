@@ -207,6 +207,10 @@ class FlxInputText extends FlxText
 		lines = 1;
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 		
+		if (Text == null) {
+			Text = "";
+		}
+		
 		text = Text;		//ensure set_text is called to avoid bugs (like not preparing _charBoundaries on sys target, making it impossible to click)
 		
 		calcFrame();
@@ -767,7 +771,7 @@ class FlxInputText extends FlxText
 		{
 			if (hasFocus != newFocus) 
 			{
-				_caretTimer.start(0.5, toggleCaret, 0);
+				_caretTimer = new FlxTimer(0.5, toggleCaret, 0);
 				caret.visible = true;
 				caretIndex = text.length;
 			}

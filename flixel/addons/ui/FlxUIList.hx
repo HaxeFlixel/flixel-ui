@@ -251,9 +251,6 @@ class FlxUIList extends FlxUIGroup
 		var amtScrollMinus:Int = scrollIndex;
 		var amtScrollPlus:Int = group.members.length - (highestIndex+1);
 		
-		trace("amount - = " + amtScrollMinus);
-		trace("amount + = " + amtScrollPlus);
-		
 		var fuibutton:FlxUIButton;
 		
 		if (amtScrollMinus > 0) {
