@@ -267,9 +267,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			normalPixels = FlxDestroyUtil.dispose(normalPixels);
 			togglePixels = FlxDestroyUtil.dispose(togglePixels);
 			
-			loadGraphic(combinedPixels, true, false, upB.width, upB.height, false, key);
+			loadGraphic(combinedPixels, true, upB.width, upB.height, false, key);
 		}else {
-			loadGraphic(normalPixels, true, false, upB.width, upB.height, false, key);
+			loadGraphic(normalPixels, true, upB.width, upB.height, false, key);
 		}
 	}
 	
@@ -478,7 +478,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 														   arr_bmpData[frame_indeces[2]]);
 														   
 		if(!has_toggle){
-			loadGraphic(normalPixels, true, false, W, H, false, key);
+			loadGraphic(normalPixels, true, W, H, false, key);
 		}else {
  			var togglePixels:BitmapData = assembleButtonFrames(arr_bmpData[frame_indeces[3]], 
 															   arr_bmpData[frame_indeces[4]], 
@@ -490,7 +490,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			normalPixels = FlxDestroyUtil.dispose(normalPixels);
 			togglePixels = FlxDestroyUtil.dispose(togglePixels);
 			
-			loadGraphic(combinedPixels, true, false, W, H);
+			loadGraphic(combinedPixels, true, W, H);
 		}
 		
 		//cleanup

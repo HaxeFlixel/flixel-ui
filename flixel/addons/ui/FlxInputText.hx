@@ -46,9 +46,15 @@ class FlxInputText extends FlxText
 	
 	/**
 	 * This regular expression will filter out (remove) everything that matches. 
-	 * This is activated by setting filterMode = FlxInputText.CUSTOM_FILTER.
-	 */
-	public var customFilterPattern:EReg;
+	* Automatically sets filterMode = FlxInputText.CUSTOM_FILTER.
+	*/
+	public var customFilterPattern(default,set):EReg;
+	public function set_customFilterPattern(cfp:EReg)
+	{
+		customFilterPattern = cfp;
+		filterMode = CUSTOM_FILTER;
+		return customFilterPattern;
+	}
 	
 	/**
 	 * A function called whenever the value changes from user input, or enter is pressed
@@ -189,6 +195,7 @@ class FlxInputText extends FlxText
 		
 		caret = new FlxSprite();
 		caret.makeGraphic(caretWidth, Std.int(size + 2));
+		_caretTimer = new FlxTimer();
 		
 		caretIndex = 0;
 		hasFocus = false;
@@ -760,7 +767,7 @@ class FlxInputText extends FlxText
 		{
 			if (hasFocus != newFocus) 
 			{
-				_caretTimer = FlxTimer.start(0.5, toggleCaret, 0);
+				_caretTimer.start(0.5, toggleCaret, 0);
 				caret.visible = true;
 				caretIndex = text.length;
 			}

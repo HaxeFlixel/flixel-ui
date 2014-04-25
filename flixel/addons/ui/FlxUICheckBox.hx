@@ -78,7 +78,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIClic
 			Box = FlxUIAssets.IMG_CHECK_BOX;
 		}
 		
-		box.loadGraphic(Box, true, false);
+		box.loadGraphic(Box, true);
 		
 		button = new FlxUIButton(0, 0, Label, _clickCheck);
 		
