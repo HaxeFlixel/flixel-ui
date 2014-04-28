@@ -1384,6 +1384,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			fti.drawFrame();
 			ft = fti;
 		}
+		
+		if (data.hasNode.param) {
+			var params = getParams(data);
+			var ihp:IHasParams = cast ft;
+			ihp.params = params;
+		}
+		
 		return ft;
 	}
 	

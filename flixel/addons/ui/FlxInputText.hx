@@ -27,7 +27,7 @@ import flixel.util.FlxTimer;
  * License: Creative Commons Attribution 3.0 United States
  * @link http://creativecommons.org/licenses/by/3.0/us/
  */
-class FlxInputText extends FlxText 
+class FlxInputText extends FlxText
 {		
 	public static inline var NO_FILTER:Int			= 0;
 	public static inline var ONLY_ALPHA:Int			= 1;
