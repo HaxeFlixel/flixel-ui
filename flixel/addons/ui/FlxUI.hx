@@ -2716,6 +2716,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var borderDef:BorderDef = new BorderDef(border_style, border_color, border_size, border_quality);
 		
 		switch(border_str) {
+			case "false", "none": borderDef.style = FlxText.BORDER_NONE;
 			case "shadow": borderDef.style = FlxText.BORDER_SHADOW;
 			case "outline": borderDef.style = FlxText.BORDER_OUTLINE;
 			case "outline_fast": borderDef.style = FlxText.BORDER_OUTLINE_FAST;
@@ -2723,17 +2724,17 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				//no "border" value, check for shortcuts:
 				//try "outline"
 				border_str = U.xml_str(data.x, "shadow", true, "");
-				if (border_str != "") {
+				if (border_str != "" && border_str != "false" && border_str != "none") {
 					borderDef.style = FlxText.BORDER_SHADOW;
 					borderDef.color = U.parseHex(border_str, false, true);
 				}else{
 					border_str = U.xml_str(data.x, "outline", true, "");
-					if (border_str != "") {
+					if (border_str != "" && border_str != "false" && border_str != "none") {
 						borderDef.style = FlxText.BORDER_OUTLINE;
 						borderDef.color = U.parseHex(border_str, false, true);
 					}else{
 						border_str = U.xml_str(data.x, "outline_fast");
-						if (border_str != "") {
+						if (border_str != "" && border_str != "false" && border_str != "none") {
 							borderDef.style = FlxText.BORDER_OUTLINE_FAST;
 							borderDef.color = U.parseHex(border_str, false, true);
 						}
@@ -2828,6 +2829,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						case "int": params.push(Std.parseInt(param.att.value));
 						case "float": params.push(Std.parseFloat(param.att.value));
 						case "color", "hex":params.push(U.parseHex(param.att.value, true));
+						case "bool", "boolean": 
+							var str:String = new String(param.att.value);
+							str = str.toLowerCase();
+							if (str == "true" || str == "1") {
+								params.push(true);
+							}else{
+								params.push(false);
+							}
 					}
 				}
 			}

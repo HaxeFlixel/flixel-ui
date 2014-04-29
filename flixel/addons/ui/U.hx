@@ -129,6 +129,14 @@ class U
 		}return default_;
 	}
 	
+	public static function boolify(str:String):Bool {
+		str = str.toLowerCase();
+		if (str == "true" || str == "1") {
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * Safety wrapper for reading a bool attribute from xml
 	 * @param	data the Xml object
