@@ -1457,6 +1457,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			labels.push(label);
 		}
 		
+		ids.reverse();		//reverse so they match the order entered in the xml
+		labels.reverse();
+		
 		var y_space:Float = U.xml_f(data.x, "y_space", 25);
 		
 		var params:Array<Dynamic> = getParams(data);
@@ -2828,6 +2831,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 				}
 			}
+		}
+		if (params != null)
+		{
+			params.reverse();	//reverse so it matches the order they were entered in the xml
 		}
 		return params;
 	}	

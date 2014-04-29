@@ -91,9 +91,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIClic
 		button.down_toggle_color = 0xffffff;
 		button.over_toggle_color = 0xffffff;
 		
-		//TODO:
-		//the +2 is a magic number, possibly should be a user-set parameter
-		button.loadGraphicSlice9(["", "", ""], Std.int(box.width + 2 + LabelW), Std.int(box.height));
+		button.loadGraphicSlice9(["", "", ""], Std.int(box.width + box_space + LabelW), Std.int(box.height));
 		
 		max_width = Std.int(box.width + box_space + LabelW);
 		
@@ -208,7 +206,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIClic
 				}
 				anchorLabelX();
 				anchorLabelY();
-				button.width = box.frameWidth + button.label.textField.textWidth + (button.label.x - (button.x + box.frameWidth));
+				button.width = box.frameWidth + box_space + button.label.textField.textWidth;	//makes the clickable size exactly match the visible size of checkbox+label
 				checkbox_dirty = false;
 			}
 		}
