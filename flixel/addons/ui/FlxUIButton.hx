@@ -9,6 +9,7 @@ import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.ILabeled;
 import flixel.FlxSprite;
+import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.util.FlxDestroyUtil;
 
@@ -52,6 +53,28 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		}
 		resize(width, height);	//force it to be "FlxUI style"
 		autoCenterLabel();
+	}
+	
+	public override function copyStyle(other:FlxUITypedButton<FlxSprite>):Void {
+		super.copyStyle(other);
+		if (Std.is(other, FlxUIButton)) {
+			var fuib:FlxUIButton = cast other;
+			
+			up_style = fuib.up_style;
+			over_style = fuib.over_style;
+			down_style = fuib.down_style;
+			
+			up_toggle_style = fuib.up_toggle_style;
+			over_toggle_style = fuib.over_toggle_style;
+			down_toggle_style = fuib.down_toggle_style;
+			
+			var t:FlxUIText = fuib.label;
+			if(t.font.indexOf(FlxAssets.FONT_DEFAULT) == -1){
+				label.setFormat(t.font, t.size, t.color, t.alignment, t.borderStyle, t.borderColor, t.embedded);
+			}else {
+				label.setFormat(null, t.size, t.color, t.alignment, t.borderStyle, t.borderColor, t.embedded);
+			}
+		}
 	}
 	
 	/**For ILabeled:**/

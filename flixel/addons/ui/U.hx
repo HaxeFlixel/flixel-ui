@@ -268,10 +268,11 @@ class U
 	 * Return a numeric string with leading zeroes
 	 * @param	i any integer
 	 * @param	d how many digits
-	 * @return  i's value as a string padded with zeroes, exactly d digits in length
+	 * @param	padChar	what to pad with ("0") by default
+	 * @return  i's value as a string padded with padChar, exactly d digits in length
 	 */
 	
-	public static inline function padDigits(i:Int, d:Int):String {
+	public static inline function padDigits(i:Int, d:Int, padChar:String="0"):String {
 		var f:Float = i;
 		var str:String = "";
 		var num_digits:Int = 0;
@@ -286,7 +287,7 @@ class U
 		
 		if(num_digits < d){		
 			for (temp in 0...(d-num_digits)) {
-				str += "0";
+				str += padChar;
 			}
 		}
 		
@@ -695,6 +696,10 @@ class U
 				#end
 			case "html5":
 				#if html5
+					return true;
+				#end
+			case "js":
+				#if js
 					return true;
 				#end
 			case "web":

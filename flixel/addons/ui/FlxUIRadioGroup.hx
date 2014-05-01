@@ -123,6 +123,20 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 		_refreshRadios();
 	}
 	
+	public function getLabel(i:Int):String{
+		if (i >= 0 && i < _labels.length){
+			return _labels[i];
+		}
+		return null;
+	}
+	
+	public function getId(i:Int):String {
+		if (i >= 0 && i < _ids.length){
+			return _ids[i];
+		}
+		return null;
+	}
+	
 	/***GETTER / SETTER***/
 	
 	private function get_clickable():Bool { return _clickable; }
@@ -145,12 +159,17 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 			}
 			j++;
 		}
+		if (_selected < 0 || _selected >= _list_radios.length)
+		{
+			_selected = -1;
+		}
 		return _selected;
 	}
 	
 	private function get_selectedLabel():String { return _labels[_selected]; }
 	private function set_selectedLabel(str:String):String {
 		var i:Int = 0;
+		_selected = -1;
 		for(c in _list_radios) {
 			c.checked = false;
 			if (_labels[i] == str) {
@@ -159,12 +178,16 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 			}
 			i++;
 		}
-		return _labels[_selected];
+		if(_selected >= 0 && _selected < _labels.length){
+			return _labels[_selected];
+		}
+		return null;
 	}
 	
 	private function get_selectedId():String { return _ids[_selected]; }
 	private function set_selectedId(str:String):String {
 		var i:Int = 0;
+		_selected = -1;
 		for(c in _list_radios) {
 			c.checked = false;
 			if (_ids[i] == str) {
@@ -173,7 +196,10 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 			}
 			i++;
 		}
-		return _ids[_selected];
+		if(_selected >= 0 && _selected < _ids.length){
+			return _ids[_selected];
+		}
+		return null;
 	}
 	
 	/**
@@ -238,7 +264,8 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 		var xx:Float = 0;
 		var yy:Float = 0;
 		var i:Int = 0;
-		for(id in _ids) {
+		
+		for (id in _ids) {
 			var label:String = "";
 			if (_labels != null && _labels.length > i) {
 				label = _labels[i];
@@ -258,13 +285,26 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 				c = new FlxUICheckBox(0, 0, _box_asset, _dot_asset, label, _label_width, [id, false]);
 				c.broadcastToFlxUI = false;					//internal communication only
 				c.callback = _onCheckBoxEvent.bind(c);
+				
+				add(c);
+				
 				c.x = Std.int(xx);
 				c.y = Std.int(yy);
 				
-				add(c);
 				c.text = label;
+				if (_list_radios.length > 0) {
+					c.button.copyStyle(cast _list_radios[0].button);
+					c.button.width = _list_radios[0].button.width;
+					c.button.height = _list_radios[0].button.height;
+					c.textX = _list_radios[0].textX;
+					c.textY = _list_radios[0].textY;
+					trace("c.button.height = " + c.button.height);
+					trace("[0].button.height = " + _list_radios[0].button.height);
+				}
+				
 				_list_radios.push(c);
 			}
+			
 			yy += _y_space;
 			i++;
 		}

@@ -2,6 +2,7 @@ package flixel.addons.ui;
 
 import flash.display.BitmapData;
 import flash.errors.Error;
+import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.Lib;
@@ -2291,7 +2292,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var src:String = ""; 
 		var fs:FlxUISprite = null;
 		
-		src = U.xml_gfx(data.x, "src");
+		src = loadScaledSrc(data);
 		
 		var bounds: { min_width:Float, min_height:Float, 
 					  max_width:Float, max_height:Float } = calcMaxMinSize(data);
@@ -2319,6 +2320,71 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		return fs;
+	}
+	
+	/**
+	 * For grabbing a resolution-specific version of an image src and dynamically scaling (and caching) it as necessary
+	 * @param	data	the xml node in question
+	 * @return	the unique key of the scaled bitmap
+	 */
+	
+	private function loadScaledSrc(data:Fast):String
+	{
+		var src:String = U.xml_str(data.x, "src");					//get the original src
+		if (data.hasNode.scale) {
+			for (scaleNode in data.nodes.scale) {
+				var ratio:Float = U.xml_f(scaleNode.x, "screen_ratio", -1);
+				var tolerance:Float = U.xml_f(scaleNode.x, "tolerance", 0.1);
+				var actualRatio:Float = FlxG.width / FlxG.height;
+				if (ratio < 0 || (ratio > 0 && Math.abs(ratio - actualRatio) <= tolerance) ) {	//check if our screen ratio is within bounds
+					var suffix:String = U.xml_str(scaleNode.x, "suffix");		
+					var bmpSrc:String = U.gfx(src + suffix);					//add the proper suffix, so "asset"->"asset_16x9"
+					
+					var testBmp:BitmapData = Assets.getBitmapData(bmpSrc, true);
+					if (testBmp != null) {									//if the master asset exists
+						var W:Float = _loadWidth(scaleNode,-1);				//find the desired final size
+						var H:Float = _loadHeight(scaleNode,-1);
+						
+						if (W < 0)
+						{
+							W = testBmp.width;
+						}
+						if (H < 0)
+						{
+							H = testBmp.height;
+						}
+						
+						var diff:Float = Math.abs(W - testBmp.width) + Math.abs(H - testBmp.height);
+						if (diff > 0.01) {						//if final size != master asset size, we're going to scale it
+							var scaleKey:String = bmpSrc +"_" + Std.int(W) + "x" + Std.int(H);	//generate a unique scaled asset key
+							
+							if(FlxG.bitmap.get(scaleKey) == null){								//if it doesn't exist yet, create it
+								var scaledBmp:BitmapData = new BitmapData(Std.int(W), Std.int(H),true,0x00000000);				//create a unique bitmap and scale it
+								
+								var m:Matrix = getMatrix();
+								m.identity();
+								m.scale(W / testBmp.width, H / testBmp.height);
+								scaledBmp.draw(testBmp, m, null, null, null, true);
+								
+								FlxG.bitmap.add(scaledBmp, true, scaleKey);						//store it by the unique key
+							}
+							return scaleKey;													//return the final scaled key
+						}else {
+							return bmpSrc;		//couldn't scale it, return master asset key
+						}
+					}
+					break;						//stop on the first resolution test that passes
+				}
+			}
+		}
+		return U.xml_gfx(data.x, "src"); 		//no resolution tag found, just return original src
+	}
+	
+	private function getMatrix():Matrix {
+		if (_matrix == null) {
+			_matrix = new Matrix();
+		}
+		return _matrix;
 	}
 	
 	private function thisWidth():Int {
@@ -2473,7 +2539,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (U.isStrNum(str)) {								//Most likely: is it just a number?
 			return Std.parseFloat(str);						//If so, parse and return
 		}
-		
 		var percf:Float = U.perc_to_float(str);			//Next likely: is it a %?
 		if(!Math.isNaN(percf)){				
 			switch(target) {
@@ -2503,7 +2568,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 			}
 		}
-		
 		return default_;
 	}
 	

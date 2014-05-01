@@ -115,12 +115,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIClic
 		checked = false;
 		
 		//set all these to 0
-		button.labelOffsets[FlxButton.NORMAL].x = 0;
-		button.labelOffsets[FlxButton.NORMAL].y = 0;
-		button.labelOffsets[FlxButton.PRESSED].x = 0;
-		button.labelOffsets[FlxButton.PRESSED].y = 0;
-		button.labelOffsets[FlxButton.HIGHLIGHT].x = 0;
-		button.labelOffsets[FlxButton.HIGHLIGHT].y = 0;
+		button.setAllLabelOffsets(0, 0);
 		
 		x = X;
 		y = Y;
@@ -128,6 +123,15 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIClic
 		textX = 0;
 		textY = 0;	//forces anchorLabel() to be called and upate correctly
 	}
+	
+	/*
+	public function copy(?Params:Array<Dynamic>,?Callback:Void->Void):FlxUICheckBox {
+		var boxAsset:String = box != null ? box.cachedGraphics.key : null;
+		var checkAsset:String = mark != null ? mark.cachedGraphics.key : null;
+		var label:String = (button != null && button.label != null) ? button.label.text : null;
+		var labelW:Int = (label != null) ? Std.int(button.label.width) : 100;
+		return new FlxUICheckBox(x, y, boxAsset, checkAsset, label, labelW, Params, Callback);
+	}*/
 	
 	/**For ILabeled:**/
 	

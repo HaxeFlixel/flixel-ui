@@ -112,6 +112,40 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		labelAlphas[FlxButton.NORMAL] = 1;
 	}
 	
+	public function copyStyle(other:FlxUITypedButton<FlxSprite>):Void {
+		up_color = other.up_color;
+		over_color = other.over_color;
+		down_color = other.down_color;
+		
+		up_toggle_color = other.up_toggle_color;
+		over_toggle_color = other.over_toggle_color;
+		down_toggle_color = other.over_toggle_color;
+		
+		up_visible = other.up_visible;
+		over_visible = other.over_visible;
+		down_visible = other.down_visible;
+		
+		up_toggle_visible = other.up_toggle_visible;
+		over_toggle_visible = other.over_toggle_visible;
+		down_toggle_visible = other.down_toggle_visible;
+		
+		var ctPt:FlxPoint = other.getCenterLabelOffset();
+		setCenterLabelOffset(ctPt.x, ctPt.y);
+		
+		var i:Int = 0;
+		for (flxPt in other.labelOffsets) {
+			labelOffsets[i].x = flxPt.x;
+			labelOffsets[i].y = flxPt.y;
+			i++;
+		}
+		
+		i = 0;
+		for (alpha in other.labelAlphas){
+			labelAlphas[i] = alpha;
+			i++;
+		}
+	}
+	
 	/**
 	 * Set all 3 sets of labelOffsets at once
 	 * @param	X
@@ -557,6 +591,10 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public function setCenterLabelOffset(X:Float, Y:Float):Void {
 		_centerLabelOffset.x = X;
 		_centerLabelOffset.y = Y;
+	}
+	
+	public function getCenterLabelOffset():FlxPoint {
+		return FlxPoint.get(_centerLabelOffset.x, _centerLabelOffset.y);
 	}
 	
 	public function forceStateHandler(event:String):Void {
