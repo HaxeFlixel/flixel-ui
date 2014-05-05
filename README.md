@@ -32,7 +32,7 @@ when we finally upload it to haxelib:
 
 1. In your openfl assets folder, create an "xml" directory
 2. Create an xml layout file for each state you want a UI for
-3. Make your UI-driven states extend flixel.addons.ui.FlxStateX
+3. Make your UI-driven states extend flixel.addons.ui.FlxUIState
 4. In the create() function, set:
 
 ````
@@ -223,7 +223,7 @@ After your FlxUI has loaded, you can fetch your individual layouts using getAsse
 
 Sometimes multiple layouts have "failed" according to your rules, and you want to pick the one that failed by the least. If the failure condition was "some_thing's width is greater than 100 pixels", than if some_thing.width = 176, failed_by is 76.
 
-To *respond* to failure conditions, you need to write your own code. In the RPG Interface demo, there are two battle layouts, one that is more appropriate for 4:3 resolutions, and another that works better in 16:9. The custom FlxStateX for that state will check failure conditions on load, and set the mode depending on which layout works best. Speaking of modes...
+To *respond* to failure conditions, you need to write your own code. In the RPG Interface demo, there are two battle layouts, one that is more appropriate for 4:3 resolutions, and another that works better in 16:9. The custom FlxUIState for that state will check failure conditions on load, and set the mode depending on which layout works best. Speaking of modes...
 
 ####8. \<mode>
 Specifies UI "modes" that you can switch between. Basically just a glorified way of quickly hiding and showing specific assets. For instance, in Defender's Quest we had four states for our save slots - empty, play, new_game+ (New Game+ eligible), and play+ (New Game+ started). This would determine what buttons were visible ("New Game", "Play", "Play+", "Import", "Export"). 
@@ -346,7 +346,7 @@ You can add as many <param> tags as you want. When you click this button, it wil
 FlxUI.event(CLICK_EVENT, this, null, params);
 ````
 
-This, in turn, will call getEvent() on whatever IEventGetter "owns" this FlxUI object. In the default setup, this is your FlxStateX. So extend this function in your FlxStateX:
+This, in turn, will call getEvent() on whatever IEventGetter "owns" this FlxUI object. In the default setup, this is your FlxUIState. So extend this function in your FlxUIState:
 
 ````
 getEvent(id:String,sender:Dynamic,data:Dynamic):Void
