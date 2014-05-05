@@ -1,6 +1,7 @@
 package flixel.addons.ui;
 
 import flixel.addons.ui.FlxUI.NamedBool;
+import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
@@ -15,6 +16,11 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 	public var selectedId(get, set):String;
 	public var selectedLabel(get, set):String;
 	public var selectedIndex(get, set):Int;
+	
+	public var numRadios(get, null):Int;
+	private function get_numRadios():Int {
+		return _list_radios.length;
+	}
 	
 	public static inline var CLICK_EVENT:String = "click_radio_group";
 	
@@ -37,6 +43,32 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 	}
 	
 	/**
+	 * If this is false, when the size changes it auto-expands the scroll canvas
+	 * If this is true, when the size changes it forces it to scroll
+	 */
+	public var fixedSize:Bool = false;
+	
+	public override function set_width(Value:Float):Float {
+		super.set_width(Value);
+		if (fixedSize) {
+			if (_list != null) {
+				_list.width = Value;
+			}
+		}
+		return Value;
+	}
+	
+	public override function set_height(Value:Float):Float {
+		super.set_height(Value);
+		if (fixedSize) {
+			if(_list != null){
+				_list.height = Value;
+			}
+		}
+		return Value;
+	}
+	
+	/**
 	 * Creates a set of radio buttons
 	 * @param	X				X location
 	 * @param	Y				Y location
@@ -47,20 +79,27 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 	 * @param	width_			maximum width of a button
 	 * @param	height_			height of a button
 	 * @param	label_width_	maximum width of a label
+	 * @param	MoreString		Localized string that says "<X> more..." in your language. MUST have "<X>" token
+	 * @param	PrevButtonOffset	Offset for the "previous" scroll button
+	 * @param	NextButtonOffset	Offset for the "next" scroll button
+	 * @param	PrevButton		Your own custom button for the "previous" scroll button
+	 * @param	NextButton		Your own custom button for the "next" scroll button
 	 */
 	
-	public function new(X:Float, Y:Float, ids_:Array<String>,labels_:Array<String>, ?callback_:String->Void=null, y_space_:Float=25, width_:Int=100, height_:Int=20, label_width_:Int=100):Void {
+	public function new(X:Float, Y:Float, ids_:Array<String>,labels_:Array<String>, ?callback_:String->Void=null, y_space_:Float=25, width_:Int=100, height_:Int=20, label_width_:Int=100, MoreString:String="<X> more...", PrevButtonOffset:FlxPoint=null,NextButtonOffset:FlxPoint=null, PrevButton:IFlxUIButton=null, NextButton:IFlxUIButton=null):Void {
 		super();
 		_y_space = y_space_;
 		_width = width_;
 		_height = height_;
 		_label_width = label_width_;
-		x = X;
-		y = Y;
 		callback = callback_;
 		_list_radios = new Array<FlxUICheckBox>();
+		_list = new FlxUIList(0, 0, null, 0, 0, MoreString, FlxUIList.STACK_VERTICAL,0,PrevButtonOffset,NextButtonOffset,PrevButton,NextButton);
+		add(_list);
 		updateRadios(ids_, labels_);
 		loadGraphics(null, null);
+		x = X;
+		y = Y;
 	}
 	
 	public function loadGraphics(Box:Dynamic,Dot:Dynamic):Void {
@@ -86,6 +125,7 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 		if (_list_radios != null) {
 			U.clearArray(_list_radios);	
 		}
+		_list = null;
 		_ids = null;
 		_labels = null;
 		super.destroy();
@@ -109,7 +149,7 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 	}
 	
 	public function show(b:Bool):Void {
-		for(fo in members) {
+		for(fo in _list.members) {
 			fo.visible = b;
 		}
 	}
@@ -121,6 +161,10 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 			c.visible = false;
 		}
 		_refreshRadios();
+	}
+	
+	@:allow(flixel.addons.ui.FlxUI) private function getRadios():Array<FlxUICheckBox> {
+		return _list_radios;
 	}
 	
 	public function getLabel(i:Int):String{
@@ -135,6 +179,13 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 			return _ids[i];
 		}
 		return null;
+	}
+	
+	public function getIsVisible(i:Int):Bool {
+		if (i >= 0 && i < _list_radios.length){
+			return _list_radios[i].visible;
+		}
+		return false;
 	}
 	
 	/***GETTER / SETTER***/
@@ -207,12 +258,20 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 	 * This will scroll the "pane" by that amount and return how many lines are above/below
 	 * the currently visible pane
 	 * @param	scroll How many lines DOWN you have scrolled
-	 * @param	max_items Max amount of lines visible
+	 * @param	max_items (optional) Max amount of lines visible
 	 * @return a FlxPoint of off-pane radio lines : (count_above,count_below)
 	 */
 	
-	public function setLineScroll(scroll:Int, max_items:Int):FlxPoint{
-		var i:Int = 1;
+	public function setLineScroll(scroll:Int,?max_items:Int):FlxPoint{
+		_list.scrollIndex = scroll;
+		if (max_items != null)
+		{
+			if (_list.stacking == FlxUIList.STACK_VERTICAL) {
+				height = (_y_space * max_items) + 1;
+			}
+		}
+		return FlxPoint.get(_list.amountPrevious, _list.amountNext);
+		/*var i:Int = 1;
 		var yy:Float = y;
 		var more_above:Int = 0;
 		var more_below:Int = 0;
@@ -231,7 +290,7 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 			}
 			i++;
 		}
-		return FlxPoint.get(more_above, more_below);
+		return FlxPoint.get(more_above, more_below);*/
 	}
 	
 	/***GETTER / SETTER***/
@@ -239,6 +298,8 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 	
 	
 	/***PRIVATE***/
+	
+	private var _list:FlxUIList;
 	
 	private var _box_asset:Dynamic;
 	private var _dot_asset:Dynamic;
@@ -265,6 +326,11 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 		var yy:Float = 0;
 		var i:Int = 0;
 		
+		var maxX:Float = 0;
+		var maxY:Float = 0;
+		
+		_list._skipRefresh = true;
+		
 		for (id in _ids) {
 			var label:String = "";
 			if (_labels != null && _labels.length > i) {
@@ -277,16 +343,24 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 				c = _list_radios[i];
 				c.visible = true;
 				c.text = label;
-				if (i == 0) {
+				if (i == 0)
+				{
 					xx = c.x;
 					yy = c.y;
 				}
-			}else {
+				else
+				{
+					c.x = Std.int(xx);
+					c.y = Std.int(yy);
+				}
+			}
+			else 
+			{
 				c = new FlxUICheckBox(0, 0, _box_asset, _dot_asset, label, _label_width, [id, false]);
 				c.broadcastToFlxUI = false;					//internal communication only
 				c.callback = _onCheckBoxEvent.bind(c);
 				
-				add(c);
+				_list.add(c);
 				
 				c.x = Std.int(xx);
 				c.y = Std.int(yy);
@@ -298,15 +372,35 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 					c.button.height = _list_radios[0].button.height;
 					c.textX = _list_radios[0].textX;
 					c.textY = _list_radios[0].textY;
-					trace("c.button.height = " + c.button.height);
-					trace("[0].button.height = " + _list_radios[0].button.height);
 				}
 				
 				_list_radios.push(c);
 			}
 			
+			if (xx + c.width > maxX) {
+				maxX = xx + c.width;
+			}
+			if (yy + c.height > maxY) {
+				maxY = yy + c.height;
+			}
+			
 			yy += _y_space;
 			i++;
+		}
+		if (fixedSize == false) {
+			if (maxX > _list.width) {
+				_list.width = maxX;
+			}
+			if (maxY > _list.height) {
+				_list.height = maxY;
+			}
+			width = _list.width;
+			height = _list.height;
+		}
+		_list._skipRefresh = false;
+		
+		if (fixedSize == true) {
+			_list.refreshList();
 		}
 	}
 	

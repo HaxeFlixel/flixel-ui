@@ -10,7 +10,7 @@ import flixel.addons.ui.FlxUI.MaxMinSize;
 import flixel.addons.ui.FlxUIButton.ButtonLabelStyle;
 import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.addons.ui.FlxUIText.BorderDef;
-import flixel.addons.ui.FlxUIText.FontDef;
+import flixel.addons.ui.FontDef;
 import flixel.addons.ui.interfaces.IEventGetter;
 import flixel.addons.ui.interfaces.IFireTongue;
 import flixel.addons.ui.interfaces.IFlxUIButton;
@@ -1444,6 +1444,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var W:Int = cast _loadWidth(data, 11, "radio_width");
 		var H:Int = cast _loadHeight(data, 11, "radio_height");
 		
+		var scrollH:Int = cast _loadHeight(data, 0, "height");
+		var scrollW:Int = cast _loadHeight(data, 0, "width");
+		
 		var labelW:Int = cast _loadWidth(data, 100, "label_width");
 		
 		for (radioNode in data.nodes.radio) {
@@ -1478,7 +1481,22 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		//if radio_src or dot_src are == "", then leave radio_asset/dot_asset == null, 
 		//and FlxUIRadioGroup will default to defaults defined in FlxUIAssets 
 		
-		frg = new FlxUIRadioGroup(0, 0, ids, labels, null, y_space, W, H, labelW);
+		var prevOffset:FlxPoint = null;
+		var nextOffset:FlxPoint = null;
+		
+		if (data.hasNode.button) {
+			for (btnNode in data.nodes.button) {
+				var id:String = U.xml_str(btnNode.x, "id",true);
+				if (id == "previous" || id == "prev") {
+					prevOffset = FlxPoint.get(U.xml_f(btnNode.x, "x"),U.xml_f(btnNode.x,"y"));
+				}
+				else if (id == "next") {
+					nextOffset = FlxPoint.get(U.xml_f(btnNode.x, "x"),U.xml_f(btnNode.x,"y"));
+				}
+			}
+		}
+		
+		frg = new FlxUIRadioGroup(0, 0, ids, labels, null, y_space, W, H, labelW, prevOffset, nextOffset);
 		frg.params = params;
 		
 		if (radio_asset != "" && radio_asset != null) {
@@ -1488,7 +1506,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var text_x:Int = U.xml_i(data.x, "text_x");
 		var text_y:Int = U.xml_i(data.x, "text_y");
 		
-		for (fo in frg.members) {
+		var radios = frg.getRadios();
+		for (fo in radios) {
 			if(fo != null){
 				if (Std.is(fo, FlxUICheckBox)){
 					var fc:FlxUICheckBox = cast(fo, FlxUICheckBox);
@@ -1497,6 +1516,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					fc.textY = text_y;
 				}
 			}
+		}
+		
+		if (scrollW != 0) {
+			frg.fixedSize = true;
+			frg.width = scrollW;
+		}
+		if (scrollH != 0) {
+			frg.fixedSize = true;
+			frg.height = scrollH;
 		}
 		
 		return frg;
@@ -2091,6 +2119,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				//load default graphics
 				if(W > 0 && H > 0){
 					fb.loadGraphicSlice9(null, W, H, null, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);
+				}else {
+					fb.loadGraphicSlice9(null, 80, 20, null, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);
 				}
 			}
 		}
@@ -2820,10 +2850,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	private function _loadFontDef(data:Fast):FontDef{
-		var fontFace:String = _loadFontFace(data);
+		var fontFile:String = _loadFontFace(data);
 		var fontStyle:String = U.xml_str(data.x, "style");
 		var fontSize:Int = U.xml_i(data.x, "size", 8);
-		return new FontDef(fontFace, fontSize, fontStyle);
+		var fd:FontDef = new FontDef(U.xml_str(data.x, "font"), ".ttf", fontFile);
+		fd.format.size = fontSize;
+		fd.setFontStyle(fontStyle);
+		return fd;
 	}
 	
 	private function _loadFontFace(data:Fast):String{
@@ -2840,15 +2873,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			_ptr.getEvent("finish_load", this, null);
 		}
 	}
-	
-	/*
-	private function _onClickDropDown_control(isActive:Bool, dropdown:FlxUIDropDownMenu):Void {
-		if (isActive) {
-			focus = dropdown;
-		}else {
-			focus = null;
-		}
-	}*/
 	
 	/**********UTILITY FUNCTIONS************/
 	

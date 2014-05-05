@@ -1,6 +1,8 @@
 package flixel.addons.ui;
 import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.FlxObject;
+import flixel.FlxSprite;
 import flixel.ui.FlxTypedButton.FlxTypedButton;
 import flixel.util.FlxPoint;
 
@@ -51,6 +53,9 @@ class FlxUIList extends FlxUIGroup
 		return moreString;
 	}
 	
+	public var amountPrevious(default, null):Int;
+	public var amountNext(default, null):Int;
+	
 	/**
 	 * Creates a scrollable list of widgets
 	 * @param	X			X position of the list
@@ -99,6 +104,7 @@ class FlxUIList extends FlxUIGroup
 				pButton.loadGraphicsUpOverDown(FlxUIAssets.IMG_BUTTON_ARROW_UP);
 				pButton.label.width = pButton.label.fieldWidth = 100;
 				pButton.label.text = getMoreString(0);
+				pButton.setAllLabelOffsets(0, 0);
 				pButton.setCenterLabelOffset(pButton.width+2, pButton.height - pButton.label.height);
 				pButton.label.alignment = "left";
 			}
@@ -118,6 +124,7 @@ class FlxUIList extends FlxUIGroup
 				nButton.label.width = nButton.label.fieldWidth = 100;
 				//nButton.autoCenterLabel();
 				nButton.label.text = getMoreString(0);
+				nButton.setAllLabelOffsets(0, 0);
 				nButton.setCenterLabelOffset(nButton.width+2, 0);
 				nButton.label.alignment = "left";
 			}
@@ -157,9 +164,21 @@ class FlxUIList extends FlxUIGroup
 		refreshList();
 	}
 	
+	public override function add(Object:FlxSprite):FlxSprite{
+		super.add(Object);
+		refreshList();
+		return Object;
+	}
+	
+	
 	/****PRIVATE****/
 	
-	private var _skipRefresh:Bool = false;
+	private function safeAdd(Object:FlxSprite):FlxSprite {
+		return super.add(Object);
+	}
+	
+	
+	@:allow(flixel.addons.ui.FlxUIRadioGroup) private var _skipRefresh:Bool = false;
 	
 	private function getMoreString(i:Int):String {
 		var newString:String = moreString;
@@ -181,7 +200,7 @@ class FlxUIList extends FlxUIGroup
 		refreshList();
 	}
 	
-	private function refreshList():Void {
+	@:allow(flixel.addons.ui.FlxUIRadioGroup) private function refreshList():Void {
 		if (_skipRefresh) {
 			return;
 		}
@@ -248,29 +267,25 @@ class FlxUIList extends FlxUIGroup
 			i++;
 		}
 		
-		var amtScrollMinus:Int = scrollIndex;
-		var amtScrollPlus:Int = group.members.length - (highestIndex+1);
+		amountPrevious = scrollIndex;
+		amountNext = group.members.length - (highestIndex+1);
 		
 		var fuibutton:FlxUIButton;
 		
-		if (amtScrollMinus > 0) {
-			add(cast prevButton);
+		if (amountPrevious > 0) {
+			safeAdd(cast prevButton);
 			if (Std.is(prevButton, FlxUIButton)) {
 				fuibutton = cast prevButton;
-				fuibutton.label.text = getMoreString(amtScrollMinus);
+				fuibutton.label.text = getMoreString(amountPrevious);
 			}
 		}
-		if (amtScrollPlus > 0) {
-			add(cast nextButton);
+		if (amountNext > 0) {
+			safeAdd(cast nextButton);
 			if(Std.is(nextButton, FlxUIButton)) {
 				fuibutton = cast nextButton;
-				fuibutton.label.text = getMoreString(amtScrollPlus);
+				fuibutton.label.text = getMoreString(amountNext);
 			}
 		}
-		
-		
-		/*add(cast prevButton);
-		add(cast nextButton);*/
 	}
 	
 	private override function get_width():Float {

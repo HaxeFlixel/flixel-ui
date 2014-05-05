@@ -612,7 +612,8 @@ class U
 		}		
 		thing = null;
 	}
-		
+	
+	
 	public static inline function fontStr(str:String, style:String=""):String {
 		return _font(str, style);
 	}	

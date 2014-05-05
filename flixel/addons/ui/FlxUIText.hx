@@ -31,24 +31,6 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget im
 	}
 }
 
-class FontDef
-{
-	public var name:String=null;
-	public var size:Null<Int>=null;
-	public var style:String=null;
-	
-	public function new(Name:String, ?Size:Null<Int>, ?Style:String) {
-		name = Name;
-		size = Size;
-		style = Style;
-	}
-	
-	public function apply(f:FlxText):Void {
-		f.font = name;
-		f.size = size;
-	}
-}
-
 class BorderDef
 {
 	public var style:Int; 

@@ -3,8 +3,10 @@ package flixel.addons.ui;
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flash.text.Font;
+import flash.text.TextFormat;
 import flixel.addons.ui.FlxUIText.BorderDef;
-import flixel.addons.ui.FlxUIText.FontDef;
+import flixel.addons.ui.FontDef;
 import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.ILabeled;
@@ -12,6 +14,7 @@ import flixel.FlxSprite;
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.util.FlxDestroyUtil;
+import openfl.Assets;
 
 /**
  * This class extends FlxUITypedButton and has a Text label, and is thus
@@ -69,10 +72,18 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 			down_toggle_style = fuib.down_toggle_style;
 			
 			var t:FlxUIText = fuib.label;
-			if(t.font.indexOf(FlxAssets.FONT_DEFAULT) == -1){
-				label.setFormat(t.font, t.size, t.color, t.alignment, t.borderStyle, t.borderColor, t.embedded);
-			}else {
-				label.setFormat(null, t.size, t.color, t.alignment, t.borderStyle, t.borderColor, t.embedded);
+			
+			var tf:TextFormat = t.textField.defaultTextFormat;
+			
+			if (t.font.indexOf(FlxAssets.FONT_DEFAULT) == -1) 
+			{
+				var fd:FontDef = FontDef.copyFromFlxText(t);
+				fd.apply(label);
+			}
+			else 
+			{
+				//put "null" for the default font
+				label.setFormat(null, tf.size, tf.color, cast tf.align, t.borderStyle, t.borderColor, t.embedded);
 			}
 		}
 	}
