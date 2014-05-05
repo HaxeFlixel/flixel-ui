@@ -35,10 +35,10 @@ class BorderDef
 {
 	public var style:Int; 
 	public var color:Int; 
-	public var size:Int;
+	public var size:Float;
 	public var quality:Float;
 	
-	public function new(Style:Int, Color:Int, Size:Int=1, Quality:Float=1) {
+	public function new(Style:Int, Color:Int, Size:Float=1, Quality:Float=1) {
 		style = Style;
 		color = Color;
 		size = Size;
