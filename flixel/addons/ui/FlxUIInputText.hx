@@ -31,14 +31,14 @@ class FlxUIInputText extends FlxInputText implements IResizable implements IFlxU
 		if(broadcastToFlxUI){
 			switch(action) {
 				case FlxInputText.ENTER_ACTION:										//press enter
-					FlxUI.event(ENTER_EVENT, this, text, null);
+					FlxUI.event(ENTER_EVENT, this, text, params);
 				case FlxInputText.DELETE_ACTION, 
 					FlxInputText.BACKSPACE_ACTION:									//deleted some text
-					FlxUI.event(DELETE_EVENT, this, text, null);
-					FlxUI.event(CHANGE_EVENT, this, text, null);
+					FlxUI.event(DELETE_EVENT, this, text, params);
+					FlxUI.event(CHANGE_EVENT, this, text, params);
 				case FlxInputText.INPUT_ACTION:										//text was input
-					FlxUI.event(INPUT_EVENT, this, text, null);
-					FlxUI.event(CHANGE_EVENT, this, text, null);
+					FlxUI.event(INPUT_EVENT, this, text, params);
+					FlxUI.event(CHANGE_EVENT, this, text, params);
 			}
 		}
 	}
