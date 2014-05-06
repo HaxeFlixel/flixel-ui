@@ -8,7 +8,6 @@ package flixel.addons.ui.interfaces;
 interface IFireTongue {
 	public function get(flag:String, context:String = "data", safe:Bool = true):String;
 	
-	public var locale(get, null):String;		
-	public function get_locale():String;
+	public var locale(default, null):String;
 }
 

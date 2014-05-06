@@ -5,6 +5,7 @@ import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
+import flixel.text.FlxText;
 import flixel.util.FlxPoint;
 
 /**
@@ -16,6 +17,20 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 	public var selectedId(get, set):String;
 	public var selectedLabel(get, set):String;
 	public var selectedIndex(get, set):Int;
+	
+	public var activeStyle(default, set):CheckStyle;
+	private function set_activeStyle(b:CheckStyle):CheckStyle {
+		activeStyle = b;
+		updateActives();
+		return activeStyle;
+	}
+	
+	public var inactiveStyle(default, set):CheckStyle;
+	private function set_inactiveStyle(b:CheckStyle):CheckStyle{
+		inactiveStyle = b;
+		updateActives();
+		return inactiveStyle;
+	}
 	
 	public var numRadios(get, null):Int;
 	private function get_numRadios():Int {
@@ -94,6 +109,7 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 		_label_width = label_width_;
 		callback = callback_;
 		_list_radios = new Array<FlxUICheckBox>();
+		_list_active = [];
 		_list = new FlxUIList(0, 0, null, 0, 0, MoreString, FlxUIList.STACK_VERTICAL,0,PrevButtonOffset,NextButtonOffset,PrevButton,NextButton);
 		add(_list);
 		updateRadios(ids_, labels_);
@@ -122,9 +138,16 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 	}
 	
 	public override function destroy():Void {
-		if (_list_radios != null) {
-			U.clearArray(_list_radios);	
+		if (_list_radios != null)
+		{
+			U.clearArray(_list_radios);
 		}
+		if (_list_active != null)
+		{
+			U.clearArray(_list_active);
+		}
+		_list_active = null;
+		_list_radios = null;
 		_list = null;
 		_ids = null;
 		_labels = null;
@@ -271,33 +294,18 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 			}
 		}
 		return FlxPoint.get(_list.amountPrevious, _list.amountNext);
-		/*var i:Int = 1;
-		var yy:Float = y;
-		var more_above:Int = 0;
-		var more_below:Int = 0;
-		for(c in _list_radios) {
-			if (i <= scroll) {
-				c.visible = false;
-				more_above++;
-			}else if (i > scroll + max_items) {
-				c.visible = false;
-				more_below++;
-			}else {
-				c.x = Std.int(x);
-				c.y = Std.int(yy);
-				yy += _y_space;
-				c.visible = true;
-			}
-			i++;
-		}
-		return FlxPoint.get(more_above, more_below);*/
 	}
 	
-	/***GETTER / SETTER***/
-	
-	
+	public function setRadioActive(i:Int, b:Bool):Void {
+		if (i >= 0 && i < _list_active.length) {
+			_list_active[i] = b;
+		}
+		updateActives();
+	}
 	
 	/***PRIVATE***/
+	
+	private var _list_active:Array<Bool>;			//list of inactive radios
 	
 	private var _list:FlxUIList;
 	
@@ -368,6 +376,9 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 				c.text = label;
 				if (_list_radios.length > 0) {
 					c.button.copyStyle(cast _list_radios[0].button);
+					if (activeStyle == null) {
+						activeStyle = makeActiveStyle();
+					}
 					c.button.width = _list_radios[0].button.width;
 					c.button.height = _list_radios[0].button.height;
 					c.textX = _list_radios[0].textX;
@@ -375,6 +386,7 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 				}
 				
 				_list_radios.push(c);
+				_list_active.push(true);
 			}
 			
 			if (xx + c.width > maxX) {
@@ -402,6 +414,32 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 		if (fixedSize == true) {
 			_list.refreshList();
 		}
+		
+		updateActives();
+	}
+	
+	private function updateActives():Void {
+		var i:Int = 0;
+		for (r in _list_radios) {
+			r.active = _list_active[i];
+			if (_list_active[i] == false && inactiveStyle != null){
+				inactiveStyle.applyToCheck(r);
+			}else if (_list_active[i] == true && activeStyle != null) {
+				activeStyle.applyToCheck(r);
+			}
+			i++;
+		}
+	}
+	
+	private function makeActiveStyle():CheckStyle{
+		if (_list_radios.length > 0) {
+			var btn = _list_radios[0].button;
+			var t:FlxText = btn.label;
+			var cs:CheckStyle = new CheckStyle(0xFFFFFF, FontDef.copyFromFlxText(t), t.alignment, t.color, new BorderDef(t.borderStyle, t.borderColor, t.borderSize, t.borderQuality));
+			return cs;
+		}
+		return null;
+		
 	}
 	
 	private function _onCheckBoxEvent(checkBox:FlxUICheckBox):Void {
@@ -431,5 +469,21 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 			}
 		}
 		return true;
+	}
+}
+
+class CheckStyle extends ButtonLabelStyle {
+	public var checkColor:Null<Int> = null;
+	
+	public function new(CheckColor:Null<Int>=null, ?Font:FontDef, ?Align:String, ?Color:Int, ?Border:BorderDef) {
+		checkColor = CheckColor;
+		super(Font, Align, Color, Border);
+	}
+	
+	public function applyToCheck(c:FlxUICheckBox):Void {
+		if (checkColor != null) {
+			c.color = checkColor;
+		}
+		apply(c.button.label);
 	}
 }

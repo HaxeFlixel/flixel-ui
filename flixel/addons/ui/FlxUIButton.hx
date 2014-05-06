@@ -5,7 +5,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.text.Font;
 import flash.text.TextFormat;
-import flixel.addons.ui.FlxUIText.BorderDef;
+import flixel.addons.ui.BorderDef;
 import flixel.addons.ui.FontDef;
 import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IHasParams;
@@ -260,36 +260,6 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 					label.borderQuality = up_style.border.quality;
 				}
 			}
-		}
-	}
-}
-
-class ButtonLabelStyle 
-{
-	public var font:FontDef=null;
-	public var border:BorderDef=null;
-	public var color:Null<Int>=null;
-	public var align:String=null;
-	
-	public function new(?Font:FontDef, ?Align:String, ?Color:Int, ?Border:BorderDef) {
-		font = Font;
-		border = Border;
-		color = Color;
-		align = Align;
-	}
-	
-	public function apply(f:FlxText):Void {
-		if (font != null) {
-			font.apply(f);
-		}
-		if (border != null) {
-			border.apply(f);
-		}
-		if (color != null) {
-			f.color = color;
-		}
-		if (align != null) {
-			f.alignment = align;
 		}
 	}
 }

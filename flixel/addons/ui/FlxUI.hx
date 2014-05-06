@@ -7,9 +7,10 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.Lib;
 import flixel.addons.ui.FlxUI.MaxMinSize;
-import flixel.addons.ui.FlxUIButton.ButtonLabelStyle;
+import flixel.addons.ui.ButtonLabelStyle;
 import flixel.addons.ui.FlxUIDropDownMenu;
-import flixel.addons.ui.FlxUIText.BorderDef;
+import flixel.addons.ui.BorderDef;
+import flixel.addons.ui.FlxUIRadioGroup.CheckStyle;
 import flixel.addons.ui.FontDef;
 import flixel.addons.ui.interfaces.IEventGetter;
 import flixel.addons.ui.interfaces.IFireTongue;
@@ -1507,13 +1508,18 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var text_y:Int = U.xml_i(data.x, "text_y");
 		
 		var radios = frg.getRadios();
+		var i:Int = 0;
 		for (fo in radios) {
 			if(fo != null){
 				if (Std.is(fo, FlxUICheckBox)){
 					var fc:FlxUICheckBox = cast(fo, FlxUICheckBox);
-					formatButtonText(data, fc);
+					var t:FlxText = formatButtonText(data, fc);
+					if (t != null && frg.activeStyle == null) {
+						frg.activeStyle = new CheckStyle(0xffffff, FontDef.copyFromFlxText(t), t.alignment, t.color, new BorderDef(t.borderStyle, t.borderColor, t.borderSize, t.borderQuality));
+					}
 					fc.textX = text_x;
 					fc.textY = text_y;
+					i++;
 				}
 			}
 		}
@@ -2936,7 +2942,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return params;
 	}	
 			
-	private function formatButtonText(data:Fast, button:Dynamic):Void {
+	private function formatButtonText(data:Fast, button:Dynamic):FlxText {
 		if (data != null && data.hasNode.text) {
 			var textNode = data.node.text;
 			var use_def:String = U.xml_str(textNode.x, "use_def", true);
@@ -3085,7 +3091,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				the_label.visible = ifb.up_visible;
 				the_label.color = ifb.up_color;
 			}
+			return the_label;
 		}
+		return null;
 	}
 }
 

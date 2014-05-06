@@ -1,7 +1,7 @@
 package flixel.addons.ui;
 import flash.text.TextField;
 import flash.text.TextFormat;
-import flixel.addons.ui.FlxUIText.BorderDef;
+import flixel.addons.ui.BorderDef;
 import flixel.text.FlxText;
 import openfl.Assets;
 
@@ -66,7 +66,11 @@ class FontDef
 			textField.setTextFormat(format);
 		}
 		if (flxText != null) {
-			flxText.setFormat(file, format.size, format.color, cast format.align, border.style, border.color);
+			if (file == "" || file == null) {
+				flxText.setFormat(null, format.size, format.color, cast format.align, border.style, border.color);	//default font
+			}else {
+				flxText.setFormat(file, format.size, format.color, cast format.align, border.style, border.color);
+			}
 		}
 	}
 	
