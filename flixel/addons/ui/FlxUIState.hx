@@ -25,7 +25,10 @@ import haxe.xml.Fast;
 class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 {
 	public var destroyed:Bool;
+	
+	#if !FLX_NO_MOUSE
 	public var cursor:FlxUICursor = null;
+	#end
 	
 	private var _xml_id:String = "";	//the xml to load
 	private var _makeCursor:Bool;		//whether to auto-construct a cursor and load default widgets into it
@@ -54,11 +57,11 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		if (static_tongue != null) {
 			_tongue = static_tongue;
 		}
-		
+		#if !FLX_NO_MOUSE
 		if (_makeCursor == true) {
 			cursor = new FlxUICursor(onCursorEvent);
 		}
-		
+		#end
 		if(_xml_id != null && _xml_id != ""){
 			_ui = new FlxUI(null,this,null,_tongue);
 			add(_ui);
@@ -78,7 +81,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 				_ui.load(data);
 			}
 		}
-		
+		#if !FLX_NO_MOUSE
 		if (cursor != null) {			//Cursor goes on top, of course
 			add(cursor);
 			var widget:IFlxUIWidget;
@@ -92,6 +95,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		}
 		
 		FlxG.mouse.visible = true;
+		#end
 	}
 	
 	public function resizeScreen(width:Float=800, height:Float=600):Void {
