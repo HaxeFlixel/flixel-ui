@@ -1,4 +1,5 @@
 package flixel.addons.ui;
+
 import flash.display.Sprite;
 import flixel.FlxG;
 import flixel.input.mouse.FlxMouse;
