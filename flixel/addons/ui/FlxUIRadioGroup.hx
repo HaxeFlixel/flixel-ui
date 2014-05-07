@@ -400,14 +400,16 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 			i++;
 		}
 		if (fixedSize == false) {
+			maxX += 5;		//add some buffer
+			maxY += 5;
 			if (maxX > _list.width) {
 				_list.width = maxX;
 			}
 			if (maxY > _list.height) {
 				_list.height = maxY;
 			}
-			width = _list.width;
-			height = _list.height;
+			width = maxX;
+			height = maxY;
 		}
 		_list._skipRefresh = false;
 		

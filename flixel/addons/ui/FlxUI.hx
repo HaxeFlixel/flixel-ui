@@ -1509,13 +1509,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var radios = frg.getRadios();
 		var i:Int = 0;
+		var styleSet:Bool = false;
 		for (fo in radios) {
 			if(fo != null){
 				if (Std.is(fo, FlxUICheckBox)){
 					var fc:FlxUICheckBox = cast(fo, FlxUICheckBox);
 					var t:FlxText = formatButtonText(data, fc);
-					if (t != null && frg.activeStyle == null) {
+					if (t != null && styleSet == false) {
 						frg.activeStyle = new CheckStyle(0xffffff, FontDef.copyFromFlxText(t), t.alignment, t.color, new BorderDef(t.borderStyle, t.borderColor, t.borderSize, t.borderQuality));
+						styleSet = true;
 					}
 					fc.textX = text_x;
 					fc.textY = text_y;
