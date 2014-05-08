@@ -31,7 +31,7 @@ class FontDef
 		}
 		border = Border;
 		if (border == null) {
-			border = new BorderDef(FlxText.BORDER_NONE, 0x000000);
+			border = new BorderDef(NONE, 0x000000);
 		}
 	}
 	
