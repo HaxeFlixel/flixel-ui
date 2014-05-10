@@ -1,9 +1,7 @@
 package flixel.addons.ui;
 
-/**
- * ...
- * @author 
- */
+import flixel.util.FlxStringUtil;
+
 class StrIdLabel
 {
 	public var id:String;
@@ -29,5 +27,11 @@ class StrIdLabel
 		if (a.id < b.id) { return -1; }
 		if (a.id > b.id) { return  1; }
 		return 0;
+	}
+	
+	public function toString():String {
+		return FlxStringUtil.getDebugString([ 
+			LabelValuePair.weak("id", id),
+			LabelValuePair.weak("label", label)]);
 	}
 }
