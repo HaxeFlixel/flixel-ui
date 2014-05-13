@@ -1,11 +1,12 @@
 package flixel.addons.ui;
-import flixel.interfaces.IFlxDestroyable;
+
 import flixel.util.FlxColorUtil;
+import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 /**
  * ...
  * @author Lars A. Doucet
  */
-class SwatchData implements IFlxDestroyable{
+class SwatchData implements IFlxDestroyable {
 
 	public var name:String;
 	public var colors:Array<Int>;

@@ -7,10 +7,11 @@ import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.interfaces.IFlxDestroyable;
+import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import flixel.util.FlxPoint;
 import haxe.Json;
 import haxe.xml.Fast;
+import haxe.xml.Printer;
 import openfl.Assets;
 
 #if (cpp || neko)
@@ -18,8 +19,6 @@ import sys.FileSystem;
 import sys.io.File;
 import sys.io.FileOutput;
 #end
-
-import haxe.xml.Printer;
 
 /**
  * Utility functions, inlined where possible

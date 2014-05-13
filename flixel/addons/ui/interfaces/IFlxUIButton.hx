@@ -1,9 +1,10 @@
 package flixel.addons.ui.interfaces;
+
 import flash.display.BitmapData;
 import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.addons.ui.FlxUIText;
 import flixel.FlxSprite;
-import flixel.interfaces.IFlxDestroyable;
+import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import flixel.util.FlxPoint;
 
 /**
