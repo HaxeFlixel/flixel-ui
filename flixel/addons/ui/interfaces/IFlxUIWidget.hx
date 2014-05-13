@@ -1,7 +1,7 @@
 package flixel.addons.ui.interfaces;
 
 import flixel.addons.ui.FlxUI.UIEventCallback;
-import flixel.interfaces.IFlxSprite;
+import flixel.FlxSprite;
 
 /**
  * ...

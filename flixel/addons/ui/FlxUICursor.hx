@@ -1,18 +1,15 @@
 package flixel.addons.ui;
 import flash.events.MouseEvent;
 import flixel.addons.ui.Anchor;
-import flixel.addons.ui.FlxUI;
 import flixel.addons.ui.FlxUIAssets;
 import flixel.addons.ui.FlxUISprite;
 import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxG;
 import flixel.FlxObject;
-import flixel.FlxSprite;
-import flixel.input.mouse.FlxMouse;
+import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
 import flixel.util.FlxDestroyUtil;
-import flixel.util.FlxMath;
-import flixel.util.FlxPoint;
 
 /**
  * Cursor object that you can use to "click" on interface elements using a keyboard or gamepad

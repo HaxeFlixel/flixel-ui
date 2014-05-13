@@ -1,6 +1,6 @@
 package flixel.addons.ui;
+
 import flixel.FlxG;
-import flixel.interfaces.IFlxDestroyable;
 import flixel.util.FlxDestroyUtil;
 
 /**
@@ -15,7 +15,7 @@ class MultiKey implements IFlxDestroyable
 										//forbidden is useful so you can distinguish a "TAB" from a "SHIFT+TAB"
 										//-- you add "SHIFT" to the first one's forbidden list
 	
-	public function new(Key:Int,?Combos:Array<Int>=null,?Forbiddens:Array<Int>=null) 
+	public function new(Key:Int,?Combos:Array<Int>,?Forbiddens:Array<Int>) 
 	{
 		key = Key;
 		combos = Combos;

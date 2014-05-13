@@ -9,7 +9,7 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxArrayUtil;
-import flixel.util.FlxPoint;
+import flixel.math.FlxPoint;
 import flixel.util.FlxStringUtil;
 import flixel.util.FlxTimer;
 
@@ -130,7 +130,7 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 					fb.over_toggle_color = 0xffffff;
 					
 					fb.label.color = 0xFFFFFF;
-					fb.label.setBorderStyle(FlxText.BORDER_OUTLINE);
+					fb.label.setBorderStyle(OUTLINE);
 					
 					fb.id = tdata.id;
 					

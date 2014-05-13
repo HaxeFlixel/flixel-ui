@@ -1,17 +1,16 @@
 package flixel.addons.ui;
 
-import flash.display.BitmapData;
 import flash.errors.Error;
 import flash.events.KeyboardEvent;
 import flash.geom.Rectangle;
 import flixel.addons.ui.FlxUI.NamedString;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
-import flixel.util.FlxPoint;
-import flixel.util.FlxRect;
 import flixel.util.FlxTimer;
 	
 /**
@@ -650,13 +649,14 @@ class FlxInputText extends FlxText
 			
 			//Generate unique key for the caret so we don't cause weird bugs if someone makes some random flxsprite of this size and color
 			var caretKey:String = "caret" + cw + "x" + ch + "c:" + caretC + "b:" + borderStyle+"," + borderSize+"," + borderC;
-			switch(borderStyle) 
+			switch (borderStyle) 
 			{
-				case FlxText.BORDER_NONE:
+				case NONE:
 					//No border, just make the caret
 					caret.makeGraphic(cw, ch, caretC,false,caretKey);
 					caret.offset.x = caret.offset.y = 0;
-				case FlxText.BORDER_SHADOW:
+					
+				case SHADOW:
 					//Shadow offset to the lower-right
 					cw += Std.int(borderSize);
 					ch += Std.int(borderSize);		//expand canvas on one side for shadow
@@ -666,7 +666,8 @@ class FlxInputText extends FlxText
 					r.x = r.y = 0;
 					caret.pixels.fillRect(r, caretC);	//draw caret
 					caret.offset.x = caret.offset.y = 0;
-				case FlxText.BORDER_OUTLINE_FAST,FlxText.BORDER_OUTLINE:
+					
+				case OUTLINE_FAST, OUTLINE:
 					//Border all around it
 					cw += Std.int(borderSize * 2);
 					ch += Std.int(borderSize * 2);	//expand canvas on both sides

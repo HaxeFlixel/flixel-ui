@@ -4,7 +4,7 @@ import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.ui.FlxTypedButton.FlxTypedButton;
-import flixel.util.FlxPoint;
+import flixel.math.FlxPoint;
 
 /**
  * ...

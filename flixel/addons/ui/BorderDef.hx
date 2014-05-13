@@ -3,12 +3,12 @@ import flixel.text.FlxText;
 
 class BorderDef
 {
-	public var style:Int; 
+	public var style:FlxTextBorderStyle; 
 	public var color:Int; 
 	public var size:Float;
 	public var quality:Float;
 	
-	public function new(Style:Int, Color:Int, Size:Float=1, Quality:Float=1) {
+	public function new(Style:FlxTextBorderStyle, Color:Int, Size:Float=1, Quality:Float=1) {
 		style = Style;
 		color = Color;
 		size = Size;

@@ -6,7 +6,7 @@ import flixel.addons.ui.interfaces.IHasParams;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxArrayUtil;
-import flixel.util.FlxPoint;
+import flixel.math.FlxPoint;
 import flixel.util.FlxStringUtil;
 
 /**

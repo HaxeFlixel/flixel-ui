@@ -1,9 +1,7 @@
 package flixel.addons.ui;
 
-/**
- * ...
- * @author 
- */
+import flixel.util.FlxStringUtil;
+
 class StrIdLabel
 {
 	public var id:String;
@@ -32,6 +30,8 @@ class StrIdLabel
 	}
 	
 	public function toString():String {
-		return "{id:" + id + ", label:" + label + "}";
+		return FlxStringUtil.getDebugString([ 
+			LabelValuePair.weak("id", id),
+			LabelValuePair.weak("label", label)]);
 	}
 }

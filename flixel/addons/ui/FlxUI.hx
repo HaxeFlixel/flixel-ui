@@ -29,7 +29,7 @@ import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxColor;
-import flixel.util.FlxPoint;
+import flixel.math.FlxPoint;
 import flixel.util.FlxStringUtil;
 import haxe.xml.Fast;
 import openfl.Assets;
@@ -1832,7 +1832,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			if (tab_def == null || !tab_def.hasNode.text) {
 				for (t in list_tabs) {
 					t.label.color = 0xFFFFFF;
-					t.label.setBorderStyle(FlxText.BORDER_OUTLINE);
+					t.label.setBorderStyle(OUTLINE);
 				}
 			}
 			
@@ -2810,34 +2810,34 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private function _loadBorder(data:Fast):BorderDef
 	{
 		var border_str:String = U.xml_str(data.x, "border");
-		var border_style:Int = FlxText.BORDER_NONE;
+		var border_style:FlxTextBorderStyle = NONE;
 		var border_color:Int = _loadColor(data, "border_color", 0);
 		var border_size:Int = U.xml_i(data.x, "border_size", 1);
 		var border_quality:Float = U.xml_f(data.x, "border_quality", 0);
 
-		var borderDef:BorderDef = new BorderDef(border_style, border_color, border_size, border_quality);
+		var borderDef = new BorderDef(border_style, border_color, border_size, border_quality);
 		
 		switch(border_str) {
-			case "false", "none": borderDef.style = FlxText.BORDER_NONE;
-			case "shadow": borderDef.style = FlxText.BORDER_SHADOW;
-			case "outline": borderDef.style = FlxText.BORDER_OUTLINE;
-			case "outline_fast": borderDef.style = FlxText.BORDER_OUTLINE_FAST;
+			case "false", "none": borderDef.style = NONE;
+			case "shadow": borderDef.style = SHADOW;
+			case "outline": borderDef.style = OUTLINE;
+			case "outline_fast": borderDef.style = OUTLINE_FAST;
 			case "":
 				//no "border" value, check for shortcuts:
 				//try "outline"
 				border_str = U.xml_str(data.x, "shadow", true, "");
 				if (border_str != "" && border_str != "false" && border_str != "none") {
-					borderDef.style = FlxText.BORDER_SHADOW;
+					borderDef.style = SHADOW;
 					borderDef.color = U.parseHex(border_str, false, true);
 				}else{
 					border_str = U.xml_str(data.x, "outline", true, "");
 					if (border_str != "" && border_str != "false" && border_str != "none") {
-						borderDef.style = FlxText.BORDER_OUTLINE;
+						borderDef.style = OUTLINE;
 						borderDef.color = U.parseHex(border_str, false, true);
 					}else{
 						border_str = U.xml_str(data.x, "outline_fast");
 						if (border_str != "" && border_str != "false" && border_str != "none") {
-							borderDef.style = FlxText.BORDER_OUTLINE_FAST;
+							borderDef.style = OUTLINE_FAST;
 							borderDef.color = U.parseHex(border_str, false, true);
 						}
 					}

@@ -1,11 +1,10 @@
 package flixel.addons.ui;
+
 import flixel.FlxObject;
-import flixel.interfaces.IFlxDestroyable;
+import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 
 /**
  * A class that describes how some object should be positioned relative to another
- * 
- * @author 
  */
 class Anchor implements IFlxDestroyable
 {
