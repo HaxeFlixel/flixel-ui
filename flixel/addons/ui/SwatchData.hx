@@ -93,7 +93,7 @@ class SwatchData implements IFlxDestroyable{
 
 	public function toString():String 
 	{
-		var str:String = "(" + name + ",";
+		var str:String = "(";
 		var i:Int = 0;
 		if(colors != null){
 			for (colorInt in colors) {
@@ -106,13 +106,13 @@ class SwatchData implements IFlxDestroyable{
 		}else {
 			str += "null";
 		}
-		str += ")";
+		str += ",name="+name+")";
 		return str;
 	}
 
 	//Get the total raw difference in colors from another color swatch
 	
-	public function getRawDifference(?other:SwatchData, ?otherColors:Array<Int>):Int {
+	public function getRawDifference(?other:SwatchData, ?otherColors:Array<Int>, ?IgnoreInvisible:Bool=false):Int {
 		var listA:Array<Int> = colors;
 		if (colors != null) {
 			listA = colors;
@@ -144,8 +144,20 @@ class SwatchData implements IFlxDestroyable{
 		
 		var totalDiff:Int = 0;
 		var i:Int = 0;
-		for (i in 0...smallList.length) {
-			totalDiff += getRGBdelta(bigList[i], smallList[i]);				//get raw RGB delta
+		for (i in 0...smallList.length)
+		{
+			var ignore:Bool = false;
+			if (IgnoreInvisible && (bigList[i] == 0x00000000 || smallList[i] == 0x00000000))
+			{
+				if (listA[i] == 0x00000000)
+				{
+					ignore = true;
+				}
+			}
+			if (!ignore)
+			{
+				totalDiff += getRGBdelta(bigList[i], smallList[i]);				//get raw RGB delta
+			}
 		}
 		
 		var lengthDiff:Int = bigList.length - smallList.length;

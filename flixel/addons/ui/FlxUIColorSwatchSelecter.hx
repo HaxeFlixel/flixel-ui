@@ -297,20 +297,18 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 		updateSelected();
 	}
 	
-	public function selectByColors(Data:SwatchData, PickClosest:Bool = true):Void {
+	public function selectByColors(Data:SwatchData, PickClosest:Bool = true, IgnoreInvisible:Bool = true):Void {
 		var best_delta:Int = 99999999;
 		var curr_delta:Int = 0;
 		var best_swatch:FlxUIColorSwatch = null;
 		
 		_selectedSwatch = null;
-		
 		for (sprite in members) {
 			if (sprite != _selectionSprite && sprite != _selectedSwatch && sprite.visible == true && sprite.active == true) {
 				var swatch:FlxUIColorSwatch = cast sprite;
 				var swatchData:SwatchData = swatch.colors;
 				if (PickClosest) {
-					curr_delta = Data.getRawDifference(swatchData);
-					
+					curr_delta = Data.getRawDifference(swatchData,IgnoreInvisible);
 					if (curr_delta < best_delta) {
 						best_swatch = swatch;
 						best_delta = curr_delta;
