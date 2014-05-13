@@ -1,17 +1,16 @@
 package flixel.addons.ui;
 
-import flash.display.BitmapData;
 import flash.errors.Error;
 import flash.events.KeyboardEvent;
 import flash.geom.Rectangle;
 import flixel.addons.ui.FlxUI.NamedString;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
-import flixel.util.FlxPoint;
-import flixel.util.FlxRect;
 import flixel.util.FlxTimer;
 	
 /**

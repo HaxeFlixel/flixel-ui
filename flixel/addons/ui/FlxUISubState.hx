@@ -7,7 +7,7 @@ import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxSubState;
-import flixel.util.FlxPoint;
+import flixel.math.FlxPoint;
 import haxe.xml.Fast;
 
 /**

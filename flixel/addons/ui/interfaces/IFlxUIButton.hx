@@ -5,7 +5,7 @@ import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.addons.ui.FlxUIText;
 import flixel.FlxSprite;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
-import flixel.util.FlxPoint;
+import flixel.math.FlxPoint;
 
 /**
  * This interface keeps me from having to use a Dynamic variable to point to a value holding a FlxUITypedButton 

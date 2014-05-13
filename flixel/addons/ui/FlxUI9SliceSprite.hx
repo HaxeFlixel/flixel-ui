@@ -7,9 +7,9 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
+import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
 import flixel.util.FlxDestroyUtil;
-import flixel.util.FlxPoint;
-import flixel.util.FlxRect;
 import openfl.Assets;
 
 /**

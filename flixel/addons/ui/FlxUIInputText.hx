@@ -1,10 +1,8 @@
 package flixel.addons.ui;
 
-import flixel.addons.ui.FlxUI.NamedString;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.IResizable;
-import flixel.util.FlxRect;
 
 /**
  * @author Lars Doucet

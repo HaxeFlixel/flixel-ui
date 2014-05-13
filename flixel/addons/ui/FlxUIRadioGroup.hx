@@ -6,7 +6,7 @@ import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.text.FlxText;
-import flixel.util.FlxPoint;
+import flixel.math.FlxPoint;
 
 /**
  * @author Lars Doucet

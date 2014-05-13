@@ -1,10 +1,9 @@
 package flixel.addons.ui;
 
-import flixel.addons.ui.FlxUI.UIEventCallback;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxSprite;
-import flixel.util.FlxRandom;
+import flixel.math.FlxRandom;
 
 /**
  * A scalable object with width and height that isn't used for display purposes
