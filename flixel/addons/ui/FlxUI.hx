@@ -913,11 +913,21 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			case "radio_group": return _loadRadioGroup(info);					//has events, params
 			case "layout", "ui": return _loadLayout(info);
 			case "failure": if (_failure_checks == null) { _failure_checks = new Array<Fast>(); }
-							_failure_checks.push(data);
+							_failure_checks.push(info);
 							return null;
-			case "align": 	_alignThing(data);
+			case "align": 	_alignThing(info);
 							return null;
 			case "mode", "include", "group", "load_if":			//ignore these, they are handled elsewhere
+							return null;
+			case "change":
+							_changeThing(info);
+							return null;
+			case "position":
+							id = U.xml_str(info.x, "id", true);
+							var thing = getAsset(id);
+							if(thing != null){
+								_loadPosition(info, thing);
+							}
 							return null;
 			
 			default: 
@@ -1055,7 +1065,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					return;
 				}
 				
-				if (data.hasNode.bounds) {
+				var boundsError:String = "";
+					
+				if (data.hasNode.bounds)
+				{
 					var bound_range:Float = -1;
 					
 					if (axis == "horizontal") {
@@ -1065,29 +1078,39 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						bounds.x = _getDataSize("h", U.xml_str(data.node.bounds.x, "top"), -1);
 						bounds.y = _getDataSize("h", U.xml_str(data.node.bounds.x, "bottom"), -1);
 					}
+				}
 				
-					if (bounds.x != -1 && bounds.y != -1) {
-						if(bounds.y <= bounds.x){
-							//throw new Error("FlxUI._alignThing(): bounds max must be > bounds min!");
-							return;
-						}
-					}else {
-						//throw new Error("FlxUI._alignThing(): missing bound!");
-						return;
+				if (bounds.x != -1 && bounds.y != -1)
+				{
+					if (bounds.y <= bounds.x)
+					{
+						boundsError = "FlxUI._alignThing(): bounds max must be > bounds min!";
 					}
-					
+				}
+				else
+				{
+					boundsError = "FlxUI._alignThing(): missing bound!";
+				}
+				
+				if (boundsError == "")
+				{
 					_doAlign(objects, axis, spacing, resize, bounds);
-					
-					if(data.hasNode.anchor || data.has.x || data.has.y){
-						for (object in objects) {
-							var thing:IFlxUIWidget = getAsset(object);
-							_loadPosition(data,thing);
-						}
-					}
+				}
 				
-				}else {
-					throw new Error("FlxUI._alignThing(): <bounds> node not found!");
-					return;
+				if (data.hasNode.anchor || data.has.x || data.has.y)
+				{
+					for (object in objects)
+					{
+						var thing:IFlxUIWidget = getAsset(object);
+						_loadPosition(data,thing);
+					}
+				}
+				else
+				{
+					if (boundsError != "")
+					{
+						FlxG.log.error(boundsError);
+					}
 				}
 			}
 		}else {
@@ -1268,6 +1291,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		if (type == "align") {
 			_alignThing(data);
+		}
+		
+		if (type == "position") {
+			_loadPosition(data, thing);
+			return;
 		}
 		
 		if (thing == null) {
@@ -2730,10 +2758,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private function _loadPosition(data:Fast, thing:IFlxUIWidget):Void {
 		var X:Float = _loadX(data);			//position offset from 0,0
 		var Y:Float = _loadY(data);
-			
+		
+		//if you don't define x or y in an anchor, they default to 0
+		//but if you set x="same" / y="same", you default to whatever it was before
+		
 		var ctrX:Bool = U.xml_bool(data.x, "center_x");	//if true, centers on the screen
 		var ctrY:Bool = U.xml_bool(data.x, "center_y");
-				
+		
 		var center_on:String = U.xml_str(data.x, "center_on");
 		var center_on_x:String = U.xml_str(data.x, "center_on_x");
 		var center_on_y:String = U.xml_str(data.x, "center_on_y");
@@ -2751,8 +2782,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 			anchor_x = _getAnchorPos(thing, "x", anchor_x_str);
 			anchor_y = _getAnchorPos(thing, "y", anchor_y_str);
+			
 			anchor_x_flush = U.xml_str(data.node.anchor.x, "x-flush",true);
-			anchor_y_flush = U.xml_str(data.node.anchor.x, "y-flush", true);						
+			anchor_y_flush = U.xml_str(data.node.anchor.x, "y-flush", true);
 		}
 		
 		//Flush it to the anchored coordinate
