@@ -490,7 +490,25 @@ class U
 			}
 			return null;
 		}
-	
+		
+		public static function fixSlash(path:String):String 
+		{
+			var goodSlash:String = slash();
+			var badSlash:String = (goodSlash == "/") ? "\\" : "/";
+			while (path.indexOf(badSlash) != -1)
+			{
+				path = StringTools.replace(path, badSlash, goodSlash);
+			}
+			return path;
+		}
+		
+		public static inline function slash():String {
+			#if windows
+				return "\\";
+			#else
+				return "/";
+			#end
+		}
 		
 		public static function writeXml(data:Xml, path:String, wrapData:Bool=true, addHeader:Bool=true):Void {
 			var xml:Xml = data;

@@ -30,7 +30,15 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	public var cursor:FlxUICursor = null;
 	#end
 	
-	private var _xml_id:String = "";	//the xml to load
+	private var _xml_id:String = "";			//the xml file to load from assets
+	#if (debug && sys)
+		//If you want to do live reloading, set the path to your assets directory on your local disk here, 
+		//and it will load that instead of loading the xml specification from embedded assets
+		//(only works on cpp/neko targets)
+		//this should serve as a PREFIX to the _xml_id:
+		//if full path="path/to/assets/xml/ui/foo.xml" and _xml_id="ui/foo.xml", then liveFilePath="path/to/assets/xml/"
+		private var _liveFilePath:String = "";
+	#end
 	private var _makeCursor:Bool;		//whether to auto-construct a cursor and load default widgets into it
 	
 	private var _ui:FlxUI;
@@ -39,6 +47,12 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	public static var static_tongue:IFireTongue=null;
 	//if this is not null, each state will grab this auto-magically
 	//otherwise it's up to you to set _tongue before the UI stuff loads.
+	
+	#if (debug && sys)
+		public static var static_liveFilePath:String = "";
+		//if this is not "", each state will grab this auto-magically
+		//otherwise it's up to you to set _liveFilePath before the UI stuff loads.
+	#end
 	
 	//set this to true to make it automatically reload the UI when the window size changes
 	public var reload_ui_on_resize:Bool = false;
@@ -54,30 +68,81 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	}
 	
 	public override function create():Void {
-		if (static_tongue != null) {
+		if (static_tongue != null)
+		{
 			_tongue = static_tongue;
 		}
+		
+		#if (debug && sys)
+			if (static_liveFilePath != null && static_liveFilePath != "")
+			{
+				_liveFilePath = static_liveFilePath;
+			}
+		#end
+		
 		#if !FLX_NO_MOUSE
-		if (_makeCursor == true) {
+		if (_makeCursor == true)
+		{
 			cursor = new FlxUICursor(onCursorEvent);
 		}
 		#end
-		if(_xml_id != null && _xml_id != ""){
-			_ui = new FlxUI(null,this,null,_tongue);
+		
+		var liveFile:Fast = null;
+		
+		if (_xml_id != null && _xml_id != "")
+		{
+			#if (debug && sys)
+				trace("_liveFilePath = " + _liveFilePath);
+				if (_liveFilePath != null && _liveFilePath != "")
+				{
+					try
+					{
+						liveFile = U.readFast(U.fixSlash(_liveFilePath +_xml_id));
+						trace("liveFile = " + liveFile);
+					}
+					catch(msg:String)
+					{
+						FlxG.log.warn(msg);
+						trace(msg);
+						liveFile = null;
+					}
+				}
+				_ui = new FlxUI(null, this, null, _tongue, _liveFilePath);
+			#else
+				_ui = new FlxUI(null, this, null, _tongue);
+			#end
 			add(_ui);
 			
-			if(getTextFallback != null){
+			if (getTextFallback != null)
+			{
 				_ui.getTextFallback = getTextFallback;
 			}
 			
-			var data:Fast = U.xml(_xml_id);
-			if (data == null) {
-				data = U.xml(_xml_id, "xml", true, "");	//try again without default directory prepend
+			
+			var data:Fast = null;
+			
+			if (liveFile == null)
+			{
+				data = U.xml(_xml_id);
+				if (data == null)
+				{
+					data = U.xml(_xml_id, "xml", true, "");	//try again without default directory prepend
+				}
 			}
 			
-			if (data == null) {
-				FlxG.log.error("FlxUISubState: Could not load _xml_id \"" + _xml_id + "\"");
-			} else{
+			if (data == null)
+			{
+				if (liveFile != null)
+				{
+					_ui.load(liveFile);
+				}
+				else
+				{
+					FlxG.log.error("FlxUISubState: Could not load _xml_id \"" + _xml_id + "\"");
+				}
+			}
+			else
+			{
 				_ui.load(data);
 			}
 		}

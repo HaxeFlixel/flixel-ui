@@ -53,6 +53,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	public var failed:Bool = false;
 	public var failed_by:Float = 0;
 	
+	#if (debug && sys)
+		//If you want to do live reloading, set the path to your assets directory on your local disk here, 
+		//and it will load that instead of loading the xml specification from embedded assets
+		//(only works on cpp/neko targets)
+		//this should serve as a PREFIX to the _xml_id:
+		//if full path="path/to/assets/xml/ui/foo.xml" and _xml_id="ui/foo.xml", then liveFilePath="path/to/assets/xml/"
+		public var liveFilePath:String;
+	#end
+	
 	public var tongue(get, set):IFireTongue;
 	private function get_tongue():IFireTongue { return _ptr_tongue; }
 	private function set_tongue(t:IFireTongue):IFireTongue 
@@ -187,14 +196,23 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 		
 	/***PUBLIC FUNCTIONS***/
-		
-	public function new(data:Fast=null,ptr:IEventGetter=null,superIndex_:FlxUI=null,tongue_:IFireTongue=null) 
+	
+	#if (debug && sys)
+	public function new(data:Fast = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null, liveFilePath_:String="") 
+	#else
+	public function new(data:Fast = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null) 
+	#end
 	{
 		super();
 		_ptr_tongue = tongue_;	//set the localization data structure, if any.
 								//we set this directly b/c no children have been created yet
 								//when children FlxUI elements are added, this pointer is passed down
 								//on destroy(), it is recurvisely removed from all of them
+		#if (debug && sys)
+			liveFilePath = liveFilePath_;	//set the path for live file loading (loads xml files from local disk rather than embedded assets. 
+											//useful for faster edit-reload loop
+			trace("liveFilePath = " + liveFilePath);
+		#end
 		_ptr = ptr;
 		if (superIndex_ != null) {
 			setSuperIndex(superIndex_);
@@ -395,6 +413,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 */
 	
 	public function load(data:Fast):Void {
+		trace("data = " + data.x);
+		
 		_group_index = new Map<String,FlxUIGroup>();
 		_asset_index = new Map<String,IFlxUIWidget>();
 		_definition_index = new Map<String,Fast>();
@@ -410,7 +430,38 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			if (data.hasNode.include) {
 				for (inc_data in data.nodes.include) {
 					var inc_id:String = inc_data.att.id;
-					var inc_xml:Fast = U.xml(inc_id);
+					
+					var liveFile:Fast = null;
+					
+					#if (debug && sys)
+						trace("trying to read include id " + inc_id);
+						trace("liveFilePath = " + liveFilePath);
+						if (liveFilePath != null && liveFilePath != "")
+						{
+							trace("trying to load " + U.fixSlash(liveFilePath + inc_id + ".xml"));
+							try
+							{
+								liveFile = U.readFast(U.fixSlash(liveFilePath + inc_id + ".xml"));
+								trace("liveFile = " + liveFile);
+							}
+							catch (msg:String)
+							{
+								FlxG.log.warn(msg);
+								trace(msg);
+								liveFile = null;
+							}
+						}
+					#end
+					
+					var inc_xml:Fast = null;
+					if (liveFile == null)
+					{
+						inc_xml = U.xml(inc_id);
+					}else
+					{
+						inc_xml = liveFile;
+					}
+					
 					if(inc_xml != null){
 						for (def_data in inc_xml.nodes.definition) {
 							//add a prefix to avoid collisions:
@@ -1747,7 +1798,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						case "3ds": 
 							#if NINTENDO_3DS
 								defValue = true;
-							#end			
+							#end
 						case "wiiu":
 							#if NINTENDO_WIIU
 								defValue = true;
@@ -1756,10 +1807,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 							#if PS_VITA
 								defValue = true;
 							#end
+						case "ps3":
+							#if PS_3
+								defValue = true;
+							#end
 						case "ps4":
 							#if PS_4
 								defValue = true;
-							#end							
+							#end
 					}
 					return defValue == haxeVal;
 				}
@@ -1773,7 +1828,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if(_loadTest(data)){
 		
 			var id:String = U.xml_str(data.x, "id", true);
-			var _ui:FlxUI = new FlxUI(data, this, this,_ptr_tongue);
+			trace("trying to load layout: " + id);
+			trace("data looks like : " + data.x);
+			#if (debug && sys)
+			var _ui:FlxUI = new FlxUI(data, this, this, _ptr_tongue, liveFilePath);
+			#else
+			var _ui:FlxUI = new FlxUI(data, this, this, _ptr_tongue);
+			#end
 			_ui.id = id;
 		
 			return _ui;
@@ -2728,6 +2789,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 							case "center": return_val = other.x + (other.width / 2);
 							case "width": return_val = other.width;
 							case "height": return_val = other.height;
+							case "halfheight": return_val = other.height / 2;
+							case "halfwidth": return_val = other.width / 2;
 						}
 					}
 				case "h", "height":
@@ -2743,6 +2806,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 							case "center": return_val = other.y + (other.height / 2);
 							case "height": return_val = other.height;
 							case "width": return_val = other.width;
+							case "halfheight": return_val = other.height / 2;
+							case "halfwidth": return_val = other.width / 2;
 						}
 					}
 			}
@@ -2837,7 +2902,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		//Then, add its offset to wherever it wound up:
 		_delta(thing, X, Y);
-	}	
+	}
 	
 	private function _loadBorder(data:Fast):BorderDef
 	{
