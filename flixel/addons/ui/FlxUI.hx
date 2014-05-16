@@ -8,6 +8,7 @@ import flash.geom.Rectangle;
 import flash.Lib;
 import flixel.addons.ui.FlxUI.MaxMinSize;
 import flixel.addons.ui.ButtonLabelStyle;
+import flixel.addons.ui.FlxUI.Rounding;
 import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.addons.ui.BorderDef;
 import flixel.addons.ui.FlxUIRadioGroup.CheckStyle;
@@ -211,7 +212,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		#if (debug && sys)
 			liveFilePath = liveFilePath_;	//set the path for live file loading (loads xml files from local disk rather than embedded assets. 
 											//useful for faster edit-reload loop
-			trace("liveFilePath = " + liveFilePath);
 		#end
 		_ptr = ptr;
 		if (superIndex_ != null) {
@@ -413,8 +413,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 */
 	
 	public function load(data:Fast):Void {
-		trace("data = " + data.x);
-		
 		_group_index = new Map<String,FlxUIGroup>();
 		_asset_index = new Map<String,IFlxUIWidget>();
 		_definition_index = new Map<String,Fast>();
@@ -434,20 +432,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					var liveFile:Fast = null;
 					
 					#if (debug && sys)
-						trace("trying to read include id " + inc_id);
-						trace("liveFilePath = " + liveFilePath);
 						if (liveFilePath != null && liveFilePath != "")
 						{
-							trace("trying to load " + U.fixSlash(liveFilePath + inc_id + ".xml"));
 							try
 							{
 								liveFile = U.readFast(U.fixSlash(liveFilePath + inc_id + ".xml"));
-								trace("liveFile = " + liveFile);
 							}
 							catch (msg:String)
 							{
 								FlxG.log.warn(msg);
-								trace(msg);
 								liveFile = null;
 							}
 						}
@@ -879,6 +872,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			if (info.hasNode.haxedef) {
 				info = applyNodeChanges(info, "haxedef");
 			}
+			
+			if (info.hasNode.window) {
+				info = applyNodeChanges(info, "window");
+			}
 		}
 		return info;
 	}
@@ -886,7 +883,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	/**
 	 * Make any necessary changes to data/definition xml objects (such as for locale or haxedef settings)
 	 * @param	data		Fast xml data
-	 * @param	nodeName	name of the node, "locale", or "haxedef"
+	 * @param	nodeName	name of the node, "locale", "haxedef", or "resolution"
 	 */
 	
 	private function applyNodeChanges(data:Fast,nodeName:String):Fast {
@@ -906,6 +903,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var haxedef:Bool = false;
 		if (nodeName == "haxedef") {
 			haxedef = true;
+		}
+		
+		//Else if nodeName="window", check to see if we match this resolution
+		if (nodeName == "window") {
+			nodeValue = FlxG.width + "," + FlxG.height;
 		}
 		
 		for (cNode in data.nodes.resolve(nodeName)) {
@@ -1828,8 +1830,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if(_loadTest(data)){
 		
 			var id:String = U.xml_str(data.x, "id", true);
-			trace("trying to load layout: " + id);
-			trace("data looks like : " + data.x);
 			#if (debug && sys)
 			var _ui:FlxUI = new FlxUI(data, this, this, _ptr_tongue, liveFilePath);
 			#else
@@ -2595,6 +2595,29 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return 0;
 	}
 	
+	private function getRound(node:Fast):Rounding{
+		var roundStr:String = U.xml_str(node.x, "round", true, "");
+		switch(roundStr) {
+			case "floor", "-1", "down": 
+				return Rounding.Floor;
+			case "up", "1", "ceil", "ceiling": 
+				return Rounding.Ceil;
+			case "round", "0", "true": 
+				return Rounding.Round;
+		}
+		return Rounding.None;
+	}
+	
+	private function doRound(f:Float, round:Rounding):Float{
+		switch(round) {
+			case Rounding.None: return f;
+			case Rounding.Floor: return cast Math.floor(f);
+			case Rounding.Round: return cast Math.round(f);
+			case Rounding.Ceil: return cast Math.ceil(f);
+		}
+		return f;
+	}
+	
 	private function calcMaxMinSize(data:Fast, width:Dynamic = null, height:Dynamic = null):MaxMinSize {
 		var min_w:Float = 0;
 		var min_h:Float = 0;
@@ -2605,21 +2628,25 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var temp_max_w:Float = Math.POSITIVE_INFINITY;
 		var temp_max_h:Float = Math.POSITIVE_INFINITY;
 		
+		var round:Rounding = Rounding.None;
+		
 		if (data.hasNode.exact_size) {
 			for (exactNode in data.nodes.exact_size) {
 				var exact_w_str:String = U.xml_str(exactNode.x, "width");
 				var exact_h_str:String = U.xml_str(exactNode.x, "height");
-				min_w = _getDataSize("w", exact_w_str, 0);
-				min_h = _getDataSize("h", exact_h_str, 0);
-				max_w = min_w;
-				max_h = min_h;
+				round = getRound(exactNode);
+				min_w = doRound(_getDataSize("w", exact_w_str, 0),round);
+				min_h = doRound(_getDataSize("h", exact_h_str, 0),round);
+				max_w = doRound(min_w,round);
+				max_h = doRound(min_h,round);
 			}
 		}else if (data.hasNode.min_size) {
 			for(minNode in data.nodes.min_size){
 				var min_w_str:String = U.xml_str(minNode.x, "width");
 				var min_h_str:String = U.xml_str(minNode.x, "height");
-				temp_min_w = _getDataSize("w", min_w_str, 0);
-				temp_min_h = _getDataSize("h", min_h_str, 0);
+				round = getRound(minNode);
+				temp_min_w = doRound(_getDataSize("w", min_w_str, 0),round);
+				temp_min_h = doRound(_getDataSize("h", min_h_str, 0),round);
 				if (temp_min_w > min_w) {
 					min_w = temp_min_w;
 				}
@@ -2631,8 +2658,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			for(maxNode in data.nodes.max_size){
 				var max_w_str:String = U.xml_str(maxNode.x, "width");
 				var max_h_str:String = U.xml_str(maxNode.x, "height");
-				temp_max_w = _getDataSize("w", max_w_str, Math.POSITIVE_INFINITY);
-				temp_max_h = _getDataSize("h", max_h_str, Math.POSITIVE_INFINITY);
+				round = getRound(maxNode);
+				temp_max_w = doRound(_getDataSize("w", max_w_str, Math.POSITIVE_INFINITY),round);
+				temp_max_h = doRound(_getDataSize("h", max_h_str, Math.POSITIVE_INFINITY),round);
 				if (temp_max_w < max_w) {
 					max_w = temp_max_w;
 				}
@@ -3004,6 +3032,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return str;
 	}
 	
+	
 	/**
 	 * Parses params out of xml and loads them in the correct type
 	 * @param	data
@@ -3011,35 +3040,53 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private static inline function getParams(data:Fast):Array<Dynamic>{
 		var params:Array<Dynamic> = null;
+		
 		if (data.hasNode.param) {
 			params = new Array<Dynamic>();
 			for (param in data.nodes.param) {
 				if(param.has.type && param.has.value){
 					var type:String = param.att.type;
 					type = type.toLowerCase();
+					var valueStr:String = param.att.value;
+					var value:Dynamic = valueStr;
+					trace("-->type=" + type + " value=" + valueStr);
+					var sort:Int = U.xml_i(param.x, "sort",-1);
 					switch(type) {
-						case "string": params.push(new String(param.att.value));
-						case "int": params.push(Std.parseInt(param.att.value));
-						case "float": params.push(Std.parseFloat(param.att.value));
-						case "color", "hex":params.push(U.parseHex(param.att.value, true));
+						case "string": value = new String(valueStr);
+						case "int": value = Std.parseInt(valueStr);
+						case "float": value = Std.parseFloat(valueStr);
+						case "color", "hex": value = U.parseHex(valueStr, true);
 						case "bool", "boolean": 
-							var str:String = new String(param.att.value);
+							var str:String = new String(valueStr);
 							str = str.toLowerCase();
 							if (str == "true" || str == "1") {
-								params.push(true);
+								value = true;
 							}else{
-								params.push(false);
+								value = false;
 							}
 					}
+					
+					//Add sorting metadata to the array
+					params.push( { sort:sort, value:value } );
 				}
 			}
-		}
-		if (params != null)
-		{
-			params.reverse();	//reverse so it matches the order they were entered in the xml
+			
+			//Sort the array
+			params.sort(sortParams);
+			
+			//Strip out the sorting metdata
+			for (i in 0...params.length) {
+				params[i] = params[i].value;
+			}
 		}
 		return params;
-	}	
+	}
+	
+	private static function sortParams(a:SortValue, b:SortValue):Int {
+		if (a.sort < b.sort) return -1;
+		if (a.sort > b.sort) return 1;
+		return 0;
+	}
 			
 	private function formatButtonText(data:Fast, button:Dynamic):FlxText {
 		if (data != null && data.hasNode.text) {
@@ -3197,6 +3244,18 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 }
 
 typedef UIEventCallback = String->IFlxUIWidget->Dynamic->Array<Dynamic>->Void;
+
+enum Rounding{
+	Floor;
+	Ceil;
+	Round;
+	None;
+}
+
+typedef SortValue = {
+	var sort:Int;
+	var value:Dynamic;
+}
 
 typedef NamedBool = {
 	name:String,
