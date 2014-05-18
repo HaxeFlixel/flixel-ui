@@ -304,7 +304,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		#if (!FLX_NO_MOUSE && !FLX_NO_TOUCH)
 		if (dropPanel.visible && FlxG.mouse.justPressed) 
 		{
-			if (!dropPanel.overlapsPoint(FlxG.mouse)) 
+			if (!FlxG.mouse.overlaps(dropPanel)) 
 			{
 				showList(false);
 			}

@@ -7,7 +7,6 @@ import flixel.input.mouse.FlxMouse;
 /**
  * A customized extension to FlxMouse that lets us add in accessibility stuff
  * like using the keyboard to control mouse moving/clicking
- * @author 
  */
 class FlxUIMouse extends FlxMouse
 {
@@ -25,32 +24,15 @@ class FlxUIMouse extends FlxMouse
 	 */
 	private override function update():Void
 	{
-		if (updateGlobalScreenPosition)
-		{
-			_globalScreenPosition.x = Math.floor(FlxG.game.mouseX);
-			_globalScreenPosition.y = Math.floor(FlxG.game.mouseY);
-		}
+		var oldScreenX:Int = _globalScreenX;
+		var oldScreenY:Int = _globalScreenY;
 		
-		//actually position the flixel mouse cursor graphic
-		if (visible)
-		{
-			cursorContainer.x = _globalScreenPosition.x;
-			cursorContainer.y = _globalScreenPosition.y;
-		}
-		updateCursor();
+		super.update();
 		
-		// Update the buttons
-		_leftButton.update();
-		#if !FLX_NO_MOUSE_ADVANCED
-		_middleButton.update();
-		_rightButton.update();
-		#end
-		
-		// Update the wheel
-		if (!_wheelUsed)
+		if (!updateGlobalScreenPosition)
 		{
-			wheel = 0;
+			_globalScreenX = oldScreenX;
+			_globalScreenY = oldScreenY;
 		}
-		_wheelUsed = false;
 	}
 }

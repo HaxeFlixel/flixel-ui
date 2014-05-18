@@ -1,9 +1,5 @@
 package flixel.addons.ui;
 
-/**
- * ...
- * @author 
- */
 class AnchorPoint
 {
 	public var offset:Float = 0;								//Manual offset from the anchor point
@@ -16,5 +12,4 @@ class AnchorPoint
 		side = Side;
 		flush = Flush;
 	}
-	
 }
