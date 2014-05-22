@@ -3,16 +3,11 @@ import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.ui.FlxTypedButton.FlxTypedButton;
+import flixel.ui.FlxButton;
 import flixel.math.FlxPoint;
 
-/**
- * ...
- * @author 
- */
 class FlxUIList extends FlxUIGroup
 {
-
 	public static inline var STACK_HORIZONTAL:Int = 0;
 	public static inline var STACK_VERTICAL:Int = 1;
 	
