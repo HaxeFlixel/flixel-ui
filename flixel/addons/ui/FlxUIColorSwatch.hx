@@ -6,14 +6,9 @@ import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
-import flixel.util.FlxColorUtil;
 import flixel.util.FlxStringUtil;
 import flixel.util.loaders.CachedGraphics;
 
-/**
- * ...
- * @author 
- */
 class FlxUIColorSwatch extends FlxUIButton
 {
 	public var multiColored(default, set):Bool;
@@ -288,7 +283,7 @@ class FlxUIColorSwatch extends FlxUIButton
 		if (multiColored) {
 			var str:String = _origKey;
 			for (c in colors.colors) {
-				str += "+" + FlxColorUtil.ARGBtoWebString(c);
+				str += "+" + c.toWebString();
 			}
 			return str;
 		}
