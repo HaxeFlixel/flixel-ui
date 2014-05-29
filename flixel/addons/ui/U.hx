@@ -137,6 +137,47 @@ class U
 	}
 	
 	/**
+	 * Pass in two variables as strings, and compare them using proper casting based on a desired type
+	 * @param	variable	some variable as a string, say "1.0", "2354", "false", or "happydays"
+	 * @param	otherValue	another variable
+	 * @param	type		"string","int","float", or "bool"
+	 * @param	operator	"==","!=","<",">","<=",">="
+	 * @return	the value of the comparison
+	 */
+	
+	public static function compareStringVars(variable:String,otherValue:String,type:String,operator:String="=="):Bool{
+		switch(type) {
+			case "string": 
+				if (operator == "==" || operator == "=") { return variable == otherValue; }
+				if (operator == "!==" || operator == "!=") { return variable != otherValue; }
+			case "int":
+				var ia:Int = Std.parseInt(variable);
+				var ib:Int = Std.parseInt(otherValue);
+					 if (operator == "==" || operator == "=") { return ia == ib; }
+				else if (operator == "!==" || operator == "!=") { return ia != ib; }
+				else if (operator == "<") { return ia < ib; }
+				else if (operator == ">") { return ia > ib; }
+				else if (operator == "<=") { return ia <= ib; }
+				else if (operator == ">=") { return ia >= ib; }
+			case "float":
+				var fa:Float = Std.parseFloat(variable);
+				var fb:Float = Std.parseFloat(otherValue);
+					 if (operator == "==" || operator == "=") { return fa == fb; }
+				else if (operator == "!==" || operator == "!=") { return fa != fb; }
+				else if (operator == "<") { return fa < fb; }
+				else if (operator == ">") { return fa > fb; }
+				else if (operator == "<=") { return fa <= fb; }
+				else if (operator == ">=") { return fa >= fb; }
+			case "bool":
+				var ba:Bool = U.boolify(variable);
+				var bb:Bool = U.boolify(otherValue);
+					 if (operator == "==" || operator == "=") { return ba == bb; } 
+				else if (operator == "!==" || operator == "!=") { return ba != bb; }
+		}
+		return false;
+	}
+	
+	/**
 	 * Safety wrapper for reading a bool attribute from xml
 	 * @param	data the Xml object
 	 * @param	att the name of the attribute

@@ -9,6 +9,7 @@ import flash.Lib;
 import flixel.addons.ui.FlxUI.MaxMinSize;
 import flixel.addons.ui.ButtonLabelStyle;
 import flixel.addons.ui.FlxUI.Rounding;
+import flixel.addons.ui.FlxUI.VarValue;
 import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.addons.ui.BorderDef;
 import flixel.addons.ui.FlxUIRadioGroup.CheckStyle;
@@ -401,6 +402,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				_definition_index.remove(key);
 			}_definition_index = null;
 		}
+		if (_variable_index != null) {
+			for (key in _variable_index.keys()) {
+				_variable_index.remove(key);
+			}_variable_index = null;
+		}
 		_superIndexUI = null;
 		_ptr_tongue = null;
 		super.destroy();
@@ -416,6 +422,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		_group_index = new Map<String,FlxUIGroup>();
 		_asset_index = new Map<String,IFlxUIWidget>();
 		_definition_index = new Map<String,Fast>();
+		_variable_index = new Map<String,String>();
 		_mode_index = new Map<String,Fast>();
 		
 		
@@ -469,7 +476,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 			}
 			
-			
 			//First, load all our definitions
 			if (data.hasNode.definition) {
 				for (def_data in data.nodes.definition) {
@@ -477,7 +483,17 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					_definition_index.set(def_id, def_data);
 				}
 			}
-		
+			
+			//Next, load all our variables
+			if (data.hasNode.variable) {
+				for (var_data in data.nodes.variable) {
+					var var_id:String = U.xml_str(var_data.x, "id", true);
+					var var_value = U.xml_str(var_data.x, "value");
+					if (var_id != "") {
+						_variable_index.set(var_id, var_value);
+					}
+				}
+			}
 			
 			//Next, load all our modes
 			if (data.hasNode.mode) {
@@ -749,10 +765,30 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return new ButtonLabelStyle(fontDef, align, color, border);
 	}
 	
+	public function checkVariable(key:String, otherValue:String, type:String, operator:String="==", recursive:Bool=true):Bool {
+		var variable:String = getVariable(key, recursive);
+		if (variable != null)
+		{
+			return U.compareStringVars(variable, otherValue, type, operator);
+		}
+		else 
+		{
+			return false;
+		}
+	}
+	
+	public function getVariable(key:String, recursive:Bool = true):String{
+		var variable:String = _variable_index.get(key);
+		if (variable == null && recursive && _superIndexUI != null) {
+			variable = _superIndexUI.getVariable(key, recursive);
+		}
+		return variable;
+	}
+	
 	public function getDefinition(key:String,recursive:Bool=true):Fast{
 		var definition:Fast = _definition_index.get(key);
 		if (definition == null && recursive && _superIndexUI != null) {
-			definition = _superIndexUI.getDefinition(key, recursive);			
+			definition = _superIndexUI.getDefinition(key, recursive);
 		}
 		if (definition == null) {	//still null? check the globals:
 			if (key.indexOf("include:") == -1) {	
@@ -793,6 +829,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private var _group_index:Map<String,FlxUIGroup>;
 	private var _asset_index:Map<String,IFlxUIWidget>;
 	private var _definition_index:Map<String,Fast>;
+	private var _variable_index:Map<String,String>;
 	private var _mode_index:Map<String,Fast>;
 	
 	private var _curr_mode:String = "";
@@ -1781,6 +1818,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private function _loadTest(data:Fast):Bool {
 		if (data.hasNode.load_if) {
 			for (node in data.nodes.load_if) {
+				
 				var aspect_ratio:Float = U.xml_f(node.x, "aspect_ratio", -1);
 				if (aspect_ratio != -1) {
 					var tolerance:Float = U.xml_f(node.x, "tolerance", 0.1);
@@ -1820,9 +1858,37 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 					return defValue == haxeVal;
 				}
+				
+				var variable:String = U.xml_str(node.x, "variable", false, "");
+				var variableType:String = U.xml_str(node.x, "type", true, "string");
+				if (variable != "")
+				{
+					var varData= parseVarValue(variable);
+					if (varData != null)
+					{
+						return checkVariable(varData.variable, varData.value, variableType, varData.operator);
+					}
+				}
 			}
 		}
 		return true;
+	}
+	
+	private function parseVarValue(varString:String):VarValue {
+		var arr:Array<String> = ["==", "=", "!=", "!==", "<", ">", "<=", ">="];
+		var temp:Array<String>;
+		for (op in arr)
+		{
+			if (varString.indexOf(op) != -1)
+			{
+				temp = varString.split(op);
+				if (temp != null && temp.length == 2)
+				{
+					return { variable:temp[0], value:temp[1], operator:op };
+				}
+			}
+		}
+		return null;
 	}
 	
 	private function _loadLayout(data:Fast):FlxUI {
@@ -1830,11 +1896,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if(_loadTest(data)){
 		
 			var id:String = U.xml_str(data.x, "id", true);
+			var X:Float = _loadX(data);
+			var Y:Float = _loadY(data);
 			#if (debug && sys)
 			var _ui:FlxUI = new FlxUI(data, this, this, _ptr_tongue, liveFilePath);
 			#else
 			var _ui:FlxUI = new FlxUI(data, this, this, _ptr_tongue);
 			#end
+			_ui.x = X;
+			_ui.y = Y;
 			_ui.id = id;
 		
 			return _ui;
@@ -2308,7 +2378,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private static inline function _loadBitmapRect(source:String,rect_str:String):BitmapData {
 		var b1:BitmapData = Assets.getBitmapData(U.gfx(source));
 		var r:Rectangle = FlxUI9SliceSprite.getRectFromString(rect_str);
-		var b2:BitmapData = new BitmapData(Std.int(r.width), Std.int(r.height), true, 0x00ffffff);					
+		var b2:BitmapData = new BitmapData(Std.int(r.width), Std.int(r.height), true, 0x00ffffff);
 		b2.copyPixels(b1, r, new Point(0, 0));
 		return b2;
 	}
@@ -2316,7 +2386,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private function _loadRegion(data:Fast):FlxUIRegion {
 		var w:Int = Std.int(_loadWidth(data));
 		var h:Int = Std.int(_loadHeight(data));
-		return new FlxUIRegion(0, 0, w, h);
+		var vis:Bool = U.xml_bool(data.x, "visible", true);
+		var reg = new FlxUIRegion(0, 0, w, h);
+		reg.visible = vis;
+		return reg;
 	}
 	
 	private function _load9SliceSprite(data:Fast,load_code:String=""):FlxUI9SliceSprite{
@@ -3282,4 +3355,10 @@ typedef MaxMinSize = {
 	min_height:Float,
 	max_width:Float,
 	max_height:Float
+}
+
+typedef VarValue = {
+	variable:String,
+	value:String,
+	operator:String
 }
