@@ -7,6 +7,7 @@ import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxG;
 import flixel.FlxObject;
+import flixel.input.mouse.FlxMouse;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.util.FlxDestroyUtil;
@@ -14,7 +15,6 @@ import flixel.util.FlxDestroyUtil;
 /**
  * Cursor object that you can use to "click" on interface elements using a keyboard or gamepad
  * TODO: need to support gamepad and/or deal with absence of mouse
- * @author 
  */
 class FlxUICursor extends FlxUISprite
 {
@@ -68,8 +68,7 @@ class FlxUICursor extends FlxUISprite
 	 * @param	DefaultKeys		default hotkey layouts, accepts KEYS_DEFAULT_TAB, ..._WASD, etc, combine using "|" operator
 	 * @param	Asset			visual asset for the cursor. If not supplied, uses default
 	 */
-	
-	public function new(Callback:String->IFlxUIWidget->Void,InputMethod:Int=INPUT_KEYS,DefaultKeys:Int=KEYS_DEFAULT_TAB,?Asset:Dynamic=null) 
+	public function new(Callback:String->IFlxUIWidget->Void,InputMethod:Int=INPUT_KEYS,DefaultKeys:Int=KEYS_DEFAULT_TAB,?Asset:Dynamic) 
 	{
 		if (Asset == null) {							//No asset detected? Guess based on game's resolution
 			if(FlxG.height < 400){
@@ -107,20 +106,13 @@ class FlxUICursor extends FlxUISprite
 			_newMouse = null;
 		}
 		
-		FlxDestroyUtil.destroyArray(keysUp);
-		FlxDestroyUtil.destroyArray(keysDown);
-		FlxDestroyUtil.destroyArray(keysLeft);
-		FlxDestroyUtil.destroyArray(keysRight);
-		FlxDestroyUtil.destroyArray(keysClick);
+		keysUp = FlxDestroyUtil.destroyArray(keysUp);
+		keysDown = FlxDestroyUtil.destroyArray(keysDown);
+		keysLeft = FlxDestroyUtil.destroyArray(keysLeft);
+		keysRight = FlxDestroyUtil.destroyArray(keysRight);
+		keysClick = FlxDestroyUtil.destroyArray(keysClick);
 		
-		keysUp = null;
-		keysDown = null;
-		keysLeft = null;
-		keysRight = null;
-		keysClick = null;
-		
-		anchor.destroy();
-		anchor = null;
+		anchor = FlxDestroyUtil.destroy(anchor);
 		
 		U.clearArraySoft(_widgets);
 		_widgets = null;
@@ -318,7 +310,7 @@ class FlxUICursor extends FlxUISprite
 		return widgetPoint;
 	}
 	
-	private function _doMouseMove(pt:FlxPoint=null):Void {
+	private function _doMouseMove(?pt:FlxPoint):Void {
 		var dispose:Bool = false;
 		if (pt == null) {
 			pt = _getWidgetPoint();
@@ -331,12 +323,8 @@ class FlxUICursor extends FlxUISprite
 		if (dispatchEvents) {
 			//dispatch a low-level mouse event to the FlxG.stage object itself
 			
-			//Force the mouse to this location
-			FlxG.mouse.x = pt.x;
-			FlxG.mouse.y = pt.y;
-			
-			var rawMouseX:Float = pt.x * FlxG.camera.zoom;
-			var rawMouseY:Float = pt.y * FlxG.camera.zoom;
+			var rawMouseX:Int = Std.int(pt.x * FlxG.camera.zoom);
+			var rawMouseY:Int = Std.int(pt.y * FlxG.camera.zoom);
 			
 			//REALLY force it to this location
 			FlxG.mouse.setGlobalScreenPositionUnsafe(rawMouseX, rawMouseY);
@@ -352,7 +340,7 @@ class FlxUICursor extends FlxUISprite
 		}
 	}
 	
-	private function _doPress(pt:FlxPoint=null):Void {
+	private function _doPress(?pt:FlxPoint):Void {
 		var currWidget:IFlxUIWidget = _widgets[location];
 		if (currWidget == null) {
 			return null;
@@ -384,7 +372,7 @@ class FlxUICursor extends FlxUISprite
 		}
 	}
 	
-	private function _doRelease(pt:FlxPoint=null):Void {
+	private function _doRelease(?pt:FlxPoint):Void {
 		var currWidget:IFlxUIWidget = _widgets[location];
 		if (currWidget == null) {
 			return null;
@@ -423,7 +411,7 @@ class FlxUICursor extends FlxUISprite
 		if (_newMouse != null)
 		{
 			_newMouse.updateGlobalScreenPosition = true;	//resume low-level-mouse updating now that I'm done overriding it
-			_newMouse.setGlobalScreenPositionUnsafe(FlxG.game.mouseX, FlxG.game.mouseY);
+			_newMouse.setGlobalScreenPositionUnsafe(Std.int(FlxG.game.mouseX), Std.int(FlxG.game.mouseY));
 		}
 	}
 	

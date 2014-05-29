@@ -12,7 +12,6 @@ import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.ui.FlxButton;
-import flixel.ui.FlxTypedButton;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxDestroyUtil;
 import flixel.math.FlxPoint;

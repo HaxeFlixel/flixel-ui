@@ -284,9 +284,9 @@ class FlxInputText extends FlxText
 		// Set focus and caretIndex as a response to mouse press
 		if (FlxG.mouse.justPressed) 
 		{
-			if (overlapsPoint(FlxG.mouse)) 
+			if (FlxG.mouse.overlaps(this)) 
 			{
-				caretIndex = getCaretIndexFromPoint(FlxG.mouse);
+				caretIndex = getCaretIndexFromPoint(FlxG.mouse.toPoint());
 				hasFocus = true;
 			}
 			else 

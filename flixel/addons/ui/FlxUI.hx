@@ -3122,7 +3122,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					type = type.toLowerCase();
 					var valueStr:String = param.att.value;
 					var value:Dynamic = valueStr;
-					trace("-->type=" + type + " value=" + valueStr);
 					var sort:Int = U.xml_i(param.x, "sort",-1);
 					switch(type) {
 						case "string": value = new String(valueStr);

@@ -1,6 +1,6 @@
 package flixel.addons.ui;
 
-import flixel.util.FlxColorUtil;
+import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 /**
  * ...
@@ -9,21 +9,21 @@ import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 class SwatchData implements IFlxDestroyable {
 
 	public var name:String;
-	public var colors:Array<Int>;
+	public var colors:Array<FlxColor>;
 	
 	//The "main four" are now getter/setters so you can have an underlying colors array with arbitrary # of colors
-	public var hilight(get, set):Int;
-	public var midtone(get, set):Int;
-	public var shadowMid(get, set):Int;
-	public var shadowDark(get, set):Int;
+	public var hilight(get, set):FlxColor;
+	public var midtone(get, set):FlxColor;
+	public var shadowMid(get, set):FlxColor;
+	public var shadowDark(get, set):FlxColor;
 	
-	public function setColor(i:Int, Value:Int):Int {
+	public function setColor(i:Int, Value:FlxColor):FlxColor {
 		if (colors == null) { colors = [];}
 		colors[i] = Value;
 		return Value;
 	}
 	
-	public function getColor(i:Int):Int {
+	public function getColor(i:Int):FlxColor {
 		if (colors.length >= i) {
 			return colors[i];
 		}
@@ -32,37 +32,37 @@ class SwatchData implements IFlxDestroyable {
 	
 	/**GETTERs/SETTERS**/
 
-	private function get_hilight():Int {
+	private function get_hilight():FlxColor {
 		return getColor(0);
 	}
-	private function set_hilight(Value:Int):Int {
+	private function set_hilight(Value:FlxColor):FlxColor {
 		if (colors == null) { colors = [];}
 		colors[0] = Value;
 		return Value;
 	}
 	
-	private function get_midtone():Int {
+	private function get_midtone():FlxColor {
 		return getColor(1);
 	}
-	private function set_midtone(Value:Int):Int {
+	private function set_midtone(Value:FlxColor):FlxColor {
 		if (colors == null) { colors = [];}
 		colors[1] = Value;
 		return Value;
 	}
 	
-	private function get_shadowMid():Int {
+	private function get_shadowMid():FlxColor {
 		return getColor(2);
 	}
-	private function set_shadowMid(Value:Int):Int {
+	private function set_shadowMid(Value:FlxColor):FlxColor {
 		if (colors == null) { colors = [];}
 		colors[2] = Value;
 		return Value;
 	}
 	
-	private function get_shadowDark():Int {
+	private function get_shadowDark():FlxColor {
 		return getColor(3);
 	}
-	private function set_shadowDark(Value:Int):Int {
+	private function set_shadowDark(Value:FlxColor):FlxColor {
 		if (colors == null) { colors = [];}
 		colors[3] = Value;
 		return Value;
@@ -77,7 +77,7 @@ class SwatchData implements IFlxDestroyable {
 		}
 	}
 	
-	public function new(Name:String, ?Colors:Array<Int>)
+	public function new(Name:String, ?Colors:Array<FlxColor>)
 	{
 		if (Colors == null) {
 			Colors = [0xffffffff, 0xff888888, 0xff444444, 0xff000000];
@@ -88,7 +88,7 @@ class SwatchData implements IFlxDestroyable {
 
 	public function copy():SwatchData 
 	{
-		var colorsCopy:Array<Int> = colors != null ? colors.copy() : null;
+		var colorsCopy:Array<FlxColor> = colors != null ? colors.copy() : null;
 		return new SwatchData(name, colorsCopy);
 	}
 
@@ -98,7 +98,7 @@ class SwatchData implements IFlxDestroyable {
 		var i:Int = 0;
 		if(colors != null){
 			for (colorInt in colors) {
-				str += FlxColorUtil.ARGBtoHexString(colorInt);
+				str += colorInt.toWebString();
 				if (i != colors.length - 1) {
 					str += ",";
 				}
@@ -113,15 +113,15 @@ class SwatchData implements IFlxDestroyable {
 
 	//Get the total raw difference in colors from another color swatch
 	
-	public function getRawDifference(?other:SwatchData, ?otherColors:Array<Int>, ?IgnoreInvisible:Bool=false):Int {
-		var listA:Array<Int> = colors;
+	public function getRawDifference(?other:SwatchData, ?otherColors:Array<FlxColor>, ?IgnoreInvisible:Bool=false):Int {
+		var listA:Array<FlxColor> = colors;
 		if (colors != null) {
 			listA = colors;
 		}else {
 			listA = [];
 		}
 		
-		var listB:Array<Int> = null;
+		var listB:Array<FlxColor> = null;
 		if (other != null) {
 			listB = other.colors;
 		}else {
@@ -132,8 +132,8 @@ class SwatchData implements IFlxDestroyable {
 			}
 		}
 		
-		var bigList:Array<Int>;
-		var smallList:Array<Int>;
+		var bigList:Array<FlxColor>;
+		var smallList:Array<FlxColor>;
 		
 		if (listA.length < listB.length) {
 			bigList = listB;
@@ -169,8 +169,8 @@ class SwatchData implements IFlxDestroyable {
 		return totalDiff;
 	}
 	
-	public function doColorsEqual(?other:SwatchData,?otherColors:Array<Int>):Bool {
-		var otherArray:Array<Int> = null;
+	public function doColorsEqual(?other:SwatchData,?otherColors:Array<FlxColor>):Bool {
+		var otherArray:Array<FlxColor> = null;
 		if (other != null) {
 			otherArray = other.colors;
 		}else {
