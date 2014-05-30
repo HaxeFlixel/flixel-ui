@@ -477,7 +477,7 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 class CheckStyle extends ButtonLabelStyle {
 	public var checkColor:Null<Int> = null;
 	
-	public function new(CheckColor:Null<Int>=null, ?Font:FontDef, ?Align:String, ?Color:Int, ?Border:BorderDef) {
+	public function new(CheckColor:Null<Int>=null, ?Font:FontDef, ?Align:FlxTextAlign, ?Color:Int, ?Border:BorderDef) {
 		checkColor = CheckColor;
 		super(Font, Align, Color, Border);
 	}
