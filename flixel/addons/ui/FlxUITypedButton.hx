@@ -90,25 +90,24 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	 * @param	Y			The Y position of the button.
 	 * @param	OnClick		The function to call whenever the button is clicked.
 	 */
-	public function new(X:Float = 0, Y:Float = 0, ?OnClick:Void->Void)
-	{
+	public function new(X:Float = 0, Y:Float = 0, ?OnClick:Void->Void) {
 		super(X, Y, OnClick);
 		
 		_centerLabelOffset = FlxPoint.get(0, 0);
 		
-		//By default, the button depresses the label by 1 pixel when pressed
-		labelOffsets[FlxButton.HIGHLIGHT].x = 0;
-		labelOffsets[FlxButton.HIGHLIGHT].y = 0;
+		statusAnimations[3] = "normal_toggled";
+		statusAnimations[4] = "highlight_toggled";
+		statusAnimations[5] = "pressed_toggled";
 		
-		labelOffsets[FlxButton.PRESSED].x = 0;
-		labelOffsets[FlxButton.PRESSED].y = 1;
+		labelAlphas = [for (i in 0...3) 1];
+	}
+	
+	override public function updateFrameData():Void {
+		super.updateFrameData();
 		
-		labelOffsets[FlxButton.NORMAL].x = 0;
-		labelOffsets[FlxButton.NORMAL].y = 0;
-		
-		labelAlphas[FlxButton.HIGHLIGHT] = 1;
-		labelAlphas[FlxButton.PRESSED] = 1;
-		labelAlphas[FlxButton.NORMAL] = 1;
+		animation.add("normal_toggled", [3]);
+		animation.add("highlight_toggled", [4]);
+		animation.add("pressed_toggled", [5]);
 	}
 	
 	public function copyStyle(other:FlxUITypedButton<FlxSprite>):Void {
@@ -152,8 +151,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	 */
 	
 	public function setAllLabelOffsets(X:Float, Y:Float):Void {
-		labelOffsets[FlxButton.HIGHLIGHT].x = labelOffsets[FlxButton.PRESSED].x = labelOffsets[FlxButton.NORMAL].x = X;
-		labelOffsets[FlxButton.HIGHLIGHT].y = labelOffsets[FlxButton.PRESSED].y = labelOffsets[FlxButton.NORMAL].y = Y;
+		for (labelOffset in labelOffsets) {
+			labelOffset.set(X, Y);
+		}
 	}
 	
 	public override function update():Void {
@@ -173,14 +173,16 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			
 			theLabel.scrollFactor = scrollFactor;
 		}
-		
-		if (animation != null){
-			// Then pick the appropriate frame of animation
-			if (toggled){
-				animation.frameIndex =  3 + status;
-			}else {
-				animation.frameIndex = status;
-			}
+	}
+	
+	/**
+	 * Offset the statusAnimations-index by 3 when toggled.
+	 */
+	override public function updateStatusAnimation():Void {
+		if (has_toggle && toggled) {
+			animation.play(statusAnimations[status + 3]);
+		} else {
+			super.updateStatusAnimation();
 		}
 	}
 	
@@ -657,13 +659,10 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	/**
 	 * Combines two stacked button images for a toggle button
-	 * @param	normal
-	 * @param	toggle
-	 * @return
 	 */
 	
 	public function combineToggleBitmaps(normal:BitmapData,toggle:BitmapData):BitmapData {
-		var combined:BitmapData = new BitmapData(normal.width, normal.height + toggle.height);
+		var combined = new BitmapData(normal.width, normal.height + toggle.height);
 		
 		combined.copyPixels(normal, normal.rect, _flashPointZero);
 		_flashPoint.x = 0;
@@ -676,10 +675,6 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	/**
 	 * Give me three bitmapdatas and I'll return an assembled button bitmapdata for you.
 	 * If overB or downB are missing, it will not include those frames.
-	 * @param	upB
-	 * @param	overB
-	 * @param	downB
-	 * @return
 	 */
 	
 	public function assembleButtonFrames(upB:BitmapData, overB:BitmapData, downB:BitmapData):BitmapData {
@@ -824,6 +819,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		}
 		return NewY;
 	}
+	
 	/*********PRIVATE************/
 	
 	private var _no_graphic:Bool = false;
