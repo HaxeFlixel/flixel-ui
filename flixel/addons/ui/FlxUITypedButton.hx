@@ -105,9 +105,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	override public function updateFrameData():Void {
 		super.updateFrameData();
 		
-		animation.add("normal_toggled", [3]);
-		animation.add("highlight_toggled", [4]);
-		animation.add("pressed_toggled", [5]);
+		setupAnimation("normal_toggled", 3);
+		setupAnimation("highlight_toggled", 4);
+		setupAnimation("pressed_toggled", 5);
 	}
 	
 	public function copyStyle(other:FlxUITypedButton<FlxSprite>):Void {
