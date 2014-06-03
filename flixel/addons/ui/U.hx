@@ -543,6 +543,14 @@ class U
 			return path;
 		}
 		
+		public static inline function endline():String {
+			#if windows
+				return "\r\n";
+			#else
+				return "\n";
+			#end
+		}
+		
 		public static inline function slash():String {
 			#if windows
 				return "\\";
