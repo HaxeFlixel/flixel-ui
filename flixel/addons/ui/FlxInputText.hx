@@ -559,7 +559,7 @@ class FlxInputText extends FlxText
 		}
 		
 		if (boundary != null) {
-			var alignStr:String = getAlignStr();
+			var alignStr:FlxTextAlign = getAlignStr();
 			
 			//Check to see if the text is visually overflowing
 			var diffW:Int = Std.int((_textField.width - 2) - boundary.right); //Flash supplies 4px magic # padding to text field size: boundary.right is already offset by 2
@@ -567,14 +567,15 @@ class FlxInputText extends FlxText
 			_textField.scrollH = 0;
 			
 			switch(alignStr) {
-				case "center":
+				case CENTER:
 					_textField.scrollH = diffW;
 					//for center case, we will need to offset by (-diffW/2) in calcFrame() 
 					calcFrame(true);
-				case "left":
+				case LEFT:
 					_textField.scrollH = diffW;
 					calcFrame(true);
-				case "right":
+				case RIGHT:
+				case JUSTIFY:
 					//do nothing
 			}
 		}
@@ -792,8 +793,8 @@ class FlxInputText extends FlxText
 		return hasFocus = newFocus;
 	}	
 	
-	private function getAlignStr():String {
-		var alignStr:String = "left";
+	private function getAlignStr():FlxTextAlign {
+		var alignStr:FlxTextAlign = LEFT;
 		if (_defaultFormat != null && _defaultFormat.align != null) {
 			alignStr = alignment;
 		}
@@ -804,12 +805,12 @@ class FlxInputText extends FlxText
 	{
 		var offx:Float = 0;
 		
-		var alignStr:String = getAlignStr();
+		var alignStr:FlxTextAlign = getAlignStr();
 		
 		switch(alignStr) {
-			case "right"	: offx = 0;
-			case "center"	: offx = (_textField.width - _textField.textWidth) / 2;
-			default			: offx = 0;
+			case RIGHT: offx = 0;
+			case CENTER: offx = (_textField.width - _textField.textWidth) / 2;
+			default: offx = 0;
 		}
 		
 		caretIndex = newCaretIndex;

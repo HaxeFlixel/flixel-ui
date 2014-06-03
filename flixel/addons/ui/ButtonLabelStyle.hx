@@ -6,9 +6,9 @@ class ButtonLabelStyle
 	public var font:FontDef=null;
 	public var border:BorderDef=null;
 	public var color:Null<Int>=null;
-	public var align:String=null;
+	public var align:FlxTextAlign=null;
 	
-	public function new(?Font:FontDef, ?Align:String, ?Color:Int, ?Border:BorderDef) {
+	public function new(?Font:FontDef, ?Align:FlxTextAlign, ?Color:Int, ?Border:BorderDef) {
 		font = Font;
 		border = Border;
 		color = Color;
