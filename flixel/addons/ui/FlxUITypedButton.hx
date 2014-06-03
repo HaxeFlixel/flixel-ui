@@ -102,8 +102,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		labelAlphas = [for (i in 0...3) 1];
 	}
 	
-	override public function updateFrameData():Void {
-		super.updateFrameData();
+	override public function graphicLoaded():Void {
+		super.graphicLoaded();
 		
 		setupAnimation("normal_toggled", 3);
 		setupAnimation("highlight_toggled", 4);
