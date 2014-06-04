@@ -673,8 +673,7 @@ class FlxInputText extends FlxText
 					cw += Std.int(borderSize * 2);
 					ch += Std.int(borderSize * 2);	//expand canvas on both sides
 					caret.makeGraphic(cw, ch, borderC, false, caretKey);	//start with borderColor canvas
-					var r:Rectangle = new Rectangle(borderSize, borderSize, caretWidth, Std.int(size+2));
-					r.setTo(borderSize, borderSize, caretWidth, Std.int(size+2));
+					var r = new Rectangle(borderSize, borderSize, caretWidth, Std.int(size+2));
 					caret.pixels.fillRect(r, caretC);	//draw caret
 					//we need to offset caret's drawing position since the caret is now larger than normal
 					caret.offset.x = caret.offset.y = borderSize;
