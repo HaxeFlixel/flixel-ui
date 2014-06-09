@@ -2988,13 +2988,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}else {
 			if (center_on_x != "") {
-				var other = getAsset(center_on);
+				var other = getAsset(center_on_x);
 				if (other != null) {
 					U.center(cast(other, FlxObject), cast(thing, FlxObject), true, false);
 				}
 			}
 			if (center_on_y != "") {
-				var other = getAsset(center_on);
+				var other = getAsset(center_on_y);
 				if (other != null) {
 					U.center(cast(other, FlxObject), cast(thing, FlxObject), false, true);
 				}
