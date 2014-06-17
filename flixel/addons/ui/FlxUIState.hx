@@ -8,6 +8,8 @@ import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxG;
 import flixel.FlxState;
 import haxe.xml.Fast;
+import openfl.Assets;
+import openfl.events.Event;
 
 /**
  * This is a simple extension of FlxState that does two things:
@@ -54,6 +56,12 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		//otherwise it's up to you to set _liveFilePath before the UI stuff loads.
 	#end
 	
+	#if (debug && sys)
+		public var reload_ui_on_asset_change(default, set):Bool;
+		// setting this to true will add a listener to reload the UI when assets are updated ("openfl update <proj> <target>" in OpenFL 2.0)
+		// cpp/neko only
+	#end
+	
 	//set this to true to make it automatically reload the UI when the window size changes
 	public var reload_ui_on_resize:Bool = false;
 	
@@ -61,6 +69,15 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	private var _reload_countdown:Int = 0;
 	
 	public var getTextFallback:String->String->Bool->String = null;
+	
+	#if (debug && sys)
+		private function set_reload_ui_on_asset_change(b:Bool):Bool {
+			// whether or not to reload UI when assets are updated
+			if (b) Assets.addEventListener(Event.CHANGE, reloadUI);
+			else Assets.removeEventListener(Event.CHANGE, reloadUI);
+			return reload_ui_on_asset_change = b;
+		}
+	#end
 	
 	public function new() 
 	{
@@ -243,7 +260,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		return Flag;
 	}
 	
-	private function reloadUI():Void {
+	private function reloadUI(?e:Event):Void {
 		if (_ui != null) {
 			remove(_ui, true);
 			_ui.destroy();
