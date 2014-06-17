@@ -550,6 +550,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						
 						if (thing_id != null && thing_id != "") {
 							_asset_index.set(thing_id, thing);
+							
+							//The widget id can be used in getEvent-handlers.
+							thing.id = thing_id;
 						}
 					}
 				}
