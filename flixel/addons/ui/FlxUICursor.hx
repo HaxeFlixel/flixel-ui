@@ -163,30 +163,30 @@ class FlxUICursor extends FlxUISprite
 		_clearKeys();
 		_newKeys();
 		if (code & KEYS_DEFAULT_TAB == KEYS_DEFAULT_TAB) {
-			_addToKeys(keysRight, new MultiKey(FlxG.keys.getKeyCode("TAB"),null,[FlxG.keys.getKeyCode("SHIFT")]));	//Tab, (but NOT Shift+Tab!)
-			_addToKeys(keysLeft, new MultiKey(FlxG.keys.getKeyCode("TAB"), [FlxG.keys.getKeyCode("SHIFT")]));		//Shift+Tab
-			_addToKeys(keysClick, new MultiKey(FlxG.keys.getKeyCode("ENTER")));
+			_addToKeys(keysRight, new MultiKey(TAB, null, [SHIFT]));  //Tab, (but NOT Shift+Tab!)
+			_addToKeys(keysLeft, new MultiKey(TAB, [SHIFT]));         //Shift+Tab
+			_addToKeys(keysClick, new MultiKey(ENTER));
 		}
 		if (code & KEYS_DEFAULT_ARROWS == KEYS_DEFAULT_ARROWS) {
-			_addToKeys(keysRight, new MultiKey(FlxG.keys.getKeyCode("RIGHT")));
-			_addToKeys(keysLeft, new MultiKey(FlxG.keys.getKeyCode("LEFT")));
-			_addToKeys(keysDown, new MultiKey(FlxG.keys.getKeyCode("DOWN")));
-			_addToKeys(keysUp, new MultiKey(FlxG.keys.getKeyCode("UP")));
-			_addToKeys(keysClick, new MultiKey(FlxG.keys.getKeyCode("ENTER")));
+			_addToKeys(keysRight, new MultiKey(RIGHT));
+			_addToKeys(keysLeft, new MultiKey(LEFT));
+			_addToKeys(keysDown, new MultiKey(DOWN));
+			_addToKeys(keysUp, new MultiKey(UP));
+			_addToKeys(keysClick, new MultiKey(ENTER));
 		}
 		if (code & KEYS_DEFAULT_WASD == KEYS_DEFAULT_WASD) {
-			_addToKeys(keysRight, new MultiKey(FlxG.keys.getKeyCode("D")));
-			_addToKeys(keysLeft, new MultiKey(FlxG.keys.getKeyCode("A")));
-			_addToKeys(keysDown, new MultiKey(FlxG.keys.getKeyCode("S")));
-			_addToKeys(keysUp, new MultiKey(FlxG.keys.getKeyCode("W")));
-			_addToKeys(keysClick, new MultiKey(FlxG.keys.getKeyCode("ENTER")));
+			_addToKeys(keysRight, new MultiKey(D));
+			_addToKeys(keysLeft, new MultiKey(A));
+			_addToKeys(keysDown, new MultiKey(S));
+			_addToKeys(keysUp, new MultiKey(W));
+			_addToKeys(keysClick, new MultiKey(ENTER));
 		}
 		if (code & KEYS_DEFAULT_NUMPAD == KEYS_DEFAULT_NUMPAD) {
-			_addToKeys(keysRight, new MultiKey(FlxG.keys.getKeyCode("NUMPADSIX")));
-			_addToKeys(keysLeft, new MultiKey(FlxG.keys.getKeyCode("NUMPADFOUR")));
-			_addToKeys(keysDown, new MultiKey(FlxG.keys.getKeyCode("NUMPADTWO")));
-			_addToKeys(keysUp, new MultiKey(FlxG.keys.getKeyCode("NUMPADEIGHT")));
-			_addToKeys(keysClick, new MultiKey(FlxG.keys.getKeyCode("ENTER")));
+			_addToKeys(keysRight, new MultiKey(NUMPADSIX));
+			_addToKeys(keysLeft, new MultiKey(NUMPADFOUR));
+			_addToKeys(keysDown, new MultiKey(NUMPADTWO));
+			_addToKeys(keysUp, new MultiKey(NUMPADEIGHT));
+			_addToKeys(keysClick, new MultiKey(ENTER));
 		}
 	}
 	
