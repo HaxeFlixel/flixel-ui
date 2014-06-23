@@ -297,7 +297,7 @@ class FlxUICursor extends FlxUISprite
 		if (Std.is(currWidget, FlxObject)) {
 			fo = cast currWidget;
 			//success! Get ScreenXY, to deal with any possible scrolling/camera craziness
-			widgetPoint = fo.getScreenXY(FlxPoint.get(fo.x, fo.y));
+			widgetPoint = fo.getScreenPosition();
 		}else {
 			//otherwise just make your best guess from current raw position
 			widgetPoint = FlxPoint.get(currWidget.x, currWidget.y);

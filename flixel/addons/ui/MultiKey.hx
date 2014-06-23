@@ -115,10 +115,10 @@ class MultiKey implements IFlxDestroyable
 	}
 	
 	private function checkCombos(value:Bool):Bool {
-		return FlxG.keys.anyPressed(combos);
+		return FlxG.keys.anyPressed(combos) == value;
 	}
 	
 	private function checkForbiddens(value:Bool):Bool {
-		return FlxG.keys.anyPressed(forbiddens);
+		return FlxG.keys.anyPressed(forbiddens) == value;
 	}
 }
