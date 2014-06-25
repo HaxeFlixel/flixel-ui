@@ -1039,12 +1039,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadWidth(data:Fast,default_:Float=10,str:String="width"):Float {
 		var ws:String = U.xml_str(data.x, str, true, Std.string(default_));
-		return _getDataSize("w", ws, default_);
+		var round:Rounding = getRound(data);
+		return doRound(_getDataSize("w", ws, default_),round);
 	}
 	
 	private function _loadHeight(data:Fast,default_:Float=10,str:String="height"):Float {
 		var hs:String = U.xml_str(data.x, str, true, Std.string(default_));
-		return _getDataSize("h", hs, default_);
+		var round:Rounding = getRound(data);
+		return doRound(_getDataSize("h", hs, default_),round);
 	}
 	
 	private function _loadCompass(data:Fast,str:String="resize_point"):FlxPoint {
@@ -1058,8 +1060,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			case "se", "lr": fp.x = 1;   fp.y = 1;
 			case "s":        fp.x = 0.5; fp.y = 1;
 			case "sw", "ll": fp.x = 0;   fp.y = 1;
-			case "w":        fp.x = 0.5; fp.y = 0;	
-			case "m","c","mid","center":fp.x = 0.5; fp.y = 0.5;	 
+			case "w":        fp.x = 0.5; fp.y = 0;
+			case "m","c","mid","center":fp.x = 0.5; fp.y = 0.5;
 		}
 		return fp;
 	}

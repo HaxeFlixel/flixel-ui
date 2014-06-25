@@ -1,7 +1,9 @@
 package flixel.addons.ui;
 
 import flixel.FlxG;
+import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxDestroyUtil;
+import flixel.input.FlxInputState;
 
 /**
  * Makes it easier to check if, say, SHIFT+Tab is being pressed rather than just Tab by itself
@@ -118,7 +120,7 @@ class MultiKey implements IFlxDestroyable
 		{
 			for (otherKey in combos) 
 			{
-				if (FlxG.keys.pressed.check(otherKey) != value)
+				if(FlxG.keys.checkStatus(otherKey,FlxInputState.PRESSED) != value)
 				{
 					return false;
 				}
@@ -132,7 +134,7 @@ class MultiKey implements IFlxDestroyable
 		{
 			for (forbiddenKey in forbiddens)
 			{
-				if (FlxG.keys.pressed.check(forbiddenKey) != value)
+				if(FlxG.keys.checkStatus(forbiddenKey,FlxInputState.PRESSED) != value)
 				{
 					return false;
 				}

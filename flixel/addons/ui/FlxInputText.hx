@@ -306,8 +306,8 @@ class FlxInputText extends FlxText
 		
 		if (hasFocus) 
 		{
-			// Do nothing for Shift, Ctrl and flixel console hotkey
-			if (key == 16 || key == 17 || key == 220) 
+			// Do nothing for Shift, Ctrl, Esc, and flixel console hotkey
+			if (key == 16 || key == 17 || key == 220 || key == 27) 
 			{
 				return;
 			}
