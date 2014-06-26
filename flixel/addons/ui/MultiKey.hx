@@ -3,7 +3,6 @@ package flixel.addons.ui;
 import flixel.FlxG;
 import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxDestroyUtil;
-import flixel.input.FlxInputState;
 
 /**
  * Makes it easier to check if, say, SHIFT+Tab is being pressed rather than just Tab by itself
@@ -11,17 +10,17 @@ import flixel.input.FlxInputState;
 class MultiKey implements IFlxDestroyable
 {
 	/**
-	 * the keycode for the main key itself, ie, tab
+	 * The keycode for the main key itself, ie, tab
 	 */
 	public var key:FlxKey;
 	/**
-	 * any other keys that must be pressed at the same time, ie, shift, alt, etc
+	 * Any other keys that must be pressed at the same time, ie, shift, alt, etc
 	 */
 	public var combos:Array<FlxKey>;
 	/**
-	 * any other keys, that if pressed at the same time, forbid the press
-	 * forbidden is useful so you can distinguish a "TAB" from a "SHIFT+TAB"
-	 * -- you add "SHIFT" to the first one's forbidden list
+	 * Any other keys, that if pressed at the same time, forbid the press.
+	 * (Forbidden is useful so you can distinguish a "TAB" from a "SHIFT+TAB"
+	 * -- you add "SHIFT" to the first one's forbidden list)
 	 */
 	public var forbiddens:Array<FlxKey>;
 	

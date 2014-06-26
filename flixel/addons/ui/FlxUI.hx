@@ -2821,6 +2821,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				temp = str.split(operator);			
 				if (temp != null && temp.length == 2) {		//if I find exactly one operator/operand
 					var f:Float = Std.parseFloat(temp[1]);	//try to read the operand as a number
+					if (Math.isNaN(f))
+					{
+						f = getAssetProperty(1,"",temp[1]);
+					}
 					if (f == 0 && temp[1] != "0") {
 						return null;	//improperly formatted, invalid operand, bail out
 					}else{
@@ -2846,33 +2850,48 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _getStretch(index:Int, target:String, str:String):Float {
 		var arr:Array<Dynamic> = null;
-		var prop:String = "";
+		
 		var operator:String = "";
 		var operand:Float = 0;
 		
 		arr = _getOperation(str);
+		
 		if (arr != null) {
 			str = cast arr[0];
 			operator = cast arr[1];
 			operand = cast arr[2];
 		}
 		
-		if (str.indexOf(".") != -1) {
+		var return_val:Float = getAssetProperty(index,target,str);
+		
+		if (return_val != -1 && operator != "") {
+			return_val = _doOperation(return_val, operator, operand);
+		}
+		
+		return return_val;
+	}
+	
+	private function getAssetProperty(index:Int, target:String, str:String):Float{
+		var prop:String = "";
+		
+		if (str.indexOf(".") != -1)
+		{
+			var arr:Array<String> = null;
 			arr = str.split(".");
 			str = arr[0];
-			prop = arr[1];			
+			prop = arr[1];
 		}
 		
 		var other:IFlxUIWidget = getAsset(str);
-				
+		
 		var return_val:Float = 0;
 		
-		if (other == null) {			
+		if (other == null) {
 			switch(str) {
 				case "top", "up": return_val = 0;
 				case "bottom", "down": return_val = thisHeight();
 				case "left": return_val = 0;
-				case "right": return_val = thisWidth();				
+				case "right": return_val = thisWidth();
 				default:
 					if (U.isStrNum(str)) {
 						return_val = Std.parseFloat(str);
@@ -2916,16 +2935,24 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 							case "halfwidth": return_val = other.width / 2;
 						}
 					}
+				default:
+					switch(prop) {
+						case "top", "up", "y": return_val = other.y;
+						case "bottom", "down": return_val = other.y +other.height;
+						case "right": return_val = other.x + other.width;
+						case "left","x": return_val = other.x;
+						case "centery": return_val = other.y + (other.height / 2);
+						case "centerx": return_val = other.x + (other.width / 2);
+						case "height": return_val = other.height;
+						case "width": return_val = other.width;
+						case "halfheight": return_val = other.height / 2;
+						case "halfwidth": return_val = other.width / 2;
+					}
 			}
 		}
-		
-		if (return_val != -1 && operator != "") {
-			return_val = _doOperation(return_val, operator, operand);
-		}
-		
 		return return_val;
 	}
-		
+	
 	private function _loadPosition(data:Fast, thing:IFlxUIWidget):Void {
 		var X:Float = _loadX(data);			//position offset from 0,0
 		var Y:Float = _loadY(data);
