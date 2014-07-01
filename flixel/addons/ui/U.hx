@@ -794,6 +794,19 @@ class U
 		return arr;
 	}
 	
+	public static function copy_arr_arr_i(src:Array<Array<Int>>):Array<Array<Int>> {
+		if (src == null) { return null;}
+		var arrarr:Array<Array<Int>> = [];
+		for (arri in src) {
+			var temp:Array<Int> = [];
+			for (i in arri) {
+				temp.push(i);
+			}
+			arrarr.push(temp);
+		}
+		return arrarr;
+	}
+	
 	public static function copy_shallow_arr_i(src:Array<Int>):Array<Int> {
 		if (src == null) { return null;}
 		var arr:Array<Int> = new Array<Int>();

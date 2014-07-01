@@ -58,6 +58,19 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		autoCenterLabel();
 	}
 	
+	public function copy():FlxUIButton
+	{
+		var Label:String = null;
+		if (label != null)
+		{
+			Label = label.text;
+		}
+		var f:FlxUIButton = new FlxUIButton(0, 0, Label, onUp.callback);
+		f.copyGraphic(cast this);
+		f.copyStyle(cast this);
+		return f;
+	}
+	
 	public override function copyStyle(other:FlxUITypedButton<FlxSprite>):Void {
 		super.copyStyle(other);
 		if (Std.is(other, FlxUIButton)) {

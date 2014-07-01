@@ -19,7 +19,7 @@ class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizabl
 		super(X, Y);
 		
 		#if debug
-			color = FlxRandom.color(null, null, 255);
+			color = color.setRGB(FlxRandom.int(0, 255), FlxRandom.int(0, 255), FlxRandom.int(0, 255));
 		#end
 		
 		resize(W, H);

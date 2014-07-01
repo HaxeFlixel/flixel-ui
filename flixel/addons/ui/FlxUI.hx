@@ -381,7 +381,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	
-	
 	/**
 	 * Remove all the references and pointers, then destroy everything
 	 */
@@ -2637,37 +2636,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						var assetValue:Float = _getStretch(1, wh, str);
 						return assetValue;
 					}
-
-					/*if (r.match(str)) {
-						
-						var p: { pos:Int, len:Int }= r.matchedPos();
-						if (p.pos == 0 && p.len == str.length) {
-							var arr:Array<String> = str.split(".");
-							str = arr[0];
-							property = arr[1];
-						}
-					}
-					
-					var other:IFlxUIWidget = getAsset(str);
-										
-					if (thing != null && other != null) {
-						if (axis == "x") { 
-							switch(property) {
-								case "left": return other.x;
-								case "right": return other.x + other.width;
-								case "center": return other.x + other.width / 2;
-								default:return other.x; 
-							}
-						}
-						else if (axis == "y") { 
-							switch(property) {
-								case "top": return other.y;
-								case "bottom": return other.y + other.height;
-								case "center": return other.y + other.height / 2;
-								default:return other.y;
-							}
-						}
-					}*/
 				}
 		}
 		return 0;
@@ -2978,8 +2946,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			anchor_x_str = U.xml_str(data.node.anchor.x, "x");
 			anchor_y_str = U.xml_str(data.node.anchor.x, "y");
 			
+			var rounding:Rounding = getRound(data.node.anchor);
+			
 			anchor_x = _getAnchorPos(thing, "x", anchor_x_str);
 			anchor_y = _getAnchorPos(thing, "y", anchor_y_str);
+			
+			anchor_x = doRound(anchor_x, rounding);
+			anchor_y = doRound(anchor_y, rounding);
 			
 			anchor_x_flush = U.xml_str(data.node.anchor.x, "x-flush",true);
 			anchor_y_flush = U.xml_str(data.node.anchor.x, "y-flush", true);
@@ -3393,3 +3366,4 @@ typedef VarValue = {
 	value:String,
 	operator:String
 }
+

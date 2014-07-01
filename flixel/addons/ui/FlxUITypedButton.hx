@@ -110,6 +110,30 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		setupAnimation("pressed_toggled", 5);
 	}
 	
+	public function copyGraphic(other:FlxUITypedButton<FlxSprite>):Void {
+		_src_w = other._src_w;
+		_src_h = other._src_h;
+		_frame_indeces = U.copy_shallow_arr_i(other._frame_indeces);
+		tile = other.tile;
+		resize_ratio = other.resize_ratio;
+		
+		if (other._centerLabelOffset == null)
+		{
+			_centerLabelOffset = null;
+		}
+		else
+		{
+			_centerLabelOffset = new FlxPoint(other._centerLabelOffset.x, other._centerLabelOffset.y);
+		}
+		
+		_no_graphic = other._no_graphic;
+		
+		_slice9_arrays = U.copy_arr_arr_i(other._slice9_arrays);
+		_slice9_assets = U.copy_shallow_arr_str(other._slice9_assets);
+		
+		resize(other.width, other.height);
+	}
+	
 	public function copyStyle(other:FlxUITypedButton<FlxSprite>):Void {
 		up_color = other.up_color;
 		over_color = other.over_color;
@@ -822,16 +846,25 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	/*********PRIVATE************/
 	
+	@:allow(FlxUITypedButton)
 	private var _no_graphic:Bool = false;
 	
+	@:allow(FlxUITypedButton)
 	private var _src_w:Int = 0;	//frame size of the source image. If 0, make an inferred guess.
+	
+	@:allow(FlxUITypedButton)
 	private var _src_h:Int = 0;
 	
+	@:allow(FlxUITypedButton)
 	private var _frame_indeces:Array<Int>;
 	
 	//if you're doing 9-slice resizing:
+	@:allow(FlxUITypedButton)
 	private var _slice9_arrays:Array<Array<Int>>;	//the 9-slice scaling rules for the original assets
+	
+	@:allow(FlxUITypedButton)
 	private var _slice9_assets:Array<String>;		//the asset id's of the original 9-slice scale assets
 	
+	@:allow(FlxUITypedButton)
 	private var _centerLabelOffset:FlxPoint = null;	//this is the offset necessary to center ALL the labels
 }
