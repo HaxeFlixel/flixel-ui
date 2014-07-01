@@ -18,6 +18,7 @@ import flixel.math.FlxPoint;
 import flixel.util.FlxStringUtil;
 import openfl.Assets;
 
+@:allow(FlxUITypedButton)
 class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResizable implements IFlxUIWidget implements IFlxUIClickable implements IHasParams implements ICursorPointable
 {
 	public var id:String; 
@@ -128,8 +129,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		
 		_no_graphic = other._no_graphic;
 		
-		_slice9_arrays = U.copy_arr_arr_i(other._slice9_arrays);
-		_slice9_assets = U.copy_shallow_arr_str(other._slice9_assets);
+		_slice9_arrays = other._slice9_arrays.copy();
+		_slice9_assets = other._slice9_assets.copy();
 		
 		resize(other.width, other.height);
 	}
@@ -846,25 +847,18 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	/*********PRIVATE************/
 	
-	@:allow(FlxUITypedButton)
 	private var _no_graphic:Bool = false;
 	
-	@:allow(FlxUITypedButton)
 	private var _src_w:Int = 0;	//frame size of the source image. If 0, make an inferred guess.
 	
-	@:allow(FlxUITypedButton)
 	private var _src_h:Int = 0;
 	
-	@:allow(FlxUITypedButton)
 	private var _frame_indeces:Array<Int>;
 	
 	//if you're doing 9-slice resizing:
-	@:allow(FlxUITypedButton)
 	private var _slice9_arrays:Array<Array<Int>>;	//the 9-slice scaling rules for the original assets
 	
-	@:allow(FlxUITypedButton)
 	private var _slice9_assets:Array<String>;		//the asset id's of the original 9-slice scale assets
 	
-	@:allow(FlxUITypedButton)
 	private var _centerLabelOffset:FlxPoint = null;	//this is the offset necessary to center ALL the labels
 }
