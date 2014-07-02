@@ -32,29 +32,15 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget im
 		return params;
 	}
 	
-	/**
-	 * Simple copy
-	 * @return
-	 */
-	
-	public override function clone(?NewSprite:FlxSprite):FlxSprite
+	public override function clone():FlxUIText
 	{
-		if (NewSprite != null && Std.is(NewSprite, FlxUIText) == false) {
-			return super.clone(NewSprite);
-		}
-		
-		var newText:FlxUIText = null;
-		
-		if (NewSprite == null) {
-			newText = new FlxUIText();
-		}else {
-			newText = cast NewSprite;
-		}
-		
+		var newText = new FlxUIText();
 		newText.width = width;
 		newText.height = height;
 		newText.setFormat(font, size, color);
-		if (_defaultFormat != null && _defaultFormat.align != null)		//for some reason, naively setting (f.alignment = alignment) causes cast errors!
+		
+		//for some reason, naively setting (f.alignment = alignment) causes cast errors!
+		if (_defaultFormat != null && _defaultFormat.align != null)
 		{
 			newText.alignment = alignment;
 		}
