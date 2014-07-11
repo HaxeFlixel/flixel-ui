@@ -557,7 +557,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 			}
 			
-			
 			_postLoad(data);
 			
 		}else {
@@ -1152,6 +1151,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var spacing:Float = U.xml_f(data.x, "spacing", -1);
 				var resize:Bool = U.xml_bool(data.x, "resize");
 				
+				var grow:Bool = U.xml_bool(data.x, "grow", true);
+				var shrink:Bool = U.xml_bool(data.x, "shrink", true);
+				
 				var bounds:FlxPoint = FlxPoint.get(-1,-1);
 				
 				if (axis != "horizontal" && axis != "vertical") {
@@ -1188,7 +1190,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				
 				if (boundsError == "")
 				{
-					_doAlign(objects, axis, spacing, resize, bounds);
+					_doAlign(objects, axis, spacing, resize, bounds, grow, shrink);
 				}
 				
 				if (data.hasNode.anchor || data.has.x || data.has.y)
@@ -1213,7 +1215,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 	}
 	
-	private function _doAlign(objects:Array<String>, axis:String, spacing:Float, resize:Bool, bounds:FlxPoint):Void {
+	private function _doAlign(objects:Array<String>, axis:String, spacing:Float, resize:Bool, bounds:FlxPoint, allowGrow:Bool=true, allowShrink:Bool=true):Void {
 		var total_spacing:Float = 0;
 		var total_size:Float = 0;
 		
@@ -1233,7 +1235,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		//calculate total size of everything
 		for (id in objects) {
 			var widget:IFlxUIWidget = getAsset(id);
-			
 			var theval:Float = 0;
 			
 			switch(size_prop) {
@@ -1269,11 +1270,26 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}else {
 				//if we are resizing, resize it to the target size now
 				if (Std.is(widget, IResizable)) {
+					var allow:Bool = true;
 					var widgetr:IResizable = cast widget;
-					if(axis == "vertical"){
-						widgetr.resize(widgetr.width, object_size);
+					if (axis == "vertical") {
+						if (object_size > widgetr.width) {
+							allow = allowGrow;
+						}else if (object_size < widgetr.width) {
+							allow = allowShrink;
+						}
+						if(allow){
+							widgetr.resize(widgetr.width, object_size);
+						}
 					}else if (axis == "horizontal") {
-						widgetr.resize(object_size, widgetr.height);
+						if (object_size > widgetr.height) {
+							allow = allowGrow;
+						}else if (object_size < widgetr.height) {
+							allow = allowShrink;
+						}
+						if (allow){
+							widgetr.resize(object_size, widgetr.height);
+						}
 					}
 				}
 			}
@@ -1378,8 +1394,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 	}
 	
-	private function _postLoadThing(type:String, data:Fast):Void {
-		
+	private function _postLoadThing(type:String, data:Fast):Void
+	{
 		var id:String = U.xml_str(data.x, "id", true);
 		var thing:IFlxUIWidget = getAsset(id);
 		
@@ -1406,7 +1422,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			var bounds: { min_width:Float, min_height:Float, 
 			              max_width:Float, max_height:Float } = calcMaxMinSize(data);
 			
-			if(bounds != null){
+			if (bounds != null)
+			{
 				_resizeThing(cast(thing, IResizable), bounds);
 			}
 		}
@@ -1458,6 +1475,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		text = getText(text,context, true, code);
 		
 		var W:Int = Std.int(_loadWidth(data, 100));
+		var H:Int = Std.int(_loadHeight(data, -1));
 		
 		var the_font:String = _loadFontFace(data);
 		
@@ -1513,6 +1531,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			var params = getParams(data);
 			var ihp:IHasParams = cast ft;
 			ihp.params = params;
+		}
+		
+		if (H > 0 && ft.height != H)
+		{
+			if (Std.is(ft, IResizable))
+			{
+				var r:IResizable = cast ft;
+				r.resize(r.width, H);
+			}
 		}
 		
 		return ft;
@@ -2085,6 +2112,34 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return ns;
 	}
 	
+	private function getResizeRatio(data:Fast):FlxPoint
+	{
+		var str:String = U.xml_str(data.x, "resize_ratio_x", true);
+		if (str == "")
+		{
+			str = U.xml_str(data.x, "resize_ratio_y", true);
+			if (str == "")
+			{
+				//neither x nor y supplied, assume Y
+				var resize_ratio = U.xml_f(data.x, "resize_ratio", -1);
+				return new FlxPoint(resize_ratio, FlxUISprite.RESIZE_RATIO_Y);
+			}
+			else
+			{
+				//y supplied
+				return new FlxPoint(Std.parseFloat(str), FlxUISprite.RESIZE_RATIO_Y);
+			}
+		}
+		else
+		{
+			//x supplied
+			return new FlxPoint(Std.parseFloat(str), FlxUISprite.RESIZE_RATIO_X);
+		}
+		
+		//This should never happen
+		return new FlxPoint( -1, -1);
+	}
+	
 	private function _loadButton(data:Fast, setCallback:Bool = true, isToggle:Bool = false, load_code:String=""):IFlxUIWidget{
 		var src:String = ""; 
 		var fb:IFlxUIButton = null;
@@ -2400,8 +2455,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var src:String = ""; 
 		var f9s:FlxUI9SliceSprite = null;
 				
-		var resize_ratio:Float = U.xml_f(data.x, "resize_ratio", -1);
+		var resize:FlxPoint = getResizeRatio(data);
+		
+		var resize_ratio:Float = resize.x;
 		var resize_point:FlxPoint = _loadCompass(data, "resize_point");
+		var resize_ratio_axis:Int = Std.int(resize.y);
 		
 		var bounds: { min_width:Float, min_height:Float, 
 			          max_width:Float, max_height:Float } = calcMaxMinSize(data);
@@ -2437,7 +2495,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var tile:Int = _loadTileRule(data);
 				
-		f9s = new FlxUI9SliceSprite(0, 0, src, rc, slice9, tile, smooth,"",resize_ratio,resize_point);
+		f9s = new FlxUI9SliceSprite(0, 0, src, rc, slice9, tile, smooth,"",resize_ratio,resize_point,resize_ratio_axis);
 		
 		return f9s;
 	}
@@ -2501,6 +2559,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var bounds: { min_width:Float, min_height:Float, 
 					  max_width:Float, max_height:Float } = calcMaxMinSize(data);
 		
+		var resize:FlxPoint = getResizeRatio(data);
+		  
+		var resize_ratio:Float = resize.x;
+		var resize_ratio_axis:Int = Std.int(resize.y);
+		var resize_point:FlxPoint = _loadCompass(data, "resize_point");
+		 
 		if(src != ""){
 			fs = new FlxUISprite(0, 0, src);
 		}else {
@@ -2523,6 +2587,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			fs.makeGraphic(W, H, C);
 		}
 		
+		fs.resize_point = resize_point;
+		fs.resize_ratio = resize_ratio;
+		fs.resize_ratio_axis = resize_ratio_axis;
+		
 		return fs;
 	}
 	
@@ -2535,47 +2603,23 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private function loadScaledSrc(data:Fast):String
 	{
 		var src:String = U.xml_str(data.x, "src");					//get the original src
-		if (data.hasNode.scale) {
-			for (scaleNode in data.nodes.scale) {
+		if (data.hasNode.scale)
+		{
+			for (scaleNode in data.nodes.scale)
+			{
 				var ratio:Float = U.xml_f(scaleNode.x, "screen_ratio", -1);
 				var tolerance:Float = U.xml_f(scaleNode.x, "tolerance", 0.1);
 				var actualRatio:Float = FlxG.width / FlxG.height;
-				if (ratio < 0 || (ratio > 0 && Math.abs(ratio - actualRatio) <= tolerance) ) {	//check if our screen ratio is within bounds
-					var suffix:String = U.xml_str(scaleNode.x, "suffix");		
-					var bmpSrc:String = U.gfx(src + suffix);					//add the proper suffix, so "asset"->"asset_16x9"
+				if (ratio < 0 || (ratio > 0 && Math.abs(ratio - actualRatio) <= tolerance))
+				{
+					//check if our screen ratio is within bounds
+					var suffix:String = U.xml_str(scaleNode.x, "suffix");
+					var srcSuffix:String = (src + suffix);					//add the proper suffix, so "asset"->"asset_16x9"
 					
-					var testBmp:BitmapData = Assets.getBitmapData(bmpSrc, true);
-					if (testBmp != null) {									//if the master asset exists
-						var W:Float = _loadWidth(scaleNode,-1);				//find the desired final size
-						var H:Float = _loadHeight(scaleNode,-1);
-						
-						if (W < 0)
-						{
-							W = testBmp.width;
-						}
-						if (H < 0)
-						{
-							H = testBmp.height;
-						}
-						
-						var diff:Float = Math.abs(W - testBmp.width) + Math.abs(H - testBmp.height);
-						if (diff > 0.01) {						//if final size != master asset size, we're going to scale it
-							var scaleKey:String = bmpSrc +"_" + Std.int(W) + "x" + Std.int(H);	//generate a unique scaled asset key
-							
-							if(FlxG.bitmap.get(scaleKey) == null){								//if it doesn't exist yet, create it
-								var scaledBmp:BitmapData = new BitmapData(Std.int(W), Std.int(H),true,0x00000000);				//create a unique bitmap and scale it
-								
-								var m:Matrix = getMatrix();
-								m.identity();
-								m.scale(W / testBmp.width, H / testBmp.height);
-								scaledBmp.draw(testBmp, m, null, null, null, true);
-								
-								FlxG.bitmap.add(scaledBmp, true, scaleKey);						//store it by the unique key
-							}
-							return scaleKey;													//return the final scaled key
-						}else {
-							return bmpSrc;		//couldn't scale it, return master asset key
-						}
+					var returnSrc:String = U.loadScaledImage(srcSuffix, _loadWidth(scaleNode, -1), _loadHeight(scaleNode, -1));
+					if (returnSrc != null)
+					{
+						return returnSrc;
 					}
 					break;						//stop on the first resolution test that passes
 				}
@@ -2584,12 +2628,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return U.xml_gfx(data.x, "src"); 		//no resolution tag found, just return original src
 	}
 	
-	private function getMatrix():Matrix {
+	
+	/*private function getMatrix():Matrix {
 		if (_matrix == null) {
 			_matrix = new Matrix();
 		}
 		return _matrix;
-	}
+	}*/
 	
 	private function thisWidth():Int {
 		//if (_ptr == null || Std.is(_ptr, FlxUI) == false) {

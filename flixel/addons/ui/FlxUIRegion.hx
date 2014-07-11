@@ -4,6 +4,7 @@ import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxSprite;
 import flixel.math.FlxRandom;
+import flixel.util.FlxColor;
 
 /**
  * A scalable object with width and height that isn't used for display purposes
@@ -18,10 +19,6 @@ class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizabl
 	public function new(X:Float=0,Y:Float=0,W:Float=16,H:Float=16) {
 		super(X, Y);
 		
-		#if debug
-			color = color.setRGB(FlxRandom.int(0, 255), FlxRandom.int(0, 255), FlxRandom.int(0, 255));
-		#end
-		
 		resize(W, H);
 	}
 	
@@ -33,7 +30,10 @@ class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizabl
 		width = w;
 		height = h;
 		#if debug
-			makeGraphic(Std.int(w), Std.int(h));
+			var theColor:FlxColor = 0xFFFFFFFF;
+			theColor.setRGB(FlxRandom.int(0, 255), FlxRandom.int(0, 255), FlxRandom.int(0, 255));
+			alpha = 0.5;
+			makeGraphic(Std.int(w), Std.int(h), theColor);
 		#end
 	}	 
 }

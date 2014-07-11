@@ -30,6 +30,7 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	
 	private var _tile:Int = TILE_NONE;			//tile neither
 	private var _smooth:Bool = false;
+	
 	private var _asset_id:String = "";
 	
 	private var _raw_pixels:BitmapData;
@@ -64,10 +65,12 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	 * @param	smooth	When stretching, whether to smooth middle pieces (default false)
 	 * @param 	id	if Graphic is a BitmapData, manually specify its original source id, if any
 	 * @param   ratio	Resize ratio to force, if desired (W/H)
+	 * @param	Resize_point	Point for anchoring resizes
+	 * @param	Resize_axis	Whether resizing is based around the X or Y axis
 	 * @param
 	 */
 	
-	public function new(X:Float, Y:Float, Graphic:Dynamic, Rect:Rectangle, Slice9:Array<Int>=null, Tile:Int=TILE_NONE, Smooth:Bool=false, Id:String="",Ratio:Float=-1,Resize_point=null) 
+	public function new(X:Float, Y:Float, Graphic:Dynamic, Rect:Rectangle, Slice9:Array<Int>=null, Tile:Int=TILE_NONE, Smooth:Bool=false, Id:String="",Ratio:Float=-1,Resize_point=null,Resize_axis:Int=FlxUISprite.RESIZE_RATIO_Y) 
 	{
 		super(X, Y, null);
 		
@@ -90,6 +93,7 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 		}
 		
 		resize_ratio = Ratio;
+		resize_ratio_axis = Resize_axis;
 		if (Resize_point != null) {
 			resize_point = Resize_point;
 		}
@@ -97,20 +101,7 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 		resize(Rect.width, Rect.height);
 	}
 	
-	public var resize_ratio(default, set):Float;
-	private function set_resize_ratio(r:Float):Float { resize_ratio = r; return r;}
-
-	public var resize_point(default, set):FlxPoint;
-	private function set_resize_point(r:FlxPoint):FlxPoint { 
-		if (r != null) { 
-			resize_point = FlxPoint.get(); 
-			resize_point.x = r.x;
-			resize_point.y = r.y;
-		}
-		return resize_point; 
-	}
-	
-	public function resize(w:Float, h:Float):Void {
+	public override function resize(w:Float, h:Float):Void {
 		
 		var old_width:Float = width;
 		var old_height:Float = height;
@@ -118,7 +109,14 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 		if(resize_ratio > 0){
 			var effective_ratio:Float = (w / h);
 			if (Math.abs(effective_ratio - resize_ratio) > 0.0001) {
-				h = w * (1 / resize_ratio);
+				if (resize_ratio_axis == FlxUISprite.RESIZE_RATIO_Y)
+				{
+					h = w * (1 / resize_ratio);
+				}
+				else
+				{
+					w = h * (1 / resize_ratio);
+				}
 			}
 		}
 		

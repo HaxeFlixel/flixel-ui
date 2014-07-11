@@ -23,7 +23,22 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget im
 	public function resize(w:Float, h:Float):Void {
 		width = w;
 		height = h;
-		calcFrame();
+		
+		var old_size:Float = size;
+		var diff:Float = height - cachedGraphics.bitmap.height;
+		var failsafe:Int = 0;
+		while (diff > 0 && failsafe < 999)
+		{
+			failsafe++;
+			size = size+1;
+			calcFrame();
+			diff = (h - cachedGraphics.bitmap.height);
+		}
+		if (failsafe >= 999)
+		{
+			FlxG.log.warn("Loop failsafe tripped while resizing FlxUIText to height(" + h + ")");
+			size = old_size;
+		}
 	}
 	
 	public function set_params(p:Array<Dynamic>):Array<Dynamic>

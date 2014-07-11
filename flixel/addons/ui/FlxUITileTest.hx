@@ -68,7 +68,7 @@ class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIW
 		pixels = canvas;
 	}
 	
-	public function resize(w:Float, h:Float):Void {		
+	public override function resize(w:Float, h:Float):Void {
 		tileWidth = Std.int(w / _tilesWide);
 		tileHeight = Std.int(h / _tilesTall);
 		

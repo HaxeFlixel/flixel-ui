@@ -13,6 +13,7 @@ import haxe.Json;
 import haxe.xml.Fast;
 import haxe.xml.Printer;
 import openfl.Assets;
+import openfl.geom.Matrix;
 
 #if (cpp || neko)
 import sys.FileSystem;
@@ -234,19 +235,6 @@ class U
 		if(centerY){fb2.y = fb1.y + ((fb1.height - fb2.height) / 2);}
 	}	
 	
-	/*public static inline function groupGetFirstDeadOfType(_group:FlxGroup, type:String):Entity{
-		for (fb in _group.members) {
-			if (fb.alive == false) {
-				if (Std.is(fb, Entity)) {
-					var e:Entity = cast(fb, Entity);
-					if (e.type == type || type=="*") {
-						return e;
-					}
-				}
-			}
-		}return null;
-	}*/
-
 	public static inline function test_int(i1:Int, test:String, i2:Int):Bool {
 		var bool:Bool = false;
 		switch(test) {
@@ -272,37 +260,6 @@ class U
 		}
 		return bool;
 	}
-	
-	/*public static inline function countRoomEntities(content:Dynamic,list_things:Array<String>,literal:Bool=false):Array<Int>{
-		var count_things:Array<Int> = new Array<Int>();
-		var i:Int = 0;
-		for (i in 0...list_things.length) {
-			count_things.push(0);
-		}
-		
-		var rows:Array<String> = content.split("\n");
-		var iy:Int = 0;
-		var ix:Int = 0;
-		var type:String;
-		var best_type:String="";
-		for (row in rows) {
-			var length:Int = row.length;
-			for (ix in 0...length) {
-				var char:String = row.charAt(ix);			
-				
-				i = 0; for (str in list_things) {
-					if (literal && str == char) {
-						count_things[i]++;
-					}else if (str == getSpawnCharType(char)) {
-						count_things[i]++;
-					}
-					i++;
-				}
-			}
-			iy++;
-		}		
-		return count_things;
-	}*/
 	
 	/**
 	 * Return a numeric string with leading zeroes
@@ -865,7 +822,58 @@ class U
 		return BlendMode.NORMAL;
 	}
 	
-
+	/**
+	 * For grabbing a resolution-specific version of an image src and dynamically scaling (and caching) it as necessary
+	 * @param	src	the asset key of the base image
+	 * @param	W	the final scaled width of the new image
+	 * @param	H	the final scaled height of the new image
+	 * @return	the unique key of the scaled bitmap
+	 */
+	
+	public static function loadScaledImage(src:String,W:Float,H:Float):String
+	{
+		var bmpSrc:String = gfx(src);
+		var	testBmp:BitmapData = Assets.getBitmapData(bmpSrc, true);
+		
+		if (testBmp != null)	//if the master asset exists
+		{
+			if (W < 0)
+			{
+				W = testBmp.width;
+			}
+			if (H < 0)
+			{
+				H = testBmp.height;
+			}
+			
+			var diff:Float = Math.abs(W - testBmp.width) + Math.abs(H - testBmp.height);
+			
+			//if final size != master asset size, we're going to scale it
+			if (diff > 0.01) 
+			{
+				var scaleKey:String = bmpSrc +"_" + Std.int(W) + "x" + Std.int(H);	//generate a unique scaled asset key
+				
+				//if it doesn't exist yet, create it
+				if (FlxG.bitmap.get(scaleKey) == null)
+				{
+					var scaledBmp:BitmapData = new BitmapData(Std.int(W), Std.int(H),true,0x00000000);	//create a unique bitmap and scale it
+					
+					var m:Matrix = getMatrix();
+					m.identity();
+					m.scale(W / testBmp.width, H / testBmp.height);
+					scaledBmp.draw(testBmp, m, null, null, null, true);
+					
+					FlxG.bitmap.add(scaledBmp, true, scaleKey);			//store it by the unique key
+				}
+				return scaleKey;										//return the final scaled key
+			}
+			else 
+			{
+				return bmpSrc;		//couldn't scale it, return master asset key
+			}
+		}
+		return null; 				//failure
+	}
 
 	
 	public static function gfx(id:String, dir1:String = "", dir2:String = "", dir3:String = "", dir4:String = "",suppressError:Bool=false):String{
@@ -993,8 +1001,16 @@ class U
    }
    
 	public static function get_gfx(str:String):String {
+		if (str != null && str.length > 4 && str.indexOf(".png") != -1)
+		{
+			str = str.substr(0, str.length - 4);	//strip off the .png suffix if it exists
+		}
 		if (str.indexOf("raw:") == 0 || str.indexOf("RAW:") == 0) {
 			str = str.substr(4, str.length - 4);
+			return str + ".png";
+		}
+		if (str != null && str.indexOf("assets/gfx/") == 0)
+		{
 			return str + ".png";
 		}
 		return "assets/gfx/" + str + ".png";
@@ -1393,4 +1409,12 @@ class U
 			return str;
 		}
 		
+		public static function getMatrix():Matrix {
+			if (_matrix == null) {
+				_matrix = new Matrix();
+			}
+			return _matrix;
+		}
+	
+		private static var _matrix:Matrix = null;
 }
