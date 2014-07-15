@@ -1537,9 +1537,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var border:BorderDef = _loadBorder(data);
 		
 		var backgroundColor:Int = U.parseHex(U.xml_str(data.x, "background", true, "0x00000000"), true, true, 0x00000000);
+		var passwordMode:Bool = U.xml_bool(data.x, "password_mode");
 		
 		var ft:IFlxUIWidget;
 		var fti:FlxUIInputText = new FlxUIInputText(0, 0, W, text, size, color, backgroundColor);
+		fti.passwordMode = passwordMode;
 			
 		var force_case:String = U.xml_str(data.x, "force_case", true, "");
 		var forceCase:Int;
