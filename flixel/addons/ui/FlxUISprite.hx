@@ -1,7 +1,5 @@
 package flixel.addons.ui;
 
-import com.leveluplabs.tdrpg.OmniData;
-import crashdumper.CrashDumper;
 import flixel.addons.ui.FlxUI.UIEventCallback;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
@@ -56,7 +54,6 @@ class FlxUISprite extends FlxSprite implements IFlxUIWidget implements IResizabl
 	
 	public function resize(w:Float, h:Float):Void
 	{
-		trace("id=" + id + " resize(" + w + "," + h + ")");
 		var old_width:Float = width;
 		var old_height:Float = height;
 		
@@ -99,10 +96,7 @@ class FlxUISprite extends FlxSprite implements IFlxUIWidget implements IResizabl
 	public function loadGraphicAtScale(GraphicKey:String,W:Float,H:Float):Void
 	{
 		loadGraphic(GraphicKey, false);
-		trace("graphickey = " + GraphicKey);
-		trace("base size = (" + width + "," + height + ")");
 		resize(W, H);
-		trace("resize size = (" + width + "," + height + ")");
 	}
 	
 	/**

@@ -106,7 +106,7 @@ class U
 	 * @param	data the Xml object
 	 * @param	att the name of the attribute
 	 * @param 	default_ what to return if the value doesn't exist
-	 * @return  the attribute as a float if it exists, otherwise returns 0
+	 * @return  the attribute as a float if it exists, otherwise returns default
 	 */
 	
 	public static function xml_f(data:Xml, att:String, default_:Float=0):Float{
@@ -120,7 +120,7 @@ class U
 	 * @param	data the Xml object
 	 * @param	att the name of the attribute
 	 * @param 	default_ what to return if the value doesn't exist
-	 * @return  the attribute as an int if it exists, otherwise returns 0
+	 * @return  the attribute as an int if it exists, otherwise returns default
 	 */
 	
 	public static function xml_i(data:Xml, att:String, default_:Int=0):Int {
@@ -129,12 +129,57 @@ class U
 		}return default_;
 	}
 	
+	/**
+	 * Safety wrapper for reading a point attribute from xml
+	 * @param	data the Xml object
+	 * @param	att the name of the attribute
+	 * @param 	default_ what to return if the value doesn't exist
+	 * @return  the attribute as a point if it exists, otherwise returns default
+	 */
+	
+	public static function xml_pt(data:Xml, att:String, default_:FlxPoint=null):FlxPoint {
+		if (data.get(att) != null) {
+			return pointify(data.get(att));
+		}
+		return default_;
+	}
+	
 	public static function boolify(str:String):Bool {
 		str = str.toLowerCase();
 		if (str == "true" || str == "1") {
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Parses a point expressed as a string to a FlxPoint object.
+	 * Must be two numbers separated by a "," or an "x"
+	 * This function strips extraneous characters first, ie "(",")"," ","=",":"
+	 * @param	str
+	 * @return
+	 */
+	
+	public static function pointify(str:String):FlxPoint {
+		var pt:FlxPoint = null;
+		if (str != null) {
+			var arr:Array<String> = ["(", ")", " ", "=", ":"];	//remove fancy point formatting crap, reduce to just pt="1,2" or whatever
+			for (thing in arr) {
+				while (str.indexOf(thing) != -1) {
+					str = StringTools.replace(str, thing, "");
+				}
+			}
+			if (str.indexOf(",") == -1) {						//there's no comma
+				if (str.indexOf("x") != -1) {					//is there an x?
+					str = StringTools.replace(str, "x", ",");	//replace x with comma
+				}
+			}
+			arr = str.split(",");
+			if (arr.length == 2) {
+				pt = new FlxPoint(Std.parseFloat(arr[0]), Std.parseFloat(arr[1]));
+			}
+		}
+		return pt;
 	}
 	
 	/**

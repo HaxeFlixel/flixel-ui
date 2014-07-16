@@ -298,13 +298,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @return	the asset, or null if destroy=true
 	 */
 	
-	public function removeAsset(key:String, destroy:Bool=true):IFlxUIWidget{
+	public function removeAsset(key:String, destroy:Bool = true):IFlxUIWidget {
 		var asset = getAsset(key, false);
 		if (asset != null) {
 			replaceInGroup(cast asset, null, true);
 			_asset_index.remove(key);
 		}
-		if (destroy) {
+		if (destroy && asset != null) {
 			asset.destroy();
 			asset = null;
 		}
@@ -1087,6 +1087,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	private function _changeThing(data:Fast):Void {
+		if (_loadTest(data) == false)
+		{
+			return;
+		}
+		
 		var id:String = U.xml_str(data.x, "id", true);
 		var thing = getAsset(id);
 		if (thing == null) {
@@ -1142,6 +1147,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	
 	private function _alignThing(data:Fast):Void {
+		if (_loadTest(data) == false) {
+			return;
+		}
 		var datastr:String = data.x.toString();
 		if (data.hasNode.objects) {
 			for (objectNode in data.nodes.objects) {
@@ -1850,20 +1858,48 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (data.hasNode.load_if) {
 			for (node in data.nodes.load_if) {
 				
+				var matchValue:Bool = U.xml_bool(node.x, "is", true);
+				var match:Bool = matchValue;
+				
+				//check aspect ration
 				var aspect_ratio:Float = U.xml_f(node.x, "aspect_ratio", -1);
 				if (aspect_ratio != -1) {
+					match = true;
 					var tolerance:Float = U.xml_f(node.x, "tolerance", 0.1);
 					var screen_ratio:Float = cast(FlxG.width, Float) / cast(FlxG.height, Float);
 					var diff:Float = Math.abs(screen_ratio - aspect_ratio);
 					if (diff > tolerance) {
+						match = false;
+					}
+					if (match != matchValue) {
 						return false;
 					}
 				}
 				
+				//check resolution
+				var resolution:FlxPoint = U.xml_pt(node.x, "resolution", null);
+				if (resolution != null)
+				{
+					match = true;
+					var toleranceRes:FlxPoint = U.xml_pt(node.x, "tolearance", null);
+					if (toleranceRes == null) { toleranceRes = new FlxPoint(0, 0); }
+					var diffX:Float = Math.abs(resolution.x - FlxG.width);
+					var diffY:Float = Math.abs(resolution.y - FlxG.height);
+					if (diffX > toleranceRes.x || diffY > toleranceRes.y)
+					{
+						match = false;
+					}
+					if (match != matchValue) {
+						return false;
+					}
+				}
+				
+				//check haxedefs
 				var haxeDef:String = U.xml_str(node.x, "haxedef", true, "");
 				var haxeVal:Bool = U.xml_bool(node.x, "value", true);
 				
 				if (haxeDef != "") {
+					match = true;
 					var defValue:Bool = false;
 					switch(haxeDef) {
 						case "3ds": 
@@ -1887,17 +1923,25 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 								defValue = true;
 							#end
 					}
-					return defValue == haxeVal;
+					match = (defValue == haxeVal);
+					if (match != matchValue) {
+						return false;
+					}
 				}
 				
+				//check variable
 				var variable:String = U.xml_str(node.x, "variable", false, "");
 				var variableType:String = U.xml_str(node.x, "type", true, "string");
 				if (variable != "")
 				{
+					match = true;
 					var varData= parseVarValue(variable);
 					if (varData != null)
 					{
-						return checkVariable(varData.variable, varData.value, variableType, varData.operator);
+						match = checkVariable(varData.variable, varData.value, variableType, varData.operator);
+					}
+					if (match != matchValue) {
+						return false;
 					}
 				}
 			}
