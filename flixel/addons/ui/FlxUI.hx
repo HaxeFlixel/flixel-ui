@@ -2092,6 +2092,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var resize_ratio:Float = U.xml_f(data.x, "resize_ratio", -1);
 		var resize_point:FlxPoint = _loadCompass(data, "resize_point");
 		var isVis:Bool = U.xml_bool(data.x, "visible", true);
+		var isActive:Bool = U.xml_bool(data.x, "active", true);
 		
 		var label:String = U.xml_str(data.x, "label");
 		
@@ -2375,6 +2376,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		fb.visible = isVis;
+		fb.active = isActive;
 		
 		return fb;
 	}

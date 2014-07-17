@@ -320,6 +320,8 @@ Attributes:
 * width/height - optional, only needed if you're using a 9-slice sprite as source
 * text_x/text_y - label offsets
 * label - text to show
+* active - whether the button should be active initially
+* visible - whether the button should be visible initially
 
 Child tags:
 * \<text> - just like a regular \<text> node
