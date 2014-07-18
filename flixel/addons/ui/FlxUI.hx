@@ -1556,6 +1556,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var W:Int = Std.int(_loadWidth(data, 100));
 		
+		var H:Int = Std.int(_loadHeight(data));
+		
 		var the_font:String = _loadFontFace(data);
 		
 		var align:String = U.xml_str(data.x, "align"); if (align == "") { align = null;}
