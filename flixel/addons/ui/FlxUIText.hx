@@ -5,8 +5,11 @@ import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxSprite;
+import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import flixel.util.loaders.TextureAtlasFrame;
+import haxe.io.Error;
+import openfl.text.TextField;
 
 /**
  * Simple extension to the basic text field class.

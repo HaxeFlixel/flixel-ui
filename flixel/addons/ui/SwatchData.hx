@@ -1,5 +1,6 @@
 package flixel.addons.ui;
 
+import flixel.util.FlxArrayUtil;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 /**
@@ -69,12 +70,8 @@ class SwatchData implements IFlxDestroyable {
 	}
 	
 	public function destroy():Void {
-		if(colors != null){
-			while (colors.length > 1) {
-				colors.pop();
-			}
-			colors = null;
-		}
+		FlxArrayUtil.clearArray(colors);
+		colors = null;
 	}
 	
 	public function new(Name:String, ?Colors:Array<FlxColor>)

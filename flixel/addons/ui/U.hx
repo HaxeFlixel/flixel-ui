@@ -919,6 +919,52 @@ class U
 		}
 		return null; 				//failure
 	}
+	
+	/**
+	 * For grabbing a version of an image src and dynamically scaling (and caching) it as necessary
+	 * @param	src	the asset key of the base image
+	 * @param	Scale	the scale factor of the new image
+	 * @return	the unique key of the scaled bitmap
+	 */
+	
+	public static function loadMonoScaledImage(src:String,Scale:Float):String
+	{
+		var bmpSrc:String = gfx(src);
+		var	testBmp:BitmapData = Assets.getBitmapData(bmpSrc, true);
+		
+		if (testBmp != null)	//if the master asset exists
+		{
+			if (Scale < 0)
+			{
+				throw "Error! Scale must be positive!";
+			}
+			
+			//if final size != master asset size, we're going to scale it
+			if (Math.abs(Scale-1.00) > 0.001) 
+			{
+				var scaleKey:String = bmpSrc +"_ScaleX" + Scale;	//generate a unique scaled asset key
+				
+				//if it doesn't exist yet, create it
+				if (FlxG.bitmap.get(scaleKey) == null)
+				{
+					var scaledBmp:BitmapData = new BitmapData(Std.int(testBmp.width*Scale), Std.int(testBmp.height*Scale),true,0x00000000);	//create a unique bitmap and scale it
+					
+					var m:Matrix = getMatrix();
+					m.identity();
+					m.scale(Scale, Scale);
+					scaledBmp.draw(testBmp, m, null, null, null, true);
+					
+					FlxG.bitmap.add(scaledBmp, true, scaleKey);			//store it by the unique key
+				}
+				return scaleKey;										//return the final scaled key
+			}
+			else 
+			{
+				return bmpSrc;		//couldn't scale it, return master asset key
+			}
+		}
+		return null; 				//failure
+	}
 
 	
 	public static function gfx(id:String, dir1:String = "", dir2:String = "", dir3:String = "", dir4:String = "",suppressError:Bool=false):String{

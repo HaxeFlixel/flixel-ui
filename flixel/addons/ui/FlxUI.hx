@@ -291,6 +291,22 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		super.update();
 	}
 	
+	public function showAsset(key:String, Show:Bool, ?Active:Null<Bool>=null):Void
+	{
+		var asset = getAsset(key, false);
+		if (asset != null) {
+			asset.visible = Show;
+			if (Active == null)
+			{
+				asset.active = Show;
+			}
+			else
+			{
+				asset.active = Active;
+			}
+		}
+	}
+	
 	/**
 	 * Removes an asset
 	 * @param	key the asset to remove
