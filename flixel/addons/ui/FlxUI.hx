@@ -1005,6 +1005,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			case "line": return _loadLine(info);
 			case "sprite": return _loadSprite(info);
 			case "text": return _loadText(info);								//if input has events
+			case "input_text": return _loadInputText(info);								//if input has events
 			case "numeric_stepper": return _loadNumericStepper(info);			//has events, params
 			case "button": return _loadButton(info);							//has events, params
 			case "button_toggle": return _loadButton(info,true,true);			//has events, params
@@ -1475,6 +1476,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var the_font:String = _loadFontFace(data);
 		
 		var input:Bool = U.xml_bool(data.x, "input");
+		if(input)
+		{
+					throw new Error("FlxUI._loadText(): <text> with input has been deprecated. Use <input_text> instead.");
+		}
 		
 		var align:String = U.xml_str(data.x, "align"); if (align == "") { align = null;}
 		var size:Int = U.xml_i(data.x, "size"); if (size == 0) { size = 8;}
@@ -1485,42 +1490,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var backgroundColor:Int = U.parseHex(U.xml_str(data.x, "background", true, "0x00000000"), true, true, 0x00000000);
 		
 		var ft:IFlxUIWidget;
-		if(input == false){
-			var ftu:FlxUIText = new FlxUIText(0, 0, W, text, size);
-			ftu.setFormat(the_font, size, color, align);
-			border.apply(ftu);
-			ftu.drawFrame();
-			ft = ftu;
-		}else {
-			var fti:FlxUIInputText = new FlxUIInputText(0, 0, W, text, size, color, backgroundColor);
-			
-			var force_case:String = U.xml_str(data.x, "force_case", true, "");
-			var forceCase:Int;
-			switch(force_case) {
-				case "u", "upper", "upper_case", "uppercase": forceCase = FlxInputText.UPPER_CASE;
-				case "l", "lower", "lower_case", "lowercase": forceCase = FlxInputText.LOWER_CASE;
-				default: forceCase = FlxInputText.ALL_CASES;
-			}
-			
-			var filter:String = U.xml_str(data.x, "filter", true, "");
-			var filterMode:Int;
-			while (filter.indexOf("_") != -1) {
-				filter = StringTools.replace(filter, "_", "");	//strip out any underscores
-			}
-			switch(filter) {
-				case "a", "alpha", "onlyalpha": filterMode = FlxInputText.ONLY_ALPHA;
-				case "n", "num", "numeric", "onlynumeric": filterMode = FlxInputText.ONLY_NUMERIC;
-				case "an", "alphanum", "alphanumeric", "onlyalphanumeric": filterMode = FlxInputText.ONLY_ALPHANUMERIC;
-				default: filterMode = FlxInputText.NO_FILTER;
-			}
-			
-			fti.setFormat(the_font, size, color, align);
-			fti.forceCase = forceCase;
-			fti.filterMode = filterMode;
-			border.apply(fti);
-			fti.drawFrame();
-			ft = fti;
-		}
+		var ftu:FlxUIText = new FlxUIText(0, 0, W, text, size);
+		ftu.setFormat(the_font, size, color, align);
+		border.apply(ftu);
+		ftu.drawFrame();
+		ft = ftu;
 		
 		if (data.hasNode.param) {
 			var params = getParams(data);
@@ -1530,6 +1504,71 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		return ft;
 	}
+
+	private function _loadInputText(data:Fast):IFlxUIWidget{
+		
+		var text:String = U.xml_str(data.x, "text");
+		var context:String = U.xml_str(data.x, "context", true, "ui");
+		var code:String = U.xml_str(data.x, "code", true, "");
+		text = getText(text,context, true, code);
+		
+		var W:Int = Std.int(_loadWidth(data, 100));
+		
+		var the_font:String = _loadFontFace(data);
+		
+		var align:String = U.xml_str(data.x, "align"); if (align == "") { align = null;}
+		var size:Int = U.xml_i(data.x, "size"); if (size == 0) { size = 8;}
+		var color:Int = _loadColor(data);
+		
+		var border:BorderDef = _loadBorder(data);
+		
+		var backgroundColor:Int = U.parseHex(U.xml_str(data.x, "background", true, "0x00000000"), true, true, 0x00000000);
+		var passwordMode:Bool = U.xml_bool(data.x, "password_mode");
+		
+		var ft:IFlxUIWidget;
+		var fti:FlxUIInputText = new FlxUIInputText(0, 0, W, text, size, color, backgroundColor);
+		fti.passwordMode = passwordMode;
+			
+		var force_case:String = U.xml_str(data.x, "force_case", true, "");
+		var forceCase:Int;
+		switch(force_case) {
+			case "upper", "upper_case", "uppercase": forceCase = FlxInputText.UPPER_CASE;
+			case "lower", "lower_case", "lowercase": forceCase = FlxInputText.LOWER_CASE;
+			case "u", "l":
+					throw new Error("FlxUI._loadInputText(): 1 letter values have been deprecated (force_case attribute).");
+			default: forceCase = FlxInputText.ALL_CASES;
+		}
+		
+		var filter:String = U.xml_str(data.x, "filter", true, "");
+		var filterMode:Int;
+		while (filter.indexOf("_") != -1) {
+			filter = StringTools.replace(filter, "_", "");	//strip out any underscores
+		}
+		switch(filter) {
+			case "alpha", "onlyalpha": filterMode = FlxInputText.ONLY_ALPHA;
+			case "num", "numeric", "onlynumeric": filterMode = FlxInputText.ONLY_NUMERIC;
+			case "alphanum", "alphanumeric", "onlyalphanumeric": filterMode = FlxInputText.ONLY_ALPHANUMERIC;
+			case "a", "n", "an":
+					throw new Error("FlxUI._loadInputText(): 1 letter values have been deprecated (filter attribute).");
+			default: filterMode = FlxInputText.NO_FILTER;
+		}
+			
+		fti.setFormat(the_font, size, color, align);
+		fti.forceCase = forceCase;
+		fti.filterMode = filterMode;
+		border.apply(fti);
+		fti.drawFrame();
+		ft = fti;
+		
+		if (data.hasNode.param) {
+			var params = getParams(data);
+			var ihp:IHasParams = cast ft;
+			ihp.params = params;
+		}
+		
+		return ft;
+	}
+
 	
 	public static function consolidateData(data:Fast, definition:Fast):Fast {
 		if (data == null && definition != null) {
