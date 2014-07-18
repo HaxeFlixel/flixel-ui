@@ -539,6 +539,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					var thing = _loadThing(type, obj);
 					
 					if (thing != null) {
+						_loadGlobals(obj, thing);
 						if (tempGroup != null) {
 							tempGroup.add(cast thing);
 						}else {
@@ -565,6 +566,18 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}	
 		
 		
+	}
+
+	private function _loadGlobals(data:Fast, thing:Dynamic)
+	{
+		if(Std.is(thing, FlxBasic))
+		{
+			var isVis:Bool = U.xml_bool(data.x, "visible", true);
+			var isActive:Bool = U.xml_bool(data.x, "active", true);
+		
+			thing.visible = isVis;
+			thing.active = isActive;
+		}
 	}
 	
 	private function _postLoad(data:Fast):Void {
@@ -2091,7 +2104,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var resize_ratio:Float = U.xml_f(data.x, "resize_ratio", -1);
 		var resize_point:FlxPoint = _loadCompass(data, "resize_point");
-		var isVis:Bool = U.xml_bool(data.x, "visible", true);
 		
 		var label:String = U.xml_str(data.x, "label");
 		
@@ -2373,8 +2385,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (sprite != null && toggleSprite != null) {
 			fb.toggle_label = toggleSprite;
 		}
-		
-		fb.visible = isVis;
 		
 		return fb;
 	}
