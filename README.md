@@ -140,6 +140,8 @@ This is any of the many Flixel-UI widgets, such as **\<sprite\>**, **\<button\>*
 * **x/y** - integer, specifies position. If no anchor tag exists as a child node, the position is absolute. If an anchor tag exists, the position is relative to the anchor.
 * **use_def** - string, optional, references a \<definition\> tag by id to use for this widget.
 * **group** - string, optional, references a \<group\> tag by id. Will make this widget the child of that group instead of the FlxUI itself.
+* **visible** - boolean, optional, sets the visibility of the widget when the layout is loaded
+* **active** - boolean, optional, controls whether a widget responds to any updates
 
 --
 
@@ -275,7 +277,7 @@ The only tags available in a **\<mode>** element are \<hide> and \<show>, which 
 * **Button, toggle** (FlxUIButton) - \<button_toggle>
 * **Check box** (FlxUICheckBox) - \<checkbox>
 * **Text, vanilla** (FlxUIText) - \<text>
-* **Text, input** (FlxUIInputText) - \<text>
+* **Text, input** (FlxUIInputText) - \<input_text>
 * **Radio button group** (FlxUIRadioGroup) - \<radio_group>
 * **Tabbed menu** (FlxUITabMenu) - \<tab_menu>
 * **Line** (FlxUISprite) - \<line>
@@ -496,9 +498,33 @@ So far just .ttf fonts are supported, and you MUST name them according to this s
 FlxUI does not yet support FlxBitmapFonts, but we'll be adding it soon.
 
 ###7. Text, input (FlxUIInputText)
-**\<text>**
+**\<input_text>**
 
 This has not been thoroughly tested, but it exists.
+
+Attributes:
+* x/y, use_def, group
+* font - string, something like "vera" or "verdana"
+* size - integer, size of font
+* style - string, "regular", "bold", "italic", or "bold-italic"
+* color - hex string, ie, "0xffffff" is white
+* shadow - shadow color (not working yet maybe?)
+* align - "left", "center", or "right". Haven't tested "justify"
+* password_mode - bool, hides text if true
+
+The system will look for a font file in your assets/fonts/ directory, formatted like this:
+
+|Filename|Family|Style|
+|---|---|---|
+vera.ttf|Vera|Regular
+verab.ttf|Vera|Bold
+verai.ttf|Vera|Italic
+veraz.ttf|Vera|Bold-Italic
+
+So far just .ttf fonts are supported, and you MUST name them according to this scheme (for now at least).
+
+FlxUI does not yet support FlxBitmapFonts, but we'll be adding it soon.
+
 
 ###8. Radio button group (FlxUIRadioGroup)
 **\<radio_group>**
