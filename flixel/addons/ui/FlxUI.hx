@@ -1544,6 +1544,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			ihp.params = params;
 		}
 		
+		if (H > 0 && ft.height != H)
+		{
+			if (Std.is(ft, IResizable))
+			{
+				var r:IResizable = cast ft;
+				r.resize(r.width, H);
+			}
+		}
+		
 		return ft;
 	}
 
@@ -1555,8 +1564,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		text = getText(text,context, true, code);
 		
 		var W:Int = Std.int(_loadWidth(data, 100));
-		
-		var H:Int = Std.int(_loadHeight(data));
+		var H:Int = Std.int(_loadHeight(data, -1));
 		
 		var the_font:String = _loadFontFace(data);
 		
