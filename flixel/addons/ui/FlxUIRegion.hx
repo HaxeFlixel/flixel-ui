@@ -8,7 +8,6 @@ import flixel.util.FlxColor;
 
 /**
  * A scalable object with width and height that isn't used for display purposes
- * @author 
  */
 class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizable
 {
@@ -29,11 +28,5 @@ class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizabl
 	public function resize(w:Float, h:Float) : Void {
 		width = w;
 		height = h;
-		#if debug
-			var theColor:FlxColor = 0xFFFFFFFF;
-			theColor.setRGB(FlxRandom.int(0, 255), FlxRandom.int(0, 255), FlxRandom.int(0, 255));
-			alpha = 0.5;
-			makeGraphic(Std.int(w), Std.int(h), theColor);
-		#end
 	}	 
 }
