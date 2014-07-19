@@ -408,14 +408,14 @@ class FlxInputText extends FlxText
 		var caretRightOfText:Bool = false;
 		#if !js
 			if (hit.y < 2) hit.y = 2;
-			else if (hit.y > _textField.textHeight + 2) hit.y = _textField.textHeight + 2;
+			else if (hit.y > textField.textHeight + 2) hit.y = textField.textHeight + 2;
 			if (hit.x < 2) hit.x = 2;
-			else if (hit.x > _textField.getLineMetrics(0).width) {
-				hit.x = _textField.getLineMetrics(0).width;
+			else if (hit.x > textField.getLineMetrics(0).width) {
+				hit.x = textField.getLineMetrics(0).width;
 				caretRightOfText = true;
 			}
-			else if (hit.x > _textField.getLineMetrics(_textField.numLines-1).width && hit.y > _textField.textHeight - _textField.getLineMetrics(_textField.numLines - 1).ascent) {
-				hit.x = _textField.getLineMetrics(_textField.numLines - 1).width;
+			else if (hit.x > textField.getLineMetrics(textField.numLines-1).width && hit.y > textField.textHeight - textField.getLineMetrics(textField.numLines - 1).ascent) {
+				hit.x = textField.getLineMetrics(textField.numLines - 1).width;
 				caretRightOfText = true;
 			}
 		#end
@@ -423,14 +423,14 @@ class FlxInputText extends FlxText
 		
 		if (caretRightOfText) {
 			#if flash
-				index = _textField.getCharIndexAtPoint(hit.x, hit.y) + 1;
+				index = textField.getCharIndexAtPoint(hit.x, hit.y) + 1;
 			#elseif sys
 				index = getCharIndexAtPoint(hit.x, hit.y) + 1;
 			#end
 		}
 		else {
 			#if flash
-				index = _textField.getCharIndexAtPoint(hit.x, hit.y);
+				index = textField.getCharIndexAtPoint(hit.x, hit.y);
 			#elseif sys
 				index = getCharIndexAtPoint(hit.x, hit.y);
 			#end
@@ -446,7 +446,7 @@ class FlxInputText extends FlxText
 	private function getCharBoundaries(charIndex:Int):Rectangle 
 	{
 		#if flash
-		return _textField.getCharBoundaries(charIndex);
+		return textField.getCharBoundaries(charIndex);
 		#else
 		if (_charBoundaries != null && charIndex >= 0 && charIndex < _charBoundaries.length) 
 		{
@@ -468,7 +468,7 @@ class FlxInputText extends FlxText
 		var return_text:String = super.set_text(Text);
 		var numChars:Int = Text.length;
 		prepareCharBoundaries(numChars);
-		_textField.text = "";
+		textField.text = "";
 		var textH:Float = 0;
 		var textW:Float = 0;
 		var lastW:Float = 0;
@@ -481,11 +481,11 @@ class FlxInputText extends FlxText
 		
 		for (i in 0...numChars) 
 		{
-			_textField.appendText(Text.substr(i, 1));	//add a character
-			textW = _textField.textWidth;				//count up total text width
+			textField.appendText(Text.substr(i, 1));	//add a character
+			textW = textField.textWidth;				//count up total text width
 			if (i == 0) 
 			{
-				textH = _textField.textHeight;			//count height after first char
+				textH = textField.textHeight;			//count height after first char
 			}
 			_charBoundaries[i].x = magicX + lastW;			//place x at end of last character
 			_charBoundaries[i].y = magicY;					//place y at zero
@@ -493,7 +493,7 @@ class FlxInputText extends FlxText
 			_charBoundaries[i].height = textH;
 			lastW = textW;
 		}
-		_textField.text = Text;
+		textField.text = Text;
 		onSetTextCheck();
 		return return_text;
 		#end
@@ -562,17 +562,17 @@ class FlxInputText extends FlxText
 			var alignStr:FlxTextAlign = getAlignStr();
 			
 			//Check to see if the text is visually overflowing
-			var diffW:Int = Std.int((_textField.width - 2) - boundary.right); //Flash supplies 4px magic # padding to text field size: boundary.right is already offset by 2
+			var diffW:Int = Std.int((textField.width - 2) - boundary.right); //Flash supplies 4px magic # padding to text field size: boundary.right is already offset by 2
 			
-			_textField.scrollH = 0;
+			textField.scrollH = 0;
 			
 			switch(alignStr) {
 				case CENTER:
-					_textField.scrollH = diffW;
+					textField.scrollH = diffW;
 					//for center case, we will need to offset by (-diffW/2) in calcFrame() 
 					calcFrame(true);
 				case LEFT:
-					_textField.scrollH = diffW;
+					textField.scrollH = diffW;
 					calcFrame(true);
 				case RIGHT:
 				case JUSTIFY:
@@ -586,12 +586,12 @@ class FlxInputText extends FlxText
 		for (i in 0...text.length) {
 			boundary = getCharBoundaries(i);
 			if (i < _scrollBoundIndeces.left) {
-				if (boundary.left - _textField.scrollH > 0) {
+				if (boundary.left - textField.scrollH > 0) {
 					_scrollBoundIndeces.left = i;
 				}
 			}
 			if (i > _scrollBoundIndeces.right) {
-				if (boundary.right - _textField.scrollH < _textField.width) {
+				if (boundary.right - textField.scrollH < textField.width) {
 					_scrollBoundIndeces.right = i;
 				}
 			}
@@ -808,7 +808,7 @@ class FlxInputText extends FlxText
 		
 		switch(alignStr) {
 			case RIGHT: offx = 0;
-			case CENTER: offx = (_textField.width - _textField.textWidth) / 2;
+			case CENTER: offx = (textField.width - textField.textWidth) / 2;
 			default: offx = 0;
 		}
 		
@@ -849,14 +849,14 @@ class FlxInputText extends FlxText
 					caret.x = x + offx + 2; 
 					caret.y = y + 2; 
 					if (alignStr == "right") {
-						caret.x = x + _textField.width - 2;
+						caret.x = x + textField.width - 2;
 					}
 				}
 			}
 		}
 		
 		#if !js
-		caret.x -= _textField.scrollH;
+		caret.x -= textField.scrollH;
 		#end
 		
 		// Make sure the caret doesn't leave the textfield on single-line input texts
@@ -897,12 +897,12 @@ class FlxInputText extends FlxText
 		if (Value == 0) return 0;
 		
 		if (Value > 1) {
-			_textField.wordWrap = true;
-			_textField.multiline = true;
+			textField.wordWrap = true;
+			textField.multiline = true;
 		}
 		else {
-			_textField.wordWrap = false;
-			_textField.multiline = false;
+			textField.wordWrap = false;
+			textField.multiline = false;
 		}
 		
 		lines = Value;
@@ -912,12 +912,12 @@ class FlxInputText extends FlxText
 	
 	private function get_passwordMode():Bool
 	{
-		return _textField.displayAsPassword;
+		return textField.displayAsPassword;
 	}
 	
 	private function set_passwordMode(value:Bool):Bool
 	{
-		_textField.displayAsPassword = value;
+		textField.displayAsPassword = value;
 		calcFrame();
 		return value;
 	}
