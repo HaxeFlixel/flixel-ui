@@ -8,6 +8,7 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
+import flixel.util.FlxColor;
 import flixel.math.FlxPoint;
 import haxe.Json;
 import haxe.xml.Fast;
@@ -347,7 +348,13 @@ class U
 	
 	public static inline function parseHex(str:String,cast32Bit:Bool=false,safe:Bool=false,default_color:Int=0x000000):Int {
 		var return_val:Int = -1;		
+		try
+		{
+			return_val = Reflect.field(FlxColor, str);
+			str = "0x" + StringTools.hex(return_val);
+		} catch(msg:String){}
 		
+
 		if (str.indexOf("0x") != 0) {	//if it doesn't start with "0x"
 			if(!safe){
 				throw "U.parseHex() string(" + str + ") does not start with \"0x\"!";
