@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-	<assets path="assets/images" rename="flixel/flixel-ui/img" if="flash"/>
-	<assets path="assets/images" rename="flixel/flixel-ui/img" if="html5"/>
-	<assets path="assets/images" rename="flixel/flixel-ui/img" if="desktop"/>
-	<assets path="assets/images" rename="flixel/flixel-ui/img" if="mobile"/>
-	<assets path="assets/images" rename="flixel/flixel-ui/img" if="neko"/>
-	
-	<assets path="assets/xml" rename="flixel/flixel-ui/xml" if="flash"/>
-	<assets path="assets/xml" rename="flixel/flixel-ui/xml" if="html5"/>
-	<assets path="assets/xml" rename="flixel/flixel-ui/xml" if="desktop"/>
-	<assets path="assets/xml" rename="flixel/flixel-ui/xml" if="mobile"/>
-	<assets path="assets/xml" rename="flixel/flixel-ui/xml" if="neko"/>
+	<assets path="assets/images" rename="flixel/flixel-ui/img"/>
+	<assets path="assets/xml" rename="flixel/flixel-ui/xml"/>
 </project>
