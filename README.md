@@ -20,13 +20,14 @@ Please note the test project in flixel-demos requires the localization library *
 
 ###Install flixel-ui:
 
-latest dev version:
+get latest stable release from haxelib:
+
+    haxelib install flixel-ui
+
+get latest bleeding-edge dev version from github:
 
     haxelib git flixel-ui https://github.com/HaxeFlixel/flixel-ui
 
-when we finally upload it to haxelib:
-
-    haxelib install flixel-ui
 
 ###Quick project setup
 
