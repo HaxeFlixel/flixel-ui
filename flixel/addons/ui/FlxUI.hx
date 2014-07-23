@@ -482,7 +482,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 							//add a prefix to avoid collisions:
 							var def_id:String = "include:"+def_data.att.id;
 							_definition_index.set(def_id, def_data);
-							
 							//DON'T recursively search for further includes. 
 							//Search 1 level deep only!
 							//Ignore everything else in the include file
@@ -827,6 +826,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				definition = getDefinition("include:" + key, recursive);
 			}
 		}
+		
 		return definition;
 	}
 	

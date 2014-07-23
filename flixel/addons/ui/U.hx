@@ -545,6 +545,9 @@ class U
 			return path;
 		}
 		
+		#if flash
+		public static function endline():String { return "\n";}
+		#else
 		public static inline function endline():String {
 			#if windows
 				return "\r\n";
@@ -552,6 +555,7 @@ class U
 				return "\n";
 			#end
 		}
+		#end
 		
 		public static inline function slash():String {
 			#if windows
@@ -620,6 +624,12 @@ class U
 	}
 	
 	public static function xml(id:String, extension:String = "xml",getFast:Bool=true,dir="assets/xml/"):Dynamic{
+		if (id.indexOf("raw:") == 0 || id.indexOf("RAW:") == 0)
+		{
+			id = id.substr(4, id.length - 4);
+			dir = "";
+		}
+		
 		var str:String = Assets.getText(dir + id + "." + extension);
 		if (str == null) {
 			return null;
@@ -632,6 +642,7 @@ class U
 			return the_xml.firstElement();
 		}
 	}
+	
 	
 	/**
 	 * This will remove an array structure, but will leave its contents untouched.
