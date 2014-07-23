@@ -348,9 +348,12 @@ class U
 	
 	public static inline function parseHex(str:String,cast32Bit:Bool=false,safe:Bool=false,default_color:Int=0x000000):Int {
 		var return_val = FlxColor.fromString(str);
-		if(return_val == null)
-		{
-			throw "U.parseHex() unable to parse hex String " + str;
+		if(return_val == null) {
+			if(!safe) {
+				throw "U.parseHex() unable to parse hex String " + str;
+			}else {
+				return_val = default_color;	
+			}
 		}	
 		return return_val;
 	}
