@@ -210,7 +210,7 @@ class FlxInputText extends FlxText
 			Text = "";
 		}
 		
-		text = Text;		//ensure set_text is called to aVoid bugs (like not preparing _charBoundaries on sys target, making it impossible to click)
+		text = Text;		//ensure set_text is called to avoid bugs (like not preparing _charBoundaries on sys target, making it impossible to click)
 		
 		calcFrame();
 	}
