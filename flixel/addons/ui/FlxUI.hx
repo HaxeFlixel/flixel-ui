@@ -479,7 +479,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					
 					if(inc_xml != null){
 						for (def_data in inc_xml.nodes.definition) {
-							//add a prefix to avoid collisions:
+							//add a prefix to aVoid collisions:
 							var def_id:String = "include:"+def_data.att.id;
 							_definition_index.set(def_id, def_data);
 							//DON'T recursively search for further includes. 
@@ -2452,7 +2452,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var slice9_tab:Array<Int> = FlxStringUtil.toIntArray(FlxUIAssets.SLICE9_TAB);
 				var slice9_ids:Array<Array<Int>> = [slice9_tab, slice9_tab, slice9_tab, slice9_tab, slice9_tab, slice9_tab];
 				
-				//These is/cast checks are here to avoid weeeeird bugs on neko target, which suggests they might also crop up elsewhere
+				//These is/cast checks are here to aVoid weeeeird bugs on neko target, which suggests they might also crop up elsewhere
 				if (Std.is(fb, FlxUIButton)) {
 					var fbui:FlxUIButton = cast fb;
 					fbui.loadGraphicSlice9(graphic_ids, W, H, slice9_ids, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);

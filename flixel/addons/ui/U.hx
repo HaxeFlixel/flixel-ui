@@ -935,10 +935,11 @@ class U
 	 * For grabbing a version of an image src and dynamically scaling (and caching) it as necessary
 	 * @param	src	the asset key of the base image
 	 * @param	Scale	the scale factor of the new image
+	 * @param	smooth	whether to apply smoothing or not
 	 * @return	the unique key of the scaled bitmap
 	 */
 	
-	public static function loadMonoScaledImage(src:String,Scale:Float):String
+	public static function loadMonoScaledImage(src:String,Scale:Float,smooth:Bool=true):String
 	{
 		var bmpSrc:String = gfx(src);
 		var	testBmp:BitmapData = Assets.getBitmapData(bmpSrc, true);
@@ -963,7 +964,7 @@ class U
 					var m:Matrix = getMatrix();
 					m.identity();
 					m.scale(Scale, Scale);
-					scaledBmp.draw(testBmp, m, null, null, null, true);
+					scaledBmp.draw(testBmp, m, null, null, null, smooth);
 					
 					FlxG.bitmap.add(scaledBmp, true, scaleKey);			//store it by the unique key
 				}

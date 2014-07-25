@@ -27,6 +27,7 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget im
 		var old_size:Float = size;
 		var diff:Float = height - cachedGraphics.bitmap.height;
 		var failsafe:Int = 0;
+		
 		while (diff > 0 && failsafe < 999)
 		{
 			failsafe++;

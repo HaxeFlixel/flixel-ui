@@ -337,7 +337,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		
 		dropPanel.visible = b;
 		
-		FlxUI.forceFocus(b, this);			//avoid overlaps
+		FlxUI.forceFocus(b, this);			//aVoid overlaps
 	}
 	
 	private function onDropdown():Void 

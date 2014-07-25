@@ -84,6 +84,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		super.destroy();
 	}
 	
+	//TODO: add ability to set this property via xml, add documentation
+	public var autoResizeLabel:Bool = false;	//if this is true, when resize() is called on the button, it calls resize() on the label
+	
 	/**
 	 * Creates a new FlxUITypedButton object with a gray background.
 	 * 
@@ -227,6 +230,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		var old_width:Float = width;
 		var old_height:Float = height;
 		
+		var label_diffx:Float = width - label.width;
+		var label_diffy:Float = height - label.height;
+		
 		var old_offx:Float = 0;
 		var old_offy:Float = 0;
 		if (label != null) {
@@ -250,6 +256,17 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			}else {
 				//default assets
 				loadGraphicSlice9(null, Std.int(W), Std.int(H), null,tile);
+			}
+		}
+		
+		if (autoResizeLabel)
+		{
+			if (Std.is(label, IResizable))
+			{
+				var targetW:Float = W - label_diffx;
+				var targetH:Float = H - label_diffy;
+				var ir:IResizable = cast label;
+				ir.resize(targetW, targetH);
 			}
 		}
 		

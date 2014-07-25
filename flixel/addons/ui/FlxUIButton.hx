@@ -105,11 +105,27 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	
 	public override function resize(W:Float, H:Float):Void {
 		super.resize(W, H);
-		if(label != null){
+		/*if(label != null){
 			label.width = W;
 			label.fieldWidth = W;
-		}
+			label.resize(W, H);
+		}*/
 	}
+	
+	/**
+	 * Separated out so it can be easily overriden
+	 * @param	label_diffx	before the button was resized, (button.width-label.width)
+	 * @param	label_diffy	before the button was resized, (button.height-label.height)
+	 */
+	
+	/*private override function autoResizeLabel(label_diffx:Float,label_diffy:Float):Void
+	{
+		var targetW:Float = W - label_diffx;
+		var targetH:Float = H - label_diffy;
+		trace("resizing button to (" + targetW + "," + targetH + ")");
+		var ir:IResizable = cast label;
+		ir.resize(targetW, targetH);
+	}*/
 	
 	public function addIcon(icon:FlxSprite,X:Int=0,Y:Int=0,?center:Bool=true)
 	{
