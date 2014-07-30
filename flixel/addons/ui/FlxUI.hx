@@ -493,18 +493,25 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			//First, load all our definitions
 			if (data.hasNode.definition) {
 				for (def_data in data.nodes.definition) {
-					var def_id:String = def_data.att.id;
-					_definition_index.set(def_id, def_data);
+					if (_loadTest(def_data))
+					{
+						var def_id:String = def_data.att.id;
+						_definition_index.set(def_id, def_data);
+					}
 				}
 			}
 			
 			//Next, load all our variables
 			if (data.hasNode.variable) {
 				for (var_data in data.nodes.variable) {
-					var var_id:String = U.xml_str(var_data.x, "id", true);
-					var var_value = U.xml_str(var_data.x, "value");
-					if (var_id != "") {
-						_variable_index.set(var_id, var_value);
+					if (_loadTest(var_data))
+					{
+						var var_id:String = U.xml_str(var_data.x, "id", true);
+						var var_value = U.xml_str(var_data.x, "value");
+						if (var_id != "")
+						{
+							_variable_index.set(var_id, var_value);
+						}
 					}
 				}
 			}
@@ -512,23 +519,28 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			//Next, load all our modes
 			if (data.hasNode.mode) {
 				for (mode_data in data.nodes.mode) {
-					var mode_data2:Fast = applyNodeConditionals(mode_data);
-					var mode_id:String = mode_data.att.id;
-					//mode_data
-					_mode_index.set(mode_id, mode_data2);
+					if (_loadTest(mode_data))
+					{
+						var mode_data2:Fast = applyNodeConditionals(mode_data);
+						var mode_id:String = mode_data.att.id;
+						//mode_data
+						_mode_index.set(mode_id, mode_data2);
+					}
 				}
 			}
 		
 			//Then, load all our group definitions
 			if(data.hasNode.group){
 				for (group_data in data.nodes.group) {
-					
-					//Create FlxUIGroup's for each group we define
-					var id:String = group_data.att.id;
-					var tempGroup:FlxUIGroup = new FlxUIGroup();
-					tempGroup.id = id;
-					_group_index.set(id, tempGroup);
-					add(tempGroup);
+					if (_loadTest(group_data))
+					{
+						//Create FlxUIGroup's for each group we define
+						var id:String = group_data.att.id;
+						var tempGroup:FlxUIGroup = new FlxUIGroup();
+						tempGroup.id = id;
+						_group_index.set(id, tempGroup);
+						add(tempGroup);
+					}
 				}
 			}
 			
@@ -537,39 +549,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var node:Xml;
 				for (node in data.x.elements()) 
 				{
-					var type:String = node.nodeName;
-					type.toLowerCase();
-					var obj:Fast = new Fast(node);
-					var group_id:String="";
-					var tempGroup:FlxUIGroup = null;
-					
-					var thing_id:String = U.xml_str(obj.x, "id", true);
-					//If it belongs to a group, get that information ready:
-					if (obj.has.group) { 
-						group_id = obj.att.group; 
-						tempGroup = getGroup(group_id);
-					}
-					
-					//Make the thing
-					var thing = _loadThing(type, obj);
-					
-					if (thing != null) {
-						_loadGlobals(obj, thing);
-						if (tempGroup != null) {
-							tempGroup.add(cast thing);
-						}else {
-							add(cast thing);
-						}
-						
-						_loadPosition(obj, thing);	//Position the thing if possible
-						
-						if (thing_id != null && thing_id != "") {
-							_asset_index.set(thing_id, thing);
-							
-							//The widget id can be used in getEvent-handlers.
-							thing.id = thing_id;
-						}
-					}
+					_loadSub(node);
 				}
 			}
 			
@@ -577,9 +557,64 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 		}else {
 			_onFinishLoad();
-		}	
+		}
+	}
+	
+	private function _loadSub(node:Xml,iteration:Int=0):Void
+	{
+		var type:String = node.nodeName;
+		type.toLowerCase();
+		var obj:Fast = new Fast(node);
 		
+		//if a "load_if" tag is wrapped around a block of other tags
+		//then to the load test, and if so, load all the children inside the block
+		if (type == "load_if")
+		{
+			if (_loadTest(obj))
+			{
+				if (node.firstElement() != null)
+				{
+					for (subNode in node.elements())
+					{
+						_loadSub(subNode,iteration+1);
+					}
+				}
+			}
+			
+			return;	//exit early
+		}
 		
+		var group_id:String="";
+		var tempGroup:FlxUIGroup = null;
+		
+		var thing_id:String = U.xml_str(obj.x, "id", true);
+		//If it belongs to a group, get that information ready:
+		if (obj.has.group) { 
+			group_id = obj.att.group; 
+			tempGroup = getGroup(group_id);
+		}
+		
+		//Make the thing
+		
+		var thing = _loadThing(type, obj);
+		
+		if (thing != null) {
+			_loadGlobals(obj, thing);
+			if (tempGroup != null) {
+				tempGroup.add(cast thing);
+			}else {
+				add(cast thing);
+			}
+			
+			_loadPosition(obj, thing);	//Position the thing if possible
+			
+			if (thing_id != null && thing_id != "") {
+				_asset_index.set(thing_id, thing);
+				
+				//The widget id can be used in getEvent-handlers.
+				thing.id = thing_id;
+			}
+		}
 	}
 
 	private function _loadGlobals(data:Fast, thing:Dynamic)
@@ -660,21 +695,24 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					
 					var nodeName:String = xml.nodeName;
 					
-					switch(nodeName) {
-						case "show":
-							showThing(U.xml_str(xml, "id", true),true);
-						case "hide":
-							showThing(U.xml_str(xml, "id", true), false);
-						case "align":
-							_alignThing(node2);
-						case "change":
-							_changeThing(node2);
-						case "position":
-							id = U.xml_str(xml, "id", true);
-							thing = getAsset(id);
-							if(thing != null){
-								_loadPosition(node2, thing);
-							}
+					if (_loadTest(node2))
+					{
+						switch(nodeName) {
+							case "show":
+								showThing(U.xml_str(xml, "id", true),true);
+							case "hide":
+								showThing(U.xml_str(xml, "id", true), false);
+							case "align":
+								_alignThing(node2);
+							case "change":
+								_changeThing(node2);
+							case "position":
+								id = U.xml_str(xml, "id", true);
+								thing = getAsset(id);
+								if(thing != null){
+									_loadPosition(node2, thing);
+								}
+						}
 					}
 				}
 			}
@@ -802,7 +840,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		else 
 		{
-			return false;
+			return U.compareStringVars("", otherValue, type, operator);
 		}
 	}
 	
@@ -1013,6 +1051,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var info:Fast = consolidateData(data, definition);
 		info = applyNodeConditionals(info);
 		
+		if (_loadTest(info) == false)
+		{
+			return null;
+		}
+		
 		switch(type) {
 			case "region": return _loadRegion(info);
 			case "chrome", "nineslicesprite", "nine_slice_sprite", "nineslice", "nine_slice": return _load9SliceSprite(info);
@@ -1117,11 +1160,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	private function _changeThing(data:Fast):Void {
-		if (_loadTest(data) == false)
-		{
-			return;
-		}
-		
 		var id:String = U.xml_str(data.x, "id", true);
 		var thing = getAsset(id);
 		if (thing == null) {
@@ -1176,15 +1214,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	
 	
-	private function _alignThing(data:Fast):Void {
-		if (_loadTest(data) == false) {
-			return;
-		}
+	private function _alignThing(data:Fast):Void
+	{
 		var datastr:String = data.x.toString();
-		if (data.hasNode.objects) {
-			for (objectNode in data.nodes.objects) {
+		if (data.hasNode.objects)
+		{
+			for (objectNode in data.nodes.objects)
+			{
 				var objects:Array<String> = U.xml_str(objectNode.x, "value", true, "").split(",");
-			
+				
 				var axis:String = U.xml_str(data.x, "axis", true);
 				var spacing:Float = U.xml_f(data.x, "spacing", -1);
 				var resize:Bool = U.xml_bool(data.x, "resize");
@@ -1194,13 +1232,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				
 				var bounds:FlxPoint = FlxPoint.get(-1,-1);
 				
-				if (axis != "horizontal" && axis != "vertical") {
+				if (axis != "horizontal" && axis != "vertical")
+				{
 					throw new Error("FlxUI._alignThing(): axis must be \"horizontal\" or \"vertical\"!");
 					return;
 				}
 				
 				var boundsError:String = "";
-					
+				
 				if (data.hasNode.bounds)
 				{
 					var bound_range:Float = -1;
@@ -1218,12 +1257,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				{
 					if (bounds.y <= bounds.x)
 					{
-						boundsError = "FlxUI._alignThing(): bounds max must be > bounds min!";
+						boundsError = "bounds max must be > bounds min! (max=" + bounds.y + " min=" + bounds.x + ")";
 					}
 				}
 				else
 				{
-					boundsError = "FlxUI._alignThing(): missing bound!";
+					boundsError = "missing bound!";
 				}
 				
 				if (boundsError == "")
@@ -1243,11 +1282,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				{
 					if (boundsError != "")
 					{
+						//throw ("BoundsError(" + boundsError + "), Data=\n"+datastr);
 						FlxG.log.error(boundsError);
 					}
 				}
 			}
-		}else {
+		}
+		else
+		{
 			throw new Error("FlxUI._alignThing(): <objects> node not found!");
 			return;
 		}
@@ -1434,6 +1476,27 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _postLoadThing(type:String, data:Fast):Void
 	{
+		if (type == "load_if")		//if the whole thing is a load_if tag, evaluate & load all sub elements
+		{
+			if (_loadTest(data))
+			{
+				if (data.x.firstElement() != null)
+				{
+					for (subNode in data.x.elements())
+					{
+						var nodeType:String = subNode.nodeName.toLowerCase();
+						_postLoadThing(nodeType, new Fast(subNode));
+					}
+				}
+			}
+			return;
+		}
+		
+		if (_loadTest(data) == false)
+		{
+			return;
+		}
+		
 		var id:String = U.xml_str(data.x, "id", true);
 		var thing:IFlxUIWidget = getAsset(id);
 		
@@ -1933,95 +1996,115 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	private function _loadTest(data:Fast):Bool {
-		if (data.hasNode.load_if) {
-			for (node in data.nodes.load_if) {
-				
-				var matchValue:Bool = U.xml_bool(node.x, "is", true);
-				var match:Bool = matchValue;
-				
-				//check aspect ration
-				var aspect_ratio:Float = U.xml_f(node.x, "aspect_ratio", -1);
-				if (aspect_ratio != -1) {
-					match = true;
-					var tolerance:Float = U.xml_f(node.x, "tolerance", 0.1);
-					var screen_ratio:Float = cast(FlxG.width, Float) / cast(FlxG.height, Float);
-					var diff:Float = Math.abs(screen_ratio - aspect_ratio);
-					if (diff > tolerance) {
-						match = false;
-					}
-					if (match != matchValue) {
-						return false;
-					}
-				}
-				
-				//check resolution
-				var resolution:FlxPoint = U.xml_pt(node.x, "resolution", null);
-				if (resolution != null)
+		var result:Bool = true;
+		if (data.name == "load_if")
+		{
+			result = _loadTestSub(data);
+			if (result == false)
+			{
+				return false;
+			}
+		}
+		if (data.hasNode.load_if)
+		{
+			for (node in data.nodes.load_if)
+			{
+				result = _loadTestSub(node);
+				if (result == false)
 				{
-					match = true;
-					var toleranceRes:FlxPoint = U.xml_pt(node.x, "tolearance", null);
-					if (toleranceRes == null) { toleranceRes = new FlxPoint(0, 0); }
-					var diffX:Float = Math.abs(resolution.x - FlxG.width);
-					var diffY:Float = Math.abs(resolution.y - FlxG.height);
-					if (diffX > toleranceRes.x || diffY > toleranceRes.y)
-					{
-						match = false;
-					}
-					if (match != matchValue) {
-						return false;
-					}
+					return false;
 				}
-				
-				//check haxedefs
-				var haxeDef:String = U.xml_str(node.x, "haxedef", true, "");
-				var haxeVal:Bool = U.xml_bool(node.x, "value", true);
-				
-				if (haxeDef != "") {
-					match = true;
-					var defValue:Bool = false;
-					switch(haxeDef) {
-						case "3ds": 
-							#if NINTENDO_3DS
-								defValue = true;
-							#end
-						case "wiiu":
-							#if NINTENDO_WIIU
-								defValue = true;
-							#end
-						case "vita":
-							#if PS_VITA
-								defValue = true;
-							#end
-						case "ps3":
-							#if PS_3
-								defValue = true;
-							#end
-						case "ps4":
-							#if PS_4
-								defValue = true;
-							#end
-					}
-					match = (defValue == haxeVal);
-					if (match != matchValue) {
-						return false;
-					}
-				}
-				
-				//check variable
-				var variable:String = U.xml_str(node.x, "variable", false, "");
-				var variableType:String = U.xml_str(node.x, "type", true, "string");
-				if (variable != "")
-				{
-					match = true;
-					var varData= parseVarValue(variable);
-					if (varData != null)
-					{
-						match = checkVariable(varData.variable, varData.value, variableType, varData.operator);
-					}
-					if (match != matchValue) {
-						return false;
-					}
-				}
+			}
+		}
+		return result;
+	}
+	
+	private function _loadTestSub(node:Fast):Bool
+	{
+		var matchValue:Bool = U.xml_bool(node.x, "is", true);
+		var match:Bool = matchValue;
+		
+		//check aspect ration
+		var aspect_ratio:Float = U.xml_f(node.x, "aspect_ratio", -1);
+		if (aspect_ratio != -1) {
+			match = true;
+			var tolerance:Float = U.xml_f(node.x, "tolerance", 0.1);
+			var screen_ratio:Float = cast(FlxG.width, Float) / cast(FlxG.height, Float);
+			var diff:Float = Math.abs(screen_ratio - aspect_ratio);
+			if (diff > tolerance) {
+				match = false;
+			}
+			if (match != matchValue) {
+				return false;
+			}
+		}
+		
+		//check resolution
+		var resolution:FlxPoint = U.xml_pt(node.x, "resolution", null);
+		if (resolution != null)
+		{
+			match = true;
+			var toleranceRes:FlxPoint = U.xml_pt(node.x, "tolerance", null);
+			if (toleranceRes == null) { toleranceRes = new FlxPoint(0, 0); }
+			var diffX:Float = Math.abs(resolution.x - FlxG.width);
+			var diffY:Float = Math.abs(resolution.y - FlxG.height);
+			if (diffX > toleranceRes.x || diffY > toleranceRes.y)
+			{
+				match = false;
+			}
+			if (match != matchValue) {
+				return false;
+			}
+		}
+		
+		//check haxedefs
+		var haxeDef:String = U.xml_str(node.x, "haxedef", true, "");
+		var haxeVal:Bool = U.xml_bool(node.x, "value", true);
+		
+		if (haxeDef != "") {
+			match = true;
+			var defValue:Bool = false;
+			switch(haxeDef) {
+				case "3ds": 
+					#if NINTENDO_3DS
+						defValue = true;
+					#end
+				case "wiiu":
+					#if NINTENDO_WIIU
+						defValue = true;
+					#end
+				case "vita":
+					#if PS_VITA
+						defValue = true;
+					#end
+				case "ps3":
+					#if PS_3
+						defValue = true;
+					#end
+				case "ps4":
+					#if PS_4
+						defValue = true;
+					#end
+			}
+			match = (defValue == haxeVal);
+			if (match != matchValue) {
+			return false;
+			}
+		}
+		
+		//check variable
+		var variable:String = U.xml_str(node.x, "variable", false, "");
+		var variableType:String = U.xml_str(node.x, "type", true, "string");
+		if (variable != "")
+		{
+			match = true;
+			var varData= parseVarValue(variable);
+			if (varData != null)
+			{
+				match = checkVariable(varData.variable, varData.value, variableType, varData.operator);
+			}
+			if (match != matchValue) {
+				return false;
 			}
 		}
 		return true;
@@ -2046,24 +2129,19 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadLayout(data:Fast):FlxUI {
 		
-		if(_loadTest(data)){
+		var id:String = U.xml_str(data.x, "id", true);
+		var X:Float = _loadX(data);
+		var Y:Float = _loadY(data);
+		#if (debug && sys)
+		var _ui:FlxUI = new FlxUI(data, this, this, _ptr_tongue, liveFilePath);
+		#else
+		var _ui:FlxUI = new FlxUI(data, this, this, _ptr_tongue);
+		#end
+		_ui.x = X;
+		_ui.y = Y;
+		_ui.id = id;
 		
-			var id:String = U.xml_str(data.x, "id", true);
-			var X:Float = _loadX(data);
-			var Y:Float = _loadY(data);
-			#if (debug && sys)
-			var _ui:FlxUI = new FlxUI(data, this, this, _ptr_tongue, liveFilePath);
-			#else
-			var _ui:FlxUI = new FlxUI(data, this, this, _ptr_tongue);
-			#end
-			_ui.x = X;
-			_ui.y = Y;
-			_ui.id = id;
-		
-			return _ui;
-		}
-		
-		return null;
+		return _ui;
 	}
 	
 	private function _loadTabMenu(data:Fast):FlxUITabMenu{
@@ -2116,7 +2194,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}
 		
-		var list_tabs:Array<FlxUIButton> = new Array<FlxUIButton>();
+		var list_tabs:Array<IFlxUIButton> = new Array<IFlxUIButton>();
 		
 		var id:String = "";
 		
@@ -2133,7 +2211,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					label = getText(label,context,true,code);
 			
 					var tab_info:Fast = consolidateData(tab_node, tab_def);
-					var tab:FlxUIButton = cast _loadButton(tab_info, true, true, "tab_menu");
+					var tab:IFlxUIButton = cast _loadButton(tab_info, true, true, "tab_menu");
 					tab.id = id;
 					list_tabs.push(tab);
 				}
@@ -2143,8 +2221,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (list_tabs.length > 0) {
 			if (tab_def == null || !tab_def.hasNode.text) {
 				for (t in list_tabs) {
-					t.label.color = 0xFFFFFF;
-					t.label.setBorderStyle(OUTLINE);
+					if (Std.is(t, FlxUITypedButton))
+					{
+						var tb:FlxUITypedButton<FlxSprite> = cast t;
+						tb.label.color = 0xFFFFFF;
+						if (Std.is(tb.label, FlxUIText))
+						{
+							var labelText:FlxUIText = cast tb.label;
+							labelText.setBorderStyle(OUTLINE);
+						}
+					}
 				}
 			}
 			
@@ -2268,6 +2354,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var resize_ratio:Float = U.xml_f(data.x, "resize_ratio", -1);
 		var resize_point:FlxPoint = _loadCompass(data, "resize_point");
+		var resize_label:Bool = U.xml_bool(data.x, "resize_label", false);
 		
 		var label:String = U.xml_str(data.x, "label");
 		
@@ -2294,9 +2381,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var params:Array<Dynamic> = getParams(data);
 		
-		if (sprite == null) {
+		if (sprite == null)
+		{
 			fb = new FlxUIButton(0, 0, label);
-		}else {
+		}
+		else
+		{
 			var tempGroup:FlxSpriteGroup = null;
 			if (label != "") {
 				//We have a Sprite AND a Label, so we package it up in a group
@@ -2318,6 +2408,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		fb.resize_ratio = resize_ratio;
 		fb.resize_point = resize_point;
+		fb.autoResizeLabel = resize_label;
 		
 		if (setCallback) {
 			fb.params = params;
@@ -2474,7 +2565,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		/***End graphics loading block***/
 		
-		if (sprite == null) {
+		if (sprite == null)
+		{
 			if (data != null && data.hasNode.text) {
 				formatButtonText(data, fb);
 			}else {

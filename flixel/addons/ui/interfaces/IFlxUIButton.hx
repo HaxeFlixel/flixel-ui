@@ -4,6 +4,7 @@ import flash.display.BitmapData;
 import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.addons.ui.FlxUIText;
 import flixel.FlxSprite;
+import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import flixel.math.FlxPoint;
 
@@ -14,13 +15,13 @@ import flixel.math.FlxPoint;
  */
 interface IFlxUIButton extends IFlxUIWidget extends IHasParams extends IFlxDestroyable
 {
-	public var up_color:Int;
-	public var over_color:Int;
-	public var down_color:Int;
+	public var up_color:Null<FlxColor>;
+	public var over_color:Null<FlxColor>;
+	public var down_color:Null<FlxColor>;
 	
-	public var up_toggle_color:Int;
-	public var over_toggle_color:Int;
-	public var down_toggle_color:Int;
+	public var up_toggle_color:Null<FlxColor>;
+	public var over_toggle_color:Null<FlxColor>;
+	public var down_toggle_color:Null<FlxColor>;
 	
 	public var up_visible:Bool;
 	public var over_visible:Bool;
@@ -36,7 +37,9 @@ interface IFlxUIButton extends IFlxUIWidget extends IHasParams extends IFlxDestr
 	public var has_toggle:Bool;
 	public var toggled:Bool;
 	
-	public var toggle_label(default,set):FlxSprite;
+	public var toggle_label(default, set):FlxSprite;
+	
+	public var autoResizeLabel:Bool;
 	
 	public function autoCenterLabel():Void;
 	public function loadGraphicSlice9(assets:Array<String> = null, W:Int = 80, H:Int = 20, slice9:Array<Array<Int>> = null, Tile:Int = FlxUI9SliceSprite.TILE_NONE, Resize_Ratio:Float = -1, isToggle:Bool = false, src_w:Int = 0, src_h:Int = 0, frame_indeces:Array<Int> = null):Void;

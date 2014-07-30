@@ -13,6 +13,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.ui.FlxButton;
 import flixel.util.FlxArrayUtil;
+import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.math.FlxPoint;
 import flixel.util.FlxStringUtil;
@@ -33,13 +34,13 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	//Change these to something besides 0 to make the label use that color
 	//when that state is active
-	public var up_color:Int = 0;
-	public var over_color:Int = 0;
-	public var down_color:Int = 0;
+	public var up_color:Null<FlxColor> = null;
+	public var over_color:Null<FlxColor> = null;
+	public var down_color:Null<FlxColor> = null;
 	
-	public var up_toggle_color:Int = 0;
-	public var over_toggle_color:Int = 0;
-	public var down_toggle_color:Int = 0;
+	public var up_toggle_color:Null<FlxColor> = null;
+	public var over_toggle_color:Null<FlxColor> = null;
+	public var down_toggle_color:Null<FlxColor> = null;
 	
 	public var up_visible:Bool = true;
 	public var over_visible:Bool = true;
@@ -778,8 +779,12 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		super.onUpHandler();
 		if (label != null) {
 			var theLabel = fetchAndShowCorrectLabel();
-			theLabel.color = (toggled) ? up_toggle_color : up_color;
 			theLabel.visible = (toggled) ? up_toggle_visible : up_visible;
+			var thecol:Null<FlxColor> = (toggled) ? up_toggle_color : up_color;
+			if (thecol != null)
+			{
+				theLabel.color = thecol;
+			}
 		}
 		if (broadcastToFlxUI) {
 			FlxUI.event(CLICK_EVENT, this, null, params);
@@ -791,8 +796,12 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		super.onDownHandler();
 		if (label != null) {
 			var theLabel = fetchAndShowCorrectLabel();
-			theLabel.color = (toggled) ? down_toggle_color : down_color;
 			theLabel.visible = (toggled) ? down_toggle_visible : down_visible;
+			var thecol:Null<FlxColor> = (toggled) ? down_toggle_color : down_color;
+			if(thecol != null)
+			{
+				theLabel.color = thecol;
+			}
 		}
 		if (broadcastToFlxUI) {
 			FlxUI.event(DOWN_EVENT, this, null, params);
@@ -804,8 +813,12 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		super.onOverHandler();
 		if (label != null) {
 			var theLabel = fetchAndShowCorrectLabel();
-			theLabel.color = (toggled) ? over_toggle_color : over_color;
 			theLabel.visible = (toggled) ? over_toggle_visible : over_visible;
+			var thecol:Null<FlxColor> = (toggled) ? over_toggle_color : over_color;
+			if (thecol != null)
+			{
+				theLabel.color = thecol;
+			}
 		}
 		if (broadcastToFlxUI) {
 			FlxUI.event(OVER_EVENT, this, null, params);
@@ -817,8 +830,12 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		super.onOutHandler();
 		if (label != null) {
 			var theLabel = fetchAndShowCorrectLabel();
-			theLabel.color = (toggled) ? up_toggle_color : up_color;
 			theLabel.visible = (toggled) ? up_toggle_visible : up_visible;
+			var thecol:Null<FlxColor> = (toggled) ? up_toggle_color : up_color;
+			if (thecol != null)
+			{
+				theLabel.color = thecol;
+			}
 		}
 		if (broadcastToFlxUI) {
 			FlxUI.event(OUT_EVENT, this, null, params);

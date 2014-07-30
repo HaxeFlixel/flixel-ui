@@ -7,6 +7,7 @@ import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.loaders.TextureAtlasFrame;
+import openfl.text.TextField;
 
 /**
  * Simple extension to the basic text field class.
@@ -28,10 +29,17 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget im
 		var diff:Float = height - cachedGraphics.bitmap.height;
 		var failsafe:Int = 0;
 		
+		var numLines:Int = textField.numLines;
+		
 		while (diff > 0 && failsafe < 999)
 		{
 			failsafe++;
 			size = size+1;
+			if (textField.numLines > numLines)		//Failsafe in case the expanding text causes it to break to a new line
+			{
+				size = size-1;
+				break;
+			}
 			calcFrame();
 			diff = (h - cachedGraphics.bitmap.height);
 		}
