@@ -252,8 +252,10 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 	
 	private function _onTabEvent(id:String):Void {
 		showTabId(id);
+		var tab = getTab(id);
+		var params = (tab != null) ? tab.params : null;
 		if (broadcastToFlxUI) {
-			FlxUI.event(CLICK_EVENT, this, id);
+			FlxUI.event(CLICK_EVENT, this, id, params);
 		}
 	}
 	
