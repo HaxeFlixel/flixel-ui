@@ -164,9 +164,12 @@ class FlxInputText extends FlxText
 	private var _scrollBoundIndeces:{ left:Int, right:Int }={left:0,right:0};
 	
 	//workaround to deal with non-availability of getCharIndexAtPoint or getCharBoundaries on cpp/neko targets
-	#if !flash
 	private var _charBoundaries:Array<FlxRect>;
-	#end
+	
+	/**
+	 * Stores last input text scroll. 
+	 */
+	private var lastScroll:Int; 
 	
 	/**
 	 * @param	X				The X position of the text.
@@ -181,8 +184,7 @@ class FlxInputText extends FlxText
 	public function new(X:Float = 0, Y:Float = 0, Width:Int = 150, ?Text:String, size:Int = 8, TextColor:Int = FlxColor.BLACK, BackgroundColor:Int = FlxColor.WHITE, EmbeddedFont:Bool = true)
 	{
 		super(X, Y, Width, Text, size, EmbeddedFont);
-		
-		backgroundColor = BackgroundColor;
+ 		backgroundColor = BackgroundColor;
 		
 		if (BackgroundColor != FlxColor.TRANSPARENT) 
 		{
@@ -314,12 +316,30 @@ class FlxInputText extends FlxText
 			// Left arrow
 			else if (key == 37) 
 			{ 
-				if (caretIndex > 0) caretIndex --;
+				if (caretIndex > 0) { 
+					caretIndex--;
+					text = text; // forces scroll update
+				}
 			}
 			// Right arrow
 			else if (key == 39) 
 			{ 
-				if (caretIndex < text.length) caretIndex ++;
+				if (caretIndex < text.length) {
+					caretIndex ++;
+					text = text; // forces scroll update
+				}
+			} 
+			// End key
+			else if (key == 35) 
+			{
+				caretIndex = text.length;
+				text = text; // forces scroll update
+			}
+			// Home key
+			else if (key == 36)
+			{
+				caretIndex = 0;
+				text = text;
 			}
 			// Backspace
 			else if (key == 8) 
@@ -327,9 +347,8 @@ class FlxInputText extends FlxText
 				if (caretIndex > 0) 
 				{
 					var s:String;
-					text = text.substring(0, caretIndex - 1) + text.substring(caretIndex);
 					caretIndex--;
-					dirty = true;
+					text = text.substring(0, caretIndex) + text.substring(caretIndex + 1 );
 					onChange(BACKSPACE_ACTION);
 				}
 			}
@@ -348,7 +367,7 @@ class FlxInputText extends FlxText
 				onChange(ENTER_ACTION);
 			}
 			// Actually add some text
-			else 
+			else
 			{
 				if (e.charCode == 0)  // non-printable characters crash String.fromCharCode
 				{
@@ -358,8 +377,8 @@ class FlxInputText extends FlxText
 				
 				if (newText.length > 0 && (maxLength == 0 || (text.length + newText.length) < maxLength)) 
 				{
-					text = insertSubstring(text, newText, caretIndex);
 					caretIndex++;
+					text = insertSubstring(text, newText, caretIndex);
 					onChange(INPUT_ACTION);
 				}
 			}
@@ -405,38 +424,7 @@ class FlxInputText extends FlxText
 	{
 	#if !FLX_NO_MOUSE
 		var hit:FlxPoint = FlxPoint.get(FlxG.mouse.x - x, FlxG.mouse.y - y);
-		var caretRightOfText:Bool = false;
-		#if !js
-			if (hit.y < 2) hit.y = 2;
-			else if (hit.y > textField.textHeight + 2) hit.y = textField.textHeight + 2;
-			if (hit.x < 2) hit.x = 2;
-			else if (hit.x > textField.getLineMetrics(0).width) {
-				hit.x = textField.getLineMetrics(0).width;
-				caretRightOfText = true;
-			}
-			else if (hit.x > textField.getLineMetrics(textField.numLines-1).width && hit.y > textField.textHeight - textField.getLineMetrics(textField.numLines - 1).ascent) {
-				hit.x = textField.getLineMetrics(textField.numLines - 1).width;
-				caretRightOfText = true;
-			}
-		#end
-		var index:Int = 0;
-		
-		if (caretRightOfText) {
-			#if flash
-				index = textField.getCharIndexAtPoint(hit.x, hit.y) + 1;
-			#elseif sys
-				index = getCharIndexAtPoint(hit.x, hit.y) + 1;
-			#end
-		}
-		else {
-			#if flash
-				index = textField.getCharIndexAtPoint(hit.x, hit.y);
-			#elseif sys
-				index = getCharIndexAtPoint(hit.x, hit.y);
-			#end
-		}
-		
-		return index;
+		return getCharIndexAtPoint(hit.x, hit.y);
 	#else
 		return 0;
 	#end
@@ -445,26 +433,24 @@ class FlxInputText extends FlxText
 	
 	private function getCharBoundaries(charIndex:Int):Rectangle 
 	{
-		#if flash
-		return textField.getCharBoundaries(charIndex);
-		#else
-		if (_charBoundaries != null && charIndex >= 0 && charIndex < _charBoundaries.length) 
+		if (_charBoundaries != null && charIndex >= 0 && _charBoundaries.length > 0) 
 		{
 			var r:Rectangle = new Rectangle();
-			_charBoundaries[charIndex].copyToFlash(r);
+			if (charIndex >= _charBoundaries.length)
+			{
+				_charBoundaries[_charBoundaries.length - 1].copyToFlash(r);
+			} else 
+			{
+				_charBoundaries[charIndex].copyToFlash(r);
+			}
 			return r;
 		}
 		return null;
-		#end
 	}
 	
 	private override function set_text(Text:String):String
 	{
-		#if flash
-		var return_text:String = super.set_text(Text);
-		onSetTextCheck();
-		return return_text;
-		#else
+		lastScroll = textField.scrollH;
 		var return_text:String = super.set_text(Text);
 		var numChars:Int = Text.length;
 		prepareCharBoundaries(numChars);
@@ -496,19 +482,35 @@ class FlxInputText extends FlxText
 		textField.text = Text;
 		onSetTextCheck();
 		return return_text;
-		#end
 	}
 	
-	#if !flash
-	//WORKAROUND since this function isn't available for openfl-native TextFields, we just hack it ourselves
 	private function getCharIndexAtPoint(X:Float, Y:Float):Int 
 	{
 		var i:Int = 0;
+		X += textField.scrollH + 2;
+		var offx :Int;
+		
+		// offset X according to text alignment when there is no scroll.
+		if (_charBoundaries != null && _charBoundaries.length > 0) 
+		{
+			if (textField.textWidth <= textField.width) {
+				switch(getAlignStr()) 
+				{
+					case RIGHT: 
+						X = X - textField.width + textField.textWidth;
+					case CENTER:
+						X = X - textField.width / 2 + textField.textWidth / 2;
+					default:
+				}
+			}
+		}
+		
+		// place caret at matching char position
 		if (_charBoundaries != null) 
 		{
 			for (r in _charBoundaries) 
 			{
-				if (X >= r.left && X <= r.right && Y >= r.top && Y <= r.bottom) 
+				if (X >= r.left && X <= r.right) 
 				{
 					return i;
 				}
@@ -516,6 +518,16 @@ class FlxInputText extends FlxText
 			}
 		}
 		
+		// place caret at rightmost position
+		if (_charBoundaries != null && _charBoundaries.length > 0) 
+		{
+			if (X > textField.textWidth) 
+			{
+				return _charBoundaries.length;
+			}
+		}
+		
+		// place caret at leftmost position
 		return -1;
 	}
 	
@@ -543,58 +555,38 @@ class FlxInputText extends FlxText
 			}
 		}
 	}
-	#end
 	
 	/**
 	 * Called every time the text is changed (for both flash/cpp) to update scrolling, etc
 	 */
-	
 	private function onSetTextCheck():Void {
 		#if !js
 		var boundary:Rectangle = null;
-		if (caretIndex == -1) {
+		if (caretIndex == -1) 
+		{
 			boundary = getCharBoundaries(text.length - 1);
-		}else {
+		} else  
+		{
 			boundary = getCharBoundaries(caretIndex);
 		}
 		
 		if (boundary != null) {
-			var alignStr:FlxTextAlign = getAlignStr();
-			
-			//Check to see if the text is visually overflowing
-			var diffW:Int = Std.int((textField.width - 2) - boundary.right); //Flash supplies 4px magic # padding to text field size: boundary.right is already offset by 2
-			
-			textField.scrollH = 0;
-			
-			switch(alignStr) {
-				case CENTER:
-					textField.scrollH = diffW;
-					//for center case, we will need to offset by (-diffW/2) in calcFrame() 
-					calcFrame(true);
-				case LEFT:
-					textField.scrollH = diffW;
-					calcFrame(true);
-				case RIGHT:
-				case JUSTIFY:
-					//do nothing
+			// Checks if carret is out of textfield bounds
+			// if it is update scroll, otherwise maintain the same scroll as last check.
+			var diffW:Int = 0;
+			if (boundary.right > lastScroll + textField.width - 2 )
+			{
+				diffW = -Std.int((textField.width - 2) - boundary.right); // caret to the right of textfield.
+			} else if (boundary.left < lastScroll ) 
+			{
+				diffW = Std.int(boundary.left) - 2;  // caret to the left of textfield
+			} else 
+			{
+				diffW = lastScroll; // no scroll change
 			}
-		}
-		
-		_scrollBoundIndeces.left = 9999999;
-		_scrollBoundIndeces.right = -1;
-		
-		for (i in 0...text.length) {
-			boundary = getCharBoundaries(i);
-			if (i < _scrollBoundIndeces.left) {
-				if (boundary.left - textField.scrollH > 0) {
-					_scrollBoundIndeces.left = i;
-				}
-			}
-			if (i > _scrollBoundIndeces.right) {
-				if (boundary.right - textField.scrollH < textField.width) {
-					_scrollBoundIndeces.right = i;
-				}
-			}
+			
+			textField.scrollH = diffW;
+			calcFrame(true);
 		}
 		#end
 	}
@@ -807,8 +799,14 @@ class FlxInputText extends FlxText
 		var alignStr:FlxTextAlign = getAlignStr();
 		
 		switch(alignStr) {
-			case RIGHT: offx = 0;
-			case CENTER: offx = (textField.width - textField.textWidth) / 2;
+			case RIGHT: 
+				offx = textField.width - 2 - textField.textWidth - 2;
+				if (offx < 0) offx = 0; // hack, fix negative offset.
+			
+			case CENTER: 
+				offx = (textField.width - 2 - textField.textWidth) / 2 + textField.scrollH / 2;
+				if (offx <= 1) offx = 0; // hack, fix ofset rounding alignment.
+				
 			default: offx = 0;
 		}
 		
@@ -821,7 +819,7 @@ class FlxInputText extends FlxText
 		}
 		
 		// Caret is OK, proceed to position
-		if (caretIndex != -1) 
+		if (caretIndex != -1)
 		{
 			var boundaries:Rectangle = null;
 			
@@ -835,7 +833,7 @@ class FlxInputText extends FlxText
 				}
 			}
 			// Caret is to the right of text
-			else { 
+			else {
 				boundaries = getCharBoundaries(caretIndex - 1);
 				if (boundaries != null)
 				{
@@ -848,9 +846,6 @@ class FlxInputText extends FlxText
 					// 2 px gutters
 					caret.x = x + offx + 2; 
 					caret.y = y + 2; 
-					if (alignStr == "right") {
-						caret.x = x + textField.width - 2;
-					}
 				}
 			}
 		}
