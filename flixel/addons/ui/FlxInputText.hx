@@ -169,7 +169,7 @@ class FlxInputText extends FlxText
 	/**
 	 * Stores last input text scroll. 
 	 */
-	var lastScroll:Int; 
+	private var lastScroll:Int; 
 	
 	/**
 	 * @param	X				The X position of the text.
