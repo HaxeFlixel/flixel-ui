@@ -450,7 +450,9 @@ class FlxInputText extends FlxText
 	
 	private override function set_text(Text:String):String
 	{
-		lastScroll = textField.scrollH;
+		#if !js
+			lastScroll = textField.scrollH;
+		#end
 		var return_text:String = super.set_text(Text);
 		var numChars:Int = Text.length;
 		prepareCharBoundaries(numChars);
@@ -487,7 +489,9 @@ class FlxInputText extends FlxText
 	private function getCharIndexAtPoint(X:Float, Y:Float):Int 
 	{
 		var i:Int = 0;
-		X += textField.scrollH + 2;
+		#if !js
+			X += textField.scrollH + 2;
+		#end
 		var offx :Int;
 		
 		// offset X according to text alignment when there is no scroll.
@@ -585,7 +589,9 @@ class FlxInputText extends FlxText
 				diffW = lastScroll; // no scroll change
 			}
 			
-			textField.scrollH = diffW;
+			#if !js
+				textField.scrollH = diffW;
+			#end
 			calcFrame(true);
 		}
 		#end
@@ -804,7 +810,9 @@ class FlxInputText extends FlxText
 				if (offx < 0) offx = 0; // hack, fix negative offset.
 			
 			case CENTER: 
-				offx = (textField.width - 2 - textField.textWidth) / 2 + textField.scrollH / 2;
+				#if !js
+					offx = (textField.width - 2 - textField.textWidth) / 2 + textField.scrollH / 2;
+				#end
 				if (offx <= 1) offx = 0; // hack, fix ofset rounding alignment.
 				
 			default: offx = 0;
@@ -851,7 +859,7 @@ class FlxInputText extends FlxText
 		}
 		
 		#if !js
-		caret.x -= textField.scrollH;
+			caret.x -= textField.scrollH;
 		#end
 		
 		// Make sure the caret doesn't leave the textfield on single-line input texts
