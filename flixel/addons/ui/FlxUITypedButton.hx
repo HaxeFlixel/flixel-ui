@@ -847,7 +847,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			FlxUI.event(OUT_EVENT, this, null, params);
 		}
 	}
-
+	
 	private override function set_x(NewX:Float):Float 
 	{
 		super.set_x(NewX);
