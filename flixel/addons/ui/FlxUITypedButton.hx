@@ -172,16 +172,6 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			i++;
 		}
 	}
-	override function set_alpha(Alpha:Float):Float 
-	{
-        super.set_alpha(Alpha);
-        
-        if (label != null)
-        {
-            label.alpha = Alpha;
-        }
-        return Alpha;
-    }
 	
 	/**
 	 * Set all 3 sets of labelOffsets at once
