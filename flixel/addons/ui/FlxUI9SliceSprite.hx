@@ -17,15 +17,13 @@ import openfl.Assets;
  */
 class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFlxUIWidget 
 {
-	private static var bitmapsCreated:Int = 0; // for debug
+	private static var bitmapsCreated:Int = 0;	// for debug
 
-	private static var _canvas:Sprite;	//drives the 9-slice drawing
 	private var _bmpCanvas:BitmapData;
 	
 	private static var useSectionCache:Bool = true;
 	private static var sectionCache:Map<String,BitmapData>;
 	
-	//private var _slice9:String = "";
 	private var _slice9:Array<Int> = null;
 	
 	private var _tile:Int = TILE_NONE;			//tile neither
@@ -103,6 +101,13 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	
 	public override function resize(w:Float, h:Float):Void {
 		
+		if (Std.int(w) < 1) {
+			w = 1;
+		}
+		if (Std.int(h) < 1) {
+			h = 1;
+		}
+		
 		var old_width:Float = width;
 		var old_height:Float = height;
 		
@@ -124,37 +129,41 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 			_slice9 = [4, 4, 7, 7];
 		}
 		
-		if(_canvas == null){
-			_canvas = new Sprite();
-		}
-		_canvas.graphics.clear();
-		
-		_bmpCanvas = new BitmapData(Std.int(w), Std.int(h));
-		
-		_staticFlxRect.x = 0;
-		_staticFlxRect.y = 0;
-		_staticFlxRect.width = w;
-		_staticFlxRect.height = h;
-		paintScale9(_bmpCanvas, _asset_id, _slice9, _staticFlxRect, _tile, _smooth, _raw_pixels);
-		
 		var iw:Int = Std.int(w); 
 		if (iw < 1) { 
 			iw = 1;
 		}
-		var ih:Int = Std.int(h); 
+		var ih:Int = Std.int(h);
 		if (ih < 1) { 
 			ih = 1;
 		}
 		
-		//for caching purposes:		
+		//for caching purposes:
 		var key:String = _asset_id + "_" + _slice9.join(",") + "_" + iw + "x" + ih + "_"+_tile+"_"+_smooth;
 		
-		loadGraphic(_bmpCanvas, false, _bmpCanvas.width, _bmpCanvas.height, false, key);
+		//check if something just like this already exists
+		if (FlxG.bitmap.checkCache(key))
+		{
+			//just load the old one
+			loadGraphic(key, false, iw, ih);
+		}
+		else
+		{
+			//make a fresh one
+			var bmpCanvas = new BitmapData(Std.int(w), Std.int(h));
+			_staticFlxRect.x = 0;
+			_staticFlxRect.y = 0;
+			_staticFlxRect.width = w;
+			_staticFlxRect.height = h;
+			paintScale9(bmpCanvas, _asset_id, _slice9, _staticFlxRect, _tile, _smooth, _raw_pixels);
+			loadGraphic(bmpCanvas, false, bmpCanvas.width, bmpCanvas.height, false, key);
+		}
 		
 		var diff_w:Float = width - old_width;
 		var diff_h:Float = height - old_height;
 		
-		if(resize_point != null){
+		if (resize_point != null)
+		{
 			var delta_x:Float = diff_w * resize_point.x;
 			var delta_y:Float = diff_h * resize_point.y;
 			x -= delta_x;
