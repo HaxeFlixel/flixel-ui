@@ -1,6 +1,5 @@
 package flixel.addons.ui;
 
-import com.leveluplabs.tdrpg.UU;
 import flash.display.BitmapData;
 import flash.errors.Error;
 import flash.geom.Matrix;

@@ -2,7 +2,7 @@ package flixel.addons.ui;
 
 #if flixel_addons
 import flixel.addons.transition.Transition;
-import flixel.addons.transition.FlxTransitionState;
+import flixel.addons.transition.FlxTransitionableState;
 #end
 import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.addons.ui.interfaces.IEventGetter;
@@ -29,7 +29,7 @@ import openfl.events.Event;
  */
 
 #if flixel_addons
-class FlxUIState extends FlxTransitionState implements IEventGetter implements IFlxUIState
+class FlxUIState extends FlxTransitionableState implements IEventGetter implements IFlxUIState
 #else
 class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 #end
