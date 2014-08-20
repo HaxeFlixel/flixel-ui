@@ -1564,7 +1564,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (tileWidth < 2) { tileWidth = 2; }
 		if (tileHeight < 2) { tileHeight = 2; }
 		
+		var baseTileSize:Int = U.xml_i(data.x, "base_tile_size", -1);
+		
 		var ftt:FlxUITileTest = new FlxUITileTest(0, 0, tileWidth, tileHeight, tiles_w, tiles_h);
+		ftt.baseTileSize = baseTileSize;
 		return ftt;
 	}
 	

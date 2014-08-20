@@ -151,7 +151,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			{
 				if (liveFile != null)
 				{
-					_ui.load(liveFile);
+					loadUIFromData(liveFile);
 				}
 				else
 				{
@@ -160,7 +160,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			}
 			else
 			{
-				_ui.load(data);
+				loadUIFromData(data);
 			}
 		}
 		#if !FLX_NO_MOUSE
@@ -260,6 +260,12 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		return Flag;
 	}
 	
+	//this makes it easy to override this function in your own FlxUIState, in case you want to operate on data before it is loaded
+	private function loadUIFromData(data:Fast):Void
+	{
+		_ui.load(data);
+	}
+	
 	private function reloadUI(?e:Event):Void {
 		if (_ui != null) {
 			remove(_ui, true);
@@ -271,8 +277,9 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		add(_ui);
 				
 		var data:Fast = U.xml(_xml_id);
-		if(data != null){
-			_ui.load(data);
+		if (data != null)
+		{
+			loadUIFromData(data);
 		}
 		
 		_reload = false;

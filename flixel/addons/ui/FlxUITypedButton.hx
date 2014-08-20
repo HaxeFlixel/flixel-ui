@@ -231,12 +231,18 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		var old_width:Float = width;
 		var old_height:Float = height;
 		
-		var label_diffx:Float = width - label.width;
-		var label_diffy:Float = height - label.height;
+		var label_diffx:Float = 0;
+		var label_diffy:Float = 0;
+		if (label != null)
+		{
+			label_diffx = width - label.width;
+			label_diffy = height - label.height;
+		}
 		
 		var old_offx:Float = 0;
 		var old_offy:Float = 0;
-		if (label != null) {
+		if (label != null)
+		{
 			autoCenterLabel();						//reset to center position
 		}
 		
@@ -260,7 +266,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			}
 		}
 		
-		if (autoResizeLabel)
+		if (label != null && autoResizeLabel)
 		{
 			if (Std.is(label, IResizable))
 			{
@@ -841,7 +847,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			FlxUI.event(OUT_EVENT, this, null, params);
 		}
 	}
-
+	
 	private override function set_x(NewX:Float):Float 
 	{
 		super.set_x(NewX);

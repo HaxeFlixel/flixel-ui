@@ -4,6 +4,7 @@ import flash.display.BitmapData;
 import flash.geom.Point;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
+import haxe.xml.Fast;
 
 /**
  * This is mostly just for testing purposes, it is NOT a replacement for FlxTileMap
@@ -25,6 +26,7 @@ class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIW
 	private var _color2:Int = 0;
 	
 	public var floorToEven:Bool = true;
+	public var baseTileSize:Int = -1;
 	
 	public function new(X:Float,Y:Float,TileWidth:Int,TileHeight:Int,tilesWide:Int,tilesTall:Int,color1:Int=0xff808080,color2:Int=0xffc4c4c4) 
 	{
@@ -41,7 +43,6 @@ class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIW
 		makeTiles(tileWidth,tileHeight,_tilesWide,_tilesTall,_color1,_color2);
 	}
 
-	
 	private function makeTiles(tileWidth:Int,tileHeight:Int,tilesWide:Int,tilesTall:Int,color1:Int=0xff808080,color2:Int=0xffc4c4c4):Void {
 		makeGraphic(tileWidth * tilesWide, tileHeight * tilesTall, color1);
 		
@@ -72,7 +73,7 @@ class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIW
 		tileWidth = Std.int(w / _tilesWide);
 		tileHeight = Std.int(h / _tilesTall);
 		
-		if (tileWidth < tileHeight) { tileHeight = tileWidth; }		
+		if (tileWidth < tileHeight) { tileHeight = tileWidth; }
 		else if (tileHeight < tileWidth) { tileWidth = tileHeight; }
 		
 		if(floorToEven){
@@ -80,6 +81,13 @@ class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIW
 				tileWidth -= 1;
 				tileHeight = tileWidth;
 			}
+		}
+		
+		//if defined, force scaling to whole number multiple of tile sizes
+		if (baseTileSize > 0)
+		{
+			tileWidth = Std.int(tileWidth / baseTileSize) * baseTileSize;
+			tileHeight = tileWidth;
 		}
 		
 		makeTiles(tileWidth,tileHeight,_tilesWide,_tilesTall,_color1,_color2);

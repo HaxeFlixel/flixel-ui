@@ -8,6 +8,7 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
+import flixel.util.FlxColor;
 import flixel.math.FlxPoint;
 import haxe.Json;
 import haxe.xml.Fast;
@@ -346,32 +347,14 @@ class U
 	 */
 	
 	public static inline function parseHex(str:String,cast32Bit:Bool=false,safe:Bool=false,default_color:Int=0x000000):Int {
-		var return_val:Int = -1;		
-		
-		if (str.indexOf("0x") != 0) {	//if it doesn't start with "0x"
-			if(!safe){
-				throw "U.parseHex() string(" + str + ") does not start with \"0x\"!";
+		var return_val = FlxColor.fromString(str);
+		if(return_val == null) {
+			if(!safe) {
+				throw "U.parseHex() unable to parse hex String " + str;
 			}else {
-				return_val = default_color;
+				return_val = default_color;	
 			}
-		}
-		
-		if (str.length != 8 && str.length != 10) {
-			if(!safe){
-				throw "U.parseHex() string(" + str + ") must be 8(0xRRGGBB) or 10(0xAARRGGBB) characters long!";
-			}else {
-				return_val = default_color;
-			}
-		}
-		
-		if(return_val == -1){
-			str = str.substr(2, str.length - 2);		//chop off the "0x"
-			if (cast32Bit && str.length == 6) {			//add an alpha channel if none is given and we're casting
-				str = "FF" + str;
-			}
-			return_val = hex2dec(str);
-		}
-		
+		}	
 		return return_val;
 	}
 	
