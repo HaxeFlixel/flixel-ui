@@ -1,9 +1,5 @@
 package flixel.addons.ui;
 
-#if flixel_addons
-import flixel.addons.transition.Transition;
-import flixel.addons.transition.FlxTransitionState;
-#end
 import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.addons.ui.interfaces.IEventGetter;
 import flixel.addons.ui.interfaces.IFireTongue;
@@ -28,11 +24,7 @@ import openfl.events.Event;
  * @author Lars Doucet
  */
 
-#if flixel_addons
-class FlxUIState extends FlxTransitionState implements IEventGetter implements IFlxUIState
-#else
 class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
-#end
 {
 	public var destroyed:Bool;
 	
@@ -86,20 +78,6 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			return reload_ui_on_asset_change = b;
 		}
 	#end
-	
-	/*
-	#if flixel_addons
-	public function new(?transition:FlxTransition)
-	{
-		super(transition);
-	}
-	#else
-	public function new() 
-	{
-		super();
-	}
-	#end
-	*/
 	
 	public override function create():Void {
 		if (static_tongue != null)
