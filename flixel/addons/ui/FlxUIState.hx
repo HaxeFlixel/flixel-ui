@@ -87,20 +87,6 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		}
 	#end
 	
-	/*
-	#if flixel_addons
-	public function new(?transition:FlxTransition)
-	{
-		super(transition);
-	}
-	#else
-	public function new() 
-	{
-		super();
-	}
-	#end
-	*/
-	
 	public override function create():Void {
 		if (static_tongue != null)
 		{
@@ -154,13 +140,28 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			
 			
 			var data:Fast = null;
+			var errorMsg:String = "";
 			
 			if (liveFile == null)
 			{
-				data = U.xml(_xml_id);
+				try
+				{
+					data = U.xml(_xml_id);
+				}
+				catch (msg:String)
+				{
+					errorMsg = msg;
+				}
 				if (data == null)
 				{
-					data = U.xml(_xml_id, "xml", true, "");	//try again without default directory prepend
+					try
+					{
+						data = U.xml(_xml_id, "xml", true, "");	//try again without default directory prepend
+					}
+					catch (msg2:String)
+					{
+						errorMsg += ", " + msg2;
+					}
 				}
 			}
 			
@@ -172,7 +173,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 				}
 				else
 				{
-					FlxG.log.error("FlxUISubState: Could not load _xml_id \"" + _xml_id + "\"");
+					FlxG.log.error("FlxUISubState: Could not load _xml_id \"" + _xml_id + "\", errors=["+errorMsg+"]");
 				}
 			}
 			else
