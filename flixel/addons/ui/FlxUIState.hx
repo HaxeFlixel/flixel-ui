@@ -173,7 +173,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 				}
 				else
 				{
-					FlxG.log.error("FlxUISubState: Could not load _xml_id \"" + _xml_id + "\", errors=["+errorMsg+"]");
+					FlxG.log.error("FlxUISubState: Could not load _xml_id \"" + _xml_id + "\"");
 				}
 			}
 			else
