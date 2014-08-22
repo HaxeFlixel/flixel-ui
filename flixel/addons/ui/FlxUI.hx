@@ -433,7 +433,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @param	data
 	 */
 	
-	public function load(data:Fast):Void {
+	public function load(data:Fast):Void
+	{
 		_group_index = new Map<String,FlxUIGroup>();
 		_asset_index = new Map<String,IFlxUIWidget>();
 		_definition_index = new Map<String,Fast>();
@@ -448,6 +449,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 			//See if there's anything to include
 			if (data.hasNode.include) {
+
 				for (inc_data in data.nodes.include) {
 					var inc_id:String = inc_data.att.id;
 					
@@ -500,7 +502,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 				}
 			}
-			
+				
 			//Next, load all our variables
 			if (data.hasNode.variable) {
 				for (var_data in data.nodes.variable) {
@@ -528,15 +530,33 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 				}
 			}
-		
+			
 			//Then, load all our group definitions
 			if(data.hasNode.group){
 				for (group_data in data.nodes.group) {
 					if (_loadTest(group_data))
 					{
 						//Create FlxUIGroup's for each group we define
-						var id:String = group_data.att.id;
-						var tempGroup:FlxUIGroup = new FlxUIGroup();
+						var id:String = U.xml_str(group_data.x, "id");
+						var custom:String = U.xml_str(group_data.x, "custom");
+						
+						var tempGroup:FlxUIGroup = null;
+						
+						//Allow the user to provide their own customized FlxUIGroup class
+						if (custom != "")
+						{
+							var result = _ptr.getRequest("ui_get_group:", this, custom);
+							if (result != null && Std.is(result, FlxUIGroup))
+							{
+								tempGroup = cast result;
+							}
+						}
+						
+						if(tempGroup == null)
+						{
+							tempGroup = new FlxUIGroup();
+						}
+						
 						tempGroup.id = id;
 						_group_index.set(id, tempGroup);
 						add(tempGroup);
@@ -562,6 +582,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadSub(node:Xml,iteration:Int=0):Void
 	{
+		var loadsubi:Int = 0;
+		var error:String = " ";
 		var type:String = node.nodeName;
 		type.toLowerCase();
 		var obj:Fast = new Fast(node);
@@ -2131,7 +2153,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	private function _loadLayout(data:Fast):FlxUI {
-		
 		var id:String = U.xml_str(data.x, "id", true);
 		var X:Float = _loadX(data);
 		var Y:Float = _loadY(data);
@@ -2143,7 +2164,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		_ui.x = X;
 		_ui.y = Y;
 		_ui.id = id;
-		
 		return _ui;
 	}
 	
@@ -2656,7 +2676,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return b2;
 	}
 	
-	private function _loadRegion(data:Fast):FlxUIRegion {
+	private function _loadRegion(data:Fast):FlxUIRegion
+	{
 		var w:Int = Std.int(_loadWidth(data));
 		var h:Int = Std.int(_loadHeight(data));
 		var vis:Bool = U.xml_bool(data.x, "visible", true);
@@ -2665,7 +2686,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return reg;
 	}
 	
-	private function _load9SliceSprite(data:Fast,load_code:String=""):FlxUI9SliceSprite{
+	private function _load9SliceSprite(data:Fast, load_code:String = ""):FlxUI9SliceSprite {
 		var src:String = ""; 
 		var f9s:FlxUI9SliceSprite = null;
 				
@@ -2764,7 +2785,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return fs;
 	}
 	
-	private function _loadSprite(data:Fast):FlxUISprite{
+	private function _loadSprite(data:Fast):FlxUISprite {
 		var src:String = ""; 
 		var fs:FlxUISprite = null;
 		
@@ -2995,7 +3016,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	private function _getDataSize(target:String, str:String, default_:Float = 0):Float {		
-		
 		if (U.isStrNum(str)) {								//Most likely: is it just a number?
 			return Std.parseFloat(str);						//If so, parse and return
 		}

@@ -79,11 +79,6 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		}
 	#end
 	
-	public function new() 
-	{
-		super();
-	}
-	
 	public override function create():Void {
 		if (static_tongue != null)
 		{
@@ -178,6 +173,8 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		
 		FlxG.mouse.visible = true;
 		#end
+		
+		super.create();
 	}
 	
 	public function resizeScreen(width:Float=800, height:Float=600):Void {

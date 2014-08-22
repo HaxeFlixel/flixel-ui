@@ -197,7 +197,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		if (label != null) {
 			if (toggled && down_toggle_style != null) {
 				label.color = down_toggle_style.color;
-				if (down_toggle_style != null) {
+				if (down_toggle_style.border != null) {
 					label.borderStyle = down_toggle_style.border.style;
 					label.borderColor = down_toggle_style.border.color;
 					label.borderSize = down_toggle_style.border.size;
@@ -205,7 +205,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 				}
 			}else if (!toggled && down_style != null) {
 				label.color = down_style.color;
-				if(down_style != null){
+				if(down_style.border != null){
 					label.borderStyle = down_style.border.style;
 					label.borderColor = down_style.border.color;
 					label.borderSize = down_style.border.size;
@@ -221,7 +221,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		if (label != null) {
 			if (toggled && over_toggle_style != null) {
 				label.color = over_toggle_style.color;
-				if(over_toggle_style != null){
+				if(over_toggle_style.border != null){
 					label.borderStyle = over_toggle_style.border.style;
 					label.borderColor = over_toggle_style.border.color;
 					label.borderSize = over_toggle_style.border.size;
@@ -229,7 +229,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 				}
 			}else if (!toggled && over_style != null) {
 				label.color = over_style.color;
-				if(over_style != null){
+				if(over_style.border != null){
 					label.borderStyle = over_style.border.style;
 					label.borderColor = over_style.border.color;
 					label.borderSize = over_style.border.size;

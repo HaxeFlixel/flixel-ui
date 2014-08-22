@@ -30,7 +30,7 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 	private var _tongue:IFireTongue;
 		
 	//set this to true to make it automatically reload the UI when the window size changes
-	public var reload_ui_on_resize:Bool = false;	
+	public var reload_ui_on_resize:Bool = false;
 	
 	private var _reload:Bool = false;
 	private var _reload_countdown:Int = 0;
@@ -64,7 +64,8 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 		}
 	}
 	
-	public override function create():Void {
+	public override function create():Void
+	{
 		if (FlxUIState.static_tongue != null) {
 			_tongue = FlxUIState.static_tongue;
 		}

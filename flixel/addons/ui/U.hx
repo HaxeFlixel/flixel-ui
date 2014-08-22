@@ -914,6 +914,14 @@ class U
 		return null; 				//failure
 	}
 	
+	public static function loadImageScaleToHeight(src:String, Height:Float, Smooth:Bool = true):String
+	{
+		var bmpSrc:String = gfx(src);
+		var	testBmp:BitmapData = Assets.getBitmapData(bmpSrc, true);
+		var ratio:Float = Height / testBmp.height;
+		return loadMonoScaledImage(bmpSrc, ratio, Smooth);
+	}
+	
 	/**
 	 * For grabbing a version of an image src and dynamically scaling (and caching) it as necessary
 	 * @param	src	the asset key of the base image
@@ -931,7 +939,7 @@ class U
 		{
 			if (Scale < 0)
 			{
-				throw "Error! Scale must be positive!";
+				throw "Error! Scale must be positive! (Scale was = " + Scale+")";
 			}
 			
 			//if final size != master asset size, we're going to scale it
