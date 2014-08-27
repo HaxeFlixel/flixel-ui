@@ -136,17 +136,16 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 			}
 		}
 		
-		update();
+		updateLayout();
 		
 		selectByIndex(0);
 	}
 	
-	public override function update():Void {
+	public override function update(elapsed:Float):Void {
 		if (_dirtyLayout) {
 			updateLayout();
-			_dirtyLayout = false;
 		}
-		super.update();
+		super.update(elapsed);
 	}
 	
 	public function updateLayout():Void {
@@ -179,6 +178,8 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 				}
 			}
 		}
+		
+		_dirtyLayout = false;
 	}
 	
 	public function changeColors(list:Array<SwatchData>):Void {

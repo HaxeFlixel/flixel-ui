@@ -118,8 +118,8 @@ class FlxUICursor extends FlxUISprite
 		_widgets = null;
 	}
 	
-	public override function update():Void {
-		super.update();
+	public override function update(elapsed:Float):Void {
+		super.update(elapsed);
 		_checkKeys();
 	}
 	

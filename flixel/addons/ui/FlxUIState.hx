@@ -191,8 +191,8 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		_reload = true;
 	}
 	
-	public override function update():Void {
-		super.update();
+	public override function update(elapsed:Float):Void {
+		super.update(elapsed);
 		//This was causing bugs so I'm commenting out for now and will probably eventually remove:
 		/*#if debug
 			if (_reload) {
