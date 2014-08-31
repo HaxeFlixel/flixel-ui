@@ -1,5 +1,9 @@
 package flixel.addons.ui;
 
+#if flixel_addons
+import flixel.addons.transition.Transition;
+import flixel.addons.transition.FlxTransitionableState;
+#end
 import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.addons.ui.interfaces.IEventGetter;
 import flixel.addons.ui.interfaces.IFireTongue;
@@ -24,7 +28,11 @@ import openfl.events.Event;
  * @author Lars Doucet
  */
 
+#if flixel_addons
+class FlxUIState extends FlxTransitionableState implements IEventGetter implements IFlxUIState
+#else
 class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
+#end
 {
 	public var destroyed:Bool;
 	
@@ -132,13 +140,28 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			
 			
 			var data:Fast = null;
+			var errorMsg:String = "";
 			
 			if (liveFile == null)
 			{
-				data = U.xml(_xml_id);
+				try
+				{
+					data = U.xml(_xml_id);
+				}
+				catch (msg:String)
+				{
+					errorMsg = msg;
+				}
 				if (data == null)
 				{
-					data = U.xml(_xml_id, "xml", true, "");	//try again without default directory prepend
+					try
+					{
+						data = U.xml(_xml_id, "xml", true, "");	//try again without default directory prepend
+					}
+					catch (msg2:String)
+					{
+						errorMsg += ", " + msg2;
+					}
 				}
 			}
 			
