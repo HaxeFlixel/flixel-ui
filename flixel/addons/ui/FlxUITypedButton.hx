@@ -185,8 +185,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		}
 	}
 	
-	public override function update():Void {
-		super.update();
+	public override function update(elapsed:Float):Void {
+		super.update(elapsed);
 		
 		// Label positioning
 		if (label != null)

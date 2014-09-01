@@ -278,7 +278,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		_superIndexUI = flxUI;
 	}
 	
-	public override function update():Void {
+	public override function update(elapsed:Float):Void {
 		if (do_safe_input_delay) {
 			_safe_input_delay_elapsed += FlxG.elapsed;
 			if (_safe_input_delay_elapsed > safe_input_delay_time) {
@@ -287,8 +287,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				return;
 			}
 		}
-				
-		super.update();
+		super.update(elapsed);
 	}
 	
 	public function showAsset(key:String, Show:Bool, ?Active:Null<Bool>=null):Void

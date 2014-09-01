@@ -278,9 +278,9 @@ class FlxInputText extends FlxText
 	/**
 	 * Check for mouse input every tick.
 	 */
-	override public function update():Void 
+	override public function update(elapsed:Float):Void 
 	{
-		super.update();
+		super.update(elapsed);
 		
 		#if !FLX_NO_MOUSE
 		// Set focus and caretIndex as a response to mouse press

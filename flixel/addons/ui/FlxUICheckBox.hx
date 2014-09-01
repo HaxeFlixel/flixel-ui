@@ -199,8 +199,8 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIClic
 		return value;
 	}
 	
-	public override function update():Void{
-		super.update();
+	public override function update(elapsed:Float):Void{
+		super.update(elapsed);
 		
 		if (checkbox_dirty) {
 			if (button.label != null) {

@@ -297,9 +297,9 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		return null;
 	}
 	
-	public override function update():Void 
+	public override function update(elapsed:Float):Void 
 	{
-		super.update();
+		super.update(elapsed);
 		
 		#if (!FLX_NO_MOUSE && !FLX_NO_TOUCH)
 		if (dropPanel.visible && FlxG.mouse.justPressed) 
