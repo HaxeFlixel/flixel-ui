@@ -99,8 +99,8 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 		_reload = true;
 	}	
 	
-	public override function update():Void {
-		super.update();
+	public override function update(elapsed:Float):Void {
+		super.update(elapsed);
 		#if debug
 			if (_reload) {
 				if (_reload_countdown > 0) {
