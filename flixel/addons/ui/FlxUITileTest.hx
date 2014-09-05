@@ -4,6 +4,8 @@ import flash.display.BitmapData;
 import flash.geom.Point;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
+import flixel.math.FlxPoint;
+import flixel.util.FlxColor;
 import haxe.xml.Fast;
 
 /**
@@ -22,13 +24,13 @@ class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIW
 	
 	private var _tilesWide:Int=2;
 	private var _tilesTall:Int=2;
-	private var _color1:Int=0;
-	private var _color2:Int = 0;
+	private var _color1:FlxColor=0;
+	private var _color2:FlxColor=0;
 	
-	public var floorToEven:Bool = true;
+	public var floorToEven:Bool = false;
 	public var baseTileSize:Int = -1;
 	
-	public function new(X:Float,Y:Float,TileWidth:Int,TileHeight:Int,tilesWide:Int,tilesTall:Int,color1:Int=0xff808080,color2:Int=0xffc4c4c4) 
+	public function new(X:Float,Y:Float,TileWidth:Int,TileHeight:Int,tilesWide:Int,tilesTall:Int,color1:FlxColor=0x808080,color2:FlxColor=0xc4c4c4,FloorToEven:Bool=false) 
 	{
 		super(X, Y);
 		
@@ -40,10 +42,17 @@ class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIW
 		_color1 = color1;
 		_color2 = color2;
 		
+		floorToEven = FloorToEven;
+		
 		makeTiles(tileWidth,tileHeight,_tilesWide,_tilesTall,_color1,_color2);
 	}
 
 	private function makeTiles(tileWidth:Int,tileHeight:Int,tilesWide:Int,tilesTall:Int,color1:Int=0xff808080,color2:Int=0xffc4c4c4):Void {
+		var size:FlxPoint = constrain(tileWidth*_tilesWide, tileHeight*_tilesTall);
+		
+		tileWidth = Std.int(size.x);
+		tileHeight = Std.int(size.y);
+		
 		makeGraphic(tileWidth * tilesWide, tileHeight * tilesTall, color1);
 		
 		var brush:BitmapData = new BitmapData(tileWidth, tileHeight, true, color2);
@@ -69,14 +78,16 @@ class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIW
 		pixels = canvas;
 	}
 	
-	public override function resize(w:Float, h:Float):Void {
-		tileWidth = Std.int(w / _tilesWide);
-		tileHeight = Std.int(h / _tilesTall);
+	private function constrain(w:Float,h:Float):FlxPoint
+	{
+		var tileWidth = Std.int(w / _tilesWide);
+		var tileHeight = Std.int(h / _tilesTall);
 		
 		if (tileWidth < tileHeight) { tileHeight = tileWidth; }
 		else if (tileHeight < tileWidth) { tileWidth = tileHeight; }
 		
-		if(floorToEven){
+		if (floorToEven)
+		{
 			if ((tileWidth % 2) == 1) {
 				tileWidth -= 1;
 				tileHeight = tileWidth;
@@ -90,6 +101,10 @@ class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIW
 			tileHeight = tileWidth;
 		}
 		
+		return new FlxPoint(tileWidth, tileHeight);
+	}
+	
+	public override function resize(w:Float, h:Float):Void {
 		makeTiles(tileWidth,tileHeight,_tilesWide,_tilesTall,_color1,_color2);
 	}
 	

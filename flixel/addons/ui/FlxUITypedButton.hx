@@ -133,10 +133,23 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		
 		_no_graphic = other._no_graphic;
 		
-		_slice9_arrays = other._slice9_arrays.copy();
-		_slice9_assets = other._slice9_assets.copy();
+		if (other._slice9_arrays != null)
+		{
+			_slice9_arrays = other._slice9_arrays.copy();
+		}
+		if (other._slice9_assets != null)
+		{
+			_slice9_assets = other._slice9_assets.copy();
+		}
 		
-		resize(other.width, other.height);
+		if (_slice9_arrays == null || _slice9_assets == null)
+		{
+			loadGraphic(other.cachedGraphics, true, cast other.width, cast other.height);
+		}
+		else
+		{
+			resize(other.width, other.height);
+		}
 	}
 	
 	public function copyStyle(other:FlxUITypedButton<FlxSprite>):Void {
@@ -290,21 +303,39 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		}
 	}
 	
+	private function getBmp(str:String):BitmapData
+	{
+		if (FlxG.bitmap.checkCache(str))
+		{
+			var cg = FlxG.bitmap.get(str);
+			if (cg.bitmap != null)
+			{
+				return cg.bitmap;
+			}
+		}
+		return Assets.getBitmapData(str);
+	}
+	
 	/**
 	 * Provide a list of assets, load states from each one
 	 * @param	assets
 	 * @param   key string key for caching (optional)
 	 */
 	
-	public function loadGraphicsMultiple(assets:Array<String>, Key:String = ""):Void {
+	public function loadGraphicsMultiple(assets:Array<String>, Key:String = ""):Void
+	{
+		_slice9_assets = null;
+		_slice9_arrays = null;
+		resize_ratio = -1;
+		
 		var key:String = "";
 		
 		if (assets.length <= 3) {
 			while (assets.length < 3) { assets.push(null); }
 			if (assets[1] == null) { assets[1] = assets[0]; }
 			if (assets[2] == null) { assets[2] = assets[1]; }
-			key = assets.join(",");			
-			var pixels = assembleButtonFrames(Assets.getBitmapData(assets[0]), Assets.getBitmapData(assets[1]), Assets.getBitmapData(assets[2]));
+			key = assets.join(",");
+			var pixels = assembleButtonFrames(getBmp(assets[0]), getBmp(assets[1]), getBmp(assets[2]));
 			if (Key != "")
 			{
 				key = Key; // replaces generated key with provided key.
@@ -319,8 +350,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			{
 				key = Key; // replaces generated key with provided key.
 			}
-			var pixels_normal = assembleButtonFrames(Assets.getBitmapData(assets[0]), Assets.getBitmapData(assets[1]), Assets.getBitmapData(assets[2]));
-			var pixels_toggle = assembleButtonFrames(Assets.getBitmapData(assets[3]), Assets.getBitmapData(assets[4]), Assets.getBitmapData(assets[5]));
+			var pixels_normal = assembleButtonFrames(getBmp(assets[0]), getBmp(assets[1]), getBmp(assets[2]));
+			var pixels_toggle = assembleButtonFrames(getBmp(assets[3]), getBmp(assets[4]), getBmp(assets[5]));
 			var pixels = combineToggleBitmaps(pixels_normal, pixels_toggle);
 			loadGraphicsUpOverDown(pixels, false, key);
 			pixels_normal.dispose();
@@ -353,7 +384,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		if (Std.is(asset, BitmapData)) {
 			bd = cast asset;
 		}else if (Std.is(asset, String)) {
-			bd = Assets.getBitmapData(asset);
+			bd = getBmp(asset);
 		}
 		
 		upB = grabButtonFrame(bd, FlxButton.NORMAL, has_toggle);
@@ -461,13 +492,13 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			if(!isToggle){
 				assets = [FlxUIAssets.IMG_BUTTON];
 				slice9 = [FlxStringUtil.toIntArray(FlxUIAssets.SLICE9_BUTTON)];
-				temp = Assets.getBitmapData(assets[0]);
+				temp = getBmp(assets[0]);
 				_src_w = Std.int(temp.width);
 				_src_h = Std.int(temp.height / 3);				//calc default source width/height
 			}else {
 				assets = [FlxUIAssets.IMG_BUTTON_TOGGLE];
 				slice9 = [FlxStringUtil.toIntArray(FlxUIAssets.SLICE9_BUTTON_TOGGLE)];
-				temp = Assets.getBitmapData(assets[0]);
+				temp = getBmp(assets[0]);
 				_src_w = Std.int(temp.width);
 				_src_h = Std.int(temp.height / 6);				//calc default source width/height
 			}
@@ -490,7 +521,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		_flashRect2.height = H;
 		
 		if(assets.length == 1){								//loading everything from one graphic
-			var all = Assets.getBitmapData(assets[0]);		//load the image
+			var all = getBmp(assets[0]);		//load the image
 			
 			if (_src_w == 0 || _src_h == 0) {
 				throw new Error("Ambiguous situation! If you only provide one asset, you MUST provide src_w and src_h. Otherwise I can't tell if it's a stacked set of frames or a single frame.");
@@ -564,7 +595,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 				}else {			//load as static buttons
 					key = "";
 					for(i in 0...assets.length){
-						arr_bmpData[i] = Assets.getBitmapData(assets[i]);
+						arr_bmpData[i] = getBmp(assets[i]);
 						key += assets[i];
 						if (i < assets.length - 1) {
 							key += ",";

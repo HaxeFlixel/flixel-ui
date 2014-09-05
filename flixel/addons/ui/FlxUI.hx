@@ -45,6 +45,7 @@ import openfl.Assets;
  * 
  * @author Lars Doucet
  */
+
 class FlxUI extends FlxUIGroup implements IEventGetter
 {	
 	
@@ -440,12 +441,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		_variable_index = new Map<String,String>();
 		_mode_index = new Map<String,Fast>();
 		
-		
 		if (data != null) {
 			
 			_data = data;
-			
-			
+		
 			//See if there's anything to include
 			if (data.hasNode.include) {
 
@@ -501,7 +500,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 				}
 			}
-				
+		
 			//Next, load all our variables
 			if (data.hasNode.variable) {
 				for (var_data in data.nodes.variable) {
@@ -516,7 +515,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 				}
 			}
-			
+		
 			//Next, load all our modes
 			if (data.hasNode.mode) {
 				for (mode_data in data.nodes.mode) {
@@ -529,7 +528,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 				}
 			}
-			
+		
 			//Then, load all our group definitions
 			if(data.hasNode.group){
 				for (group_data in data.nodes.group) {
@@ -562,7 +561,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 				}
 			}
-			
+		
 			if (data.x.firstElement() != null) {
 				//Load the actual things
 				var node:Xml;
@@ -626,7 +625,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}else {
 				add(cast thing);
 			}
-			
+		
 			_loadPosition(obj, thing);	//Position the thing if possible
 			
 			if (thing_id != null && thing_id != "") {
@@ -1061,8 +1060,21 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		return data;
 	}
+
+	/**
+	 * Load an individual flixel-ui widget from a snippet of xml
+	 * @param	type
+	 * @param	data
+	 * @return
+	 */
+	
+	public function loadThing(type:String, data:Fast):IFlxUIWidget
+	{
+		return _loadThing(type, data);
+	}
 	
 	private function _loadThing(type:String, data:Fast):IFlxUIWidget{
+		
 		var use_def:String = U.xml_str(data.x, "use_def", true);
 		var definition:Fast = null;
 		if (use_def != "") {
@@ -1585,9 +1597,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (tileWidth < 2) { tileWidth = 2; }
 		if (tileHeight < 2) { tileHeight = 2; }
 		
-		var baseTileSize:Int = U.xml_i(data.x, "base_tile_size", -1);
+		var color1:FlxColor = FlxColor.fromString(U.xml_str(data.x, "color1", true, "0x808080"));
+		var color2:FlxColor = FlxColor.fromString(U.xml_str(data.x, "color2", true, "0xc4c4c4"));
 		
-		var ftt:FlxUITileTest = new FlxUITileTest(0, 0, tileWidth, tileHeight, tiles_w, tiles_h);
+		var baseTileSize:Int = U.xml_i(data.x, "base_tile_size", -1);
+		var floorToEven:Bool = U.xml_bool(data.x, "floor_to_even", false);
+		
+		var ftt:FlxUITileTest = new FlxUITileTest(0, 0, tileWidth, tileHeight, tiles_w, tiles_h, color1, color2, floorToEven);
 		ftt.baseTileSize = baseTileSize;
 		return ftt;
 	}
@@ -2370,7 +2386,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return new FlxPoint( -1, -1);
 	}
 	
-	private function _loadButton(data:Fast, setCallback:Bool = true, isToggle:Bool = false, load_code:String=""):IFlxUIWidget{
+	private function _loadButton(data:Fast, setCallback:Bool = true, isToggle:Bool = false, load_code:String = ""):IFlxUIWidget
+	{
 		var src:String = ""; 
 		var fb:IFlxUIButton = null;
 		
@@ -2382,12 +2399,17 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var sprite:FlxUISprite = null;
 		var toggleSprite:FlxUISprite = null;
-		if (data.hasNode.sprite) {
-			for(spriteNode in data.nodes.sprite){
+		if (data.hasNode.sprite)
+		{
+			for (spriteNode in data.nodes.sprite)
+			{
 				var forToggle:Bool = isToggle && U.xml_bool(spriteNode.x, "toggle");
-				if(forToggle){
+				if (forToggle)
+				{
 					toggleSprite = cast _loadThing("sprite", spriteNode);
-				}else {
+				}
+				else
+				{
 					sprite = cast _loadThing("sprite", spriteNode);
 				}
 			}
@@ -2438,8 +2460,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		/***Begin graphics loading block***/
 		
-		if (data.hasNode.graphic) {
-			
+		if (data.hasNode.graphic)
+		{
 			var blank:Bool = U.xml_bool(data.node.graphic.x, "blank");
 			
 			if (blank) {

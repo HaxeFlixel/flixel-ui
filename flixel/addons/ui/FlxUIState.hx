@@ -112,12 +112,11 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		if (_xml_id != null && _xml_id != "")
 		{
 			#if (debug && sys)
-				trace("_liveFilePath = " + _liveFilePath);
 				if (_liveFilePath != null && _liveFilePath != "")
 				{
 					try
 					{
-						liveFile = U.readFast(U.fixSlash(_liveFilePath +_xml_id));
+						liveFile = U.readFast(U.fixSlash(_liveFilePath + _xml_id));
 						trace("liveFile = " + liveFile);
 					}
 					catch(msg:String)

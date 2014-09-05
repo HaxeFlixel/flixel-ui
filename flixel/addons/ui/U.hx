@@ -963,6 +963,7 @@ class U
 			}
 			else 
 			{
+				FlxG.bitmap.add(testBmp, false, bmpSrc);
 				return bmpSrc;		//couldn't scale it, return master asset key
 			}
 		}
