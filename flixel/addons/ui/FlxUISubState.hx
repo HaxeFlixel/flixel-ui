@@ -90,7 +90,9 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 			}
 		}
 		
+		#if !FLX_NO_MOUSE
 		FlxG.mouse.visible = true;
+		#end
 	}
 	
 	public override function onResize(Width:Int,Height:Int):Void {
