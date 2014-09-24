@@ -37,9 +37,9 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 	
 	public var getTextFallback:String->String->Bool->String = null;
 	
-	public function new() 
+	public function new(BGColor:FlxColor = 0) 
 	{
-		super();
+		super(BGColor);
 	}
 	
 	public function forceScrollFactor(X:Float,Y:Float):Void {
