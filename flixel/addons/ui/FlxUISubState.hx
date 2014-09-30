@@ -7,6 +7,7 @@ import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxSubState;
+import flixel.util.FlxColor;
 import flixel.math.FlxPoint;
 import haxe.xml.Fast;
 
@@ -37,9 +38,9 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 	
 	public var getTextFallback:String->String->Bool->String = null;
 	
-	public function new() 
+	public function new(BGColor:FlxColor = 0) 
 	{
-		super();
+		super(BGColor);
 	}
 	
 	public function forceScrollFactor(X:Float,Y:Float):Void {
@@ -90,7 +91,9 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 			}
 		}
 		
+		#if !FLX_NO_MOUSE
 		FlxG.mouse.visible = true;
+		#end
 	}
 	
 	public override function onResize(Width:Int,Height:Int):Void {
