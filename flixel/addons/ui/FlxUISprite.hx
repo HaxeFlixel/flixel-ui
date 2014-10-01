@@ -26,6 +26,7 @@ class FlxUISprite extends FlxSprite implements IFlxUIWidget implements IResizabl
 	
 	public static inline var RESIZE_RATIO_X:Int = 0;
 	public static inline var RESIZE_RATIO_Y:Int = 1;
+	public static inline var RESIZE_RATIO_UNKNOWN:Int = -1;
 	
 	public var resize_ratio(default, set):Float;
 	public var resize_ratio_axis:Int = RESIZE_RATIO_Y;

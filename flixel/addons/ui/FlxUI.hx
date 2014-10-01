@@ -2378,7 +2378,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return ns;
 	}
 	
-	private function getResizeRatio(data:Fast):FlxPoint
+	private function getResizeRatio(data:Fast,defaultAxis:Int=FlxUISprite.RESIZE_RATIO_Y):FlxPoint
 	{
 		var str:String = U.xml_str(data.x, "resize_ratio_x", true);
 		if (str == "")
@@ -2386,9 +2386,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			str = U.xml_str(data.x, "resize_ratio_y", true);
 			if (str == "")
 			{
-				//neither x nor y supplied, assume Y
+				//neither x nor y supplied, assume default
 				var resize_ratio = U.xml_f(data.x, "resize_ratio", -1);
-				return new FlxPoint(resize_ratio, FlxUISprite.RESIZE_RATIO_Y);
+				return new FlxPoint(resize_ratio, defaultAxis);
 			}
 			else
 			{
@@ -2856,7 +2856,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var bounds: { min_width:Float, min_height:Float, 
 					  max_width:Float, max_height:Float } = calcMaxMinSize(data);
 		
-		var resize:FlxPoint = getResizeRatio(data);
+		var resize:FlxPoint = getResizeRatio(data,FlxUISprite.RESIZE_RATIO_UNKNOWN);
 		  
 		var resize_ratio:Float = resize.x;
 		var resize_ratio_axis:Int = Std.int(resize.y);
@@ -2867,21 +2867,28 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		if (src != "")
 		{
-			if (W == -1 && H == -1)	//If no Width or Height is supplied, return the sprite as-is
+			if (W == -1 && H == -1)	//If neither Width nor Height is supplied, return the sprite as-is
 			{
 				fs = new FlxUISprite(0, 0, src);
 			}
-			else					//If Width or Height is supplied, do some scaling
+			else					//If Width or Height or both is/are supplied, do some scaling
 			{
 				//If an explicit resize aspect ratio is supplied AND either width or height is undefined
 				if (resize_ratio != -1 && (W == -1 || H == -1))
 				{
+					//Infer the correct axis depending on which property was not defined
+					if (resize_ratio_axis == FlxUISprite.RESIZE_RATIO_UNKNOWN)
+					{
+						if (W == -1) { resize_ratio_axis = FlxUISprite.RESIZE_RATIO_X; }
+						if (H == -1) { resize_ratio_axis = FlxUISprite.RESIZE_RATIO_Y; }
+					}
+					
 					//Infer the correct scale of the undefined value depending on the resize aspect ratio
 					if (resize_ratio_axis == FlxUISprite.RESIZE_RATIO_Y)
 					{
 						H = cast W * (1 / resize_ratio);
 					}
-					else
+					else if (resize_ratio_axis == FlxUISprite.RESIZE_RATIO_X)
 					{
 						W = cast H * (1 / resize_ratio);
 					}
