@@ -1267,7 +1267,22 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var objects:Array<String> = U.xml_str(objectNode.x, "value", true, "").split(",");
 				
 				var axis:String = U.xml_str(data.x, "axis", true);
-				var spacing:Float = U.xml_f(data.x, "spacing", -1);
+				if (axis != "horizontal" && axis != "vertical")
+				{
+					throw new Error("FlxUI._alignThing(): axis must be \"horizontal\" or \"vertical\"!");
+					return;
+				}
+				
+				var spacing:Float = -1;
+				if (axis == "horizontal")
+				{
+					spacing = _getDataSize("h", U.xml_str(data.x,"spacing",true), -1);
+				}
+				else
+				{
+					spacing = _getDataSize("w", U.xml_str(data.x,"spacing",true), -1);
+				}
+				
 				var resize:Bool = U.xml_bool(data.x, "resize");
 				
 				var grow:Bool = U.xml_bool(data.x, "grow", true);
@@ -1275,11 +1290,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				
 				var bounds:FlxPoint = FlxPoint.get(-1,-1);
 				
-				if (axis != "horizontal" && axis != "vertical")
-				{
-					throw new Error("FlxUI._alignThing(): axis must be \"horizontal\" or \"vertical\"!");
-					return;
-				}
 				
 				var boundsError:String = "";
 				
@@ -2851,12 +2861,35 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var resize_ratio:Float = resize.x;
 		var resize_ratio_axis:Int = Std.int(resize.y);
 		var resize_point:FlxPoint = _loadCompass(data, "resize_point");
-		 
-		if(src != ""){
-			fs = new FlxUISprite(0, 0, src);
+		
+		var W:Int = Std.int(_loadWidth(data,-1));
+		var H:Int = Std.int(_loadHeight(data,-1));
+		
+		if (src != "")
+		{
+			if (W == -1 && H == -1)	//If no Width or Height is supplied, return the sprite as-is
+			{
+				fs = new FlxUISprite(0, 0, src);
+			}
+			else					//If Width or Height is supplied, do some scaling
+			{
+				//If an explicit resize aspect ratio is supplied AND either width or height is undefined
+				if (resize_ratio != -1 && (W == -1 || H == -1))
+				{
+					//Infer the correct scale of the undefined value depending on the resize aspect ratio
+					if (resize_ratio_axis == FlxUISprite.RESIZE_RATIO_Y)
+					{
+						H = cast W * (1 / resize_ratio);
+					}
+					else
+					{
+						W = cast H * (1 / resize_ratio);
+					}
+				}
+				
+				fs = new FlxUISprite(0, 0, U.loadScaledImage(src, W, H));
+			}
 		}else {
-			var W:Int = Std.int(_loadWidth(data));
-			var H:Int = Std.int(_loadHeight(data));
 			
 			if(bounds != null){
 				if (W < bounds.min_width) { W = Std.int(bounds.min_width); }
