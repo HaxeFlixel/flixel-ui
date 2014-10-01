@@ -752,6 +752,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var thing = getAsset(each_id);
 				if (thing != null) {
 					thing.visible = b;
+				}else{
+					var group = getGroup(each_id);
+					if (group != null) {
+						group.visible = b;
+					}
 				}
 			}
 		}else {
@@ -759,6 +764,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var thing = getAsset(id);					//else, it's just one asset
 				if (thing != null) { 
 					thing.visible = b;
+				}else {
+					var group = getGroup(id);
+					if (group != null) {
+						group.visible = b;
+					}
 				}
 			}else {											//if it's a "*", do this for ALL assets
 				for (asset_id in _asset_index.keys()) {		
