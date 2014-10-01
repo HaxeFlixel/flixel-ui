@@ -298,6 +298,9 @@ Attributes:
 * src (path to source, no extension, appended to "assets/gfx/")
 * use_def (definition id)
 * group (group id)
+* width/height (optional, use exact pixel values or formulas to scale the image)
+* resize_ratio (optional, if you specifcy width or height, you can also define this to force a scaling aspect ratio)
+* resize_ratio_x / resize_ratio_y (optional, does the same thing are resize_ratio, but only affects one axis)
 
 ###2. 9-slice sprite/chrome (FlxUI9SliceSprite)
 
