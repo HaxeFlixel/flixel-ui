@@ -481,6 +481,10 @@ Attributes:
 * box_src - source image for check mark (not 9-sliceable)
 * text_x/text_y - label offsets
 * label - text to show
+* context - FireTongue context (see Button)
+* code - Formatting code (see Button)
+* checked - (boolean) is it checked or not?
+* label_width - width of the label
 
 Child tags:
 * \<text> - same as \<button>
@@ -496,6 +500,7 @@ Event:
 A regular text field. 
 
 Attributes:
+* text - the actual text in the textfield
 * x/y, use_def, group
 * font - string, something like "vera" or "verdana"
 * size - integer, size of font
@@ -503,6 +508,8 @@ Attributes:
 * color - hex string, ie, "0xffffff" is white
 * shadow - shadow color (not working yet maybe?)
 * align - "left", "center", or "right". Haven't tested "justify"
+* context - FireTongue context (see Button)
+* code - Formatting code (see Button)
 
 The system will look for a font file in your assets/fonts/ directory, formatted like this:
 
@@ -531,6 +538,17 @@ Attributes:
 * shadow - shadow color (not working yet maybe?)
 * align - "left", "center", or "right". Haven't tested "justify"
 * password_mode - bool, hides text if true
+* background - (optional, FlxColor) the background color
+* force_case - (string) force text to appear in a specific case
+    * "upper" / "upper_case" / "uppercase"
+    * "lower" / "lower_case" / "lowercase"
+* filter - (string) allow only certain kinds of text (not thoroughly tested with non-english locales)
+    * "alpha" / "onlyalpha" - only standard alphabet characters
+    * "num" / "numeric" - only standard number characters
+    * "alphanum" / "alphanumeric", "onlyalphanumeric" -- only standard alphabet & number characters
+* context - FireTongue context (see Button)
+* code - Formatting code (see Button)
+
 
 The system will look for a font file in your assets/fonts/ directory, formatted like this:
 
