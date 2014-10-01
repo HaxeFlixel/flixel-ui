@@ -326,6 +326,22 @@ Attributes:
 * width/height - optional, only needed if you're using a 9-slice sprite as source
 * text_x/text_y - label offsets
 * label - text to show
+* context - (optional) context value if label is a [firetongue](http://www.github.com/larsiusprime/firetongue) flag
+* code - (optional) firetongue formatting code:
+    * "u" - all uppercase
+    * "l" - all lowercase
+    * "fu" - first letter uppercase
+    * "fu_" - first letter in each word uppercase
+* resize_ratio - (optional) specify aspect ratio for resizing
+* resize_point - (optional, string) specify anchor for resizing
+    *  "nw" / "ul" -- Upper-left
+    *  "n"  / "u"  -- Top
+    *  "ne" / "ur" -- Upper-right
+    *  "sw" / "ll" -- Lower-left
+    *  "s"         -- Bottom
+    *  "se" / "lr" -- Lower-right
+    *  "m" / "c" / "mid" / "center" -- Center
+* resize_label - (optional, boolean) whether or not to let the label scale when the button is resized
 
 Child tags:
 * \<text> - just like a regular \<text> node
