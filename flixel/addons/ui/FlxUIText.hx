@@ -33,10 +33,10 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget im
 		while (diff > 0 && failsafe < 999)
 		{
 			failsafe++;
-			size += 1;
+			size++;
 			if (textField.numLines > numLines)		//Failsafe in case the expanding text causes it to break to a new line
 			{
-				size -= 1;
+				size--;
 				break;
 			}
 			calcFrame();
