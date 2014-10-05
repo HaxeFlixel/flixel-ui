@@ -114,10 +114,10 @@ class FlxUISprite extends FlxSprite implements IFlxUIWidget implements IResizabl
 	public override function loadGraphic(Graphic:FlxGraphicAsset, Animated:Bool = false, Width:Int = 0, Height:Int = 0, Unique:Bool = false, ?Key:String):FlxSprite
 	{
 		var sprite = super.loadGraphic(Graphic, Animated, Width, Height, Unique, Key);
-		_originalKey = cachedGraphics.assetsKey;
+		_originalKey = graphic.assetsKey;
 		if (_originalKey == null)
 		{
-			_originalKey = cachedGraphics.key;
+			_originalKey = graphic.key;
 		}
 		return sprite;
 	}

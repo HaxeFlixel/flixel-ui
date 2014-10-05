@@ -144,7 +144,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		
 		if (_slice9_arrays == null || _slice9_assets == null)
 		{
-			loadGraphic(other.cachedGraphics, true, cast other.width, cast other.height);
+			loadGraphic(other.graphic, true, cast other.width, cast other.height);
 		}
 		else
 		{
