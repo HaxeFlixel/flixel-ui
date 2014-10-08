@@ -13,7 +13,6 @@ import flixel.addons.ui.interfaces.ILabeled;
 import flixel.FlxSprite;
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
-import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import openfl.Assets;
 
