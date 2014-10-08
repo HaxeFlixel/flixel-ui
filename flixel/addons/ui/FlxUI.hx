@@ -2456,6 +2456,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				//We have a Sprite AND a Label, so we package it up in a group
 				
 				var labelTxt = new FlxUIText(0, 0, 80, label, 8);
+				
 				labelTxt.setFormat(null, 8, 0x333333, "center");
 				
 				tempGroup = new FlxSpriteGroup();
@@ -2663,7 +2664,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					fb.down_toggle_color = 0xffffff;
 					fb.over_toggle_color = 0xffffff;
 				}
-				else {
+				else
+				{
 					// Center sprite icon 
 					fb.autoCenterLabel();
 				}
@@ -3610,7 +3612,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					the_label.width = labelWidth;
 				}
 				
-				the_label.setFormat(the_font, size, color, align);
+				if (fb != null)
+				{
+					fb.setLabelFormat(the_font, size, color, align);
+				}
+				else
+				{
+					the_label.setFormat(the_font, size, color, align);
+				}
 				
 				the_label.borderStyle = border.style;
 				the_label.borderColor = border.color;

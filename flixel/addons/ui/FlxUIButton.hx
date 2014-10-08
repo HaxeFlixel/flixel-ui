@@ -13,6 +13,7 @@ import flixel.addons.ui.interfaces.ILabeled;
 import flixel.FlxSprite;
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
+import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import openfl.Assets;
 
@@ -55,7 +56,42 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 			label.setFormat(null, 8, 0x333333, "center");
 		}
 		resize(width, height);	//force it to be "FlxUI style"
-		autoCenterLabel();
+	}
+	
+	/**
+	 * You can use this if you have a lot of text parameters
+	 * to set instead of the individual properties.
+	 * 
+	 * @param	Font			The name of the font face for the text display.
+	 * @param	Size			The size of the font (in pixels essentially).
+	 * @param	Color			The color of the text in traditional flash 0xRRGGBB format.
+	 * @param	Alignment		The desired alignment
+	 * @param	BorderStyle		NONE, SHADOW, OUTLINE, or OUTLINE_FAST (use setBorderFormat)
+	 * @param	BorderColor 	Int, color for the border, 0xRRGGBB format
+	 * @param	EmbeddedFont	Whether this text field uses embedded fonts or not
+	 * @return	This FlxText instance (nice for chaining stuff together, if you're into that).
+	 */
+	public function setLabelFormat(?Font:String, Size:Float = 8, Color:flixel.util.FlxColor = FlxColor.WHITE, ?Alignment:FlxTextAlign,
+		?BorderStyle:FlxTextBorderStyle, BorderColor:FlxColor = FlxColor.TRANSPARENT, Embedded:Bool = true):FlxText
+	{
+		if (label != null)
+		{
+			label.setFormat(Font, Size, Color, Alignment, BorderStyle, BorderColor, Embedded);
+			#if flash
+				//A VERY NECESSARY HACK
+				//on Flash target, the height does not update for another frame, so autocentering will break
+				//HOWEVER! height is always equal to the truncated textHeight + 4 (there's a 2-pixel gutter on top & bottom)
+				//so we go ahead and set that right away for autocentering purposes:
+				label.height = Std.int(label.textField.textHeight) + 4;
+			#end
+			return label;
+		}
+		return null;
+	}
+	
+	public override function autoCenterLabel():Void
+	{
+		super.autoCenterLabel();
 	}
 	
 	public override function clone():FlxUIButton
@@ -112,21 +148,6 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		}*/
 	}
 	
-	/**
-	 * Separated out so it can be easily overriden
-	 * @param	label_diffx	before the button was resized, (button.width-label.width)
-	 * @param	label_diffy	before the button was resized, (button.height-label.height)
-	 */
-	
-	/*private override function autoResizeLabel(label_diffx:Float,label_diffy:Float):Void
-	{
-		var targetW:Float = W - label_diffx;
-		var targetH:Float = H - label_diffy;
-		trace("resizing button to (" + targetW + "," + targetH + ")");
-		var ir:IResizable = cast label;
-		ir.resize(targetW, targetH);
-	}*/
-	
 	public function addIcon(icon:FlxSprite,X:Int=0,Y:Int=0,?center:Bool=true)
 	{
 		// Creates a backup of current button image.
@@ -175,7 +196,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	}
 	
 	/**********PRIVATE*********/
-			
+	
 	/**
 	 * Updates the size of the text field to match the button.
 	 */
