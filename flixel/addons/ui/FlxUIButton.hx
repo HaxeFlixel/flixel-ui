@@ -13,6 +13,7 @@ import flixel.addons.ui.interfaces.ILabeled;
 import flixel.FlxSprite;
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
+import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import openfl.Assets;
 
@@ -70,7 +71,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	 * @param	EmbeddedFont	Whether this text field uses embedded fonts or not
 	 * @return	This FlxText instance (nice for chaining stuff together, if you're into that).
 	 */
-	public function setLabelFormat(?Font:String, Size:Float = 8, Color:flixel.util.FlxColor = FlxColor.WHITE, ?Alignment:FlxTextAlign,
+	public function setLabelFormat(?Font:String, Size:Float = 8, Color:FlxColor = FlxColor.WHITE, ?Alignment:FlxTextAlign,
 		?BorderStyle:FlxTextBorderStyle, BorderColor:FlxColor = FlxColor.TRANSPARENT, Embedded:Bool = true):FlxText
 	{
 		if (label != null)
