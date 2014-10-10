@@ -7,7 +7,6 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.util.FlxStringUtil;
-import flixel.util.loaders.CachedGraphics;
 
 class FlxUIColorSwatch extends FlxUIButton
 {
@@ -140,7 +139,7 @@ class FlxUIColorSwatch extends FlxUIButton
 			loadGraphic(FlxUIAssets.IMG_SWATCH);//load default monochrome swatch
 		}
 		
-		_origKey = cachedGraphics.key;
+		_origKey = graphic.key;
 		
 		if (Color != 0xFFFFFF) {
 			multiColored = false;
@@ -174,7 +173,7 @@ class FlxUIColorSwatch extends FlxUIButton
 		
 		if (multiColored) 
 		{
-			if(cachedGraphics.key != key){
+			if(graphic.key != key){
 				if (FlxG.bitmap.checkCache(key) == false) 			//draw the swatch dynamically from supplied color values
 				{
 					makeGraphic(Std.int(width), Std.int(height), 0xFFFFFFFF, true, key);
@@ -254,7 +253,7 @@ class FlxUIColorSwatch extends FlxUIButton
 		}
 		else 
 		{
-			if (cachedGraphics.key != key) 							//load the right asset
+			if (graphic.key != key) 							//load the right asset
 			{
 				loadGraphic(key);
 			}
