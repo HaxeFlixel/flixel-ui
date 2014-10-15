@@ -41,6 +41,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	#end
 	
 	private var _xml_id:String = "";			//the xml file to load from assets
+	
 	#if (debug && sys)
 		//If you want to do live reloading, set the path to your assets directory on your local disk here, 
 		//and it will load that instead of loading the xml specification from embedded assets
@@ -126,9 +127,9 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 						liveFile = null;
 					}
 				}
-				_ui = new FlxUI(null, this, null, _tongue, _liveFilePath);
+				_ui = createUI(null, this, null, _tongue, _liveFilePath);
 			#else
-				_ui = new FlxUI(null, this, null, _tongue);
+				_ui = createUI(null, this, null, _tongue);
 			#end
 			add(_ui);
 			
@@ -263,7 +264,15 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		return Flag;
 	}
 	
-	//this makes it easy to override this function in your own FlxUIState, in case you want to operate on data before it is loaded
+	//this makes it easy to override this function in your own FlxUIState,
+	//in case you want to instantiate a custom class that extends FlxUI instead
+	private function createUI(data:Fast = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null, liveFilePath_:String=""):FlxUI
+	{
+		return new FlxUI(data, ptr, superIndex_, tongue_, liveFilePath_);
+	}
+	
+	//this makes it easy to override this function in your own FlxUIState,
+	//in case you want to operate on data before it is loaded
 	private function loadUIFromData(data:Fast):Void
 	{
 		_ui.load(data);
@@ -276,7 +285,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			_ui = null;
 		}
 		
-		_ui = new FlxUI(null,this,null,_tongue);
+		_ui = createUI(null,this,null,_tongue);
 		add(_ui);
 				
 		var data:Fast = U.xml(_xml_id);

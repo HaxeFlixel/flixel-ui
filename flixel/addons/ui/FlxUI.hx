@@ -56,14 +56,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	public var failed:Bool = false;
 	public var failed_by:Float = 0;
 	
-	#if (debug && sys)
-		//If you want to do live reloading, set the path to your assets directory on your local disk here, 
-		//and it will load that instead of loading the xml specification from embedded assets
-		//(only works on cpp/neko targets)
-		//this should serve as a PREFIX to the _xml_id:
-		//if full path="path/to/assets/xml/ui/foo.xml" and _xml_id="ui/foo.xml", then liveFilePath="path/to/assets/xml/"
-		public var liveFilePath:String;
-	#end
+	//If you want to do live reloading, set the path to your assets directory on your local disk here, 
+	//and it will load that instead of loading the xml specification from embedded assets
+	//(only works on cpp/neko targets under debug mode)
+	//this should serve as a PREFIX to the _xml_id:
+	//if full path="path/to/assets/xml/ui/foo.xml" and _xml_id="ui/foo.xml", then liveFilePath="path/to/assets/xml/"
+	public var liveFilePath:String;
 	
 	public var tongue(get, set):IFireTongue;
 	private function get_tongue():IFireTongue { return _ptr_tongue; }
@@ -200,11 +198,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 	/***PUBLIC FUNCTIONS***/
 	
-	#if (debug && sys)
+	/**
+	 * Creates a new FlxUI object
+	 * @param	data			the xml layout for this UI
+	 * @param	ptr				the object that receives events
+	 * @param	superIndex_		(optional) another FlxUI object to search if assets are not found locally
+	 * @param	tongue_			(optional) Firetongue object for localization
+	 * @param	liveFilePath_	(optional) The path for live file loading (only works if debug && sys flags are true)
+	 */
+	
 	public function new(data:Fast = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null, liveFilePath_:String="") 
-	#else
-	public function new(data:Fast = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null) 
-	#end
 	{
 		super();
 		_ptr_tongue = tongue_;	//set the localization data structure, if any.
@@ -2191,11 +2194,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var id:String = U.xml_str(data.x, "id", true);
 		var X:Float = _loadX(data);
 		var Y:Float = _loadY(data);
-		#if (debug && sys)
 		var _ui:FlxUI = new FlxUI(data, this, this, _ptr_tongue, liveFilePath);
-		#else
-		var _ui:FlxUI = new FlxUI(data, this, this, _ptr_tongue);
-		#end
 		_ui.x = X;
 		_ui.y = Y;
 		_ui.id = id;
