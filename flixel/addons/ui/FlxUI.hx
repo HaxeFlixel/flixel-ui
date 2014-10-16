@@ -294,6 +294,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		super.update(elapsed);
 	}
 	
+	public function showGroup(key:String, Show:Bool):Void
+	{
+		var group = getGroup(key, false);
+		if (group != null) {
+			group.visible = Show;
+		}
+	}
+	
 	public function showAsset(key:String, Show:Bool, ?Active:Null<Bool>=null):Void
 	{
 		var asset = getAsset(key, false);
@@ -2190,15 +2198,21 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return null;
 	}
 	
-	private function _loadLayout(data:Fast):FlxUI {
+	private function _loadLayout(data:Fast):FlxUI
+	{
 		var id:String = U.xml_str(data.x, "id", true);
 		var X:Float = _loadX(data);
 		var Y:Float = _loadY(data);
-		var _ui:FlxUI = new FlxUI(data, this, this, _ptr_tongue, liveFilePath);
+		var _ui:FlxUI = createUI(data);
 		_ui.x = X;
 		_ui.y = Y;
 		_ui.id = id;
 		return _ui;
+	}
+	
+	private function createUI(data:Fast):FlxUI
+	{
+		return new FlxUI(data, this, this, _ptr_tongue, liveFilePath);
 	}
 	
 	private function _loadTabMenu(data:Fast):FlxUITabMenu{
