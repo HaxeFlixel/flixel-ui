@@ -927,13 +927,24 @@ class U
 	 * @param	src	the asset key of the base image
 	 * @param	Scale	the scale factor of the new image
 	 * @param	smooth	whether to apply smoothing or not
+	 * @param	checkFlxBitmap	whether to use the FlxG.bitmap.get cache instead of Assets.getBitmapData
 	 * @return	the unique key of the scaled bitmap
 	 */
 	
-	public static function loadMonoScaledImage(src:String,Scale:Float,smooth:Bool=true):String
+	public static function loadMonoScaledImage(src:String,Scale:Float,smooth:Bool=true,checkFlxBitmap:Bool=false):String
 	{
 		var bmpSrc:String = gfx(src);
-		var	testBmp:BitmapData = Assets.getBitmapData(bmpSrc, true);
+		var	testBmp:BitmapData = null;
+		
+		if (!checkFlxBitmap)
+		{
+			testBmp = Assets.getBitmapData(bmpSrc, true);
+		}
+		else
+		{
+			var flximg = FlxG.bitmap.get(bmpSrc);
+			testBmp = flximg != null ? flximg.bitmap : null;
+		}
 		
 		if (testBmp != null)	//if the master asset exists
 		{
