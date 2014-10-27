@@ -259,6 +259,47 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 		}
 	}
 	
+	public function stackTabs():Void
+	{
+		var _backx:Float = _back.x;
+		var _backy:Float = _back.y;
+		
+		group.remove(_back, true);
+		
+		var tab:FlxUITypedButton<FlxSprite> = null;
+		for (t in _tabs) {
+			tab = cast t;
+			if (tab.toggled)
+			{
+				group.remove(tab, true);
+			}
+		}
+		
+		group.add(_back);
+		
+		for (t in _tabs) {
+			tab = cast t;
+			if (tab.toggled)
+			{
+				group.add(tab);
+			}
+		}
+		
+		//Put tab groups back on top
+		for (group in _tab_groups)
+		{
+			var tempX:Float = group.x;
+			var tempY:Float = group.y;
+			remove(group, true);
+			add(group);
+			group.x = tempX;
+			group.y = tempY;
+		}
+		
+		_back.x = _backx;
+		_back.y = _backy;
+	}
+	
 	public function showTabId(id:String):Void {
 		
 		_selected_tab = -1;
@@ -294,50 +335,7 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 	private var _selected_tab_id:String = "";
 	private var _selected_tab:Int = -1;
 	
-	private function stackTabs():Void {
-		var _backx:Float = _back.x;
-		var _backy:Float = _back.y;
-		
-		var _tabPts:Array<FlxPoint> = [];
-		
-		remove(_back, true);
-		
-		var tab:FlxUITypedButton<FlxSprite> = null;
-		for (t in _tabs) {
-			tab = cast t;
-			if (tab.toggled) {
-				_tabPts.push(FlxPoint.get(tab.x, tab.y));
-				remove(tab, true);
-			}
-		}
-		
-		add(_back);
-		
-		for (t in _tabs) {
-			tab = cast t;
-			if (tab.toggled) {
-				add(tab);
-				tab.x = _tabPts[0].x;
-				tab.y = _tabPts[0].y;
-				_tabPts[0].put();
-				_tabPts.splice(0, 1);
-			}
-		}
-		
-		//Put tab groups back on top
-		for (group in _tab_groups)
-		{
-			var tempX:Float = group.x;
-			var tempY:Float = group.y;
-			remove(group, true);
-			add(group);
-			group.x = tempX;
-			group.y = tempY;
-		}
-		
-		_back.x = _backx;
-		_back.y = _backy;
-	}
+	
 	
 	private function sortTabs(a:IFlxUIButton, b:IFlxUIButton):Int {
 		if (a.id < b.id) {
@@ -397,6 +395,9 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 		
 		_tabs.sort(sortTabs);
 		
+		var i:Int = 0;
+		var firstHeight:Float = 0;
+		
 		var tab:FlxUITypedButton<FlxSprite>;
 		for (t in _tabs)
 		{
@@ -411,12 +412,21 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 			}
 			
 			if (_stretch_tabs) {
+				var theHeight:Float = tab.get_height();
+				if (i != 0)
+				{
+					//when stretching, if resize_ratios are set, tabs can wind up with wrong heights since they might have different widths.
+					//to solve this we cancel resize_ratios for all tabs except the first and make sure all subsequent tabs match the height
+					//of the first tab
+					theHeight = firstHeight;
+					tab.resize_ratio = -1;
+				}
 				if(diff_size > 0){
-					tab.resize(tab_width + 1, tab.get_height());
+					tab.resize(tab_width + 1, theHeight);
 					xx += (Std.int(tab_width)+1);
 					diff_size -= 1;
 				}else {
-					tab.resize(tab_width, tab.get_height());
+					tab.resize(tab_width, theHeight);
 					xx += Std.int(tab_width);
 				}
 			}else {
@@ -426,11 +436,18 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 					xx += tab.width;
 				}
 			}
+			if (i == 0)
+			{
+				firstHeight = tab.get_height();		//if we are stretching we will make everything match the height of the first tab
+			}
+			i++;
 		}
 		
-		if (_tabs != null && _tabs.length > 0 && _tabs[0] != null) {
+		if (_tabs != null && _tabs.length > 0 && _tabs[0] != null)
+		{
 			_back.y = _tabs[0].y + _tabs[0].height - 2;
-			if (_tab_offset != null) {
+			if (_tab_offset != null)
+			{
 				_back.y -= _tab_offset.y;
 			}
 		}

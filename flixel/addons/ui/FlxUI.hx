@@ -1133,7 +1133,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			case "failure": if (_failure_checks == null) { _failure_checks = new Array<Fast>(); }
 							_failure_checks.push(info);
 							return null;
-			case "align": 	_alignThing(info);
+			case "align": 	_alignThing(info,true);				//we suppress errors first time through b/c they only matter if still present at postLoad()
 							return null;
 			case "mode", "include", "group", "load_if":			//ignore these, they are handled elsewhere
 							return null;
@@ -1268,7 +1268,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	
 	
-	private function _alignThing(data:Fast):Void
+	private function _alignThing(data:Fast,suppressError:Bool=false):Void
 	{
 		var datastr:String = data.x.toString();
 		if (data.hasNode.objects)
@@ -1300,7 +1300,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var shrink:Bool = U.xml_bool(data.x, "shrink", true);
 				
 				var bounds:FlxPoint = FlxPoint.get(-1,-1);
-				
 				
 				var boundsError:String = "";
 				
@@ -1346,8 +1345,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				{
 					if (boundsError != "")
 					{
-						//throw ("BoundsError(" + boundsError + "), Data=\n"+datastr);
-						FlxG.log.error(boundsError);
+						if (!suppressError)
+						{
+							FlxG.log.error(boundsError);
+						}
 					}
 				}
 			}

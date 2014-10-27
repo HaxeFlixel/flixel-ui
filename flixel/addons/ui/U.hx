@@ -714,8 +714,24 @@ class U
 		return new FlxSprite(0, 0, data);
 	}
 	
+	/**
+	 * Return string with first character uppercase'd
+	 * @param	str
+	 * @return
+	 */
+	
 	public static function FU(str:String):String {
 		return str.substr(0, 1).toUpperCase() + str.substr(1, str.length - 1);
+	}
+	
+	/**
+	 * Return string with first character uppercase'd, rest lowercase'd
+	 * @param	str
+	 * @return
+	 */
+	
+	public static function FUL(str:String):String {
+		return str.substr(0, 1).toUpperCase() + str.substr(1, str.length - 1).toLowerCase();
 	}
 	
 	public static function checkHaxedef(str:String):Bool {
@@ -948,9 +964,9 @@ class U
 		
 		if (testBmp != null)	//if the master asset exists
 		{
-			if (Scale < 0)
+			if (Scale <= 0)
 			{
-				throw "Error! Scale must be positive! (Scale was = " + Scale+")";
+				throw "Error! Scale must be positive & > 0! (Scale was = " + Scale+")";
 			}
 			
 			//if final size != master asset size, we're going to scale it

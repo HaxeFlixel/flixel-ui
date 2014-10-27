@@ -349,7 +349,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			var pixels_normal = assembleButtonFrames(getBmp(assets[0]), getBmp(assets[1]), getBmp(assets[2]));
 			var pixels_toggle = assembleButtonFrames(getBmp(assets[3]), getBmp(assets[4]), getBmp(assets[5]));
 			var pixels = combineToggleBitmaps(pixels_normal, pixels_toggle);
-			loadGraphicsUpOverDown(pixels, false, key);
+			loadGraphicsUpOverDown(pixels, true, key);
 			pixels_normal.dispose();
 			pixels_toggle.dispose();
 		}
