@@ -385,7 +385,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			if (!center_y) {
 				replace.y = original.y;
 			}else {
-				replace.y = original.y + (original.height - replace.width) / 2;
+				replace.y = original.y + (original.height - replace.height) / 2;
 			}
 			
 			//switch original for replacement in whatever group it was in
