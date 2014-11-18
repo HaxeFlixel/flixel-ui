@@ -56,6 +56,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	public var failed:Bool = false;
 	public var failed_by:Float = 0;
 	
+	/**
+	 * Whether or not this UI is directly attached to the current top-most FlxState
+	 */
+	public var isRoot(get, null):Bool;
+	private function get_isRoot():Bool { return _ptr != null && _ptr == getLeafUIState(); }
+	
 	//If you want to do live reloading, set the path to your assets directory on your local disk here, 
 	//and it will load that instead of loading the xml specification from embedded assets
 	//(only works on cpp/neko targets under debug mode)
@@ -179,19 +185,33 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return null;
 	}
 	
-	public function callEvent(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
-		getEvent(id, sender, data, params);
+	public function callEvent(name:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
+		getEvent(name, sender, data, params);
 	}
 	
-	public function getEvent(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
-		if (_ptr != null) {
-			_ptr.getEvent(id, sender, data, params);
+	public function getEvent(name:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
+		if (_ptr != null)
+		{
+			_ptr.getEvent(name, sender, data, params);
+			switch(name)
+			{
+				case "post_load": 
+					for (key in _asset_index.keys())
+					{
+						var thing = _asset_index.get(key);
+						if (Std.is(thing, FlxUI))
+						{
+							var fui:FlxUI = cast thing;
+							fui.getEvent("post_load",sender,data);
+						}
+					}
+			}
 		}
 	}
 	
-	public function getRequest(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Dynamic {
+	public function getRequest(name:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Dynamic {
 		if (_ptr != null) {
-			return _ptr.getRequest(id, sender, data, params);
+			return _ptr.getRequest(name, sender, data, params);
 		}
 		return null;
 	}
@@ -294,10 +314,31 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		super.update(elapsed);
 	}
 	
+	public function toggleShow(key:String):Bool
+	{
+		var thing = getAsset(key, false);
+		if (thing == null)
+		{
+			var group = getGroup(key, false);
+			if (group != null)
+			{
+				group.visible = !group.visible;
+				return group.visible;
+			}
+		}
+		else
+		{
+			thing.visible = !thing.visible;
+			return thing.visible;
+		}
+		return false;
+	}
+	
 	public function showGroup(key:String, Show:Bool):Void
 	{
 		var group = getGroup(key, false);
-		if (group != null) {
+		if (group != null)
+		{
 			group.visible = Show;
 		}
 	}
@@ -662,6 +703,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _postLoad(data:Fast):Void {
 		
+		_postLoaded = true;
 		if (data.x.firstElement() != null) {
 			//Load the actual things
 			var node:Xml;
@@ -934,6 +976,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	/***PRIVATE***/
+	
+	@:allow(FlxUI)
+	private var _postLoaded:Bool = false;
 	
 	private var _group_index:Map<String,FlxUIGroup>;
 	private var _asset_index:Map<String,IFlxUIWidget>;
@@ -1584,9 +1629,20 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			definition = getDefinition(use_def);
 		}
 		
-		if (Std.is(thing, IResizable)) {
-			var bounds: { min_width:Float, min_height:Float, 
-			              max_width:Float, max_height:Float } = calcMaxMinSize(data);
+		if (Std.is(thing, IResizable))
+		{
+			var ww:Null<Float> = _getDataSize(U.xml_str(data.x, "width"), "width");
+			var hh:Null<Float> = _getDataSize(U.xml_str(data.x, "height"), "height");
+			if (ww == 0 || ww == thing.width)
+			{
+				ww = null;
+			}
+			if (hh == 0 || hh == thing.height)
+			{
+				hh = null;
+			}
+			
+			var bounds = calcMaxMinSize(data,ww,hh);
 			
 			if (bounds != null)
 			{
@@ -1596,6 +1652,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		_delta(thing, -thing.x, -thing.y);	//reset position to 0,0
 		_loadPosition(data, thing);			//reposition
+		
+		if (Std.is(thing, FlxUI))
+		{
+			var fui_thing:FlxUI = cast thing;
+			if (fui_thing._postLoaded == false)
+			{
+				fui_thing.getEvent("post_load", this, null);
+			}
+		}
 	}
 	
 	private function _loadTileTest(data:Fast):FlxUITileTest {
@@ -2137,6 +2202,30 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			match = true;
 			var defValue:Bool = false;
 			switch(haxeDef) {
+				case "linux":
+					#if linux
+						defValue = true;
+					#end
+				case "mac":
+					#if mac
+						defValue = true;
+					#end
+				case "windows":
+					#if windows
+						defValue = true;
+					#end
+				case "flash":
+					#if flash
+						defValue = true;
+					#end
+				case "sys":
+					#if sys
+						defValue = true;
+					#end
+				case "cpp":
+					#if cpp
+						defValue = true;
+					#end
 				case "3ds": 
 					#if NINTENDO_3DS
 						defValue = true;
@@ -3052,7 +3141,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return f;
 	}
 	
-	private function calcMaxMinSize(data:Fast, width:Dynamic = null, height:Dynamic = null):MaxMinSize {
+	private function calcMaxMinSize(data:Fast, width:Null<Float> = null, height:Null<Float> = null):MaxMinSize {
 		var min_w:Float = 0;
 		var min_h:Float = 0;
 		var max_w:Float = Math.POSITIVE_INFINITY;

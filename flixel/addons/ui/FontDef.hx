@@ -148,6 +148,41 @@ class FontDef
 		return str;
 	}
 	
+	private function getFontExtension(str:String):String {
+		for (ext in EXTENSIONS) {
+			if(str.indexOf(ext) != -1){
+				return ext;
+			}
+		}
+		return str;
+	}
+	
+	private function fixFontName():Void
+	{
+		var fontStyle:String = getFontStyle(format.font);
+		var extension = getFontExtension(format.font);
+		var fontbase = stripFontExtensions(format.font);
+		if (fontStyle != "")
+		{
+			fontbase = fontbase.substr(0, fontbase.length - 1);
+		}
+		var styleStr:String = "";
+		if (format.bold && format.italic)
+		{
+			styleStr = "z";
+		}
+		else if (format.bold)
+		{
+			styleStr = "b";
+		}
+		else if (format.italic)
+		{
+			styleStr = "i";
+		}
+		format.font = fontbase + styleStr + extension;
+		file = fontbase + styleStr + extension;
+	}
+	
 	/**
 	 * See if a style is "baked" into the font str, and if so return it
 	 * @param	str font string, ie, "verdanab", "verdanai", "verdanaz"
@@ -185,5 +220,6 @@ class FontDef
 				format.bold = false;
 				format.italic = false;
 		}
+		fixFontName();
 	}
 }

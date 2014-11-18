@@ -20,12 +20,18 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget im
 	
 	public var params(default, set):Array<Dynamic>;
 	
-	public function resize(w:Float, h:Float):Void {
+	public function resize(w:Float, h:Float):Void
+	{
+		var sign:Int = 1;
+		if (h < height) { sign = -1;}
+		
 		width = w;
 		height = h;
 		
+		textField.width = width;
+		
 		var old_size:Float = size;
-		var diff:Float = height - graphic.bitmap.height;
+		var diff:Float = (height - graphic.bitmap.height);
 		
 		var oldText:String = text;
 		#if flash
@@ -37,16 +43,17 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget im
 		
 		var numLines:Int = textField.numLines;
 		
-		while (diff > 0 && failsafe < 999)
+		while ((diff*sign) > 0 && failsafe < 999)
 		{
 			failsafe++;
-			size++;
+			size += (1 * sign);
 			if (textField.numLines > numLines)		//Failsafe in case the expanding text causes it to break to a new line
 			{
-				size--;
+				size -= (1 * sign);
 				break;
 			}
-			calcFrame();
+			_regen = true;
+			calcFrame(true);
 			
 			#if flash
 				diff = height - (Std.int(textField.textHeight) + 4);
@@ -66,6 +73,12 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget im
 			FlxG.log.warn("Loop failsafe tripped while resizing FlxUIText to height(" + h + ")");
 			size = old_size;
 		}
+		
+		width = w;
+		height = h;
+		
+		_regen = true;
+		calcFrame(true);
 	}
 	
 	public function set_params(p:Array<Dynamic>):Array<Dynamic>

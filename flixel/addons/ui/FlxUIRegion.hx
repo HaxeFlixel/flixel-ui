@@ -18,6 +18,8 @@ class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizabl
 	public function new(X:Float=0,Y:Float=0,W:Float=16,H:Float=16) {
 		super(X, Y);
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
+		if (H < 1) { H = 1; }
+		if (W < 1) { W = 1; }
 		resize(W, H);
 	}
 	

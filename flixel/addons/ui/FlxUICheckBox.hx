@@ -228,10 +228,12 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIClic
 	private function _clickCheck():Void 
 	{
 		checked = !checked;
-		if (callback != null) { 
+		if (callback != null)
+		{
 			callback();
 		}
-		if(broadcastToFlxUI){
+		if (broadcastToFlxUI)
+		{
 			FlxUI.event(CLICK_EVENT, this, checked, params);
 		}
 	}
