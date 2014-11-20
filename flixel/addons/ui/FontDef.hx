@@ -140,8 +140,9 @@ class FontDef
 	 */
 	
 	private function stripFontExtensions(str:String):String {
+		if (str == null) return str;
 		for (ext in EXTENSIONS) {
-			if(str.indexOf(ext) != -1){
+			if(str != null && str.indexOf(ext) != -1){
 				str = StringTools.replace(str, ext, "");
 			}
 		}
@@ -149,6 +150,7 @@ class FontDef
 	}
 	
 	private function getFontExtension(str:String):String {
+		if (str == null) return "";
 		for (ext in EXTENSIONS) {
 			if(str.indexOf(ext) != -1){
 				return ext;
@@ -159,9 +161,9 @@ class FontDef
 	
 	private function fixFontName():Void
 	{
-		var fontStyle:String = getFontStyle(format.font);
-		var extension = getFontExtension(format.font);
-		var fontbase = stripFontExtensions(format.font);
+		var fontStyle:String = getFontStyle(file);
+		var extension = getFontExtension(file);
+		var fontbase = stripFontExtensions(file);
 		if (fontStyle != "")
 		{
 			fontbase = fontbase.substr(0, fontbase.length - 1);
@@ -179,7 +181,7 @@ class FontDef
 		{
 			styleStr = "i";
 		}
-		format.font = fontbase + styleStr + extension;
+		//format.font = fontbase + styleStr + extension;
 		file = fontbase + styleStr + extension;
 	}
 	
@@ -190,6 +192,7 @@ class FontDef
 	 */
 	
 	private function getFontStyle(str:String):String {
+		if (str == null) return "";
 		str = stripFontExtensions(str);
 		var lastChar:String = str.substr(str.length - 1, 1);
 		if (lastChar != "" && lastChar != null) {
