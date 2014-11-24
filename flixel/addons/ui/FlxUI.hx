@@ -2529,7 +2529,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 									graphic_ids[3] = U.gfx(image);
 								}
 							}
-							slice9_ids[0] = slice9;
+							if(!toggleState)
+							{
+								slice9_ids[0] = slice9;
+							}
+							else
+							{
+								slice9_ids[3] = slice9;
+							}
 						case "active", "highlight", "hilight", "over", "hover": 
 							if (image != "") { 
 								if(!toggleState){
@@ -2538,7 +2545,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 									graphic_ids[4] = U.gfx(image);
 								}
 							}
-							slice9_ids[1] = slice9;
+							if(!toggleState)
+							{
+								slice9_ids[1] = slice9;
+							}
+							else
+							{
+								slice9_ids[4] = slice9;
+							}
 						case "down", "pressed", "pushed":
 							if (image != "") { 
 								if(!toggleState){
@@ -2547,7 +2561,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 									graphic_ids[5] = U.gfx(image);
 								}
 							}
-							slice9_ids[2] = slice9;
+							if(!toggleState)
+							{
+								slice9_ids[2] = slice9;
+							}
+							else
+							{
+								slice9_ids[5] = slice9;
+							}
 						case "all":
 							if (image != "") { 
 								graphic_ids = [U.gfx(image)];

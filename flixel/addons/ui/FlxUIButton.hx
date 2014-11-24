@@ -130,7 +130,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	public function addIcon(icon:FlxSprite,X:Int=0,Y:Int=0,?center:Bool=true)
 	{
 		// Creates a backup of current button image.
-		_noIconGraphicsBkup = cachedGraphics.bitmap.clone();
+		_noIconGraphicsBkup = graphic.bitmap.clone();
 		
 		var sx:Int = X;
 		var sy:Int = Y;
@@ -141,7 +141,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		}
 		
 		// Stamps the icon in every frame of this button.
-		for (i in 0...frames)
+		for (i in 0...numFrames)
 		{
 			stamp(icon, sx, sy + Std.int(i * height));
 		}
@@ -152,9 +152,9 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		if (_noIconGraphicsBkup != null)
 		{
 			// Retreives the stored button image before icon was applied.
-			cachedGraphics.bitmap.fillRect(cachedGraphics.bitmap.rect, 0x0);					// clears the bitmap first.
-			cachedGraphics.bitmap.copyPixels(_noIconGraphicsBkup, new Rectangle(0, 0, _noIconGraphicsBkup.width, _noIconGraphicsBkup.height), new Point());
-			resetFrameBitmapDatas();
+			graphic.bitmap.fillRect(graphic.bitmap.rect, 0x0);					// clears the bitmap first.
+			graphic.bitmap.copyPixels(_noIconGraphicsBkup, new Rectangle(0, 0, _noIconGraphicsBkup.width, _noIconGraphicsBkup.height), new Point());
+			resetFrameBitmaps();
 			
 			#if flash
 			calcFrame();
