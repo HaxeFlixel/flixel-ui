@@ -30,13 +30,6 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget im
 		
 		if (h < height) { sign = -1;}
 		
-		/*
-		if (sign == -1)
-		{
-			return;
-		}
-		*/
-		
 		width = w;
 		height = h;
 		
