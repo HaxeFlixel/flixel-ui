@@ -451,9 +451,18 @@ class FlxInputText extends FlxText
 	private override function set_text(Text:String):String
 	{
 		#if !js
-			lastScroll = textField.scrollH;
+			if (textField != null)
+			{
+				lastScroll = textField.scrollH;
+			}
 		#end
 		var return_text:String = super.set_text(Text);
+		
+		if (textField == null)
+		{
+			return return_text;
+		}
+		
 		var numChars:Int = Text.length;
 		prepareCharBoundaries(numChars);
 		textField.text = "";
@@ -768,7 +777,7 @@ class FlxInputText extends FlxText
 		{
 			if (hasFocus != newFocus) 
 			{
-				_caretTimer = new FlxTimer(0.5, toggleCaret, 0);
+				_caretTimer = new FlxTimer().start(0.5, toggleCaret, 0);
 				caret.visible = true;
 				caretIndex = text.length;
 			}

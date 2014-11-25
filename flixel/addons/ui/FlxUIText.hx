@@ -15,15 +15,27 @@ import openfl.text.TextField;
 class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget implements IHasParams
 {
 	public var broadcastToFlxUI:Bool = true;
-	
 	public var id:String; 
-	
 	public var params(default, set):Array<Dynamic>;
+	public var minimumHeight(default, set):Float = 1;
 	
 	public function resize(w:Float, h:Float):Void
 	{
 		var sign:Int = 1;
+		
+		if (h < minimumHeight)
+		{
+			h = minimumHeight;
+		}
+		
 		if (h < height) { sign = -1;}
+		
+		/*
+		if (sign == -1)
+		{
+			return;
+		}
+		*/
 		
 		width = w;
 		height = h;
@@ -47,7 +59,7 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget im
 		{
 			failsafe++;
 			size += (1 * sign);
-			if (textField.numLines > numLines)		//Failsafe in case the expanding text causes it to break to a new line
+			if (sign > 0 && textField.numLines > numLines)		//Failsafe in case the expanding text causes it to break to a new line
 			{
 				size -= (1 * sign);
 				break;
@@ -79,6 +91,16 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget im
 		
 		_regen = true;
 		calcFrame(true);
+	}
+	
+	public function set_minimumHeight(H:Float):Float
+	{
+		if (H < 1)
+		{
+			H = 1;
+		}
+		minimumHeight = H;
+		return minimumHeight;
 	}
 	
 	public function set_params(p:Array<Dynamic>):Array<Dynamic>
