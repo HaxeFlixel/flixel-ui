@@ -46,7 +46,47 @@ class U
 			}
 		}return default_str;
 	} 
-		
+	/**
+	 * Safety wrapper for reading a FlxColor attribute from xml
+	 * @param	data the Xml object
+	 * @param	att a color string in either 0xRRGGBB or 0xAARRGGBB format
+	 * @param	cast32Bit if true adds an alpha channel if not detected
+	 */
+	
+	public static function xml_color(data:Xml, att:String, cast32Bit:Bool=true, defaultColor:Null<FlxColor>=null):Null<FlxColor>
+	{
+		var col:Null<FlxColor> = null;
+		var str:String = U.xml_str(data, att, true);
+		if (str != "")
+		{
+			col = U.parseHex(str, cast32Bit);
+		}
+		if (col == null && defaultColor != null)
+		{
+			col = defaultColor;
+		}
+		return col;
+	}
+	
+	public static function xml_colorArray(data:Xml, att:String, cast32Bit:Bool = true):Array<FlxColor>
+	{
+		var cols:Array<FlxColor> = null;
+		var str:String = U.xml_str(data, att, true);
+		if (str != "")
+		{
+			var arr = str.split(",");
+			if (arr != null && arr.length > 0)
+			{
+				cols = [];
+				for (i in 0...arr.length)
+				{
+					cols[i] = U.parseHex(arr[i], cast32Bit);
+				}
+			}
+		}
+		return cols;
+	}
+	
 	/**
 	 * If a string is a number that ends with a % sign, it will return a normalized percent float (0-100% = 0.0-1.0)
 	 * @param  str a percentage value, such as "5%" or "236.214%"

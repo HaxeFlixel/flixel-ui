@@ -10,6 +10,7 @@ import flixel.addons.ui.FlxUI.MaxMinSize;
 import flixel.addons.ui.ButtonLabelStyle;
 import flixel.addons.ui.FlxUI.Rounding;
 import flixel.addons.ui.FlxUI.VarValue;
+import flixel.addons.ui.FlxUIBar.FlxBarStyle;
 import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.addons.ui.BorderDef;
 import flixel.addons.ui.FlxUIRadioGroup.CheckStyle;
@@ -29,6 +30,7 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
+import flixel.ui.FlxBar.FlxBarFillDirection;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxColor;
 import flixel.math.FlxPoint;
@@ -1161,6 +1163,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			case "tile_test": return _loadTileTest(info);
 			case "line": return _loadLine(info);
 			case "sprite": return _loadSprite(info);
+			case "bar": return _loadBar(info);
 			case "text": return _loadText(info);								//if input has events
 			case "input_text": return _loadInputText(info);								//if input has events
 			case "numeric_stepper": return _loadNumericStepper(info);			//has events, params
@@ -2952,6 +2955,111 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return fs;
 	}
 	
+	private function _loadBar(data:Fast):FlxUIBar
+	{
+		var fb:FlxUIBar = null;
+		
+		var style:FlxBarStyle = {
+			filledColors:null,
+			emptyColors:null,
+			
+			chunkSize:null,
+			gradRotation:null,
+			
+			filledColor:null,
+			emptyColor:null,
+			borderColor:null,
+			
+			filledImgSrc:"",
+			emptyImgSrc:""
+		}
+		
+		var bounds: { min_width:Float, min_height:Float, 
+					  max_width:Float, max_height:Float } = calcMaxMinSize(data);
+		
+		var W:Int = Std.int(_loadWidth(data,-1));
+		var H:Int = Std.int(_loadHeight(data,-1));
+		
+		var direction:String = U.xml_str(data.x, "fill_direction", true);
+		var fillDir:FlxBarFillDirection = FlxBarFillDirection.TOP_TO_BOTTOM;
+		
+		switch(direction)
+		{
+			case "left_to_right": fillDir = FlxBarFillDirection.LEFT_TO_RIGHT;
+			case "right_to_left": fillDir = FlxBarFillDirection.RIGHT_TO_LEFT;
+			case "top_to_bottom": fillDir = FlxBarFillDirection.TOP_TO_BOTTOM;
+			case "bottom_to_top": fillDir = FlxBarFillDirection.BOTTOM_TO_TOP;
+			case "horizontal_inside_out": fillDir = FlxBarFillDirection.HORIZONTAL_INSIDE_OUT;
+			case "horizontal_outside_in": fillDir = FlxBarFillDirection.HORIZONTAL_OUTSIDE_IN;
+			case "vertical_inside_out": fillDir = FlxBarFillDirection.VERTICAL_INSIDE_OUT;
+			case "vertical_outside_in": fillDir = FlxBarFillDirection.VERTICAL_OUTSIDE_IN;
+			default: fillDir = FlxBarFillDirection.LEFT_TO_RIGHT;
+		}
+		
+		var parentRefStr:String = U.xml_str(data.x, "parent_ref", true);
+		var parentRef:IFlxUIWidget = parentRefStr != "" ? getAsset(parentRefStr) : null;
+		var variableName:String = U.xml_str(data.x, "variable");
+		
+		var value:Float = U.xml_f(data.x, "value", -1);
+		
+		var min:Float = U.xml_f(data.x, "min", 0);
+		var max:Float = U.xml_f(data.x, "max", 100);
+		
+		if (value == -1)
+		{
+			value = max;
+		}
+		
+		style.borderColor = U.xml_color(data.x, "border_color");
+		var showBorder:Bool = style.borderColor != null;
+		
+		style.filledColor = U.xml_color(data.x, "filled_color");
+		if (style.filledColor == null)
+		{
+			style.filledColor = U.xml_color(data.x, "color");
+		}
+		
+		style.emptyColor = U.xml_color(data.x, "empty_color");
+		
+		style.filledColors  = U.xml_colorArray(data.x, "filled_colors");
+		style.emptyColors = U.xml_colorArray(data.x, "empty_colors");
+		if (style.filledColors == null)
+		{
+			style.filledColors = U.xml_colorArray(data.x, "colors");
+		}
+		
+		style.filledImgSrc = loadScaledSrc(data,"src_filled");
+		style.emptyImgSrc = loadScaledSrc(data,"src_empty");
+		if (style.filledImgSrc == "")
+		{
+			style.filledImgSrc = loadScaledSrc(data,"src");
+		}
+		
+		style.chunkSize = U.xml_i(data.x, "chunk_size",1);
+		style.gradRotation = U.xml_i(data.x, "rotation",90);
+		
+		if (style.filledImgSrc == "" && style.filledColor == null && style.filledColors == null)
+		{
+			style.filledColor = FlxColor.RED;	//default to a nice plain filled red bar
+		}
+		
+		if (W == -1 && H == -1)	//If neither Width nor Height is supplied, create with default size
+		{
+			fb = new FlxUIBar(0, 0, fillDir, 100, 10, parentRef, variableName, min, max, showBorder);
+		}
+		else					//If Width or Height or both is/are supplied, create at the given size
+		{
+			fb = new FlxUIBar(0, 0, fillDir, W, H, parentRef, variableName, min, max, showBorder);
+		}
+		
+		fb.style = style;
+		fb.resize(fb.barWidth, fb.barHeight);
+		
+		fb.value = value;
+		
+		return fb;
+	}
+	
 	private function _loadSprite(data:Fast):FlxUISprite {
 		var src:String = ""; 
 		var fs:FlxUISprite = null;
@@ -3032,9 +3140,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @return	the unique key of the scaled bitmap
 	 */
 	
-	private function loadScaledSrc(data:Fast):String
+	private function loadScaledSrc(data:Fast,attName:String="src"):String
 	{
-		var src:String = U.xml_str(data.x, "src");					//get the original src
+		var src:String = U.xml_str(data.x, attName);					//get the original src
 		if (data.hasNode.scale)
 		{
 			for (scaleNode in data.nodes.scale)
@@ -3057,7 +3165,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 			}
 		}
-		return U.xml_gfx(data.x, "src"); 		//no resolution tag found, just return original src
+		return U.xml_gfx(data.x, attName); 		//no resolution tag found, just return original src
 	}
 	
 	
