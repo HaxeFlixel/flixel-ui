@@ -721,14 +721,14 @@ class FlxInputText extends FlxText
 			var pattern:EReg;
 			switch(filterMode) 
 			{
-				case ONLY_ALPHA:		pattern = ~/[^a-zA-Z]*/g;		
-				case ONLY_NUMERIC:		pattern = ~/[^0-9]*/g;			
-				case ONLY_ALPHANUMERIC:	pattern = ~/[^a-zA-Z0-9]*/g;	
-				case CUSTOM_FILTER:		pattern = customFilterPattern;	
+				case ONLY_ALPHA:		pattern = ~/[^a-zA-Z]*/g;
+				case ONLY_NUMERIC:		pattern = ~/[^0-9]*/g;
+				case ONLY_ALPHANUMERIC:	pattern = ~/[^a-zA-Z0-9]*/g;
+				case CUSTOM_FILTER:		pattern = customFilterPattern;
 				default:
 					throw new Error("FlxInputText: Unknown filterMode (" + filterMode + ")");
 			}
-			pattern.replace(text, "");
+			text = pattern.replace(text, "");
 		}
 		return text;
 	}

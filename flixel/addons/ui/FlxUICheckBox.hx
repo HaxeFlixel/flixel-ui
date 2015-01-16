@@ -40,12 +40,15 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIClic
 	
 	public static inline var CLICK_EVENT:String = "click_check_box";
 	
-	private function set_skipButtonUpdate(b:Bool):Bool {
+	private function set_skipButtonUpdate(b:Bool):Bool
+	{
 		skipButtonUpdate = b;
 		button.skipButtonUpdate = skipButtonUpdate;
 		return skipButtonUpdate;
 	}
-	private function set_params(p:Array <Dynamic>):Array<Dynamic>{
+	
+	private function set_params(p:Array <Dynamic>):Array<Dynamic>
+	{
 		params = p;
 		if (params == null) 
 		{ 
@@ -56,7 +59,8 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIClic
 		return params;
 	}
 
-	private override function set_color(Value:Int):Int {
+	private override function set_color(Value:Int):Int
+	{
 		if (button != null)
 		{
 			button.label.color = Value;
@@ -72,13 +76,22 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIClic
 		
 		params = Params;
 		
-		box = new FlxSprite();
-		if (Box == null) {
+		
+		if (Box == null)
+		{
 			//if null create a simple checkbox outline
 			Box = FlxUIAssets.IMG_CHECK_BOX;
 		}
 		
-		box.loadGraphic(Box, true);
+		if (Std.is(Box,FlxSprite))
+		{
+			box = cast Box;
+		}
+		else
+		{
+			box = new FlxSprite();
+			box.loadGraphic(Box, true);
+		}
 		
 		button = new FlxUIButton(0, 0, Label, _clickCheck);
 		
@@ -97,13 +110,21 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIClic
 		
 		button.onUp.callback = _clickCheck;    //for internal use, check/uncheck box, bubbles up to _externalCallback
 		
-		mark = new FlxSprite();
-		if (Check == null) {
+		if (Check == null)
+		{
 			//if null load from default assets:
 			Check = FlxUIAssets.IMG_CHECK_MARK;
-		}		
+		}
 		
-		mark.loadGraphic(Check);
+		if (Std.is(Check, FlxSprite))
+		{
+			mark = cast Check;
+		}
+		else
+		{
+			mark = new FlxSprite();
+			mark.loadGraphic(Check);
+		}
 		
 		add(box);
 		add(mark);

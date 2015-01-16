@@ -3,6 +3,7 @@ package flixel.addons.ui;
 import flash.display.BitmapData;
 import flash.display.BlendMode;
 import flash.geom.Point;
+import flixel.addons.ui.FlxUI.MaxMinSize;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -377,6 +378,18 @@ class U
 		return str + Std.string(i);
 	}
 	
+	public static function conformToBounds(pt:Point,maxMin:MaxMinSize):Point
+	{
+		if (maxMin != null)
+		{
+			if (pt.x < maxMin.min_width) pt.x = maxMin.min_width;
+			if (pt.y < maxMin.min_height) pt.y = maxMin.min_height;
+			if (pt.x > maxMin.max_width) pt.x = maxMin.max_width;
+			if (pt.x > maxMin.max_height) pt.y = maxMin.max_height;
+		}
+		return pt;
+	}
+	
 	/**
 	 * Parses hex string to equivalent integer, with safety checks
 	 * @param	hex_str string in format 0xRRGGBB or 0xAARRGGBB
@@ -388,10 +401,14 @@ class U
 	
 	public static inline function parseHex(str:String,cast32Bit:Bool=false,safe:Bool=false,default_color:Int=0x000000):Int {
 		var return_val = FlxColor.fromString(str);
-		if(return_val == null) {
-			if(!safe) {
+		if (return_val == null)
+		{
+			if (!safe)
+			{
 				throw "U.parseHex() unable to parse hex String " + str;
-			}else {
+			}
+			else
+			{
 				return_val = default_color;	
 			}
 		}	
@@ -720,17 +737,21 @@ class U
 		return _font(str, style);
 	}	
 	
- 	public static function font(str:String, style:String = ""):String {
+ 	public static function font(str:String, style:String = ""):String
+	{
 		var str:String = _font(str, style);
-		if (str.indexOf(".ttf") == -1) {
+		if (str.indexOf(".ttf") == -1)
+		{
 			str = str + ".ttf";
 		}
+		
 		return str;
 		//return _font(str,style) + ".ttf";
 	}
 	
 		//inline that does the work:
-		private static inline function _font(str:String, style:String=""):String {
+		private static inline function _font(str:String, style:String = ""):String
+		{
 			style = style.toLowerCase();
 			var suffix:String = "";
 			switch(style) {
@@ -970,12 +991,22 @@ class U
 		return null; 				//failure
 	}
 	
-	public static function loadImageScaleToHeight(src:String, Height:Float, Smooth:Bool = true):String
+	public static function loadImageScaleToHeight(src:String, Height:Float, Smooth:Bool = true,checkFlxBitmap:Bool=false):String
 	{
 		var bmpSrc:String = gfx(src);
-		var	testBmp:BitmapData = Assets.getBitmapData(bmpSrc, true);
+		var testBmp:BitmapData = null;
+		
+		if (!checkFlxBitmap)
+		{
+			testBmp = Assets.getBitmapData(bmpSrc, true);
+		}
+		else
+		{
+			var flximg = FlxG.bitmap.get(bmpSrc);
+			testBmp = flximg != null ? flximg.bitmap : null;
+		}
 		var ratio:Float = Height / testBmp.height;
-		return loadMonoScaledImage(bmpSrc, ratio, Smooth);
+		return loadMonoScaledImage(bmpSrc, ratio, Smooth, checkFlxBitmap);
 	}
 	
 	/**
@@ -1163,19 +1194,32 @@ class U
    }
    
 	public static function get_gfx(str:String):String {
+		var return_str:String = "";
+		
 		if (str != null && str.length > 4 && str.indexOf(".png") != -1)
 		{
 			str = str.substr(0, str.length - 4);	//strip off the .png suffix if it exists
 		}
 		if (str.indexOf("raw:") == 0 || str.indexOf("RAW:") == 0) {
 			str = str.substr(4, str.length - 4);
-			return str + ".png";
+			return_str = str + ".png";
 		}
 		if (str != null && str.indexOf("assets/gfx/") == 0)
 		{
-			return str + ".png";
+			return_str = str + ".png";
 		}
-		return "assets/gfx/" + str + ".png";
+		
+		if (return_str == "")
+		{
+			return_str = "assets/gfx/" + str + ".png";
+		}
+		
+		if (return_str.indexOf(".stitch.txt.png") != -1)
+		{
+			return_str = StringTools.replace(return_str,".stitch.txt.png", ".stitch.txt");
+		}
+		
+		return return_str;
 	}
 	
 	public static inline function sfx(str:String):String {
