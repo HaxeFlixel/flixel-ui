@@ -474,13 +474,14 @@ Static, individual frames:
 I'm not 100% sure what will happen if you do individual frames and omit one, but I think I set it up to copy one of the other ones in some kind of "smart" way. Again, it's always best to be explicit about what you want rather than be ambiguous and have the system guess.
 
 #####3.3 Button Text
-To specify what the text in a button looks like, you create a \<text> child node.
-You can specify all the properties right here, or use a definition. There's a few special considerations for <text> nodes inside of a button.
+To specify what the text in a button looks like, you create a ```<text>``` child node.
+You can specify all the properties right here, or use a definition. There's a few special considerations for ```<text>``` nodes inside of a button.
 
 The main "color" attribute (hexadecimal format, "0xffffff") is the main label color
 
-If you want to specify colors for other states, you add \<color> tags inside the \<text> tag for each state:
-````
+If you want to specify colors for other states, you add ```<color>``` tags inside the ```<text>``` tag for each state:
+
+```xml
 <button x="200" y="505" id="some_button" use_def="text_button" label="Click Me">
 	<text use_def="vera10" color="0xffffff">
 		<color id="over" value="0xffff00"/>
@@ -516,6 +517,7 @@ Toggle buttons need more graphics than a regular button. To do this, you need to
 ```
 
 Of course, if you create a single asset with 6 images stacked vertically, you can save yourself some room:
+
 ```xml
 <definition id="button_toggle" width="50" height="20">		
 	<text use_def="sans10c" color="0xffffff">
