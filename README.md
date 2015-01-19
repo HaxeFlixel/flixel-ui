@@ -148,6 +148,7 @@ This is any of the many Flixel-UI widgets, such as ```<sprite>```, ```<button>``
   * **up**: round up
   * **round** or **true**: round up if decimal is >= 0.5, round down otherwise.
   * **false** (or attribute absent): do not round
+  
 --
 
 *Child nodes:*
