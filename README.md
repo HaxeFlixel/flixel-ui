@@ -4,6 +4,8 @@
 
 [![Build Status](https://travis-ci.org/HaxeFlixel/flixel-ui.png)](https://travis-ci.org/HaxeFlixel/flixel-ui)
 
+----
+
 #Getting Started
 
 ##Install flixel-ui:
@@ -51,13 +53,15 @@ You can compare this to [State_DefaultTest](https://github.com/HaxeFlixel/flixel
 
 ##Graphic assets for Widgets
 
-####Default Assets
+###Default Assets
 
 Flixel-UI has a default set of assets (see [FlxUIAssets](https://github.com/HaxeFlixel/flixel-ui/blob/master/flixel/addons/ui/FlxUIAssets.hx) and the [assets folder](https://github.com/HaxeFlixel/flixel-ui/tree/master/assets)) for basic skinning. If you provide incomplete data and/or definitions for your widgets, FlxUI will automatically attempt to fall back on the default assets. 
 
-####Custom Assets
+###Custom Assets
 
 If you want to provide your own assets, you should put them in your project's "assets" folder, using the same structure you see in the [demo project](https://github.com/HaxeFlixel/flixel-demos/tree/master/User%20Interface/RPG%20Interface).
+
+----
 
 #FlxUI public functions
 
@@ -102,6 +106,8 @@ replaceAsset(key:String,replace:FlxBasic,center_x:Bool=true,center_y:Bool=true,d
 setMode(mode_id:String,target_id:String=""):Void
 ```
 
+----
+
 #XML layout basics
 Everything in flixel-ui is done with xml layout files. Here's a very simple example:
 
@@ -122,7 +128,7 @@ As you can see, all image source entries assume two things:
 * The format is PNG (might add JPG/GIF/etc support later)
 * The specified directory is inside "assets/gfx/"
   * If you want a different directory, prepend it with "RAW:" like this:
-  * ````"RAW:path/to/my/assets/image"```` will resolve as ````"path/to/my/assets/image.png"````
+  * ````"RAW:path/to/my/assets/image"```` will resolve as ````"path/to/my/assets/image.png"```` instead of ```"assets/gfx/path/to/my/assets/image.png"```
 
 ##Types of tags
 There are several basic types of xml tags in a Flixel-UI layout file.
@@ -138,7 +144,7 @@ This is any of the many Flixel-UI widgets, such as ```<sprite>```, ```<button>``
 
 *Attributes:*
 * **id** - string, optional, should be unique. Lets you reference this widget throughout the layout, and also lets you fetch it by name with FlxUI's ```getAsset("some_id")``` function.
-* **x** and **y** - integer, specifies position. If no anchor tag exists as a child node, the position is absolute. If an anchor tag exists, the position is relative to the anchor.
+* **x** and **y** - integer, specifies position. If no anchor tag exists as a child node, the position is absolute. If an anchor tag exists, the position is relative to the anchor.*
 * **use_def** - string, optional, references a ```<definition>``` tag by id to use for this widget.
 * **group** - string, optional, references a ```<group>``` tag by id. Will make this widget the child of that group instead of the FlxUI itself.
 * **visible** - boolean, optional, sets the visibility of the widget when the layout is loaded
@@ -153,6 +159,7 @@ This is any of the many Flixel-UI widgets, such as ```<sprite>```, ```<button>``
 
 *Child nodes:*
 * **\<anchor>** - optional, lets you position this widget relative to another object's position.*
+* **\<param>** - optional, lets you specify parameters**
 * **size tags** - optional, lets you dynamically size a widget according to some formula.*
 * **\<locale id="xx-YY">** - optional, lets you specify a locale (like "en-US" or "nb-NO") for [fireTongue](https://github.com/larsiusprime/firetongue) integration. This lets you specify changes based on the current locale:
 Example:
@@ -167,7 +174,9 @@ Example:
 </button>
 ```
 
-*More info on Anchor and Size tags appears towards the bottom in the "Dynamic Position & Size" section.
+\* More info on Anchor and Size tags appears towards the bottom in the "Dynamic Position & Size" section. 
+
+\*\* More info on Parameters can be found under the Button entry in "List of Widgets". Only some widgets use parameters. 
 
 --
 
@@ -319,15 +328,15 @@ Several tags are available in a **\<mode>** element. The most basic ones are ```
 
 The change tag lets you modify various properties of a widget after it has already been created. The widget matching the attribute "id" will be targeted. The following attributes may be used:
 
-* **text** -- Change ```text``` property of the widget (FlxUIText or FlxUIInputText). Can also set "context" and "code" attributes.*
-* **label** -- Change ```label``` property of the widget (For buttons or anything else with a text label). Can also set "context" and "code" attributes.\*
+* **text** -- Change ```text``` property of the widget (FlxUIText or FlxUIInputText). Can also set "context" and "code" attributes for objects with text and/or labels. \*
+* **label** -- Change ```label``` property of the widget (For buttons or anything else with a text label). Can also set "context" and "code" attributes.
 * **width** -- Change width, same as using it in the original widget tag
 * **height** -- Change height, same as using it in the original widget tag
 * **<params>** (child node) -- Change ```params``` property to this list.\*\*
 
-\* See "Working With Text" later in the document.
+\* See "Button" entry under "List of Widgets" for more on "context" and "code" properties.
 
-\*\* See "Working With Parameters" later in the document
+----
 
 #List of Widgets
 
@@ -693,6 +702,8 @@ TODO
 
 TODO
 
+----
+
 #Dynamic position & size
 
 ##1. Anchor Tags
@@ -727,7 +738,23 @@ You can also specify a **round** attribute (up/down/round/true/false) in the anc
 **Note to non-native speakers of English:** "flush" is a carpentry term, so if one side of one object is parallel to and touching another object's side with no air between them, the objects are "flush." This has nothing to do with toilets :)
 
 --
-##2. Size Tags
+##2. Position Tags
+
+Sometimes you want to be able to change the position of a widget later in the xml markup. Position tags work much like the original creation tag for the object, except you ONLY include the attribute id of the object you want to move, and any relevant position information.
+
+```xml
+<position id="thing" x="12" y="240"/>
+```
+
+You can use anchor tags, formulas, etc inside a position tag:
+```xml
+<position id="thing" x="other_thing.right" y="other_thing.bottom">
+  <anchor id="other_thing" x-flush="left" y-flush="top"/>
+</position>
+```
+
+--
+##3. Size Tags
 
 Let's add a size tag to our health bar:
 ```xml
@@ -768,7 +795,7 @@ Acceptable property values for reference formula, used alone or in a stretch:
  * Don't try to get too crazy here. If you need to do some super duper math, just add some code in your FlxUIState, call getAsset("some_id") to grab your assets, and do the craziness yourself.
 
 --
-##3. Alignment Tags
+##4. Alignment Tags
 
 An ```<align>``` tag lets you automatically align and space various objects together.
 
@@ -888,3 +915,37 @@ class FireTongueEx extends FireTongue implements IFireTongue
 	}	
 }
 ````
+
+----------
+
+#Advanced Tip & Tricks
+
+There's a lot of clever things you can do with flixel-ui once you know what you're doing.
+
+##1. "screen" widget always represents the flixel canvas
+
+There is always a FlxUIRegion defined by the system in any root-level FlxUI objects with the reserved named "screen". So you can always use "screen.width", "screen.top", "screen.right", etc, in any of your formulas.
+
+##2. Resolution independent text
+
+It's common for beginners to define their fonts in absolute terms like this:
+```xml
+<definition id="sans10" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
+<definition id="sans12" font="verdana" size="12" style="bold" color="0xffffff" outline="0x000000"/>
+<definition id="sans12" font="verdana" size="16" style="bold" color="0xffffff" outline="0x000000"/>
+<definition id="sans12" font="verdana" size="20" style="bold" color="0xffffff" outline="0x000000"/>
+<definition id="sans12" font="verdana" size="30" style="bold" color="0xffffff" outline="0x000000"/>
+```
+
+Size 10 font might look just fine if your game is 800x600, but what if you let the user choose the window/screen size, and they're viewing the game in 1920x1080? What if you're targetting multiple different devices? At 800x600, Size 10 font is 1.67% of the total screen height. At 1920x1080, it's 0.93%, almost half the size! So we should use a bigger font. But it might be a huge pain to use code to inspect every text field and update it. Here's a better way to do things:
+
+```xml
+<definition id="sans_tiny"     font="verdana" size="screen.height*0.01667" style="bold" color="0xffffff" outline="0x000000"/>
+<definition id="sans_small"    font="verdana" size="screen.height*0.02000" style="bold" color="0xffffff" outline="0x000000"/>
+<definition id="sans_medium"   font="verdana" size="screen.height*0.02667" style="bold" color="0xffffff" outline="0x000000"/>
+<definition id="sans_large"    font="verdana" size="screen.height*0.03334" style="bold" color="0xffffff" outline="0x000000"/>
+<definition id="sans_huge"     font="verdana" size="screen.height*0.04167" style="bold" color="0xffffff" outline="0x000000"/>
+<definition id="sans_enormous" font="verdana" size="screen.height*0.05000" style="bold" color="0xffffff" outline="0x000000"/>
+```
+
+By defining the font size in terms of the screen height, we can achieve the same results at 800x600, but make the text grow dynamically with the size of the screen. "sans_tiny" will be 10 points high in 800x600, but 18 points high in 1920x1080, representing the same proportion of the screen.
