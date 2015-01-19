@@ -755,7 +755,7 @@ So, if you have a scoreboard at the top of the screen, and you want the playfiel
 
 ```xml
 <exact_size height="stretch:scoreboard.bottom,bottom"/>
-```xml
+```
 
 Acceptable property values for reference formula, used alone or in a stretch:
 * **naked reference** (ie, "some_id") - returns inferred x or y position of that thing.
