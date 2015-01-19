@@ -347,7 +347,7 @@ Lets go over these one by one. Many of them share common attributes so I will on
 
 ###1. Image (FlxUISprite) ```<sprite>```
 
-Just a regular sprite, with a fixed size.
+Just a regular sprite. Can be scaled or fixed size.
 
 Attributes:
 * ```x``` and ```y```
