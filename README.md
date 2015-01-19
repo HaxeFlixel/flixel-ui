@@ -272,7 +272,7 @@ Specifies UI "modes" that you can switch between. For instance, in Defender's Qu
 
 The "empty" and "play" modes might look like this:
 
-````
+```xml
 <mode id="empty">
 	<show id="new_game"/>
 	<show id="import"/>
@@ -305,7 +305,7 @@ The "empty" and "play" modes might look like this:
 	<hide id="new_game"/>
 	<hide id="new_game+"/>
 </mode>
-````
+```
 
 Several tags are available in a **\<mode>** element. The most basic ones are ```<hide>``` and ```<show>```, which each only take id as an attribute. They just toggle the "visible" property on and off for the widget matching the "id" attribute. The full list is:
 
