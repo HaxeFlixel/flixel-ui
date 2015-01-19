@@ -486,16 +486,15 @@ If you want to specify colors for other states, you add \<color> tags inside the
 ````
 
 
-###4. Button, Toggle (FlxUIButton) 
-**\<button_toggle>**
+###4. Button, Toggle (FlxUIButton) ```<button_toggle>```
 
-Toggle buttons are made from the same class as regular buttons, FlxUIButton.
+Toggle buttons are made from the same class as regular buttons, ```FlxUIButton```.
 
 Toggle buttons are different in that they have 6 states, 3 for up/over/down when toggled, and 3 for up/over/down when not toggled. By default, a freshly loaded toggle button's "toggle" value is false.
 
-Toggle buttons need more graphics than a regular button. To do this, you need to provide graphic tags for both the regular and untoggled states. The toggled \<graphic> tags are the same, they just need an additional toggle="true" attribute:
+Toggle buttons need more graphics than a regular button. To do this, you need to provide graphic tags for both the regular and untoggled states. The toggled ```<graphic>``` tags are the same, they just need an additional toggle="true" attribute:
 
-````
+```xml
 <definition id="tab_button_toggle" width="50" height="20" text_x="-2" text_y="0">			
 	<text use_def="sans10c" color="0xcccccc">
 		<color id="over" value="0xccaa00"/>
@@ -511,10 +510,10 @@ Toggle buttons need more graphics than a regular button. To do this, you need to
 	<graphic id="over" toggle="true" image="ui/buttons/tab_grey_over" slice9="6,6,12,12"/>				
 	<graphic id="down" toggle="true" image="ui/buttons/tab_grey_over" slice9="6,6,12,12"/>				
 </definition>
-````
+```
 
 Of course, if you create a single asset with 6 images stacked vertically, you can save yourself some room:
-````
+```xml
 <definition id="button_toggle" width="50" height="20">		
 	<text use_def="sans10c" color="0xffffff">
 		<color id="over" value="0xffff00"/>
@@ -522,7 +521,7 @@ Of course, if you create a single asset with 6 images stacked vertically, you ca
 	
 	<graphic id="all" image="ui/buttons/button_blue_toggle" slice9="6,6,12,12"/>		
 </definition>
-````
+```
 
 Note that you can create a vertical stack of 9-slice assets, or regular statically-sized assets, the system can use either one. 
 
