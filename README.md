@@ -4,6 +4,8 @@
 
 [![Build Status](https://travis-ci.org/HaxeFlixel/flixel-ui.png)](https://travis-ci.org/HaxeFlixel/flixel-ui)
 
+----
+
 #Getting Started
 
 ##Install flixel-ui:
@@ -51,13 +53,15 @@ You can compare this to [State_DefaultTest](https://github.com/HaxeFlixel/flixel
 
 ##Graphic assets for Widgets
 
-####Default Assets
+###Default Assets
 
 Flixel-UI has a default set of assets (see [FlxUIAssets](https://github.com/HaxeFlixel/flixel-ui/blob/master/flixel/addons/ui/FlxUIAssets.hx) and the [assets folder](https://github.com/HaxeFlixel/flixel-ui/tree/master/assets)) for basic skinning. If you provide incomplete data and/or definitions for your widgets, FlxUI will automatically attempt to fall back on the default assets. 
 
-####Custom Assets
+###Custom Assets
 
 If you want to provide your own assets, you should put them in your project's "assets" folder, using the same structure you see in the [demo project](https://github.com/HaxeFlixel/flixel-demos/tree/master/User%20Interface/RPG%20Interface).
+
+----
 
 #FlxUI public functions
 
@@ -101,6 +105,8 @@ replaceAsset(key:String,replace:FlxBasic,center_x:Bool=true,center_y:Bool=true,d
 //            "" for this FlxUI, something else for a child
 setMode(mode_id:String,target_id:String=""):Void
 ```
+
+----
 
 #XML layout basics
 Everything in flixel-ui is done with xml layout files. Here's a very simple example:
@@ -329,6 +335,8 @@ The change tag lets you modify various properties of a widget after it has alrea
 * **<params>** (child node) -- Change ```params``` property to this list.\*\*
 
 \* See "Button" entry under "List of Widgets" for more on "context" and "code" properties.
+
+----
 
 #List of Widgets
 
@@ -694,6 +702,8 @@ TODO
 
 TODO
 
+----
+
 #Dynamic position & size
 
 ##1. Anchor Tags
@@ -905,3 +915,37 @@ class FireTongueEx extends FireTongue implements IFireTongue
 	}	
 }
 ````
+
+----------
+
+#Advanced Tip & Tricks
+
+There's a lot of clever things you can do with flixel-ui once you know what you're doing.
+
+##1. "screen" widget always represents the flixel canvas
+
+There is always a FlxUIRegion defined by the system in any root-level FlxUI objects with the reserved named "screen". So you can always use "screen.width", "screen.top", "screen.right", etc, in any of your formulas.
+
+##2. Resolution independent text
+
+It's common for beginners to define their fonts in absolute terms like this:
+```xml
+<definition id="sans10" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
+<definition id="sans12" font="verdana" size="12" style="bold" color="0xffffff" outline="0x000000"/>
+<definition id="sans12" font="verdana" size="16" style="bold" color="0xffffff" outline="0x000000"/>
+<definition id="sans12" font="verdana" size="20" style="bold" color="0xffffff" outline="0x000000"/>
+<definition id="sans12" font="verdana" size="30" style="bold" color="0xffffff" outline="0x000000"/>
+```
+
+Size 10 font might look just fine if your game is 800x600, but what if you let the user choose the window/screen size, and they're viewing the game in 1920x1080? What if you're targetting multiple different devices? At 800x600, Size 10 font is 1.67% of the total screen height. At 1920x1080, it's 0.93%, almost half the size! So we should use a bigger font. But it might be a huge pain to use code to inspect every text field and update it. Here's a better way to do things:
+
+```xml
+<definition id="sans_tiny"     font="verdana" size="screen.height*0.01667" style="bold" color="0xffffff" outline="0x000000"/>
+<definition id="sans_small"    font="verdana" size="screen.height*0.02000" style="bold" color="0xffffff" outline="0x000000"/>
+<definition id="sans_medium"   font="verdana" size="screen.height*0.02667" style="bold" color="0xffffff" outline="0x000000"/>
+<definition id="sans_large"    font="verdana" size="screen.height*0.03334" style="bold" color="0xffffff" outline="0x000000"/>
+<definition id="sans_huge"     font="verdana" size="screen.height*0.04167" style="bold" color="0xffffff" outline="0x000000"/>
+<definition id="sans_enormous" font="verdana" size="screen.height*0.05000" style="bold" color="0xffffff" outline="0x000000"/>
+```
+
+By defining the font size in terms of the screen height, we can achieve the same results at 800x600, but make the text grow dynamically with the size of the screen. "sans_tiny" will be 10 points high in 800x600, but 18 points high in 1920x1080, representing the same proportion of the screen.
