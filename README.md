@@ -585,7 +585,7 @@ Attributes:
 Text fields can also have borders. You can do this by specifying these four values:
 
 * ```border``` - string, border style:
-  * ```false```\```none``` - no border
+  * ```false```/```none``` - no border
   * ```shadow``` - drop shadow
   * ```outline``` - border (higher quality)
   * ```outline_fast``` - border (lower quality)
