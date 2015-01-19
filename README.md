@@ -355,7 +355,7 @@ Attributes:
 * ```color``` (color of the rectangle. "color" attribute should be hexadecimal format ```0xAARRGGBB```, or ```0xRRGGBB```, or a standard color string name like "white" from ```flixl.util.FlxColor```)
 * ```use_def``` (definition id)
 * ```group``` (group id)
-* ```width``` and ```height``` (optional, use exact pixel values or formulas to scale the image)
+* ```width``` and ```height``` (optional, use exact pixel values or formulas -- will scale the image if they differ from the source image's native width/height)
 * ```resize_ratio``` (optional, if you specify width or height, you can also define this to force a scaling aspect ratio)
 * ```resize_ratio_x``` / ```resize_ratio_y``` (optional, does the same thing are resize_ratio, but only affects one axis)
 * ```resize_point``` - (optional, string) specify anchor for resizing
