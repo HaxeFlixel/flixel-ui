@@ -147,8 +147,8 @@ This is any of the many Flixel-UI widgets, such as ```<sprite>```, ```<button>``
 --
 
 *Child nodes:*
-* **\<anchor>** - optional, lets you position this widget relative to another object's position.
-* **size tags** - optional, lets you dynamically size a widget according to some formula. (See "Dynamic Position & Size")
+* **\<anchor>** - optional, lets you position this widget relative to another object's position.*
+* **size tags** - optional, lets you dynamically size a widget according to some formula.*
 * **\<locale id="xx-YY">** - optional, lets you specify a locale (like "en-US" or "nb-NO") for [fireTongue](https://github.com/larsiusprime/firetongue) integration. This lets you specify changes based on the current locale:
 Example:
 
@@ -162,7 +162,7 @@ Example:
 </button>
 ```
 
-More info on Anchor and Size tags appears towards the bottom in the "Dynamic Position & Size" section.
+*More info on Anchor and Size tags appears towards the bottom in the "Dynamic Position & Size" section.
 
 --
 
