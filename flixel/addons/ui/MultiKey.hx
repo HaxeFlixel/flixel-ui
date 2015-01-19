@@ -60,7 +60,7 @@ class MultiKey implements IFlxDestroyable
 		{
 			return false;
 		}
-		return checkForbiddens(false);
+		return forbiddens == null || checkForbiddens(false);
 	}
 	
 	/**

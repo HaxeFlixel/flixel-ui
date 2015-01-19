@@ -263,24 +263,49 @@ class FlxUICursor extends FlxUISprite
 				break;
 			}
 		}
-		for (key in keysClick) {
-			if (key.justPressed()) {			//JUST PRESSED: send a press event only the first time it's pressed
-				_clickPressed = true;
-				_doPress();
-				break;
-			}
-			if (key.pressed()) {				//STILL PRESSED: keep the cursor in that position while the key is down
-				_clickPressed = true;
-				_doMouseMove();
-				break;
-			}else {								//NOT PRESSED:
-				if (_clickPressed) {				//if we were previously just pressed...
-					_clickPressed = false;			//count this as "just released"
-					_doRelease();					//do the release action
-					break;
-				}
+		
+		if (_clickKeysJustPressed())		//JUST PRESSED: send a press event only the first time it's pressed
+		{
+			_clickPressed = true;
+			_doPress();
+		}
+		if (_clickKeysPressed())			//STILL PRESSED: keep the cursor in that position while the key is down
+		{
+			_clickPressed = true;
+			_doMouseMove();
+		}
+		else								//NOT PRESSED:
+		{
+			if (_clickPressed)				//if we were previously just pressed...
+			{
+				_clickPressed = false;		//count this as "just released"
+				_doRelease();				//do the release action
 			}
 		}
+	}
+	
+	private function _clickKeysJustPressed():Bool
+	{
+		for (key in keysClick)
+		{
+			if (key.justPressed())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private function _clickKeysPressed():Bool
+	{
+		for (key in keysClick)
+		{
+			if (key.pressed())
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private function _getWidgetPoint():FlxPoint {
