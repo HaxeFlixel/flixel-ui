@@ -5,16 +5,17 @@
 [![Build Status](https://travis-ci.org/HaxeFlixel/flixel-ui.png)](https://travis-ci.org/HaxeFlixel/flixel-ui)
 
 #Documentation
-(Work in progress)
 
 ##Demo Project!
  A [test project](https://github.com/HaxeFlixel/flixel-demos/tree/master/User%20Interface/RPG%20Interface) is available in [flixel-demos](http://github.com/HaxeFlixel/flixel-demos). You should really, really, check it out. It has a lot of inline documentation in the xml files and showcases some complex and subtle features.
 
 Please note the test project in flixel-demos requires the localization library **[fireTongue](https://github.com/larsiusprime/firetongue)**, which can be installed thus:
 
-    haxelib git firetongue https://github.com/larsiusprime/firetongue
+    haxelib install firetongue
 
-(at least until I get around to submitting it to haxelibs officially)
+Or this for the latest dev version from github:
+
+    haxelib git firetongue https://github.com/larsiusprime/firetongue
 
 ##Getting Started
 
