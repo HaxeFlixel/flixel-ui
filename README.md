@@ -399,16 +399,17 @@ Attributes:
 
 Child tags:
 * ```<text>``` - just like a regular \<text> node
-* ```<param>``` - parameter to pass to the callback/event system (see "Working With Parameters")
+* ```<param>``` - parameter to pass to the callback/event system (see "Button Parameters")
 * ```<graphic>``` - graphic source (details below)
 
 #####3.1 Working With Parameters
 
+Parameters can be attached to buttons and many other types of interactive objects to give context to UI events. You do this by adding ```<param>``` child tags to the appropriate widget.
+
 A ```<param>``` tag takes two attributes: ```type``` and ```value```. 
 
-```type```: "string", "int", "float", and "color" or "hex" for a value like ```"0xFF00FF"```
-
-```value```: the value, as a string. The type attribute will ensure it typecasts correctly.
+* ```type```: "string", "int", "float", and "color" or "hex" for a value like ```"0xFF00FF"```
+* ```value```: the value, as a string. The type attribute will ensure it typecasts correctly.
 
 ```xml
 <button id="new_game" use_def="big_button_gold" x="594" y="11" group="top" label="New Game">
@@ -418,20 +419,21 @@ A ```<param>``` tag takes two attributes: ```type``` and ```value```.
 
 You can add as many ```<param>``` tags as you want. When you click this button, it will by default call FlxUI's internal public static event callback:
 
-````
+```haxe
 FlxUI.event(CLICK_EVENT, this, null, params);
-````
+```haxe
 
-This, in turn, will call getEvent() on whatever IEventGetter "owns" this FlxUI object. In the default setup, this is your FlxUIState. So extend this function in your FlxUIState:
+This, in turn, will call ```getEvent()``` on whatever ```IEventGetter``` "owns" this ```FlxUI``` object. In the default setup, this is your ```FlxUIState```. So extend this function in your ```FlxUIState```:
 
-````
+```haxe
 getEvent(id:String,sender:Dynamic,data:Dynamic):Void
-````
-The "sender" parameter will be the widget that originated the event -- in this case, the button. On a FlxUIButton click, the other parameters will be:
+```
 
-* **event id**: "click_button" (ie, FlxUITypedButton.CLICK_EVENT)
-* **data**: null
-* **params**: an **Array\<Dynamic>** containing all the parameters you've defined.
+The "sender" parameter will be the widget that originated the event -- in this case, the button. On a ```FlxUIButton``` click, the other parameters will be:
+
+* **event id**: "click\_button" (ie, ```FlxUITypedButton.CLICK_EVENT```)
+* **data**: ```null```
+* **params**: an ```Array<Dynamic>``` containing all the parameters you've defined.
 
 Some other interactive widgets can take parameters, and they work in basically the same way.
 
