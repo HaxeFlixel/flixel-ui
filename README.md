@@ -389,7 +389,7 @@ Attributes:
 * ```x```/```y```, ```use_def```, ```group```
 * ```width```/```height```
 
-###3. Button (FlxUIButton) ```<button>```
+###4. Button (FlxUIButton) ```<button>```
 
 Just a regular clicky button, optionally with a label.
 
@@ -412,7 +412,7 @@ Child tags:
 * ```<param>``` - parameter to pass to the callback/event system (see "Button Parameters")
 * ```<graphic>``` - graphic source (details below)
 
-#####3.1 Working With Parameters
+#####4.1 Working With Parameters
 
 Parameters can be attached to buttons and many other types of interactive objects to give context to UI events. You do this by adding ```<param>``` child tags to the appropriate widget.
 
@@ -447,7 +447,7 @@ The "sender" parameter will be the widget that originated the event -- in this c
 
 Some other interactive widgets can take parameters, and they work in basically the same way.
 
-#####3.2 Button Graphics
+#####4.2 Button Graphics
 
 Graphics for buttons can be kinda complex. You can put in multiple graphic tags, one for each button state you want to specify, or just one with the id "all" that combines all the states into one vertically stacked image, and asks the FlxUIButton to sort the individual frames out itself.
 
@@ -483,7 +483,7 @@ Static, individual frames:
 
 I'm not 100% sure what will happen if you do individual frames and omit one, but I think I set it up to copy one of the other ones in some kind of "smart" way. Again, it's always best to be explicit about what you want rather than be ambiguous and have the system guess.
 
-#####3.3 Button Text
+#####4.3 Button Text
 To specify what the text in a button looks like, you create a ```<text>``` child node.
 You can specify all the properties right here, or use a definition. There's a few special considerations for ```<text>``` nodes inside of a button.
 
@@ -500,7 +500,7 @@ If you want to specify colors for other states, you add ```<color>``` tags insid
 ````
 
 
-###4. Button, Toggle (FlxUIButton) ```<button_toggle>```
+###5. Button, Toggle (FlxUIButton) ```<button_toggle>```
 
 Toggle buttons are made from the same class as regular buttons, ```FlxUIButton```.
 
@@ -540,7 +540,7 @@ Of course, if you create a single asset with 6 images stacked vertically, you ca
 
 Note that you can create a vertical stack of 9-slice assets, or regular statically-sized assets, the system can use either one. 
 
-###5. Check box (FlxUICheckBox)
+###6. Check box (FlxUICheckBox)
 **\<checkbox>**
 
 A Check Box is a FlxUIGroup which contains three objects: a "box" image, a "check" image, and a label.
@@ -564,7 +564,7 @@ Event:
 * id - "click_checkbox"
 * params - as defined by user, but with this at the end: "checked:true" or "checked:false"
 
-###6. Text (FlxUIText)
+###7. Text (FlxUIText)
 **\<text>**
 
 A regular text field. 
@@ -594,7 +594,7 @@ So far just .ttf fonts are supported, and you MUST name them according to this s
 
 FlxUI does not yet support FlxBitmapFonts, but we'll be adding it soon.
 
-###7. Text, input (FlxUIInputText)
+###8. Text, input (FlxUIInputText)
 **\<input_text>**
 
 This has not been thoroughly tested, but it exists.
@@ -634,7 +634,7 @@ So far just .ttf fonts are supported, and you MUST name them according to this s
 FlxUI does not yet support FlxBitmapFonts, but we'll be adding it soon.
 
 
-###8. Radio button group (FlxUIRadioGroup)
+###9. Radio button group (FlxUIRadioGroup)
 **\<radio_group>**
 
 Radio groups are a set of buttons where only one can be clicked at a time. We implement these as a FlxUIGroup of FlxUICheckBox'es, and then internal logic makes only one clickable at a time. 
@@ -654,7 +654,7 @@ Event:
 * id - "click_radio_group"
 * params - as defined by user
 
-###9. Tabbed menu (FlxUITabMenu)
+###10. Tabbed menu (FlxUITabMenu)
 **\<tab_menu>**
 
 Tab menus are the most complex FlxUI widget. FlxUITabMenu extends FlxUI and is thus a full-fledged FlxUI in and of itself, just like the \<layout> tag.
