@@ -4,8 +4,6 @@
 
 [![Build Status](https://travis-ci.org/HaxeFlixel/flixel-ui.png)](https://travis-ci.org/HaxeFlixel/flixel-ui)
 
-#Documentation
-
 ##Getting Started
 
 ###Install flixel-ui:
