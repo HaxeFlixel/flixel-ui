@@ -227,14 +227,17 @@ A group tag takes one attribute - id. Just define your groups somewhere in the o
 Dynamically aligns, centers, and/or spaces objects relative to one another. 
 This is complex enough to deserve its own section below, see "Alignment Tags" under "Dynamic Position & Size" later in the document.
 
-####6. ```<layout>```
+####6. ```<position>```
+This allows you to re-position an existing asset later in the document. This is useful for complex relative positioning and other uses, and is complex enough to deserve its own section below, see "Position Tags" under "Dynamic Position & Size" later in the document.
+
+####7. ```<layout>```
 Creates a child FlxUI object inside your master FlxUI, and childs all the widgets inside to it. This is especially useful if you want to create multiple layouts for, say, different devices and screen sizes. Combined with **failure** tags, this will let you automatically calculate the best layout depending on screen size.
 
 A layout has only one attribute, id, and then its child nodes. Think of a \<layout> as its own sub-section of your xml file. It can have its own versions of anything you can put in the regular file since it is a full-fledged FlxUI - ie, definitions, groups, widgets, modes, presumably even other layout tags (haven't tested this). 
 
 Note that in a layout, scope comes into play when referencing ids. Definitions and object references will first look in the scope of the layout (ie, that FlxUI object), and if none is found, will try to find them in the parent FlxUI. 
 
-####7. ```<failure>```
+####8. ```<failure>```
 Specifies "failure" conditions for a certain layout, so FlxUI can determine which of multiple layouts to choose from in the event that one works better than another. Useful for simultaneously targeting, say, PC's with variable resolutions and mobile devices.
 
 Here's an example:
@@ -259,7 +262,7 @@ Sometimes multiple layouts have "failed" according to your rules, and you want t
 
 To *respond* to failure conditions, you need to write your own code. In the RPG Interface demo, there are two battle layouts, one that is more appropriate for 4:3 resolutions, and another that works better in 16:9. The custom FlxUIState for that state will check failure conditions on load, and set the mode depending on which layout works best. Speaking of modes...
 
-####8. \<mode>
+####9. ```<mode>```
 Specifies UI "modes" that you can switch between. For instance, in Defender's Quest we had four states for our save slots - empty, play, new_game+ (New Game+ eligible), and play+ (New Game+ started). This would determine what buttons were visible ("New Game", "Play", "Play+", "Import", "Export").
 
 The "empty" and "play" modes might look like this:
@@ -299,29 +302,42 @@ The "empty" and "play" modes might look like this:
 </mode>
 ````
 
-Several tags are available in a **\<mode>** element. The most basic ones are ```<hide>``` and ```<show>```, which each only take id as an attribute. They just toggle the "visible" property on and off. The full list is:
+Several tags are available in a **\<mode>** element. The most basic ones are ```<hide>``` and ```<show>```, which each only take id as an attribute. They just toggle the "visible" property on and off for the widget matching the "id" attribute. The full list is:
 
-* **show** -- targets attribute "id", turns element visible
-* **hide** -- targets attribute "id", turns element invisible
+* **show** -- turns element visible
+* **hide** -- turns element invisible
 * **align** -- lets you align the placement of a list of widgets, see "Alignment Tags" later in the document.
 * **change** -- lets you change the property of a widget, see "Change Tags" later in the document.
 * **position** -- lets you re-position a widget, see "Position Tags" later in the document.
 
+####9. ```<change>```
+
+The change tag lets you modify various properties of a widget after it has already been created. The widget matching the attribute "id" will be targeted. The following attributes may be used:
+
+* **text** -- Change ```text``` property of the widget (FlxUIText or FlxUIInputText). Can also set "context" and "code" attributes.*
+* **label** -- Change ```label``` property of the widget (For buttons or anything else with a text label). Can also set "context" and "code" attributes.*
+* **width** -- Change width, same as using it in the original widget tag
+* **height** -- Change height, same as using it in the original widget tag
+* **<params>** (child node) -- Change ```params``` property to this list.**
+
+*See "Working With Text" later in the document. 
+**See "Working With Parameters" later in the document
 
 ##List of Widgets
 
-* **Image, vanilla** (FlxUISprite) - \<sprite>
-* **9-slice sprite/chrome** (FlxUI9SliceSprite) - \<9slicesprite> or \<chrome>
-* **Button, vanilla** (FlxUIButton) - \<button>
-* **Button, toggle** (FlxUIButton) - \<button_toggle>
-* **Check box** (FlxUICheckBox) - \<checkbox>
-* **Text, vanilla** (FlxUIText) - \<text>
-* **Text, input** (FlxUIInputText) - \<input_text>
-* **Radio button group** (FlxUIRadioGroup) - \<radio_group>
-* **Tabbed menu** (FlxUITabMenu) - \<tab_menu>
-* **Line** (FlxUISprite) - \<line>
-* **Numeric Stepper** (FlxUINumericStepper) - \<numeric_stepper>
-* **Dropdown/Pulldown Menu** (FlxUIDropDownMenu) - \<dropdown_menu>
+* **Region** (FlxUIRegion) - ```<region>```
+* **Image, vanilla** (FlxUISprite) - ```<sprite>```
+* **9-slice sprite/chrome** (FlxUI9SliceSprite) - ```<9slicesprite>``` or ```<chrome>```
+* **Button, vanilla** (FlxUIButton) - ```<button>```
+* **Button, toggle** (FlxUIButton) - ```<button_toggle>```
+* **Check box** (FlxUICheckBox) - ```<checkbox>```
+* **Text, vanilla** (FlxUIText) - ```<text>```
+* **Text, input** (FlxUIInputText) - ```<input_text>```
+* **Radio button group** (FlxUIRadioGroup) - ```<radio_group>```
+* **Tabbed menu** (FlxUITabMenu) - ```<tab_menu>```
+* **Line** (FlxUISprite) - ```<line>```
+* **Numeric Stepper** (FlxUINumericStepper) - ```<numeric_stepper>```
+* **Dropdown/Pulldown Menu** (FlxUIDropDownMenu) - ```<dropdown_menu>```
 
 Lets go over these one by one.
 
