@@ -193,8 +193,6 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			}
 			cursor.location = 0;
 		}
-		
-		FlxG.mouse.visible = true;
 		#end
 		
 		super.create();
