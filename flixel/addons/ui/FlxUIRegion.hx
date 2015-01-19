@@ -13,7 +13,7 @@ class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizabl
 {
 	public var broadcastToFlxUI:Bool=true;
 	
-	public var id:String;
+	public var name:String;
 	
 	public function new(X:Float=0,Y:Float=0,W:Float=16,H:Float=16) {
 		super(X, Y);

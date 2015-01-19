@@ -10,7 +10,7 @@ import flixel.math.FlxPoint;
  */
 class FlxUIPopup extends FlxUISubState implements IFlxUIWidget 
 {
-	public var id:String;
+	public var name:String;
 	
 	public var broadcastToFlxUI:Bool = true;
 	

@@ -16,7 +16,7 @@ class FlxUISprite extends FlxSprite implements IFlxUIWidget implements IResizabl
 	public var broadcastToFlxUI:Bool = true;
 	
 	//simple string ID, handy for identification, etc
-	public var id:String;
+	public var name:String;
 	
 	//pointer to the thing that "owns" it
 	public var ptr_owner:Dynamic = null;

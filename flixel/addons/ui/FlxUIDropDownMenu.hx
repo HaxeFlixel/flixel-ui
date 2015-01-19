@@ -34,7 +34,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	private function set_selectedId(str:String):String {
 		var i:Int = 0;
 		for (btn in list) {
-			if (btn != null && btn.id == str) {
+			if (btn != null && btn.name == str) {
 				var item:FlxUIButton = list[i];
 				_selectedId = str;
 				if(item.label != null){
@@ -57,7 +57,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		for (btn in list) {
 			if (btn.label.text == str) {
 				var item:FlxUIButton = list[i];
-				_selectedId = item.id;
+				_selectedId = item.name;
 				_selectedLabel = str;
 				header.text.text = str;
 				return str;
@@ -105,7 +105,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	 * @param	ButtonList			Optional list of buttons to be used for the corresponding entry in DataList
 	 * @param	UIControlCallback	Used internally by FlxUI
 	 */
-	public function new(X:Float = 0, Y:Float = 0, DataList:Array<StrIdLabel>, ?Callback:String->Void, ?Header:FlxUIDropDownHeader, ?DropPanel:FlxUI9SliceSprite, ?ButtonList:Array<FlxUIButton>, ?UIControlCallback:Bool->FlxUIDropDownMenu->Void) 
+	public function new(X:Float = 0, Y:Float = 0, DataList:Array<StrNameLabel>, ?Callback:String->Void, ?Header:FlxUIDropDownHeader, ?DropPanel:FlxUI9SliceSprite, ?ButtonList:Array<FlxUIButton>, ?UIControlCallback:Bool->FlxUIDropDownMenu->Void) 
 	{
 		super(X, Y);
 		callback = Callback;
@@ -125,14 +125,14 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		{ 
 			for (data in DataList) 
 			{
-				var t:FlxUIButton = makeListButton(i, data.label, data.id);
+				var t:FlxUIButton = makeListButton(i, data.label, data.name);
 				list.push(t);
 				t.y = yoff;
 				yoff += Std.int(header.background.height);
 				
 				i++;
 			}
-			selectSomething(DataList[0].id, DataList[0].label);
+			selectSomething(DataList[0].name, DataList[0].label);
 		} 
 		else if (ButtonList != null) 
 		{
@@ -176,7 +176,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	 * @param	DataList
 	 */
 	
-	public function setData(DataList:Array<StrIdLabel>):Void {
+	public function setData(DataList:Array<StrNameLabel>):Void {
 		var i:Int = 0;
 		
 		var yoff:Int = Std.int((y - header.background.y) + header.background.height);
@@ -190,8 +190,8 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 						var btn:FlxUIButton = list[i];
 						if(btn != null){
 							btn.label.text = data.label;					//Set the label
-							var old_id:String = list[i].id;
-							list[i].id = data.id;							//Replace the id
+							var old_id:String = list[i].name;
+							list[i].name = data.name;							//Replace the name
 							recycled = true;								//we successfully recycled it
 							yoff += Std.int(header.background.height);
 						}
@@ -200,7 +200,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 					list = [];
 				}
 				if (!recycled) {											//If we couldn't recycle a button, make a fresh one
-					var t:FlxUIButton = makeListButton(i, data.label, data.id);
+					var t:FlxUIButton = makeListButton(i, data.label, data.name);
 					list.push(t);
 					t.y = yoff;
 					add(t);
@@ -222,15 +222,15 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 				}
 			}
 			
-			selectSomething(DataList[0].id, DataList[0].label);
+			selectSomething(DataList[0].name, DataList[0].label);
 		}
 		
 		dropPanel.resize(header.background.width, yoff);
 	}
 	
-	private function selectSomething(id:String, label:String):Void {
+	private function selectSomething(name:String, label:String):Void {
 		header.text.text = label;
-		selectedId = id;
+		selectedId = name;
 		selectedLabel = label;
 	}
 	
@@ -239,7 +239,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		t.broadcastToFlxUI = false;
 		t.onUp.callback = onClickItem.bind(i);
 		
-		t.id = Name;
+		t.name = Name;
 		
 		t.loadGraphicSlice9([FlxUIAssets.IMG_INVIS, FlxUIAssets.IMG_HILIGHT, FlxUIAssets.IMG_HILIGHT], Std.int(header.background.width),
 							 Std.int(header.background.height),[[1,1,3,3],[1,1,3,3],[1,1,3,3]], FlxUI9SliceSprite.TILE_NONE);
@@ -274,8 +274,8 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		}
 	}
 	
-	public function changeLabelById(id:String, NewLabel:String):Void {
-		var btn:FlxUIButton = getBtnById(id);
+	public function changeLabelById(name:String, NewLabel:String):Void {
+		var btn:FlxUIButton = getBtnById(name);
 		if (btn != null && btn.label != null) {
 			btn.label.text = NewLabel;
 		}
@@ -288,9 +288,9 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		return null;
 	}
 	
-	public function getBtnById(id:String):FlxUIButton{
+	public function getBtnById(name:String):FlxUIButton{
 		for (btn in list) {
-			if (btn.id == id) {
+			if (btn.name == name) {
 				return btn;
 			}
 		}
@@ -348,15 +348,15 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	private function onClickItem(i:Int):Void 
 	{
 		var item:FlxUIButton = list[i];
-		selectSomething(item.id,item.label.text);
+		selectSomething(item.name,item.label.text);
 		showList(false);
 		
 		if (callback != null) {
-			callback(item.id);
+			callback(item.name);
 		}
 		
 		if(broadcastToFlxUI){
-			FlxUI.event(CLICK_EVENT, this, item.id, params);
+			FlxUI.event(CLICK_EVENT, this, item.name, params);
 		}
 	}
 	
@@ -367,9 +367,9 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	 * @param	UseIndexID		Whether to use the integer index of the current string as ID.
 	 * @return	The StrIDLabel array ready to be used in FlxUIDropDownMenu's constructor
 	 */
-	public static function makeStrIdLabelArray(StringArray:Array<String>, UseIndexID:Bool = false):Array<StrIdLabel>
+	public static function makeStrIdLabelArray(StringArray:Array<String>, UseIndexID:Bool = false):Array<StrNameLabel>
 	{
-		var strIdArray:Array<StrIdLabel> = [];
+		var strIdArray:Array<StrNameLabel> = [];
 		for (i in 0...StringArray.length)
 		{
 			var ID:String = StringArray[i];
@@ -377,7 +377,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 			{
 				ID = Std.string(i);
 			}
-			strIdArray[i] = new StrIdLabel(ID, StringArray[i]);
+			strIdArray[i] = new StrNameLabel(ID, StringArray[i]);
 		}
 		return strIdArray;
 	}
