@@ -143,7 +143,11 @@ This is any of the many Flixel-UI widgets, such as ```<sprite>```, ```<button>``
 * **group** - string, optional, references a ```<group>``` tag by id. Will make this widget the child of that group instead of the FlxUI itself.
 * **visible** - boolean, optional, sets the visibility of the widget when the layout is loaded
 * **active** - boolean, optional, controls whether a widget responds to any updates
-
+* **round** - if x/y (and/or width/height for a sizeable object) are calculated from formulas/anchors, specifies how rounding works. Legal values are:
+  * **down**: round down
+  * **up**: round up
+  * **round** or **true**: round up if decimal is >= 0.5, round down otherwise.
+  * **false** (or attribute absent): do not round
 --
 
 *Child nodes:*
@@ -668,6 +672,26 @@ Child Nodes:
 * ```<group>``` - attributes are only "id"
  * Put regular FlxUI content tags here, within the ```<group></group>``` node.
 
+###11. Line (FlxUISprite) ```<line>```
+
+TODO
+
+###12. NumStepper (FlxUINumericStepper) ```<numeric_stepper>```
+
+TODO
+
+###13. Dropdown/Pulldown (FlxUIDropDownMenu) ```<dropdown>```
+
+TODO
+
+###14. Bar (FlxUIBar) ```<bar>```
+
+TODO
+
+###15. TileTest (FlxUITileTest) ```<tile_test>```
+
+TODO
+
 ##Dynamic position & size
 
 ###1. Anchor Tags
@@ -702,14 +726,14 @@ Acceptable values for x-flush/y-flush:
 ###2. Size Tags
 
 Let's add a size tag to our health bar:
-````
+```xml
 <9slicesprite id="health_bar" x="10" y="5" width="134" height="16" use_def="health" group="mcguffin">
 	<anchor x="portrait.right" y="portrait.top" x-flush="left" y-flush="top"/>
 	<exact_size width="stretch:portrait.right+10,right-10"/>
 </9slicesprite>
-````
+```
 
-There are three size tags: **\<min_size>**, **\<max_size>**, and **\<exact_size>**
+There are three size tags: ```<min_size>```, ```<max_size>```, and ```<exact_size>```
 
 This lets you either specify dynamic lower/upper bounds for an object's size, or force it to be an exact size. This lets you create a UI that can work in multiple resolutions, or just avoid having to do manual pixel calculations yourself. 
 
