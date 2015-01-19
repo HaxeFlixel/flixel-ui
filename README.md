@@ -225,7 +225,7 @@ A group tag takes one attribute - id. Just define your groups somewhere in the o
 
 ####5. ```<align>```
 Dynamically aligns, centers, and/or spaces objects relative to one another. 
-This is complex enough to deserve its own section below.
+This is complex enough to deserve its own section below, see "Alignment Tags" under "Dynamic Position & Size" later in the document.
 
 ####6. ```<layout>```
 Creates a child FlxUI object inside your master FlxUI, and childs all the widgets inside to it. This is especially useful if you want to create multiple layouts for, say, different devices and screen sizes. Combined with **failure** tags, this will let you automatically calculate the best layout depending on screen size.
