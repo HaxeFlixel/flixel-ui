@@ -322,15 +322,13 @@ Several tags are available in a **\<mode>** element. The most basic ones are ```
 
 The change tag lets you modify various properties of a widget after it has already been created. The widget matching the attribute "id" will be targeted. The following attributes may be used:
 
-* **text** -- Change ```text``` property of the widget (FlxUIText or FlxUIInputText). Can also set "context" and "code" attributes.*
-* **label** -- Change ```label``` property of the widget (For buttons or anything else with a text label). Can also set "context" and "code" attributes.\*
+* **text** -- Change ```text``` property of the widget (FlxUIText or FlxUIInputText). Can also set "context" and "code" attributes for objects with text and/or labels. \*
+* **label** -- Change ```label``` property of the widget (For buttons or anything else with a text label). Can also set "context" and "code" attributes.
 * **width** -- Change width, same as using it in the original widget tag
 * **height** -- Change height, same as using it in the original widget tag
 * **<params>** (child node) -- Change ```params``` property to this list.\*\*
 
-\* See "Working With Text" later in the document.
-
-\*\* See "Working With Parameters" later in the document
+* See "Button" entry under "List of Widgets" for more on "context" and "code" properties.
 
 #List of Widgets
 
