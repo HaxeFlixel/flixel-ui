@@ -185,8 +185,8 @@ You can do this instead:
 
 ````
 <definition id="sans10" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
-<text id="text1" x="50" y="50" text="Text 1"/>
-<text id="text2" x="50" y="50" text="Text 2"/>
+<text id="text1" use_def="sans10" x="50" y="50" text="Text 1"/>
+<text id="text2" use_def="sans10" x="50" y="50" text="Text 2"/>
 ````
 
 Notice that in this case we've created a text definition that is always bold and white with a black outline. Let's say we want some italic text instead, but we don't want to create a new definition:
