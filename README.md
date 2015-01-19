@@ -328,9 +328,9 @@ The change tag lets you modify various properties of a widget after it has alrea
 
 | Name | Class | Tag |
 |------|-------|-----|
-|**Region**|FlxUIRegion|```<region>```|
 |**Image**, vanilla|FlxUISprite|```<sprite>```|
 |**Image**, 9-slice/chrome|FlxUI9SliceSprite|```<9slicesprite>``` or ```<chrome>```|
+|**Region**|FlxUIRegion|```<region>```|
 |**Button**, vanilla|FlxUIButton|```<button>```|
 |**Button**, toggle|FlxUIButton|```<button_toggle>```|
 |**Check box**|FlxUICheckBox|```<checkbox>```|
@@ -341,6 +341,7 @@ The change tag lets you modify various properties of a widget after it has alrea
 |**Line**|FlxUISprite|```<line>```|
 |**Numeric Stepper**|FlxUINumericStepper|```<numeric_stepper>```|
 |**Dropdown/Pulldown Menu**|FlxUIDropDownMenu|```<dropdown_menu>```|
+|**Tile Grid**|FlxUITileTest|```<tile_test>```|
 
 Lets go over these one by one.
 
@@ -351,13 +352,13 @@ Lets go over these one by one.
 Just a regular sprite, with a fixed size.
 
 Attributes:
-* x/y
-* src (path to source, no extension, appended to "assets/gfx/")
-* use_def (definition id)
-* group (group id)
-* width/height (optional, use exact pixel values or formulas to scale the image)
-* resize_ratio (optional, if you specifcy width or height, you can also define this to force a scaling aspect ratio)
-* resize_ratio_x / resize_ratio_y (optional, does the same thing are resize_ratio, but only affects one axis)
+* ```x``` and ```y```
+* ```src``` (path to source, no extension, appended to "assets/gfx/")
+* ```use_def``` (definition id)
+* ```group``` (group id)
+* ```width``` and ```height``` (optional, use exact pixel values or formulas to scale the image)
+* ```resize_ratio``` (optional, if you specify width or height, you can also define this to force a scaling aspect ratio)
+* ```resize_ratio_x``` / ```resize_ratio_y``` (optional, does the same thing are resize_ratio, but only affects one axis)
 
 ###2. 9-slice sprite/chrome (FlxUI9SliceSprite)
 
