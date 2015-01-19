@@ -320,7 +320,8 @@ The change tag lets you modify various properties of a widget after it has alrea
 * **height** -- Change height, same as using it in the original widget tag
 * **<params>** (child node) -- Change ```params``` property to this list.\*\*
 
-\* See "Working With Text" later in the document. 
+\* See "Working With Text" later in the document.
+
 \*\* See "Working With Parameters" later in the document
 
 ##List of Widgets
