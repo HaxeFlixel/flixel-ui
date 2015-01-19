@@ -730,7 +730,23 @@ You can also specify a **round** attribute (up/down/round/true/false) in the anc
 **Note to non-native speakers of English:** "flush" is a carpentry term, so if one side of one object is parallel to and touching another object's side with no air between them, the objects are "flush." This has nothing to do with toilets :)
 
 --
-##2. Size Tags
+##2. Position Tags
+
+Sometimes you want to be able to change the position of a widget later in the xml markup. Position tags work much like the original creation tag for the object, except you ONLY include the attribute id of the object you want to move, and any relevant position information.
+
+```xml
+<position id="thing" x="12" y="240"/>
+```
+
+You can use anchor tags, formulas, etc inside a position tag:
+```xml
+<position id="thing" x="other_thing.right" y="other_thing.bottom">
+  <anchor id="other_thing" x-flush="left" y-flush="top"/>
+</position>
+```
+
+--
+##3. Size Tags
 
 Let's add a size tag to our health bar:
 ```xml
@@ -771,7 +787,7 @@ Acceptable property values for reference formula, used alone or in a stretch:
  * Don't try to get too crazy here. If you need to do some super duper math, just add some code in your FlxUIState, call getAsset("some_id") to grab your assets, and do the craziness yourself.
 
 --
-##3. Alignment Tags
+##4. Alignment Tags
 
 An ```<align>``` tag lets you automatically align and space various objects together.
 
