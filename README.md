@@ -698,11 +698,12 @@ TODO
 ###1. Anchor Tags
 
 Here's an example of a health bar from an RPG:
-````
+
+```xml
 <9slicesprite id="health_bar" x="10" y="5" width="134" height="16" use_def="health">
 	<anchor x="portrait.right" y="portrait.top" x-flush="left" y-flush="top"/>
 </9slicesprite>
-````
+```
 
 There is presumably another sprite defined somewhere called "portrait" and we want our health bar to show up relative to wherever that is. 
 
@@ -721,6 +722,8 @@ Acceptable values for x-flush/y-flush:
 * "bottom"
 * "center"
 
+You can also specify a **round** attribute (up/down/round/true/false) in the anchor tag itself to round the final calculated position.
+
 **Note to non-native speakers of English:** "flush" is a carpentry term, so if one side of one object is parallel to and touching another object's side with no air between them, the objects are "flush." This has nothing to do with toilets :)
 
 --
@@ -738,7 +741,7 @@ There are three size tags: ```<min_size>```, ```<max_size>```, and ```<exact_siz
 
 This lets you either specify dynamic lower/upper bounds for an object's size, or force it to be an exact size. This lets you create a UI that can work in multiple resolutions, or just avoid having to do manual pixel calculations yourself. 
 
-Size tags take only two attributes, **width** and **height**. If one is not specified, it is ignored.
+Size tags take only three attributes, **width**, **height**, and **round**. If either width or height is not specified, that part of the size is ignored and remains the same size.
 
 There are several ways to formulate a width/height attribute:
 
@@ -750,17 +753,17 @@ A **stretch** formula will tell FlxUI to calculate the difference between two va
 
 So, if you have a scoreboard at the top of the screen, and you want the playfield to stretch from the bottom of the scoreboard to the bottom of the screen:
 
-````
+```xml
 <exact_size height="stretch:scoreboard.bottom,bottom"/>
-````
+```xml
 
 Acceptable property values for reference formula, used alone or in a stretch:
 * **naked reference** (ie, "some_id") - returns inferred x or y position of that thing.
 * **property reference** (ie, "some_id.some_value") - returns a thing's property
- * "left", "right", "top", "bottom", "width", "height"
- * _NOTE: "center" not yet implemented for size formulas!_
+ * "left", "right", "top", "bottom", "width", "height", "halfwidth", "halfheight", "centerx", "centery"
+ * "center" (infers centerx or centery)
 * **arithmetic formula** (ie, "some_id.some_value+10") - do some math
- * You can tack on **one** operator and **one** _numeric_ operand to any of the above.
+ * You can tack on **one** operator and **one** operand (numeric value or widget property) to any of the above.
  * Legal operators = (+, -, *, \, ^)
  * Don't try to get too crazy here. If you need to do some super duper math, just add some code in your FlxUIState, call getAsset("some_id") to grab your assets, and do the craziness yourself.
 
