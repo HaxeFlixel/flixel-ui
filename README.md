@@ -800,7 +800,7 @@ If you specify more than one "objects" tag, you can align several groups of obje
 
 Whereas putting all 10 objects in one ```<objects>``` tag would instead get you one row with 10 columns.
 
-...
+----
 
 ##Localization (FireTongue)
 First, Firetongue has some [documentation](https://github.com/larsiusprime/firetongue) on its Github page. Read that. 
@@ -817,44 +817,47 @@ In your local project, follow these steps:
 **2. Create a FireTongue instance somewhere**
 
 Add this variable declaration in Main, for instance:
-````
+
+```haxe
 public static var tongue:FireTongueEx;
-````
-Note that it's type is FireTongueEx, not FireTongue. (This way the instance implements IFireTongue, which FlxUI needs).
+```
+Note that it's type is ```FireTongueEx```, not ```FireTongue```. (This way the instance implements ```IFireTongue```, which ```FlxUI``` needs).
 
 **3. Initialize your FireTongue instance**
 
-Add this initialization block anywhere in your early setup code (either in Main or in the create() block of your first FlxUIState, for instance):
-````
+Add this initialization block anywhere in your early setup code (either in ```Main``` or in the ```create()``` block of your first ```FlxUIState```, for instance):
+
+```haxe
 if (Main.tongue == null) {
 	Main.tongue = new FireTongueEx();
 	Main.tongue.init("en-US");
 	FlxUIState.static_tongue = Main.tongue;
 }
-````
-Setting **FlxUIState.static_tongue** will make every FlxUIState instance use this FireTongue instance without any additional setup. If you don't want to use a static reference, you can just do this on a per-state basis:
+```
 
-````
+Setting ```FlxUIState.static_tongue``` will make every ```FlxUIState``` instance automatically use this ```FireTongue``` instance without any additional setup. If you don't want to use a static reference, you can just do this on a per-state basis:
+
+```haxe
 //In the create() function of some FlxUIState object:
 _tongue = someFireTongueInstance;	
-````
+```
 
 **4. Start using FireTongue flags**
 
-Once a FlxUIState is hooked up to a FireTongue instance, it will automatically attempt to translate any raw text information as if it were a FireTongue flag -- see FireTongue's [documentation](https://github.com/larsiusprime/firetongue).
+Once a ```FlxUIState``` is hooked up to a ```FireTongue``` instance, it will automatically attempt to translate any raw text information as if it were a ```FireTongue``` flag -- see ```FireTongue```'s [documentation](https://github.com/larsiusprime/firetongue).
 
 Here's an example, where the word "Back" is translated via the localization flag "$MISC_BACK":
-````
+```haxe
 <button center_x="true" x="0" y="535" id="start" label="$MISC_BACK">		
 	<param type="string" value="back"/>
 </button>
-````
+```
 In English (en-US) this will be "Back," in Norwegian (nb-NO) this will be "Tilbake."
 
 ...
 
-[1] Here's the source code snippet for FireTongueEx.hx:
-````
+[1] Here's the source code snippet for ```FireTongueEx.hx```:
+```haxe
 import firetongue.FireTongue;
 import flixel.addons.ui.IFireTongue;
 
