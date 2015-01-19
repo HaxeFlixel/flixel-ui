@@ -421,7 +421,7 @@ You can add as many ```<param>``` tags as you want. When you click this button, 
 
 ```haxe
 FlxUI.event(CLICK_EVENT, this, null, params);
-```haxe
+```
 
 This, in turn, will call ```getEvent()``` on whatever ```IEventGetter``` "owns" this ```FlxUI``` object. In the default setup, this is your ```FlxUIState```. So extend this function in your ```FlxUIState```:
 
