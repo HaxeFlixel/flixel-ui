@@ -169,7 +169,8 @@ Example:
 ```
 
 \* More info on Anchor and Size tags appears towards the bottom in the "Dynamic Position & Size" section.
-\* \* More info on Parameters can be found under the Button entry in "List of Widgets". Only some widgets use parameters.
+\*\* More info on Parameters can be found under the Button entry in "List of Widgets". Only some widgets use parameters. 
+
 --
 
 ###2. ```<definition>```
