@@ -358,38 +358,7 @@ Attributes:
 * ```width``` and ```height``` (optional, use exact pixel values or formulas to scale the image)
 * ```resize_ratio``` (optional, if you specify width or height, you can also define this to force a scaling aspect ratio)
 * ```resize_ratio_x``` / ```resize_ratio_y``` (optional, does the same thing are resize_ratio, but only affects one axis)
-* ```resize_point``` (optional, when resizing, this point in the object stays fixed)
-
-###2. 9-slice sprite/chrome (FlxUI9SliceSprite) ```<9slicesprite>``` or ```<chrome>```
-
-A 9-slice sprite can be scaled in a more pleasing way than just stretching it directly. It divides the object up into a user-defined grid of 9 cells, (4 corners, 4 edges, 1 interior), and then repositions and scales those individually to construct a resized image. Works best for stuff like chrome and buttons.
-
-Attributes:
-* ```x```/```y```, ```use_def```, ```group```
-* src
-* width/height
-* slice9 - string, two points that define the slice9 grid, format "x1,y1,x2,y2". For example, "6,6,12,12" works well for the 12x12 chrome images in the demo project.
-* tile - bool, optional (assumes false if not exist). If true, uses tiling rather than scaling for stretching 9-slice cells. Boolean true == "true", not "True" or "TRUE", or "T".
-* smooth - bool, optional (assumes false if not exist). If ture, ensures the scaling uses smooth interpolation rather than nearest-neighbor (stretched blocky pixels).
-
-###3. Button (FlxUIButton)
-**\<button>**
-
-Just a regular clicky button, optionally with a label.
-
-Attributes:
-* x/y, use_def, group
-* width/height - optional, only needed if you're using a 9-slice sprite as source
-* text_x/text_y - label offsets
-* label - text to show
-* context - (optional) context value if label is a [firetongue](http://www.github.com/larsiusprime/firetongue) flag
-* code - (optional) firetongue formatting code:
-    * "u" - all uppercase
-    * "l" - all lowercase
-    * "fu" - first letter uppercase
-    * "fu_" - first letter in each word uppercase
-* resize_ratio - (optional) specify aspect ratio for resizing
-* resize_point - (optional, string) specify anchor for resizing
+* ```resize_point``` - (optional, string) specify anchor for resizing
     *  "nw" / "ul" -- Upper-left
     *  "n"  / "u"  -- Top
     *  "ne" / "ur" -- Upper-right
@@ -397,28 +366,57 @@ Attributes:
     *  "s"         -- Bottom
     *  "se" / "lr" -- Lower-right
     *  "m" / "c" / "mid" / "center" -- Center
-* resize_label - (optional, boolean) whether or not to let the label scale when the button is resized
+
+###2. 9-slice sprite/chrome (FlxUI9SliceSprite) ```<9slicesprite>``` or ```<chrome>```
+
+A 9-slice sprite can be scaled in a more pleasing way than just stretching it directly. It divides the object up into a user-defined grid of 9 cells, (4 corners, 4 edges, 1 interior), and then repositions and scales those individually to construct a resized image. Works best for stuff like chrome and buttons.
+
+Attributes:
+* ```x```/```y```, ```use_def```, ```group```
+* ```src```
+* ```width```/```height``` **NOT OPTIONAL**: the size of your 9-slice scaled image (not the size of the source image)
+* ```slice9``` - string, two points that define the slice9 grid, format "x1,y1,x2,y2". For example, "6,6,12,12" works well for the 12x12 chrome images in the demo project.
+* ```tile``` - bool, optional (assumes false if not exist). If true, uses tiling rather than scaling for stretching 9-slice cells. Boolean true == "true", not "True" or "TRUE", or "T".
+* ```smooth``` - bool, optional (assumes false if not exist). If ture, ensures the scaling uses smooth interpolation rather than nearest-neighbor (stretched blocky pixels).
+
+###3. Button (FlxUIButton) ```<button>```
+
+Just a regular clicky button, optionally with a label.
+
+Attributes:
+* ```x```/```y```, ```use_def```, ```group```
+* ```width```/```height``` - optional, only needed if you're using a 9-slice sprite as source
+* ```text_x```/```text_y``` - label x & y offsets
+* ```label``` - text to show
+* ```context``` - (optional) context value if label is a [firetongue](http://www.github.com/larsiusprime/firetongue) flag
+* ```code``` - (optional) firetongue formatting code. Applies a formatting rule to the text:
+    * "u" - all uppercase
+    * "l" - all lowercase
+    * "fu" - first letter uppercase
+    * "fu_" - first letter in each word uppercase
+* ```resize_ratio```, ```resize_point``` (see Image)
+* ```resize_label``` - (optional, boolean) whether or not to let the label scale when the button is resized
 
 Child tags:
-* \<text> - just like a regular \<text> node
-* \<param> - parameter to pass to the callback/event system (details below)
-* \<graphic> - graphic source (details below)
+* ```<text>``` - just like a regular \<text> node
+* ```<param>``` - parameter to pass to the callback/event system (see "Working With Parameters")
+* ```<graphic>``` - graphic source (details below)
 
-#####3.1 Button Parameters
+#####3.1 Working With Parameters
 
-A **\<param>** tag takes two attributes: **type** and **value**. 
+A ```<param>``` tag takes two attributes: ```type``` and ```value```. 
 
-**type**: "string", "int", "float", and "color" or "hex" for e.g: "0xFF00FF"
+```type```: "string", "int", "float", and "color" or "hex" for a value like ```"0xFF00FF"```
 
-**value**: the value, as a string. The type attribute will ensure it typecasts correctly.
+```value```: the value, as a string. The type attribute will ensure it typecasts correctly.
 
-````
+```xml
 <button id="new_game" use_def="big_button_gold" x="594" y="11" group="top" label="New Game">
 	<param type="string" value="new"/>
 </button>
-````
+```
 
-You can add as many <param> tags as you want. When you click this button, it will by default call FlxUI's internal public static event callback:
+You can add as many ```<param>``` tags as you want. When you click this button, it will by default call FlxUI's internal public static event callback:
 
 ````
 FlxUI.event(CLICK_EVENT, this, null, params);
