@@ -85,7 +85,7 @@ getDefinition(key:String,recursive:Bool=true):Fast
 ```
 
 less commonly used public functions:
-````
+```haxe
 //These implement the IEventGetter interface for lightweight events
 getEvent(id:String, sender:Dynamic, data:Dynamic):Void
 getRequest(id:String, sender:Dynamic, data:Dynamic):Dynamic
@@ -100,23 +100,23 @@ replaceAsset(key:String,replace:FlxBasic,center_x:Bool=true,center_y:Bool=true,d
 //  target_id is the FlxUI object to target -
 //            "" for this FlxUI, something else for a child
 setMode(mode_id:String,target_id:String=""):Void
-````
+```
 
 ##XML layout basics
 Everything in flixel-ui is done with xml layout files. Here's a very simple example:
 
-````
+```xml
 <?xml version="1.0" encoding="utf-8" ?>
 <data>	
 	<sprite src="ui/title_back" x="0" y="0"/>
 </data>
-````
+```
 
 That will create a FlxUI object whose sole child is a single sprite. The "src" parameter specifies the path to the image - FlxUI will use this to internally load the object via OpenFL thus:
 
-````
+```haxe
 Assets.getBitmapData("assets/gfx/ui/title_back.png")
-````
+```
 
 As you can see, all image source entries assume two things:
 * The format is PNG (might add JPG/GIF/etc support later)
@@ -127,7 +127,7 @@ As you can see, all image source entries assume two things:
 ###Types of tags
 There are several basic types of xml tags in a Flixel-UI layout file.
 
-**Widget**, **\<definition>**, **\<include>**, **\<group>**, **\<align>**, **\<layout>**, **\<failure>**, and **\<mode>**.
+**Widget**, ```<definition>```, ```<include>```, ```<group>```, ```<align>```, ```<position>```, ```<layout>```, ```<failure>```, ```<mode>```, and ```<change>```.
 
 Let's go over these one by one.
 
@@ -150,7 +150,7 @@ This is any of the many Flixel-UI widgets, such as **\<sprite\>**, **\<button\>*
 * **\<locale id="xx-YY">** - optional, lets you specify a locale (like "en-US" or "nb-NO") for [fireTongue](https://github.com/larsiusprime/firetongue) integration. This lets you specify changes based on the current locale:
 Example:
 
-````
+```xml
 <button center_x="true" x="0" y="505" id="battle" use_def="text_button" group="top" label="$TITLE_BATTLES">
 	<param type="string" value="battle"/>
 	<locale id="nb-NO">
@@ -158,7 +158,7 @@ Example:
 		<!--if norwegian, do 96 pixels wide instead of the default-->
 	</locale>			
 </button>
-````
+```
 * **\<anchor\>** - optional, lets you position this widget relative to another object's position.
 
 * **size tags** - optional, lets you dynamically size a widget according to some formula.
@@ -167,7 +167,7 @@ More info on Anchor and Size tags appears towards the bottom in the "Dynamic Pos
 
 --
 
-####2.\<definition>
+####2. ```<definition>```
 This lets you offload a lot of re-usable details into a separate tag with a unique id, and then call them in to another tag using the use_def="definition_id" attribute. A definition tag is exactly like a regular widget tag, except the tag name is "definition."
 
 If you provide details in the widget tag and also use a definition, it will override the information in the definition wherever they conflict. Look at the RPG Interface demo for more details.
@@ -176,79 +176,80 @@ If you provide details in the widget tag and also use a definition, it will over
 
 A very common usage is font definitions for text widgets. Instead of typing this:
 
-````
+```xml
 <text id="text1" x="50" y="50" text="Text 1" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
 <text id="text2" x="50" y="50" text="Text 2" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
-````
+```
 
 You can do this instead:
 
-````
+```xml
 <definition id="sans10" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
 <text id="text1" use_def="sans10" x="50" y="50" text="Text 1"/>
 <text id="text2" use_def="sans10" x="50" y="50" text="Text 2"/>
-````
+```
 
 Notice that in this case we've created a text definition that is always bold and white with a black outline. Let's say we want some italic text instead, but we don't want to create a new definition:
 
-````
+```xml
 <text id="italic_text" use_def="sans10" style="italic" x="50" y="50" text="My Italic Text"/>
-````
+```
 
 This is the same as writing
 
-````
+```xml
 <text id="italic_text" x="50" y="50" text="My Italic Text" font="verdana" size="10" style="italic" color="0xffffff" outline="0x000000"/>
-````
+```
 
 All of the values from the "sans10" definition are inherited, and then all the local settings of the "italic_text" tag are applied, overriding style="bold" with style="italic."
 
-####3.\<include>
+####3. ```<include>```
 Include tags let you reference definitions stored in another xml file. This is a convenience feature to cut down on file bloat, and aid organization:
 
 This invocation will include all the definitions found in "some_other_file.xml":
-````
+
+```xml
 <include id="some_other_file"/>
-````
+```
 
 *Only* definition tags will be included. It also adds a bit of scoping to your project - in the case that an included definition has the same id as one defined locally, the local definition will be used. Only in the case that FlxUI can't find your definition locally will it check for included ones. 
 
 This recursion is only one level deep. If you put \<include> tags in your included file, they'll be ignored. 
 
 
-####4. \<group>
+####4. ```<group>```
 Creates a FlxGroup (specifically a FlxUIGroup) that you can assign widgets to. Note that you do NOT add things to a group by making widget tags as child xml nodes to the \<group\> tag, but by setting the "group" attribute in a widget tag to the group's id.
 
 Groups are stacked in the order you define them, with those at the top of the file created first, and thus stacked "underneath" those that come later. 
 
 A group tag takes one attribute - id. Just define your groups somewhere in the order you want them to stack, then add widgets to them by setting the group attribute to the ids you want.
 
-####5. \<align>
+####5. ```<align>```
 Dynamically aligns, centers, and/or spaces objects relative to one another. 
 This is complex enough to deserve its own section below.
 
-####6. \<layout>
+####6. ```<layout>```
 Creates a child FlxUI object inside your master FlxUI, and childs all the widgets inside to it. This is especially useful if you want to create multiple layouts for, say, different devices and screen sizes. Combined with **failure** tags, this will let you automatically calculate the best layout depending on screen size.
 
 A layout has only one attribute, id, and then its child nodes. Think of a \<layout> as its own sub-section of your xml file. It can have its own versions of anything you can put in the regular file since it is a full-fledged FlxUI - ie, definitions, groups, widgets, modes, presumably even other layout tags (haven't tested this). 
 
 Note that in a layout, scope comes into play when referencing ids. Definitions and object references will first look in the scope of the layout (ie, that FlxUI object), and if none is found, will try to find them in the parent FlxUI. 
 
-####7. \<failure>
+####7. ```<failure>```
 Specifies "failure" conditions for a certain layout, so FlxUI can determine which of multiple layouts to choose from in the event that one works better than another. Useful for simultaneously targeting, say, PC's with variable resolutions and mobile devices.
 
 Here's an example:
-````
+```xml
 <failure target ="wave_bar" property="height" compare=">" value="15%"/>		
-````
+```
 
 "Fail if wave_bar.height is greater than 15% of total flixel canvas height."
 
 Legal values for attributes:
 
 * value - restricted to a percentage (inferring a % of total width/height) or an absolute number. 
-* property - **"width"** and **"height"**
-* compare - **< , > , <= , >= , = , ==** (= and == are synonymous in this context)
+* property - ```"width"``` and ```"height"```
+* compare - ```<```,```>```,```<=```,```>=```,```=```,```==``` (```=``` and ```==``` are synonymous in this context)
 
 After your FlxUI has loaded, you can fetch your individual layouts using getAsset(), and then check these public properties, which give you the result of the failure checks:
 
