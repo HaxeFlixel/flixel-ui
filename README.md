@@ -170,7 +170,36 @@ More info on Anchor and Size tags appears towards the bottom in the "Dynamic Pos
 ####2.\<definition>
 This lets you offload a lot of re-usable details into a separate tag with a unique id, and then call them in to another tag using the use_def="definition_id" attribute. A definition tag is exactly like a regular widget tag, except the tag name is "definition."
 
-If you provide details in the widget tag and also use a definition, it will override *some* of the information in the definition... I still need to stabilize how this works. Look at the RPG Interface demo for more details.
+If you provide details in the widget tag and also use a definition, it will override the information in the definition wherever they conflict. Look at the RPG Interface demo for more details.
+
+A very common usage is font definitions for text widgets. Instead of typing this:
+
+````
+<text id="text1" x="50" y="50" text="Text 1" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
+<text id="text2" x="50" y="50" text="Text 2" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
+````
+
+You can do this instead:
+
+````
+<definition id="sans10" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
+<text id="text1" x="50" y="50" text="Text 1"/>
+<text id="text2" x="50" y="50" text="Text 2"/>
+````
+
+Notice that in this case we've created a text definition that is always bold and white with a black outline. Let's say we want some italic text instead, but we don't want to create a new definition:
+
+````
+<text id="italic_text" use_def="sans10" style="italic" x="50" y="50" text="My Italic Text"/>
+````
+
+This is the same as writing
+
+````
+<text id="italic_text" x="50" y="50" text="My Italic Text" font="verdana" size="10" style="italic" color="0xffffff" outline="0x000000"/>
+````
+
+All of the values from the "sans10" definition are inherited, and then all the local settings of the "italic_text" tag are applied, overriding style="bold" with style="italic."
 
 ####3.\<include>
 Include tags let you reference definitions stored in another xml file. This is a convenience feature to cut down on file bloat, and aid organization:
