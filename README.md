@@ -770,17 +770,14 @@ Acceptable property values for reference formula, used alone or in a stretch:
 --
 ###3. Alignment Tags
 
-This is still very experimental and I don't have a live example in the RPG Interface demo yet. 
+An ```<align>``` tag lets you automatically align and space various objects together.
 
-An \<align> tag lets you automatically align and space various objects together.
-
-````
+```xml
 <align axis="horizontal" spacing="2" resize="true">
 	<bounds left="options.left" right="options.right"/>
 	<objects value="spell_0,spell_1,spell_2,spell_3,spell_4,spell_5"/>
 </align>
-		
-````
+```
 
 Attributes:
 * axis - "horizontal" or "vertical"
@@ -788,8 +785,21 @@ Attributes:
 * resize - bool, optional, "true" or "false" (if not exist, assumes false)
 
 Child tags:
-* \<bounds> - string, reference formula, specify left & right for horizontal, or top & bottom for vertical
-* \<objects> - string, comma separated list of object id's
+* ```<bounds>``` - string, reference formula, specify left & right for horizontal, or top & bottom for vertical
+* ```<objects>``` - string, comma separated list of object id's
+
+If you specify more than one "objects" tag, you can align several groups of objects at once according to the same rules. For instance, if you have obj_0 through obj_9 (10 in total), and you want two rows spaced evenly in five columns, this would do the trick:
+
+```xml
+<align axis="horizontal" spacing="2" resize="true">
+	<bounds left="options.left" right="options.right"/>
+	<objects value="obj_0,obj_1,obj_2,obj_3,obj_4"/>
+	<objects value="obj_5,obj_6,obj_7,obj_8,obj_9"/>
+</align>
+```
+
+Whereas putting all 10 objects in one ```<objects>``` tag would instead get you one row with 10 columns.
+
 ...
 
 ##Localization (FireTongue)
