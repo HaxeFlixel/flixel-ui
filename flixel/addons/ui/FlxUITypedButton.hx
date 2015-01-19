@@ -53,7 +53,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public var down_toggle_visible:Bool = true;
 	
 	public var toggle_label(default, set):FlxSprite;
-	public function set_toggle_label(f:FlxSprite):FlxSprite {
+	public function set_toggle_label(f:FlxSprite):FlxSprite
+	{
 		if(label != null){
 			toggle_label = f;
 			return toggle_label;
