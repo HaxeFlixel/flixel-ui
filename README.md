@@ -172,6 +172,8 @@ This lets you offload a lot of re-usable details into a separate tag with a uniq
 
 If you provide details in the widget tag and also use a definition, it will override the information in the definition wherever they conflict. Look at the RPG Interface demo for more details.
 
+**Example:**
+
 A very common usage is font definitions for text widgets. Instead of typing this:
 
 ````
