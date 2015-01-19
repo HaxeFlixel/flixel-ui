@@ -343,31 +343,29 @@ The change tag lets you modify various properties of a widget after it has alrea
 |**Dropdown/Pulldown Menu**|FlxUIDropDownMenu|```<dropdown_menu>```|
 |**Tile Grid**|FlxUITileTest|```<tile_test>```|
 
-Lets go over these one by one.
+Lets go over these one by one. Many of them share common attributes so I will only explain specific attributes in full detail the first time they appear.
 
-###1. Image (FlxUISprite)
-
-**\<sprite>**
+###1. Image (FlxUISprite) ```<sprite>```
 
 Just a regular sprite, with a fixed size.
 
 Attributes:
 * ```x``` and ```y```
-* ```src``` (path to source, no extension, appended to "assets/gfx/")
+* ```src``` (path to source, no extension, appended to "assets/gfx/". If not present will look for "color" instead)
+* ```color``` (color of the rectangle. "color" attribute should be hexadecimal format ```0xAARRGGBB```, or ```0xRRGGBB```, or a standard color string name like "white" from ```flixl.util.FlxColor```)
 * ```use_def``` (definition id)
 * ```group``` (group id)
 * ```width``` and ```height``` (optional, use exact pixel values or formulas to scale the image)
 * ```resize_ratio``` (optional, if you specify width or height, you can also define this to force a scaling aspect ratio)
 * ```resize_ratio_x``` / ```resize_ratio_y``` (optional, does the same thing are resize_ratio, but only affects one axis)
+* ```resize_point``` (optional, when resizing, this point in the object stays fixed)
 
-###2. 9-slice sprite/chrome (FlxUI9SliceSprite)
-
-**\<9slicesprite> or \<chrome>**
+###2. 9-slice sprite/chrome (FlxUI9SliceSprite) ```<9slicesprite>``` or ```<chrome>```
 
 A 9-slice sprite can be scaled in a more pleasing way than just stretching it directly. It divides the object up into a user-defined grid of 9 cells, (4 corners, 4 edges, 1 interior), and then repositions and scales those individually to construct a resized image. Works best for stuff like chrome and buttons.
 
 Attributes:
-* x/y, use_def, group
+* ```x```/```y```, ```use_def```, ```group```
 * src
 * width/height
 * slice9 - string, two points that define the slice9 grid, format "x1,y1,x2,y2". For example, "6,6,12,12" works well for the 12x12 chrome images in the demo project.
