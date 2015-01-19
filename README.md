@@ -121,6 +121,8 @@ Assets.getBitmapData("assets/gfx/ui/title_back.png")
 As you can see, all image source entries assume two things:
 * The format is PNG (might add JPG/GIF/etc support later)
 * The specified directory is inside "assets/gfx/"
+  * If you want a different directory, prepend it with "RAW:" like this:
+  * ````"RAW:path/to/my/assets/image"```` will resolve as ````"path/to/my/assets/image.png"````
 
 ###Types of tags
 There are several basic types of xml tags in a Flixel-UI layout file.
