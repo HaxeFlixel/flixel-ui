@@ -634,40 +634,39 @@ Attributes:
 
 ###9. Radio button group (FlxUIRadioGroup) ```<radio_group>```
 
-Radio groups are a set of buttons where only one can be clicked at a time. We implement these as a FlxUIGroup of FlxUICheckBox'es, and then internal logic makes only one clickable at a time. 
+Radio groups are a set of buttons where only one can be clicked at a time. We implement these as a ```FlxUIGroup``` of ```FlxUICheckBox```'es, and then internal logic makes only one clickable at a time. 
 
 Attributes:
-* x/y, use_def, group
-* radio_src - image src for radio button back (ie, checkbox "box")
-* dot_src - image src for radio dot (ie, checkbox "check mark")
-* \<param> - same as \<button>, 
-* \<radio> - two attributes, id (string) and label (string)
+* ```x```/```y```, ```use_def```, ```group```
+* ```radio_src``` - image src for radio button back (ie, checkbox "box")
+* ```dot_src``` - image src for radio dot (ie, checkbox "check mark")
 
-You construct a radio group by providing as many \<radio> tags as you want radio buttons. Give each of them an id and a label.
+You construct a radio group by providing as many ```<radio>``` child tags as you want radio buttons. Give each of them an id and a label.
 
 Child Nodes:
+* ```<param>``` - same as ```<button>```, 
+* ```<radio>``` - two attributes, id (string) and label (string)
 
 Event:
-* id - "click_radio_group"
-* params - as defined by user
+* ```id``` - "click_radio_group"
+* ```params``` - same as Button
 
-###10. Tabbed menu (FlxUITabMenu)
-**\<tab_menu>**
+###10. Tabbed menu (FlxUITabMenu) ```<tab_menu>```
 
-Tab menus are the most complex FlxUI widget. FlxUITabMenu extends FlxUI and is thus a full-fledged FlxUI in and of itself, just like the \<layout> tag.
+Tab menus are the most complex ```FlxUI``` widget. ```FlxUITabMenu``` extends ```FlxUI``` and is thus a full-fledged ```FlxUI``` in and of itself, just like the ```<layout>``` tag.
 
 This provides a menu with various tabbed buttons on top. When you click on one tab, it will show the content for that tab and hide the rest. 
 
 Attributes:
-* x/y, use_def, group
-* width/height
-* back_def - id for a 9-slice chrome definition (MUST be 9-sliceable!)
-* slice9
+* ```x```/```y```, ```use_def```, ```group```
+* ```width```/```height```
+* ```back_def``` - id for a 9-slice chrome definition (MUST be 9-sliceable!)
+* ```slice9```
 
 Child Nodes:
-* \<tab> - attributes are "id" and "label", much like in \<radio_group>
-* \<group> - attributes are only "id"
- * Put regular FlxUI content tags here, within the \<group>\</group> node.
+* ```<tab>``` - attributes are "id" and "label", much like in ```<radio_group>```
+* ```<group>``` - attributes are only "id"
+ * Put regular FlxUI content tags here, within the ```<group></group>``` node.
 
 ##Dynamic position & size
 
