@@ -329,13 +329,13 @@ The change tag lets you modify various properties of a widget after it has alrea
 | Name | Class | Tag |
 |------|-------|-----|
 |**Region**|FlxUIRegion|```<region>```|
-|**Image, vanilla**|FlxUISprite|```<sprite>```|
-|**9-slice sprite/chrome**|FlxUI9SliceSprite|```<9slicesprite>``` or ```<chrome>```|
-|**Button, vanilla**|FlxUIButton|```<button>```|
-|**Button, toggle**|FlxUIButton|```<button_toggle>```|
+|**Image**, vanilla|FlxUISprite|```<sprite>```|
+|**Image**, 9-slice/chrome|FlxUI9SliceSprite|```<9slicesprite>``` or ```<chrome>```|
+|**Button**, vanilla|FlxUIButton|```<button>```|
+|**Button**, toggle|FlxUIButton|```<button_toggle>```|
 |**Check box**|FlxUICheckBox|```<checkbox>```|
-|**Text, vanilla**|FlxUIText|```<text>```|
-|**Text, input**|FlxUIInputText|```<input_text>```|
+|**Text**, vanilla|FlxUIText|```<text>```|
+|**Text**, input|FlxUIInputText|```<input_text>```|
 |**Radio button group**|FlxUIRadioGroup|```<radio_group>```|
 |**Tabbed menu**|FlxUITabMenu|```<tab_menu>```|
 |**Line**|FlxUISprite|```<line>```|
