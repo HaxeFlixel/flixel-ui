@@ -540,8 +540,7 @@ Of course, if you create a single asset with 6 images stacked vertically, you ca
 
 Note that you can create a vertical stack of 9-slice assets, or regular statically-sized assets, the system can use either one. 
 
-###6. Check box (FlxUICheckBox)
-**\<checkbox>**
+###6. Check box (FlxUICheckBox) ```<checkbox>```
 
 A Check Box is a FlxUIGroup which contains three objects: a "box" image, a "check" image, and a label.
 
@@ -557,8 +556,12 @@ Attributes:
 * label_width - width of the label
 
 Child tags:
-* \<text> - same as \<button>
-* \<param> - same as \<button>
+* ```<text>``` - same as ```<button>```
+* ```<param>``` - same as ```<button>```
+* ```<check>``` - alternate to check_src, more powerful*
+* ```<box>``` - alternate to box_src, more powerful*
+
+*If you supply ```<check>``` or ```<box>``` child tags instead of their attribute equivalents, FlxUI will treat them as full-fledged ```<sprite>``` or ```<chrome>``` tags to load for the checkmark and box assets. You'll want to use this method if you want to do something complicated, like load a scaled sprite, or a 9-slice-scaled sprite, that you can't normally accomplish just by specifcy the src attribute, which just loads a static image as-is.
 
 Event:
 * id - "click_checkbox"
