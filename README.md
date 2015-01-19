@@ -379,6 +379,16 @@ Attributes:
 * ```tile``` - bool, optional (assumes false if not exist). If true, uses tiling rather than scaling for stretching 9-slice cells. Boolean true == "true", not "True" or "TRUE", or "T".
 * ```smooth``` - bool, optional (assumes false if not exist). If ture, ensures the scaling uses smooth interpolation rather than nearest-neighbor (stretched blocky pixels).
 
+###3. Region (FlxUIRegion) ```<region>```
+
+Regions are lightweight, invisible rectangles that can only be seen in Flixel's Debug "show outlines" mode. 
+
+Despite being invisible, Regions are full-fledged IFlxUIWidget objects and are most useful as placeholders and as intermediate objects for setting up complex layouts. Basically, anytime you feel the urge to create a ```<sprite>``` or ```<chrome>``` tag where you don't really need to see that object, but just want to use it to position something else, or generate a targetable widget you can use in a subsequent formula, use a Region instead.
+
+Attributes:
+* ```x```/```y```, ```use_def```, ```group```
+* ```width```/```height```
+
 ###3. Button (FlxUIButton) ```<button>```
 
 Just a regular clicky button, optionally with a label.
