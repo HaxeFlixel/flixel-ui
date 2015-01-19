@@ -260,7 +260,7 @@ Sometimes multiple layouts have "failed" according to your rules, and you want t
 To *respond* to failure conditions, you need to write your own code. In the RPG Interface demo, there are two battle layouts, one that is more appropriate for 4:3 resolutions, and another that works better in 16:9. The custom FlxUIState for that state will check failure conditions on load, and set the mode depending on which layout works best. Speaking of modes...
 
 ####8. \<mode>
-Specifies UI "modes" that you can switch between. Basically just a glorified way of quickly hiding and showing specific assets. For instance, in Defender's Quest we had four states for our save slots - empty, play, new_game+ (New Game+ eligible), and play+ (New Game+ started). This would determine what buttons were visible ("New Game", "Play", "Play+", "Import", "Export"). 
+Specifies UI "modes" that you can switch between. For instance, in Defender's Quest we had four states for our save slots - empty, play, new_game+ (New Game+ eligible), and play+ (New Game+ started). This would determine what buttons were visible ("New Game", "Play", "Play+", "Import", "Export").
 
 The "empty" and "play" modes might look like this:
 
@@ -299,7 +299,14 @@ The "empty" and "play" modes might look like this:
 </mode>
 ````
 
-The only tags available in a **\<mode>** element are \<hide> and \<show>, which each only take id as an attribute. They just toggle the "visible" property on and off. 
+Several tags are available in a **\<mode>** element. The most basic ones are ```\<hide>``` and ```\<show>```, which each only take id as an attribute. They just toggle the "visible" property on and off. The full list is:
+
+* **show** -- targets attribute "id", turns element visible
+* **hide** -- targets attribute "id", turns element invisible
+* **align** -- lets you align the placement of a list of widgets, see "Alignment Tags" later in the document.
+* **change** -- lets you change the property of a widget, see "Change Tags" later in the document.
+* **position** -- lets you re-position a widget, see "Position Tags" later in the document.
+
 
 ##List of Widgets
 
