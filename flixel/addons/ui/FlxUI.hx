@@ -2549,7 +2549,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		if (data.hasNode.tab) {
 			for (tab_node in data.nodes.tab) {
-				name = U.xml_str(tab_node.x, "name", true);
+				name = U.xml_name(tab_node.x);
 				
 				if(name != ""){
 					var label:String = U.xml_str(tab_node.x, "label");
@@ -2595,7 +2595,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		if (data.hasNode.group) {
 			for (group_node in data.nodes.group) {
-				name = U.xml_str(group_node.x, "name", true);
+				name = U.xml_name(group_node.x);
 				var _ui:FlxUI = new FlxUI(group_node, fg, this, _ptr_tongue);
 				if(list_tabs != null && list_tabs.length > 0){
 					_ui.y += list_tabs[0].height;

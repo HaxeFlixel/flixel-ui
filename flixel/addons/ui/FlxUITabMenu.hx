@@ -116,7 +116,7 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 	
 	/***PUBLIC***/
 	
-	public function new(?back_:FlxSprite,?tabs_:Array<IFlxUIButton>,?tab_ids_and_labels_:Array<{name:String,label:String}>,?tab_offset:FlxPoint,?stretch_tabs:Bool=false,?tab_spacing:Null<Float>=null,?tab_stacking:Array<String>=null) 
+	public function new(?back_:FlxSprite,?tabs_:Array<IFlxUIButton>,?tab_names_and_labels_:Array<{name:String,label:String}>,?tab_offset:FlxPoint,?stretch_tabs:Bool=false,?tab_spacing:Null<Float>=null,?tab_stacking:Array<String>=null) 
 	{
 		super();
 		
@@ -129,11 +129,11 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 		add(_back);
 		
 		if (tabs_ == null) {
-			if (tab_ids_and_labels_ != null) {
+			if (tab_names_and_labels_ != null) {
 				tabs_ = new Array<IFlxUIButton>();
 			
-				//load default graphic data if only tab_ids_and_labels are provided
-				for (tdata in tab_ids_and_labels_) {
+				//load default graphic data if only tab_names_and_labels are provided
+				for (tdata in tab_names_and_labels_) {
 					//set label and name
 					var fb:FlxUIButton = new FlxUIButton(0, 0, tdata.label);
 					
@@ -151,10 +151,10 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 					fb.name = tdata.name;
 					
 					//load default graphics
-					var graphic_ids:Array<FlxGraphicAsset> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
+					var graphic_names:Array<FlxGraphicAsset> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
 					var slice9tab:Array<Int> = FlxStringUtil.toIntArray(FlxUIAssets.SLICE9_TAB);
-					var slice9_ids:Array<Array<Int>> = [slice9tab, slice9tab, slice9tab, slice9tab, slice9tab, slice9tab];
-					fb.loadGraphicSlice9(graphic_ids, 0, 0, slice9_ids, FlxUI9SliceSprite.TILE_NONE, -1, true);
+					var slice9_names:Array<Array<Int>> = [slice9tab, slice9tab, slice9tab, slice9tab, slice9tab, slice9tab];
+					fb.loadGraphicSlice9(graphic_names, 0, 0, slice9_names, FlxUI9SliceSprite.TILE_NONE, -1, true);
 					tabs_.push(fb);
 				}
 			}
