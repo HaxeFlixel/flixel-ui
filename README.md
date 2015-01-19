@@ -299,7 +299,7 @@ The "empty" and "play" modes might look like this:
 </mode>
 ````
 
-Several tags are available in a **\<mode>** element. The most basic ones are ```\<hide>``` and ```\<show>```, which each only take id as an attribute. They just toggle the "visible" property on and off. The full list is:
+Several tags are available in a **\<mode>** element. The most basic ones are ```<hide>``` and ```<show>```, which each only take id as an attribute. They just toggle the "visible" property on and off. The full list is:
 
 * **show** -- targets attribute "id", turns element visible
 * **hide** -- targets attribute "id", turns element invisible
