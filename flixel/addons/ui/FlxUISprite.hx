@@ -28,13 +28,21 @@ class FlxUISprite extends FlxSprite implements IFlxUIWidget implements IResizabl
 	public static inline var RESIZE_RATIO_Y:Int = 1;
 	public static inline var RESIZE_RATIO_UNKNOWN:Int = -1;
 	
+	//what the image's aspect ratio is for rescaling by just X or just Y
 	public var resize_ratio(default, set):Float;
+	
+	//whether the resize_ratio means X in terms of Y, or Y in terms of X
 	public var resize_ratio_axis:Int = RESIZE_RATIO_Y;
+	
 	private function set_resize_ratio(r:Float):Float { resize_ratio = r; return r;}
 
+	//resize about this point, so that after resizing this point in the object remains in the same place on screen
 	public var resize_point(default, set):FlxPoint;
-	private function set_resize_point(r:FlxPoint):FlxPoint { 
-		if (r != null) { 
+	
+	private function set_resize_point(r:FlxPoint):FlxPoint
+	{
+		if (r != null)
+		{
 			resize_point = FlxPoint.get(); 
 			resize_point.x = r.x;
 			resize_point.y = r.y;
@@ -86,7 +94,8 @@ class FlxUISprite extends FlxSprite implements IFlxUIWidget implements IResizabl
 		var diff_w:Float = width - old_width;
 		var diff_h:Float = height - old_height;
 		
-		if(resize_point != null){
+		if (resize_point != null)
+		{
 			var delta_x:Float = diff_w * resize_point.x;
 			var delta_y:Float = diff_h * resize_point.y;
 			x -= delta_x;

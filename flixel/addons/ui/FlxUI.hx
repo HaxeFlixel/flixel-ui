@@ -778,7 +778,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @param	target_id UI element to target - "" for the UI itself, otherwise the id of an element that is itself a FlxUI
 	 */
 	
-	public function setMode(mode_id:String,target_id:String=""):Void {
+	public function setMode(mode_id:String, target_id:String = ""):Void
+	{
 		if (_curr_mode == mode_id)
 		{
 			return;					//no sense in setting the same mode twice!
@@ -802,7 +803,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					{
 						switch(nodeName) {
 							case "show":
-								showThing(U.xml_str(xml, "id", true),true);
+								showThing(U.xml_str(xml, "id", true), true);
 							case "hide":
 								showThing(U.xml_str(xml, "id", true), false);
 							case "align":
@@ -828,34 +829,52 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 	}
 	
-	private function showThing(id:String, b:Bool = true):Void{
-		if (id.indexOf(",") != -1) {
+	private function showThing(id:String, b:Bool = true):Void
+	{
+		if (id.indexOf(",") != -1)
+		{
 			var ids:Array<String> = id.split(",");			//if commas, it's a list
-			for(each_id in ids){
+			for (each_id in ids)
+			{
 				var thing = getAsset(each_id);
-				if (thing != null) {
+				if (thing != null)
+				{
 					thing.visible = b;
-				}else{
+				}
+				else
+				{
 					var group = getGroup(each_id);
-					if (group != null) {
+					if (group != null)
+					{
 						group.visible = b;
 					}
 				}
 			}
-		}else {
-			if(id != "*"){
+		}
+		else
+		{
+			if (id != "*")
+			{
 				var thing = getAsset(id);					//else, it's just one asset
-				if (thing != null) { 
+				if (thing != null)
+				{
 					thing.visible = b;
-				}else {
+				}
+				else
+				{
 					var group = getGroup(id);
-					if (group != null) {
+					if (group != null)
+					{
 						group.visible = b;
 					}
 				}
-			}else {											//if it's a "*", do this for ALL assets
-				for (asset_id in _asset_index.keys()) {		
-					if(asset_id != "*"){					//assets can't be named "*", smartass!
+			}
+			else											//if it's a "*", do this for ALL assets
+			{
+				for (asset_id in _asset_index.keys())
+				{
+					if (asset_id != "*")					//assets can't be named "*", smartass!
+					{
 						showThing(asset_id, b);				//recurse
 					}
 				}
@@ -865,33 +884,41 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	/******UTILITY FUNCTIONS**********/
 	
-	public function getGroup(key:String, recursive:Bool=true):FlxUIGroup{
+	public function getGroup(key:String, recursive:Bool = true):FlxUIGroup
+	{
 		var tempGroup:FlxUIGroup = _group_index.get(key);
-		if (tempGroup == null && recursive && _superIndexUI != null) {
+		if (tempGroup == null && recursive && _superIndexUI != null)
+		{
 			return _superIndexUI.getGroup(key, recursive);
 		}
 		return tempGroup;
 	}
 	
-	public function getFlxText(key:String, recursive:Bool = true):FlxText {
+	public function getFlxText(key:String, recursive:Bool = true):FlxText
+	{
 		var asset = getAsset(key, recursive);
-		if (asset != null) {
-			if (Std.is(asset, FlxText)) {
+		if (asset != null)
+		{
+			if (Std.is(asset, FlxText))
+			{
 				return cast(asset, FlxText);
 			}
 		}
 		return null;
 	}
 	
-	public function getAllAssets():Array<IFlxUIWidget> {
+	public function getAllAssets():Array<IFlxUIWidget>
+	{
 		var arr:Array<IFlxUIWidget> = [];
-		for (key in _asset_index.keys()) {
+		for (key in _asset_index.keys())
+		{
 			arr.push(getAsset(key));
 		}
 		return arr;
 	}
 	
-	public function getAssetKeys():Array<String> {
+	public function getAssetKeys():Array<String>
+	{
 		var arr:Array<String> = [];
 		for (key in _asset_index.keys()) {
 			arr.push(key);
@@ -899,35 +926,44 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return arr;
 	}
 	
-	public function hasAsset(key:String, recursive:Bool = true):Bool {
-		if (_asset_index.exists(key)) {
+	public function hasAsset(key:String, recursive:Bool = true):Bool
+	{
+		if (_asset_index.exists(key))
+		{
 			return true;
 		}
-		if (recursive && _superIndexUI != null) {
+		if (recursive && _superIndexUI != null)
+		{
 			return _superIndexUI.hasAsset(key, recursive);
 		}
 		return false;
 	}
 	
-	public function getAsset(key:String, recursive:Bool=true):IFlxUIWidget{
+	public function getAsset(key:String, recursive:Bool = true):IFlxUIWidget
+	{
 		var asset:IFlxUIWidget = _asset_index.get(key);
-		if (asset == null && recursive && _superIndexUI != null) {
+		if (asset == null && recursive && _superIndexUI != null)
+		{
 			return _superIndexUI.getAsset(key, recursive);
 		}
 		return asset;
 	}
 	
-	public function getMode(key:String, recursive:Bool = true):Fast {
+	public function getMode(key:String, recursive:Bool = true):Fast
+	{
 		var mode:Fast = _mode_index.get(key);
-		if (mode == null && recursive && _superIndexUI != null) {
+		if (mode == null && recursive && _superIndexUI != null)
+		{
 			return _superIndexUI.getMode(key, recursive);
 		}
 		return mode;
 	}
 
-	public function getLabelStyleFromDefinition(key:String, recursive:Bool = true):ButtonLabelStyle{
+	public function getLabelStyleFromDefinition(key:String, recursive:Bool = true):ButtonLabelStyle
+	{
 		var definition:Fast = getDefinition(key, recursive);
-		if (definition != null) {
+		if (definition != null)
+		{
 			var fontDef:FontDef = _loadFontDef(definition);
 			var align:String = U.xml_str(definition.x, "align"); if (align == "") { align = null;}
 			var color:Int = _loadColor(definition);
@@ -937,7 +973,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return null;
 	}
 	
-	public function getLabelStyleFromData(data:Fast):ButtonLabelStyle {
+	public function getLabelStyleFromData(data:Fast):ButtonLabelStyle
+	{
 		var fontDef:FontDef = _loadFontDef(data);
 		var align:String = U.xml_str(data.x, "align"); if (align == "") { align = null; }
 		var color:Int = _loadColor(data);
@@ -945,7 +982,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return new ButtonLabelStyle(fontDef, align, color, border);
 	}
 	
-	public function checkVariable(key:String, otherValue:String, type:String, operator:String="==", recursive:Bool=true):Bool {
+	public function checkVariable(key:String, otherValue:String, type:String, operator:String = "==", recursive:Bool = true):Bool
+	{
 		var variable:String = getVariable(key, recursive);
 		if (variable != null)
 		{
@@ -957,21 +995,27 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 	}
 	
-	public function getVariable(key:String, recursive:Bool = true):String{
+	public function getVariable(key:String, recursive:Bool = true):String
+	{
 		var variable:String = _variable_index.get(key);
-		if (variable == null && recursive && _superIndexUI != null) {
+		if (variable == null && recursive && _superIndexUI != null)
+		{
 			variable = _superIndexUI.getVariable(key, recursive);
 		}
 		return variable;
 	}
 	
-	public function getDefinition(key:String,recursive:Bool=true):Fast{
+	public function getDefinition(key:String, recursive:Bool = true):Fast
+	{
 		var definition:Fast = _definition_index.get(key);
-		if (definition == null && recursive && _superIndexUI != null) {
+		if (definition == null && recursive && _superIndexUI != null)
+		{
 			definition = _superIndexUI.getDefinition(key, recursive);
 		}
-		if (definition == null) {	//still null? check the globals:
-			if (key.indexOf("include:") == -1) {	
+		if (definition == null)	//still null? check the globals:
+		{
+			if (key.indexOf("include:") == -1)
+			{
 				//check if this definition exists with the prefix "include:"
 				//but stop short of recursively churning on "include:include:etc"
 				definition = getDefinition("include:" + key, recursive);
@@ -988,7 +1032,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @param	Y
 	 */
 	
-	private static inline function _delta(thing:IFlxUIWidget, X:Float=0, Y:Float=0):Void {				
+	private static inline function _delta(thing:IFlxUIWidget, X:Float = 0, Y:Float = 0):Void
+	{
 		thing.x += X;
 		thing.y += Y;
 	}
@@ -999,7 +1044,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @param	amt
 	 */
 		
-	private static inline function _center(thing:IFlxUIWidget,X:Bool=true,Y:Bool=true):IFlxUIWidget{
+	private static inline function _center(thing:IFlxUIWidget, X:Bool = true, Y:Bool = true):IFlxUIWidget
+	{
 		if (X) { thing.x = (FlxG.width - thing.width) / 2; }
 		if (Y) { thing.y = (FlxG.height - thing.height) / 2;}
 		return thing;
@@ -1194,7 +1240,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			case "bar": return _loadBar(info);
 			case "text": return _loadText(info);								//if input has events
 			case "input_text": return _loadInputText(info);								//if input has events
-			case "numeric_stepper": return _loadNumericStepper(info);			//has events, params
+			case "numstepper","num_stepper","numeric_stepper": return _loadNumericStepper(info);			//has events, params
 			case "button": return _loadButton(info);							//has events, params
 			case "button_toggle": return _loadButton(info,true,true);			//has events, params
 			
@@ -1295,13 +1341,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		ihp.params = getParams(data);
 	}
 	
-	private function _changeThing(data:Fast):Void {
+	private function _changeThing(data:Fast):Void
+	{
 		var id:String = U.xml_str(data.x, "id", true);
 		var thing = getAsset(id);
-		if (thing == null) {
+		if (thing == null)
+		{
 			return;
 		}
-				
+		
 		var new_width:Float = -1;
 		var new_height:Float = -1;
 		
@@ -1310,9 +1358,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var labelStyleChanged:Bool = false;
 		
-		for (attribute in data.x.attributes()) {
-			switch(attribute) {
-				case "text": if (Std.is(thing, FlxUIText)) {
+		for (attribute in data.x.attributes())
+		{
+			switch(attribute)
+			{
+				case "text": if (Std.is(thing, FlxUIText))
+							 {
 								var text = U.xml_str(data.x, "text");
 								context = U.xml_str(data.x, "context", true, "ui");
 								var t:FlxUIText = cast thing;
@@ -1323,7 +1374,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 							  context = U.xml_str(data.x, "context", true, "ui");
 							  code = U.xml_str(data.x, "code", true, "");
 							  label = getText(label, context, true, code);
-							  if (Std.is(thing, ILabeled)) {
+							  if (Std.is(thing, ILabeled))
+							  {
 								  var b:ILabeled = cast thing;
 								  b.getLabel().text = label;
 							  }
@@ -1331,17 +1383,21 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				case "height": new_height = _loadHeight(data);
 			}
 		}
-		if (Std.is(thing, IResizable)) {
+		if (Std.is(thing, IResizable))
+		{
 			var ir:IResizable = cast thing;
-			if (new_width != -1 || new_height != -1) {
+			if (new_width != -1 || new_height != -1)
+			{
 				if (new_width == -1) { new_width = ir.width; }
 				if (new_height == -1) { new_height = ir.height; }
 				ir.resize(new_width, new_height);
 			}
 		}
 		
-		if (data.hasNode.param) {
-			if (Std.is(thing, IHasParams)) {
+		if (data.hasNode.param)
+		{
+			if (Std.is(thing, IHasParams))
+			{
 				var ihp:IHasParams = cast thing;
 				ihp.params = getParams(data);
 			}
@@ -1442,7 +1498,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 	}
 	
-	private function _doAlign(objects:Array<String>, axis:String, spacing:Float, resize:Bool, bounds:FlxPoint, allowGrow:Bool=true, allowShrink:Bool=true):Void {
+	private function _doAlign(objects:Array<String>, axis:String, spacing:Float, resize:Bool, bounds:FlxPoint, allowGrow:Bool = true, allowShrink:Bool = true):Void
+	{
 		var total_spacing:Float = 0;
 		var total_size:Float = 0;
 		
@@ -1454,13 +1511,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var size_prop:String = "width";
 		var pos_prop:String = "x";
-		if (axis == "vertical") { 
+		if (axis == "vertical")
+		{ 
 			size_prop = "height"; 
 			pos_prop = "y"; 
 		}
 		
 		//calculate total size of everything
-		for (id in objects) {
+		for (id in objects)
+		{
 			var widget:IFlxUIWidget = getAsset(id);
 			var theval:Float = 0;
 			
@@ -1472,10 +1531,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			total_size += theval;
 		}
 		
-		if (resize == false) {	//not resizing, so space evenly
+		if (resize == false)	//not resizing, so space evenly
+		{
 			total_spacing = bound_range - total_size;
 			space_size = total_spacing / spaces;
-		}else {					//resizing, calculate space and then get remaining size
+		}
+		else					//resizing, calculate space and then get remaining size
+		{
 			space_size = spacing;
 			total_spacing = spacing * spaces;
 			object_size = (bound_range - total_spacing) / objects.length;	//target object size
@@ -1486,35 +1548,52 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var i:Int = 0;
 		var last_pos:Float = bounds.x;
-		for (id in objects) {
+		for (id in objects)
+		{
 			var widget:IFlxUIWidget = getAsset(id);
 			var pos:Float = last_pos;
-			if (!resize) {
-				switch(size_prop) {
+			if (!resize)
+			{
+				switch(size_prop)
+				{
 					case "width": object_size = widget.width;
 					case "height": object_size = widget.height;
 				}
-			}else {
+			}
+			else
+			{
 				//if we are resizing, resize it to the target size now
-				if (Std.is(widget, IResizable)) {
+				if (Std.is(widget, IResizable))
+				{
 					var allow:Bool = true;
 					var widgetr:IResizable = cast widget;
-					if (axis == "vertical") {
-						if (object_size > widgetr.width) {
+					if (axis == "vertical")
+					{
+						if (object_size > widgetr.width)
+						{
 							allow = allowGrow;
-						}else if (object_size < widgetr.width) {
+						}
+						else if (object_size < widgetr.width)
+						{
 							allow = allowShrink;
 						}
-						if(allow){
+						if (allow)
+						{
 							widgetr.resize(widgetr.width, object_size);
 						}
-					}else if (axis == "horizontal") {
-						if (object_size > widgetr.height) {
+					}
+					else if (axis == "horizontal")
+					{
+						if (object_size > widgetr.height)
+						{
 							allow = allowGrow;
-						}else if (object_size < widgetr.height) {
+						}
+						else if (object_size < widgetr.height)
+						{
 							allow = allowShrink;
 						}
-						if (allow){
+						if (allow)
+						{
 							widgetr.resize(object_size, widgetr.height);
 						}
 					}
@@ -1522,7 +1601,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 			last_pos = pos + object_size + space_size;
 			
-			switch(pos_prop) {
+			switch(pos_prop)
+			{
 				case "x": widget.x = pos;
 				case "y": widget.y = pos;
 			}
@@ -2970,7 +3050,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return reg;
 	}
 	
-	private function _load9SliceSprite(data:Fast, load_code:String = ""):FlxUI9SliceSprite {
+	private function _load9SliceSprite(data:Fast, load_code:String = ""):FlxUI9SliceSprite
+	{
 		var src:String = ""; 
 		var f9s:FlxUI9SliceSprite = null;
 		
@@ -2997,7 +3078,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var rc:Rectangle;
 		var rect_w:Int = Std.int(_loadWidth(data));
 		var rect_h:Int = Std.int(_loadHeight(data));
-				
+		
 		if (bounds != null)
 		{
 			if (rect_w < bounds.min_width) { rect_w = Std.int(bounds.min_width); }
@@ -3034,7 +3115,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return tile;
 	}
 	
-	private function _loadLine(data:Fast):FlxUISprite {
+	private function _loadLine(data:Fast):FlxUISprite
+	{
 		var src:String = ""; 
 		var fs:FlxUISprite = null;
 		
@@ -3228,9 +3310,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				
 				fs = new FlxUISprite(0, 0, U.loadScaledImage(src, W, H));
 			}
-		}else {
-			
-			if(bounds != null){
+		}
+		else
+		{
+			if (bounds != null)
+			{
 				if (W < bounds.min_width) { W = Std.int(bounds.min_width); }
 				else if (W > bounds.max_width) { W = Std.int(bounds.max_width); }
 				if (H < bounds.min_height) { H = Std.int(bounds.max_height); }
@@ -3373,7 +3457,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return f;
 	}
 	
-	private function calcMaxMinSize(data:Fast, width:Null<Float> = null, height:Null<Float> = null):MaxMinSize {
+	private function calcMaxMinSize(data:Fast, width:Null<Float> = null, height:Null<Float> = null):MaxMinSize
+	{
 		var min_w:Float = 0;
 		var min_h:Float = 0;
 		var max_w:Float = Math.POSITIVE_INFINITY;
@@ -3385,8 +3470,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var round:Rounding = Rounding.None;
 		
-		if (data.hasNode.exact_size) {
-			for (exactNode in data.nodes.exact_size) {
+		if (data.hasNode.exact_size)
+		{
+			for (exactNode in data.nodes.exact_size)
+			{
 				var exact_w_str:String = U.xml_str(exactNode.x, "width");
 				var exact_h_str:String = U.xml_str(exactNode.x, "height");
 				round = getRound(exactNode);
@@ -3395,43 +3482,57 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				max_w = doRound(min_w,round);
 				max_h = doRound(min_h,round);
 			}
-		}else if (data.hasNode.min_size) {
-			for(minNode in data.nodes.min_size){
+		}
+		else if (data.hasNode.min_size)
+		{
+			for (minNode in data.nodes.min_size)
+			{
 				var min_w_str:String = U.xml_str(minNode.x, "width");
 				var min_h_str:String = U.xml_str(minNode.x, "height");
 				round = getRound(minNode);
 				temp_min_w = doRound(_getDataSize("w", min_w_str, 0),round);
 				temp_min_h = doRound(_getDataSize("h", min_h_str, 0),round);
-				if (temp_min_w > min_w) {
+				if (temp_min_w > min_w)
+				{
 					min_w = temp_min_w;
 				}
-				if (temp_min_h > min_h) {
+				if (temp_min_h > min_h)
+				{
 					min_h = temp_min_h;
 				}
 			}
-		}else if (data.hasNode.max_size) {
-			for(maxNode in data.nodes.max_size){
+		}
+		else if (data.hasNode.max_size)
+		{
+			for (maxNode in data.nodes.max_size)
+			{
 				var max_w_str:String = U.xml_str(maxNode.x, "width");
 				var max_h_str:String = U.xml_str(maxNode.x, "height");
 				round = getRound(maxNode);
 				temp_max_w = doRound(_getDataSize("w", max_w_str, Math.POSITIVE_INFINITY),round);
 				temp_max_h = doRound(_getDataSize("h", max_h_str, Math.POSITIVE_INFINITY),round);
-				if (temp_max_w < max_w) {
+				if (temp_max_w < max_w)
+				{
 					max_w = temp_max_w;
 				}
-				if (temp_max_h < max_h) {
+				if (temp_max_h < max_h)
+				{
 					max_h = temp_max_h;
 				}
 			}
-		}else {
+		}
+		else
+		{
 			return null;
 		}
 		
-		if (width != null){
+		if (width != null)
+		{
 			if (width > min_w) { min_w = width; }
 			if (width < max_w) { max_w = width; }
 		}
-		if (height != null) {
+		if (height != null)
+		{
 			if (height > min_h) { min_h = height; }
 			if (height < max_h) { max_h = height; }
 		}
@@ -3498,27 +3599,34 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	/**
 	 * Give me a string like "thing.right+10" and I'll return ["+",10]
 	 * Only accepts one operator and operand at max!
-	 * The operand MUST be a number.
+	 * The operand may be a numer of an asset property.
 	 * @param	string of format: <value><operator><operand>
 	 * @return [<value>:String,<operator>:String,<operand>:Float]
 	 */
 	
-	private function _getOperation(str:String):Array<Dynamic> {
+	private function _getOperation(str:String):Array<Dynamic>
+	{
 		var list:Array<String> = ["+", "-", "*", "/", "^"];
 		var temp:Array<String> = null;
 		
-		for (operator in list) {
-			if (str.indexOf(operator) != -1) {		//return on the FIRST valid operator match found
+		for (operator in list)
+		{
+			if (str.indexOf(operator) != -1)		//return on the FIRST valid operator match found
+			{
 				temp = str.split(operator);			
-				if (temp != null && temp.length == 2) {		//if I find exactly one operator/operand
+				if (temp != null && temp.length == 2)		//if I find exactly one operator/operand
+				{
 					var f:Float = Std.parseFloat(temp[1]);	//try to read the operand as a number
 					if (Math.isNaN(f))
 					{
 						f = getAssetProperty(1,"",temp[1]);
 					}
-					if (f == 0 && temp[1] != "0") {
-						return null;	//improperly formatted, invalid operand, bail out
-					}else{
+					if (f == 0 && temp[1] != "0")
+					{
+						return null;					//improperly formatted, invalid operand, bail out
+					}
+					else
+					{
 						return [temp[0], operator, f];	//proper operand and operator
 					}
 				}
@@ -3528,8 +3636,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return null;
 	}
 	
-	private function _doOperation(value:Float, operator:String, operand:Float):Float {
-		switch(operator) {
+	private function _doOperation(value:Float, operator:String, operand:Float):Float
+	{
+		switch(operator)
+		{
 			case "+": return value + operand;
 			case "-": return value - operand;
 			case "/": return value / operand;
@@ -3539,7 +3649,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return value;
 	}
 	
-	private function _getStretch(index:Int, target:String, str:String):Float {
+	private function _getStretch(index:Int, target:String, str:String):Float
+	{
 		var arr:Array<Dynamic> = null;
 		
 		var operator:String = "";
@@ -3547,7 +3658,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		arr = _getOperation(str);
 		
-		if (arr != null) {
+		if (arr != null)
+		{
 			str = cast arr[0];
 			operator = cast arr[1];
 			operand = cast arr[2];
@@ -3555,14 +3667,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var return_val:Float = getAssetProperty(index,target,str);
 		
-		if (return_val != -1 && operator != "") {
+		if (return_val != -1 && operator != "")
+		{
 			return_val = _doOperation(return_val, operator, operand);
 		}
 		
 		return return_val;
 	}
 	
-	private function getAssetProperty(index:Int, target:String, str:String):Float{
+	private function getAssetProperty(index:Int, target:String, str:String):Float
+	{
 		var prop:String = "";
 		
 		if (str.indexOf(".") != -1)
@@ -3577,27 +3691,39 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var return_val:Float = 0;
 		
-		if (other == null) {
-			switch(str) {
+		if (other == null)
+		{
+			switch(str)
+			{
 				case "top", "up": return_val = 0;
 				case "bottom", "down": return_val = thisHeight();
 				case "left": return_val = 0;
 				case "right": return_val = thisWidth();
 				default:
-					if (U.isStrNum(str)) {
+					if (U.isStrNum(str))
+					{
 						return_val = Std.parseFloat(str);
-					}else {
+					}
+					else
+					{
 						return_val = -1;
 					}
 			}
-		}else {
-			switch(target) {
+		}
+		else
+		{
+			switch(target)
+			{
 				case "w", "width": 
-					if(prop == ""){
+					if (prop == "")
+					{
 						if (index == 0) { return_val = other.x + other.width; }
 						if (index == 1) { return_val = other.x; }
-					}else {
-						switch(prop) {
+					}
+					else
+					{
+						switch(prop)
+						{
 							case "top", "up", "y": return_val = other.y;
 							case "bottom", "down": return_val = other.y +other.height;
 							case "right": return_val = other.x + other.width;
@@ -3610,10 +3736,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						}
 					}
 				case "h", "height":
-					if(prop == ""){
+					if (prop == "")
+					{
 						if (index == 0) { return_val = other.y + other.height; }
 						if (index == 1) { return_val = other.y; }
-					}else {
+					}
+					else
+					{
 						switch(prop){
 							case "top", "up", "y": return_val = other.y;
 							case "bottom", "down": return_val = other.y +other.height;
@@ -3627,7 +3756,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						}
 					}
 				default:
-					switch(prop) {
+					switch(prop)
+					{
 						case "top", "up", "y": return_val = other.y;
 						case "bottom", "down": return_val = other.y +other.height;
 						case "right": return_val = other.x + other.width;
@@ -3743,7 +3873,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 
 		var borderDef = new BorderDef(border_style, border_color, border_size, border_quality);
 		
-		switch(border_str) {
+		switch(border_str)
+		{
 			case "false", "none": borderDef.style = NONE;
 			case "shadow": borderDef.style = SHADOW;
 			case "outline": borderDef.style = OUTLINE;
