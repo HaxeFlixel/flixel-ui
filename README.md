@@ -444,29 +444,32 @@ Graphics for buttons can be kinda complex. You can put in multiple graphic tags,
 The system can sometimes infer what the frame size should be based on the image and width/height are not set, but it helps to be explicit with width/height if they are statically sized and you're not using 9-slice scaling.
 
 Static, individual frames:
-````
+
+```xml
 <definition id="button_blue" width="96" height="32">
 	<graphic id="up" image="ui/buttons/static_button_blue_up"/>
 	<graphic id="over" image="ui/buttons/static_button_blue_over"/>
 	<graphic id="down" image="ui/buttons/static_button_blue_down"/>
 </definition>
-````
+```
 
 9-slice scaling, individual frames:
-````
+
+```xml
 <definition id="button_blue" width="96" height="32">
 	<graphic id="up" image="ui/buttons/9slice_button_blue_up" slice9="6,6,12,12"/>
 	<graphic id="over" image="ui/buttons/9slice_button_blue_over slice9="6,6,12,12""/>
 	<graphic id="down" image="ui/buttons/9slice_button_blue_down slice9="6,6,12,12""/>
 </definition>
-````
+```
 
 9-slice scaling, all-in-one frame:
-````
+
+```xml
 <definition id="button_blue" width="96" height="32">
 	<graphic id="all" image="ui/buttons/button_blue_all" slice9="6,6,12,12"/>
 <definition>
-````
+```
 
 I'm not 100% sure what will happen if you do individual frames and omit one, but I think I set it up to copy one of the other ones in some kind of "smart" way. Again, it's always best to be explicit about what you want rather than be ambiguous and have the system guess.
 
