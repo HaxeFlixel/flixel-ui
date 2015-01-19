@@ -90,7 +90,7 @@ class MultiKey implements IFlxDestroyable
 		{
 			return false;
 		}
-		if (combos != null && other.combos != null
+		if (combos != null && other.combos != null)
 		{
 			for (i in combos)
 			{
