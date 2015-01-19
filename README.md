@@ -545,15 +545,15 @@ Note that you can create a vertical stack of 9-slice assets, or regular statical
 A Check Box is a FlxUIGroup which contains three objects: a "box" image, a "check" image, and a label.
 
 Attributes:
-* x/y, use_def, group
-* check_src - source image for box (not 9-sliceable)
-* box_src - source image for check mark (not 9-sliceable)
-* text_x/text_y - label offsets
-* label - text to show
-* context - FireTongue context (see Button)
-* code - Formatting code (see Button)
-* checked - (boolean) is it checked or not?
-* label_width - width of the label
+* ```x```/```y```, ```use_def```, ```group```
+* ```check_src``` - source image for box (not 9-sliceable, not scaleable)
+* ```box_src``` - source image for check mark (not 9-sliceable, not scaleable)
+* ```text_x``` / ```text_y``` - label offsets
+* ```label`` - text to show
+* ```context``` - FireTongue context (see Button)
+* ```code``` - Formatting code (see Button)
+* ```checked``` - (boolean) is it checked or not?
+* ```label_width``` - width of the label
 
 Child tags:
 * ```<text>``` - same as ```<button>```
@@ -561,30 +561,45 @@ Child tags:
 * ```<check>``` - alternate to check_src, more powerful*
 * ```<box>``` - alternate to box_src, more powerful*
 
-*If you supply ```<check>``` or ```<box>``` child tags instead of their attribute equivalents, FlxUI will treat them as full-fledged ```<sprite>``` or ```<chrome>``` tags to load for the checkmark and box assets. You'll want to use this method if you want to do something complicated, like load a scaled sprite, or a 9-slice-scaled sprite, that you can't normally accomplish just by specifcy the src attribute, which just loads a static image as-is.
+*If you supply ```<check>``` or ```<box>``` child tags instead of their attribute equivalents, FlxUI will treat them as full-fledged ```<sprite>``` or ```<chrome>``` tags to load for the checkmark and box assets. You'll want to use this method if you want to do something complicated, like load a scaled sprite, or a 9-slice-scaled sprite, that you can't normally accomplish with the src attributes, which just load a static image as-is.
 
 Event:
 * id - "click_checkbox"
-* params - as defined by user, but with this at the end: "checked:true" or "checked:false"
+* params - as defined by user, but with this one automatically added to the list at the end: "checked:true" or "checked:false"
 
-###7. Text (FlxUIText)
-**\<text>**
+###7. Text (FlxUIText) ```<text>```
 
 A regular text field. 
 
 Attributes:
-* text - the actual text in the textfield
-* x/y, use_def, group
-* font - string, something like "vera" or "verdana"
-* size - integer, size of font
-* style - string, "regular", "bold", "italic", or "bold-italic"
-* color - hex string, ie, "0xffffff" is white
-* shadow - shadow color (not working yet maybe?)
-* align - "left", "center", or "right". Haven't tested "justify"
-* context - FireTongue context (see Button)
-* code - Formatting code (see Button)
+* ```text``` - the actual text in the textfield
+* ```x```/```y```, ```use_def```, ```group```
+* ```font``` - string, something like "vera" or "verdana"
+* ```size``` - integer, size of font
+* ```style``` - string, "regular", "bold", "italic", or "bold-italic"
+* ```color``` - hex string, ie, "0xffffff" is white
+* ```align``` - "left", "center", or "right". Haven't tested "justify"
+* ```context``` - FireTongue context (see Button)
+* ```code``` - Formatting code (see Button)
 
-The system will look for a font file in your assets/fonts/ directory, formatted like this:
+Text fields can also have borders. You can do this by specifying these four values:
+
+* ```border``` - string, border style:
+  * ```false```\```none``` - no border
+  * ```shadow``` - drop shadow
+  * ```outline``` - border (higher quality)
+  * ```outline_fast``` - border (lower quality)
+* ```border_color``` - color of the border
+* ```border_size``` - thickness in pixels
+* ```border_quality``` - number between 0.0 (lowest) and 1.0 (highest)
+
+You can also use a shortcut for border value to save space by just using "shadow", "outline", or "outline_fast" directly as attributes and assigning them a color.
+
+```xml
+<text id="my_text" text="My Text" outline="0xFF0000"/>
+```
+
+As for fonts, FlxUI will look for a font file in your ```assets/fonts/``` directory, formatted like this:
 
 |Filename|Family|Style|
 |---|---|---|
@@ -595,7 +610,7 @@ veraz.ttf|Vera|Bold-Italic
 
 So far just .ttf fonts are supported, and you MUST name them according to this scheme (for now at least).
 
-FlxUI does not yet support FlxBitmapFonts, but we'll be adding it soon.
+FlxUI does not yet support FlxBitmapFonts, but we'll be adding it eventually.
 
 ###8. Text, input (FlxUIInputText)
 **\<input_text>**
