@@ -137,10 +137,10 @@ Let's go over these one by one.
 This is any of the many Flixel-UI widgets, such as ```<sprite>```, ```<button>```, ```<checkbox>```, etc. We'll go into more detail on each one below, but all widget tags have a few things in common:
 
 *Attributes:*
-* **id** - string, optional, should be unique. Lets you reference this widget throughout the layout, and also lets you fetch it by name with FlxUI's getAsset("some_id") function.
+* **id** - string, optional, should be unique. Lets you reference this widget throughout the layout, and also lets you fetch it by name with FlxUI's ```getAsset("some_id")``` function.
 * **x** and **y** - integer, specifies position. If no anchor tag exists as a child node, the position is absolute. If an anchor tag exists, the position is relative to the anchor.
-* **use_def** - string, optional, references a \<definition\> tag by id to use for this widget.
-* **group** - string, optional, references a \<group\> tag by id. Will make this widget the child of that group instead of the FlxUI itself.
+* **use_def** - string, optional, references a ```<definition>``` tag by id to use for this widget.
+* **group** - string, optional, references a ```<group>``` tag by id. Will make this widget the child of that group instead of the FlxUI itself.
 * **visible** - boolean, optional, sets the visibility of the widget when the layout is loaded
 * **active** - boolean, optional, controls whether a widget responds to any updates
 
