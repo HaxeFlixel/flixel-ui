@@ -612,48 +612,27 @@ So far just .ttf fonts are supported, and you MUST name them according to this s
 
 FlxUI does not yet support FlxBitmapFonts, but we'll be adding it eventually.
 
-###8. Text, input (FlxUIInputText)
-**\<input_text>**
+###8. Text, input (FlxUIInputText) ```<input_text>```
 
 This has not been thoroughly tested, but it exists.
 
 Attributes:
-* x/y, use_def, group
-* font - string, something like "vera" or "verdana"
-* size - integer, size of font
-* style - string, "regular", "bold", "italic", or "bold-italic"
-* color - hex string, ie, "0xffffff" is white
-* shadow - shadow color (not working yet maybe?)
-* align - "left", "center", or "right". Haven't tested "justify"
-* password_mode - bool, hides text if true
-* background - (optional, FlxColor) the background color
-* force_case - (string) force text to appear in a specific case
+* ```x```/```y```, ```use_def```, ```group```
+* ```font```, ```size```, ```style```, ```color```, ```align```
+* (border attributes)
+* ```password_mode``` - bool, hides text if true
+* ```background``` - (optional, FlxColor) the background color
+* ```force_case``` - (string) force text to appear in a specific case
     * "upper" / "upper_case" / "uppercase"
     * "lower" / "lower_case" / "lowercase"
-* filter - (string) allow only certain kinds of text (not thoroughly tested with non-english locales)
+* ```filter``` - (string) allow only certain kinds of text (not thoroughly tested with non-english locales)
     * "alpha" / "onlyalpha" - only standard alphabet characters
     * "num" / "numeric" - only standard number characters
     * "alphanum" / "alphanumeric", "onlyalphanumeric" -- only standard alphabet & number characters
-* context - FireTongue context (see Button)
-* code - Formatting code (see Button)
+* ```context``` - FireTongue context (see Button)
+* ```code``` - Formatting code (see Button)
 
-
-The system will look for a font file in your assets/fonts/ directory, formatted like this:
-
-|Filename|Family|Style|
-|---|---|---|
-vera.ttf|Vera|Regular
-verab.ttf|Vera|Bold
-verai.ttf|Vera|Italic
-veraz.ttf|Vera|Bold-Italic
-
-So far just .ttf fonts are supported, and you MUST name them according to this scheme (for now at least).
-
-FlxUI does not yet support FlxBitmapFonts, but we'll be adding it soon.
-
-
-###9. Radio button group (FlxUIRadioGroup)
-**\<radio_group>**
+###9. Radio button group (FlxUIRadioGroup) ```<radio_group>```
 
 Radio groups are a set of buttons where only one can be clicked at a time. We implement these as a FlxUIGroup of FlxUICheckBox'es, and then internal logic makes only one clickable at a time. 
 
