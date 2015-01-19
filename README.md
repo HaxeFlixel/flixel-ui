@@ -63,7 +63,7 @@ If you want to provide your own assets, you should put them in your project's "a
 
 Most commonly used public functions in class FlxUI:
 
-````
+```haxe
 //Initiate from XML Fast object:
 //(This is handled automatically in the recommended setup)
 load(data:Fast):Void
@@ -82,7 +82,7 @@ getMode(Key:String,recursive:Bool=true):Fast
 
 //Get a widget definition:
 getDefinition(key:String,recursive:Bool=true):Fast
-````
+```
 
 less commonly used public functions:
 ````
