@@ -37,7 +37,6 @@ import flixel.math.FlxPoint;
 import flixel.util.FlxStringUtil;
 import haxe.xml.Fast;
 import openfl.Assets;
-import openfl.text.Font;
 
 /**
  * A simple xml-driven user interface
@@ -2619,10 +2618,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadButton(data:Fast, setCallback:Bool = true, isToggle:Bool = false, load_code:String = ""):IFlxUIWidget
 	{
-		if (U.xml_str(data.x, "id", true) == "shop_tab1")
-		{
-			trace("BOINK");
-		}
 		var src:String = ""; 
 		var fb:IFlxUIButton = null;
 		
@@ -2978,11 +2973,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private function _load9SliceSprite(data:Fast, load_code:String = ""):FlxUI9SliceSprite {
 		var src:String = ""; 
 		var f9s:FlxUI9SliceSprite = null;
-		
-		if (U.xml_str(data.x, "id", true).indexOf("divider") != -1)
-		{
-			trace("BOINK");
-		}
 		
 		var resize:FlxPoint = getResizeRatio(data);
 		
