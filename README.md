@@ -134,7 +134,7 @@ Let's go over these one by one.
 --
 
 ####1. Widget
-This is any of the many Flixel-UI widgets, such as **\<sprite\>**, **\<button\>**, **\<checkbox\>**, etc. We'll go into more detail on each one below, but all widget tags have a few things in common:
+This is any of the many Flixel-UI widgets, such as ```<sprite>```, ```<button>```, ```<checkbox>```, etc. We'll go into more detail on each one below, but all widget tags have a few things in common:
 
 *Attributes:*
 * **id** - string, optional, should be unique. Lets you reference this widget throughout the layout, and also lets you fetch it by name with FlxUI's getAsset("some_id") function.
