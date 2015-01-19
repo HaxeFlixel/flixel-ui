@@ -11,6 +11,7 @@ import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.graphics.FlxGraphic;
 import flixel.ui.FlxButton;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxColor;
@@ -18,6 +19,7 @@ import flixel.util.FlxDestroyUtil;
 import flixel.math.FlxPoint;
 import flixel.util.FlxStringUtil;
 import openfl.Assets;
+import flixel.system.FlxAssets.FlxGraphicAsset;
 
 @:allow(FlxUITypedButton)
 class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResizable implements IFlxUIWidget implements IFlxUIClickable implements IHasParams implements ICursorPointable
@@ -299,8 +301,23 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		}
 	}
 	
-	private function getBmp(str:String):BitmapData
+	private function getBmp(asset:FlxGraphicAsset):BitmapData
 	{
+		var str:String = null;
+		if (Std.is(asset, String))
+		{
+			str = cast asset;
+		}
+		else if (Std.is(asset, FlxGraphic))
+		{
+			var fg:FlxGraphic = cast asset;
+			str = fg.key;
+		}
+		else if(Std.is(asset, BitmapData))
+		{
+			var bmp:BitmapData = cast asset;
+			return bmp;
+		}
 		if (FlxG.bitmap.checkCache(str))
 		{
 			var cg = FlxG.bitmap.get(str);
@@ -318,7 +335,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	 * @param   key string key for caching (optional)
 	 */
 	
-	public function loadGraphicsMultiple(assets:Array<String>, Key:String = ""):Void
+	public function loadGraphicsMultiple(assets:Array<FlxGraphicAsset>, Key:String = ""):Void
 	{
 		_slice9_assets = null;
 		_slice9_arrays = null;
@@ -326,7 +343,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		
 		var key:String = "";
 		
-		if (assets.length <= 3) {
+		if (assets.length <= 3)
+		{
 			while (assets.length < 3) { assets.push(null); }
 			if (assets[1] == null) { assets[1] = assets[0]; }
 			if (assets[2] == null) { assets[2] = assets[1]; }
@@ -423,7 +441,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	 * @param	frame_indeces array of which image frames go with which button frames (optional)
 	 */
 	
-	public function loadGraphicSlice9(assets:Array<String>=null,W:Int=80,H:Int=20,slice9:Array<Array<Int>>=null,Tile:Int=FlxUI9SliceSprite.TILE_NONE,Resize_Ratio:Float=-1,isToggle:Bool=false,src_w:Int=0,src_h:Int=0,frame_indeces:Array<Int>=null):Void{
+	public function loadGraphicSlice9(assets:Array<FlxGraphicAsset>=null,W:Int=80,H:Int=20,slice9:Array<Array<Int>>=null,Tile:Int=FlxUI9SliceSprite.TILE_NONE,Resize_Ratio:Float=-1,isToggle:Bool=false,src_w:Int=0,src_h:Int=0,frame_indeces:Array<Int>=null):Void{
 	
 		if (src_w != 0) {
 			_src_w = src_w;
@@ -481,17 +499,21 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			H = 20;
 		}
 		
-		if (assets == null) {
+		if (assets == null)
+		{
 			var temp:BitmapData;
 			
 			//default asset
-			if(!isToggle){
+			if (!isToggle)
+			{
 				assets = [FlxUIAssets.IMG_BUTTON];
 				slice9 = [FlxStringUtil.toIntArray(FlxUIAssets.SLICE9_BUTTON)];
 				temp = getBmp(assets[0]);
 				_src_w = Std.int(temp.width);
 				_src_h = Std.int(temp.height / 3);				//calc default source width/height
-			}else {
+			}
+			else
+			{
 				assets = [FlxUIAssets.IMG_BUTTON_TOGGLE];
 				slice9 = [FlxStringUtil.toIntArray(FlxUIAssets.SLICE9_BUTTON_TOGGLE)];
 				temp = getBmp(assets[0]);
@@ -502,11 +524,14 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			temp = null;
 		}
 		
-		if (!has_toggle && assets.length <= 3) {
+		if (!has_toggle && assets.length <= 3)
+		{
 			//3 states - assume normal button
 			arr_bmpData = [null, null, null];
 			arr_flx9 = [null, null, null];
-		}else {
+		}
+		else
+		{
 			//6 states - assume toggle button
 			has_toggle = true;
 			arr_bmpData = [null, null, null, null, null, null];
@@ -925,7 +950,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	//if you're doing 9-slice resizing:
 	private var _slice9_arrays:Array<Array<Int>>;	//the 9-slice scaling rules for the original assets
 	
-	private var _slice9_assets:Array<String>;		//the asset id's of the original 9-slice scale assets
+	private var _slice9_assets:Array<FlxGraphicAsset>;		//the asset id's of the original 9-slice scale assets
 	
 	private var _centerLabelOffset:FlxPoint = null;	//this is the offset necessary to center ALL the labels
 }

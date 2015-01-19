@@ -29,6 +29,7 @@ import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxSpriteGroup;
+import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.ui.FlxBar.FlxBarFillDirection;
 import flixel.util.FlxArrayUtil;
@@ -2785,7 +2786,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 			}else{
 			
-				var graphic_ids:Array<String>=null;
+				var graphic_ids:Array<FlxGraphicAsset>=null;
 				var slice9_ids:Array<Array<Int>>=null;
 				var frames:Array<Int>=null;
 				
@@ -2915,7 +2916,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}else {
 			if (load_code == "tab_menu"){
 				//load default tab menu graphics
-				var graphic_ids:Array<String> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
+				var graphic_ids:Array<FlxGraphicAsset> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
 				var slice9_tab:Array<Int> = FlxStringUtil.toIntArray(FlxUIAssets.SLICE9_TAB);
 				var slice9_ids:Array<Array<Int>> = [slice9_tab, slice9_tab, slice9_tab, slice9_tab, slice9_tab, slice9_tab];
 				
@@ -3396,8 +3397,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return Std.int(ptrUI.height);*/
 	}
 		
-	private function _getAnchorPos(thing:IFlxUIWidget, axis:String, str:String):Float {
-		switch(str) {
+	private function _getAnchorPos(thing:IFlxUIWidget, axis:String, str:String):Float
+	{
+		switch(str)
+		{
 			case "": return 0;
 			case "left": return 0;
 			case "right": return thisWidth();
@@ -3774,7 +3777,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return return_val;
 	}
 	
-	private function _loadPosition(data:Fast, thing:IFlxUIWidget):Void {
+	private function _loadPosition(data:Fast, thing:IFlxUIWidget):Void
+	{
 		var X:Float = _loadX(data);			//position offset from 0,0
 		var Y:Float = _loadY(data);
 		
@@ -3795,7 +3799,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var anchor_x_flush:String = "";
 		var anchor_y_flush:String = "";
 		
-		if (data.hasNode.anchor) {
+		if (data.hasNode.anchor)
+		{
 			anchor_x_str = U.xml_str(data.node.anchor.x, "x");
 			anchor_y_str = U.xml_str(data.node.anchor.x, "y");
 			
@@ -3812,22 +3817,27 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		//Flush it to the anchored coordinate
-		if (anchor_x_str != "" || anchor_y_str != "") {
-			switch(anchor_x_flush) {
+		if (anchor_x_str != "" || anchor_y_str != "")
+		{
+			switch(anchor_x_flush)
+			{
 				case "left":	//do-nothing		 					//flush left side to anchor
 				case "right":	anchor_x = anchor_x - thing.width;	 	//flush right side to anchor
 				case "center":  anchor_x = anchor_x - thing.width / 2;	//center on anchor point
 			}
-			switch(anchor_y_flush) {
+			switch(anchor_y_flush)
+			{
 				case "up", "top": //do-nothing
 				case "down", "bottom": anchor_y = anchor_y - thing.height;
 				case "center": anchor_y = anchor_y - thing.height / 2;
 			}
 			
-			if(anchor_x_str != ""){
+			if (anchor_x_str != "")
+			{
 				thing.x = anchor_x;
 			}
-			if(anchor_y_str != ""){
+			if (anchor_y_str != "")
+			{
 				thing.y = anchor_y;
 			}
 			//_delta(thing, anchor_x, anchor_y);
@@ -3839,21 +3849,29 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 				
 		//Then, try to center it on another object:
-		if (center_on != "") {
+		if (center_on != "")
+		{
 			var other = getAsset(center_on);
-			if (other != null) {
+			if (other != null)
+			{
 				U.center(cast(other, FlxObject), cast(thing, FlxObject));
 			}
-		}else {
-			if (center_on_x != "") {
+		}
+		else
+		{
+			if (center_on_x != "")
+			{
 				var other = getAsset(center_on_x);
-				if (other != null) {
+				if (other != null)
+				{
 					U.center(cast(other, FlxObject), cast(thing, FlxObject), true, false);
 				}
 			}
-			if (center_on_y != "") {
+			if (center_on_y != "")
+			{
 				var other = getAsset(center_on_y);
-				if (other != null) {
+				if (other != null)
+				{
 					U.center(cast(other, FlxObject), cast(thing, FlxObject), false, true);
 				}
 			}
