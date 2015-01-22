@@ -8,7 +8,7 @@ import flixel.addons.ui.interfaces.IFlxUIWidget;
  */
 class FlxUISlider extends FlxSlider implements IFlxUIWidget
 {
-	public var id:String;
+	public var name:String;
 	
 	public var broadcastToFlxUI:Bool=true;
 	

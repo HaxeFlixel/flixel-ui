@@ -46,7 +46,23 @@ class U
 				return data.get(att);
 			}
 		}return default_str;
-	} 
+	}
+	
+	/**
+	 * For conveniently getting the very common "name" attribute, with backwards-compatibility for the old "id" attribute if name is not found
+	 * @param	data
+	 * @return
+	 */
+	
+	public static function xml_name(data:Xml):String
+	{
+		var name:String = U.xml_str(data, "name", true, "");
+		if (name == "")
+		{
+			name = U.xml_str(data, "id", true, "");
+		}
+		return name;
+	}
 	/**
 	 * Safety wrapper for reading a FlxColor attribute from xml
 	 * @param	data the Xml object

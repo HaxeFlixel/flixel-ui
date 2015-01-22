@@ -13,8 +13,8 @@ class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 {	
 	/***PUBLIC VARS***/
 	
-	//a handy string handler id for this thing
-	public var id:String;
+	//a handy string handler name for this thing
+	public var name:String;
 	
 	public var broadcastToFlxUI:Bool = true;
 	

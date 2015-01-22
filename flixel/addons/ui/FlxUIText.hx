@@ -15,7 +15,7 @@ import openfl.text.TextField;
 class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget implements IHasParams
 {
 	public var broadcastToFlxUI:Bool = true;
-	public var id:String; 
+	public var name:String; 
 	public var params(default, set):Array<Dynamic>;
 	public var minimumHeight(default, set):Float = 1;
 	

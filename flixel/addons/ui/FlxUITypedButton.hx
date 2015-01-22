@@ -24,7 +24,7 @@ import flixel.system.FlxAssets.FlxGraphicAsset;
 @:allow(FlxUITypedButton)
 class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResizable implements IFlxUIWidget implements IFlxUIClickable implements IHasParams implements ICursorPointable
 {
-	public var id:String; 
+	public var name:String; 
 	public var resize_ratio:Float = -1;
 	public var resize_point:FlxPoint = null;
 	public var tile:Int = FlxUI9SliceSprite.TILE_NONE;

@@ -116,7 +116,7 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 	
 	/***PUBLIC***/
 	
-	public function new(?back_:FlxSprite,?tabs_:Array<IFlxUIButton>,?tab_ids_and_labels_:Array<{id:String,label:String}>,?tab_offset:FlxPoint,?stretch_tabs:Bool=false,?tab_spacing:Null<Float>=null,?tab_stacking:Array<String>=null) 
+	public function new(?back_:FlxSprite,?tabs_:Array<IFlxUIButton>,?tab_names_and_labels_:Array<{name:String,label:String}>,?tab_offset:FlxPoint,?stretch_tabs:Bool=false,?tab_spacing:Null<Float>=null,?tab_stacking:Array<String>=null) 
 	{
 		super();
 		
@@ -129,12 +129,12 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 		add(_back);
 		
 		if (tabs_ == null) {
-			if (tab_ids_and_labels_ != null) {
+			if (tab_names_and_labels_ != null) {
 				tabs_ = new Array<IFlxUIButton>();
 			
-				//load default graphic data if only tab_ids_and_labels are provided
-				for (tdata in tab_ids_and_labels_) {
-					//set label and id
+				//load default graphic data if only tab_names_and_labels are provided
+				for (tdata in tab_names_and_labels_) {
+					//set label and name
 					var fb:FlxUIButton = new FlxUIButton(0, 0, tdata.label);
 					
 					//default style:
@@ -148,13 +148,13 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 					fb.label.color = 0xFFFFFF;
 					fb.label.setBorderStyle(OUTLINE);
 					
-					fb.id = tdata.id;
+					fb.name = tdata.name;
 					
 					//load default graphics
-					var graphic_ids:Array<FlxGraphicAsset> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
+					var graphic_names:Array<FlxGraphicAsset> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
 					var slice9tab:Array<Int> = FlxStringUtil.toIntArray(FlxUIAssets.SLICE9_TAB);
-					var slice9_ids:Array<Array<Int>> = [slice9tab, slice9tab, slice9tab, slice9tab, slice9tab, slice9tab];
-					fb.loadGraphicSlice9(graphic_ids, 0, 0, slice9_ids, FlxUI9SliceSprite.TILE_NONE, -1, true);
+					var slice9_names:Array<Array<Int>> = [slice9tab, slice9tab, slice9tab, slice9tab, slice9tab, slice9tab];
+					fb.loadGraphicSlice9(graphic_names, 0, 0, slice9_names, FlxUI9SliceSprite.TILE_NONE, -1, true);
 					tabs_.push(fb);
 				}
 			}
@@ -175,7 +175,7 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 		{
 			tab = cast t;
 			add(tab);
-			tab.onUp.callback = _onTabEvent.bind(tab.id);
+			tab.onUp.callback = _onTabEvent.bind(tab.name);
 			i++;
 		}
 		
@@ -193,10 +193,10 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 		_tab_groups = null;
 	}
 	
-	public function getTab(?id:String, ?index:Null<Int>):IFlxUIButton{
-		if (id != null) {
+	public function getTab(?name:String, ?index:Null<Int>):IFlxUIButton{
+		if (name != null) {
 			for (tab in _tabs) {
-				if (tab.id == id) {
+				if (tab.name == name) {
 					return tab;
 				}
 			}
@@ -209,11 +209,11 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 		return null;
 	}
 	
-	public function getTabGroup(?id:String, ?index:Null<Int>):FlxUIGroup {
+	public function getTabGroup(?name:String, ?index:Null<Int>):FlxUIGroup {
 		var tabGroup:FlxUIGroup;
-		if (id != null) {
+		if (name != null) {
 			for (tabGroup in _tab_groups) {
-				if (tabGroup.id == id) {
+				if (tabGroup.name == name) {
 					return tabGroup;
 				}
 			}
@@ -251,12 +251,12 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 		}
 	}
 	
-	private function _onTabEvent(id:String):Void {
-		showTabId(id);
-		var tab = getTab(id);
+	private function _onTabEvent(name:String):Void {
+		showTabId(name);
+		var tab = getTab(name);
 		var params = (tab != null) ? tab.params : null;
 		if (broadcastToFlxUI) {
-			FlxUI.event(CLICK_EVENT, this, id, params);
+			FlxUI.event(CLICK_EVENT, this, name, params);
 		}
 	}
 	
@@ -301,7 +301,7 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 		_back.y = _backy;
 	}
 	
-	public function showTabId(id:String):Void {
+	public function showTabId(name:String):Void {
 		
 		_selected_tab = -1;
 		_selected_tab_id = "";
@@ -311,15 +311,15 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 		{
 			tab.toggled = false;
 			tab.forceStateHandler(FlxUITypedButton.OUT_EVENT);
-			if (tab.id == id) {
+			if (tab.name == name) {
 				tab.toggled = true;
-				_selected_tab_id = id;
+				_selected_tab_id = name;
 				_selected_tab = i;
 			}
 			i++;
 		}
 		
-		_showOnlyGroup(id);
+		_showOnlyGroup(name);
 		stackTabs();
 	}
 	
@@ -339,9 +339,9 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 	
 	
 	private function sortTabs(a:IFlxUIButton, b:IFlxUIButton):Int {
-		if (a.id < b.id) {
+		if (a.name < b.name) {
 			return -1;
-		}else if (a.id > b.id) {
+		}else if (a.name > b.name) {
 			return 1;
 		}
 		return -1;
@@ -350,16 +350,16 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 	private function showTabInt(i:Int):Void {
 		if(i >= 0 && _tabs != null && _tabs.length > i){
 			var _tab:IFlxUIButton = _tabs[i];
-			var id:String = _tab.id;
-			showTabId(id);
+			var name:String = _tab.name;
+			showTabId(name);
 		}else {
 			showTabId("");
 		}
 	}
 	
-	private function _showOnlyGroup(id:String):Void {
+	private function _showOnlyGroup(name:String):Void {
 		for (group in _tab_groups) {
-			if (group.id == id) {
+			if (group.name == name) {
 				group.visible = group.active = true;
 			}else {
 				group.visible = group.active = false;

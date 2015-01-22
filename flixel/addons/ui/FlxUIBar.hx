@@ -14,7 +14,7 @@ import flixel.util.FlxColor;
 
 class FlxUIBar extends FlxBar implements IResizable implements IFlxUIWidget implements IHasParams
 {
-	public var id:String;
+	public var name:String;
 	public var style(default, set):FlxBarStyle;
 	public var params(default, set):Array<Dynamic>;
 	public var broadcastToFlxUI:Bool;

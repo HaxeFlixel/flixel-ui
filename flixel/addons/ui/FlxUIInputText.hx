@@ -9,7 +9,7 @@ import flixel.addons.ui.interfaces.IResizable;
  */
 class FlxUIInputText extends FlxInputText implements IResizable implements IFlxUIWidget implements IHasParams
 {
-	public var id:String;
+	public var name:String;
 	
 	public var broadcastToFlxUI:Bool=true;
 	
