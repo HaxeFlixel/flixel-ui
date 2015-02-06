@@ -949,3 +949,16 @@ Size 10 font might look just fine if your game is 800x600, but what if you let t
 ```
 
 By defining the font size in terms of the screen height, we can achieve the same results at 800x600, but make the text grow dynamically with the size of the screen. "sans_tiny" will be 10 points high in 800x600, but 18 points high in 1920x1080, representing the same proportion of the screen.
+
+#3. Scaling 9-slice-sprite source BEFORE 9-slice-scaling
+
+Let's say you've got a 9-slice-sprite, but for whatever reason you want to scale the *source* image first, *before* you then subject it to the 9-slice matrix. You can do that like this:
+
+```xml
+<chrome id="chrome" width="600" height="50" src="ui/asset" slice9="4,4,395,95">
+	<scale_src to_height="10%"/>
+	<anchor y="bottom" y-flush="bottom"/>
+</chrome>
+```
+
+Here's what's happening. Let's say "ui/asset.png" is 400x50 pixels. In this case I scale it down first using the "<scale_src>" tag, which is unique to 9-slice-sprites. The "to_height" property scales the asset to a target height (10% of the screen height in this case), and also scales the width proportionately. (You can also use "width" and "height" parameters instead). Whenever you scale an asset like this in a 9-slice sprite, the slice9 coordinates will be automatically be scaled to match the new scaled source material. Then, your final asset will be 9-slice scaled.
