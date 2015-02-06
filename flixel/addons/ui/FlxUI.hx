@@ -3280,6 +3280,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var W:Int = Std.int(_loadWidth(data,-1));
 		var H:Int = Std.int(_loadHeight(data,-1));
 		
+		if (bounds != null)
+		{
+			if (W < bounds.min_width) { W = Std.int(bounds.min_width); }
+			else if (W > bounds.max_width) { W = Std.int(bounds.max_width); }
+			if (H < bounds.min_height) { H = Std.int(bounds.max_height); }
+			else if (H > bounds.max_height) { H = Std.int(bounds.max_height);}
+		}
+		
 		if (src != "")
 		{
 			if (W == -1 && H == -1)	//If neither Width nor Height is supplied, return the sprite as-is
@@ -3314,14 +3322,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		else
 		{
-			if (bounds != null)
-			{
-				if (W < bounds.min_width) { W = Std.int(bounds.min_width); }
-				else if (W > bounds.max_width) { W = Std.int(bounds.max_width); }
-				if (H < bounds.min_height) { H = Std.int(bounds.max_height); }
-				else if (H > bounds.max_height) { H = Std.int(bounds.max_height);}
-			}
-
 			var cstr:String = U.xml_str(data.x, "color");
 			var C:Int = 0;
 			if (cstr != "")
