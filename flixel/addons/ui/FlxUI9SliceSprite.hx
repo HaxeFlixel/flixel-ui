@@ -7,6 +7,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
+import flixel.graphics.FlxGraphic;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.util.FlxDestroyUtil;
@@ -88,6 +89,10 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 		}else if (Std.is(Graphic, BitmapData)) {
 			_asset_id = Id;
 			_raw_pixels = cast Graphic;
+		}else if (Std.is(Graphic, FlxGraphic)) {
+			var fg:FlxGraphic = cast Graphic;
+			_asset_id = fg.key;
+			_raw_pixels = fg.bitmap;
 		}
 		
 		resize_ratio = Ratio;
@@ -216,8 +221,18 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 			var w:Int;
 			var h:Int;
 			if (raw == null) {
-				w = Assets.getBitmapData(assetID).width;
-				h = Assets.getBitmapData(assetID).height;
+				var assetBmp = Assets.getBitmapData(assetID);
+				if (assetBmp != null)
+				{
+					w = assetBmp.width;
+					h = assetBmp.height;
+				}
+				else
+				{
+					var assetFlx = FlxG.bitmap.get(assetID);
+					w = assetFlx.width;
+					h = assetFlx.height;
+				}
 			}else {
 				w = raw.width;
 				h = raw.height;

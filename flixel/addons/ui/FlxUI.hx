@@ -3066,6 +3066,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					  max_width:Float, max_height:Float } = calcMaxMinSize(data);
 		
 		src = U.xml_gfx(data.x, "src");
+		
+		var hasScaledSrc:Bool = data.hasNode.scale_src;
+		if (hasScaledSrc)
+		{
+			//We are scaling a base image first BEFORE we 9-slice scale it. Advanced trick!
+			//Load that first at the appropriate scale and cache it
+			src = loadScaledSrc(data, "src", "scale_src");
+		}
+		
 		if (src == "") { src = null; }
 		
 		if (src == null)
@@ -3094,13 +3103,42 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		var rc:Rectangle = new Rectangle(0, 0, rect_w, rect_h);
+		
 		var slice9:Array<Int> = FlxStringUtil.toIntArray(U.xml_str(data.x, "slice9"));
+		
+		var srcId:String = "";
+		var srcGraphic:Dynamic = src;
+		
+		if (hasScaledSrc)
+		{
+			//Figure out what effective scale we are using for the scaled source material
+			var origSrc = U.xml_gfx(data.x, "src");
+			var origAsset = Assets.getBitmapData(origSrc);
+			var srcAsset = FlxG.bitmap.get(src);
+			var srcScaleFactor = rect_h / origAsset.height;
+			
+			//Scale the 9-slice boundaries by the same amount
+			slice9[0] = Std.int(slice9[0] * srcScaleFactor);
+			slice9[1] = Std.int(slice9[1] * srcScaleFactor);
+			
+			var widthDiff = (origAsset.width - slice9[2]);
+			var heightDiff = (origAsset.height - slice9[3]);
+			
+			widthDiff = Std.int(widthDiff * srcScaleFactor);
+			heightDiff = Std.int(heightDiff * srcScaleFactor);
+			
+			slice9[2] = Std.int(srcAsset.width - widthDiff);
+			slice9[3] = Std.int(srcAsset.height - heightDiff);
+			
+			srcId = src;
+			srcGraphic = FlxG.bitmap.get(src);
+		}
 		
 		var smooth:Bool = U.xml_bool(data.x, "smooth", false);
 		
 		var tile:Int = _loadTileRule(data);
 		
-		f9s = new FlxUI9SliceSprite(0, 0, src, rc, slice9, tile, smooth,"",resize_ratio,resize_point,resize_ratio_axis);
+		f9s = new FlxUI9SliceSprite(0, 0, srcGraphic, rc, slice9, tile, smooth, srcId, resize_ratio, resize_point, resize_ratio_axis);
 		
 		return f9s;
 	}
@@ -3345,12 +3383,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @return	the unique key of the scaled bitmap
 	 */
 	
-	private function loadScaledSrc(data:Fast,attName:String="src"):String
+	private function loadScaledSrc(data:Fast,attName:String="src",scaleName:String="scale"):String
 	{
 		var src:String = U.xml_str(data.x, attName);					//get the original src
-		if (data.hasNode.scale)
+		if (data.hasNode.resolve(scaleName))
 		{
-			for (scaleNode in data.nodes.scale)
+			for (scaleNode in data.nodes.resolve(scaleName))
 			{
 				var ratio:Float = U.xml_f(scaleNode.x, "screen_ratio", -1);
 				var tolerance:Float = U.xml_f(scaleNode.x, "tolerance", 0.1);
@@ -3361,7 +3399,18 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					var suffix:String = U.xml_str(scaleNode.x, "suffix");
 					var srcSuffix:String = (src + suffix);					//add the proper suffix, so "asset"->"asset_16x9"
 					
-					var returnSrc:String = U.loadScaledImage(srcSuffix, _loadWidth(scaleNode, -1), _loadHeight(scaleNode, -1));
+					var returnSrc:String = "";
+					
+					var to_height:Float = _loadHeight(scaleNode, -1, "to_height");
+					if (to_height != -1)
+					{
+						returnSrc = U.loadImageScaleToHeight(srcSuffix, to_height, true);
+					}
+					else
+					{
+						returnSrc = U.loadScaledImage(srcSuffix, _loadWidth(scaleNode,-1), _loadHeight(scaleNode,-1));
+					}
+					
 					if (returnSrc != null)
 					{
 						return returnSrc;

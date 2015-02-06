@@ -3,6 +3,7 @@ package flixel.addons.ui;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
+import flixel.math.FlxRect;
 
 /**
  * A cheap extension of FlxUIGroup that lets you move all the children around
@@ -61,8 +62,12 @@ class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 		return false;
 	}
 	
+	/**
+	 * Calculates the bounds of the group and sets width/height
+	 * @param	rect (optional) -- if supplied, populates this with the boundaries of the group
+	 */
 	
-	public function calcBounds():Void {
+	public function calcBounds(rect:FlxRect=null){
 		if(members != null && members.length > 0){
 			var left:Float = Math.POSITIVE_INFINITY;
 			var right:Float = Math.NEGATIVE_INFINITY;
@@ -87,6 +92,13 @@ class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 			}
 			width = (right - left);
 			height = (bottom - top);
+			if (rect != null)
+			{
+				rect.x = left;
+				rect.y = top;
+				rect.width = width;
+				rect.height = height;
+			}
 		}else {
 			width = height = 0;
 		}
