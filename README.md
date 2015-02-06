@@ -967,7 +967,7 @@ Let's say you want to load a different asset in a 16x9 screen mode than a 4x3 mo
 
 So in the above example, if the screen is within 0.25 of a 16:9 ratio, it will load "ui/asset_16x9.png", if it's within 0.25 of a 4:3 ratio, it will load "ui/asset_4x3.png", and in both cases will scale them to fit the screen.
 
-But sometimes you don't want to scale both width/height separately, the most common use case is to scale based on the vertical axis alone and then automatically scale width proportionately. Use "to_height" for this:
+But sometimes you don't want to scale both ```width```/```height``` separately, the most common use case is to scale based on the vertical axis alone and then automatically scale width proportionately. Use "to_height" for this:
 
 ```xml
 <sprite id="thing" src="ui/asset">
@@ -987,4 +987,4 @@ Let's say you've got a 9-slice-sprite, but for whatever reason you want to scale
 </chrome>
 ```
 
-Here's what's happening. Let's say "ui/asset.png" is 400x50 pixels. In this case I scale it down first using the "<scale_src>" tag, which is unique to 9-slice-sprites. The "to_height" property scales the asset to a target height (10% of the screen height in this case), and also scales the width proportionately. (You can also use "width" and "height" parameters instead). Whenever you scale an asset like this in a 9-slice sprite, the slice9 coordinates will be automatically be scaled to match the new scaled source material. Then, your final asset will be 9-slice scaled.
+Here's what's happening. Let's say "ui/asset.png" is 400x50 pixels. In this case I scale it down first using the ```<scale_src>``` tag, which is unique to 9-slice-sprites. The "to_height" property scales the asset to a target height (10% of the screen height in this case), and also scales the width proportionately. (You can also use "width" and "height" parameters instead). Whenever you scale an asset like this in a 9-slice sprite, the slice9 coordinates will be automatically be scaled to match the new scaled source material. Then, your final asset will be 9-slice scaled.
