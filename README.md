@@ -950,7 +950,33 @@ Size 10 font might look just fine if your game is 800x600, but what if you let t
 
 By defining the font size in terms of the screen height, we can achieve the same results at 800x600, but make the text grow dynamically with the size of the screen. "sans_tiny" will be 10 points high in 800x600, but 18 points high in 1920x1080, representing the same proportion of the screen.
 
-#3. Scaling 9-slice-sprite source BEFORE 9-slice-scaling
+#3. Conditional scaling
+
+Let's say you want to load a different asset in a 16x9 screen mode than a 4x3 mode, and fit it to the screen.
+
+```xml
+<sprite id="thing" src="ui/asset">
+	<scale screen_ratio="1.77" tolerance="0.25" suffix="_16x9" width="100%" height="100%"/>
+	<scale screen_ratio="1.33" tolerance="0.25" suffix="_4x3" width="100%" height="100%"/>
+</sprite>
+```
+
+```screen_ratio``` and ```tolerance``` are optional -- they let you filter whether the ```<scale>``` node is activated. If not supplied, the given <scale> node is immediately applied. The ratio is width/height and tolerance is the wiggle room.
+
+```suffix``` is the suffix to apply to your src parameter, "ui/asset". ```width```/```height```, of course, are treated as they are throughout Flixel-UI markup.
+
+So in the above example, if the screen is within 0.25 of a 16:9 ratio, it will load "ui/asset_16x9.png", if it's within 0.25 of a 4:3 ratio, it will load "ui/asset_4x3.png", and in both cases will scale them to fit the screen.
+
+But sometimes you don't want to scale both width/height separately, the most common use case is to scale based on the vertical axis alone and then automatically scale width proportionately. Use "to_height" for this:
+
+```xml
+<sprite id="thing" src="ui/asset">
+	<scale screen_ratio="1.77" tolerance="0.25" suffix="_16x9" to_height="100%"/>
+	<scale screen_ratio="1.33" tolerance="0.25" suffix="_4x3" to_height="100%"/>
+</sprite>
+```
+
+#4. Scaling 9-slice-sprite source BEFORE 9-slice-scaling
 
 Let's say you've got a 9-slice-sprite, but for whatever reason you want to scale the *source* image first, *before* you then subject it to the 9-slice matrix. You can do that like this:
 
