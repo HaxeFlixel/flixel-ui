@@ -15,6 +15,7 @@ import haxe.Json;
 import haxe.xml.Fast;
 import haxe.xml.Printer;
 import openfl.Assets;
+import openfl.display.BitmapDataChannel;
 import openfl.geom.Matrix;
 
 #if (cpp || neko)
@@ -1034,7 +1035,7 @@ class U
 	 * @return	the unique key of the scaled bitmap
 	 */
 	
-	public static function loadMonoScaledImage(src:String,Scale:Float,smooth:Bool=true,checkFlxBitmap:Bool=false):String
+	public static function loadMonoScaledImage(src:String,Scale:Float,smooth:Bool=true,checkFlxBitmap:Bool=false,fixAlphaChannel:Bool=false):String
 	{
 		var bmpSrc:String = gfx(src);
 		var	testBmp:BitmapData = null;
@@ -1064,12 +1065,26 @@ class U
 				//if it doesn't exist yet, create it
 				if (FlxG.bitmap.get(scaleKey) == null)
 				{
-					var scaledBmp:BitmapData = new BitmapData(Std.int(testBmp.width*Scale), Std.int(testBmp.height*Scale),true,0x00000000);	//create a unique bitmap and scale it
+					var scaledBmp:BitmapData = new BitmapData(Std.int(testBmp.width*Scale), Std.int(testBmp.height*Scale),true, 0x00000000);	//create a unique bitmap and scale it
 					
 					var m:Matrix = getMatrix();
 					m.identity();
 					m.scale(Scale, Scale);
 					scaledBmp.draw(testBmp, m, null, null, null, smooth);
+					
+					if (fixAlphaChannel)
+					{
+						//Create a black canvas
+						var black = new BitmapData(scaledBmp.width, scaledBmp.height, true, 0xFF000000);
+						//Copy the image onto it
+						black.copyPixels(scaledBmp, scaledBmp.rect, new Point(), null, null, true);
+						//Copy the alpha channel onto it
+						black.copyChannel(scaledBmp, scaledBmp.rect, new Point(0, 0), BitmapDataChannel.ALPHA, BitmapDataChannel.ALPHA);
+						
+						var temp = scaledBmp;
+						scaledBmp = black;
+						temp.dispose();
+					}
 					
 					FlxG.bitmap.add(scaledBmp, true, scaleKey);			//store it by the unique key
 				}
