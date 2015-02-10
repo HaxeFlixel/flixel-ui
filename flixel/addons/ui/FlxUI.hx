@@ -3661,25 +3661,45 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var list:Array<String> = ["+", "-", "*", "/", "^"];
 		var temp:Array<String> = null;
 		
-		for (operator in list)
+		var operator:String = "";
+		var besti:Int = 999999;
+		
+		for (op in list)
+		{
+			var i = str.indexOf(op);
+			if (i != -1)
+			{
+				if (i < besti)
+				{
+					besti = i;
+					operator = op;
+				}
+			}
+		}
+		
+		if (operator != "")
 		{
 			if (str.indexOf(operator) != -1)		//return on the FIRST valid operator match found
 			{
-				temp = str.split(operator);			
-				if (temp != null && temp.length == 2)		//if I find exactly one operator/operand
+				var opindex = str.indexOf(operator);
+				
+				if (opindex != str.length - 1)
 				{
-					var f:Float = Std.parseFloat(temp[1]);	//try to read the operand as a number
+					var firstBit:String = str.substr(0, opindex);
+					var secondBit:String = str.substr(opindex + 1, str.length - (opindex+1));
+					
+					var f:Float = Std.parseFloat(secondBit);	//try to read the operand as a number
 					if (Math.isNaN(f))
 					{
-						f = getAssetProperty(1,"",temp[1]);
+						f = getAssetProperty(1,"",secondBit);
 					}
-					if (f == 0 && temp[1] != "0")
+					if (f == 0 && secondBit != "0")
 					{
 						return null;					//improperly formatted, invalid operand, bail out
 					}
 					else
 					{
-						return [temp[0], operator, f];	//proper operand and operator
+						return [firstBit, operator, f];	//proper operand and operator
 					}
 				}
 			}
