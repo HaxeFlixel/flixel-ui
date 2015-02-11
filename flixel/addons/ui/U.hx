@@ -762,8 +762,11 @@ class U
 			str = str + ".ttf";
 		}
 		
+		#if flash
+			str = FontFixer.add(str);
+		#end
+		
 		return str;
-		//return _font(str,style) + ".ttf";
 	}
 	
 		//inline that does the work:

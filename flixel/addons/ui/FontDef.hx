@@ -85,6 +85,10 @@ class FontDef
 			return;						//no infinite loops, please
 		}
 		
+		#if flash
+			str = FontFixer.fix(str);
+		#end
+		
 		var style = getFontStyle(str);
 		setFontStyle(style);
 		
@@ -120,17 +124,16 @@ class FontDef
 			var fontStyle = getFontStyle(str);
 			if (fontStyle != "") {							//it had a style character
 				str = str.substr(str.length - 1, 1);		//strip off the style char
-				fromStr(str,recursion+1);								//try again with this
+				fromStr(str, recursion + 1);								//try again with this
+				return;
 			}
 			else {											//it had no style character
-				fromStr(str,recursion+1);								//try again with this
+				fromStr(str, recursion + 1);								//try again with this
+				return;
 			}
 		}
 		
 		setFontStyle(style);
-		
-		//I give up
-		return null;
 	}
 	
 	/**

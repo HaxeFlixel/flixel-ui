@@ -1,5 +1,4 @@
 package flixel.addons.ui;
-
 import flash.display.BitmapData;
 import flash.errors.Error;
 import flash.geom.Matrix;
@@ -1871,6 +1870,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				r.resize(r.width, H);
 			}
 		}
+		
+		//force text redraw
+		ftu.text = " ";
+		ftu.text = text;
 		
 		return ft;
 	}
