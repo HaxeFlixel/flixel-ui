@@ -840,6 +840,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				if (thing != null)
 				{
 					thing.visible = b;
+				} else {
+					var group = getGroup(each_id);
+					if (group != null) {
+						group.visible = b;
+					}
 				}
 				else
 				{
@@ -859,6 +864,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				if (thing != null)
 				{
 					thing.visible = b;
+				} else {
+					var group = getGroup(id);
+					if (group != null) {
+						group.visible = b;
+					}
 				}
 				else
 				{
