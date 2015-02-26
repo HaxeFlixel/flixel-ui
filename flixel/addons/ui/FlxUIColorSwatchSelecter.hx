@@ -16,6 +16,8 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 	public var spacingV(default, set):Float;
 	public var maxColumns(default, set):Float;
 	
+	var _previewSwatch:FlxUIColorSwatch;
+	
 	private function set_spacingH(f:Float):Float {
 		spacingH = f;
 		_dirtyLayout = true;
@@ -49,6 +51,11 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 		return b;
 	}
 	
+	public var numSwatches(get, null):Int;
+	private function get_numSwatches() {
+		return members.length - 2;
+	}
+	
 	/**
 	 * A handy little group for selecting color swatches from
 	 * @param	X					X location
@@ -69,7 +76,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 		if (SelectionSprite != null) {
 			_selectionSprite = SelectionSprite;
 		}
-		
+	
 		var i:Int = 0;
 		var swatch:FlxUIColorSwatch;
 		if (list_data != null)
@@ -136,6 +143,10 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 			}
 		}
 		
+		_previewSwatch = new FlxUIColorSwatch(0, 0, new SwatchData("dummy", [0xffffffff, 0xff888888, 0xff444444, 0xff000000]));
+		_previewSwatch.broadcastToFlxUI = false;
+		add(_previewSwatch);
+		
 		updateLayout();
 		
 		selectByIndex(0);
@@ -179,10 +190,13 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 			}
 		}
 		
+		_previewSwatch.x = firstX - _previewSwatch.width - spacingH - 5;
+		
 		_dirtyLayout = false;
 	}
 	
 	public function changeColors(list:Array<SwatchData>):Void {
+		remove(_previewSwatch);
 		var swatches:Int = members.length - 1;
 		
 		var swatchForSelect:SwatchData = null;
@@ -245,6 +259,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 		_dirtyLayout = true;
 		
 		add(_selectionSprite);
+		add(_previewSwatch);
 		
 		if (swatchForSelect != null) {
 			selectByColors(swatchForSelect, true);
@@ -353,6 +368,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 			_selectionSprite.visible = true;
 			_selectionSprite.x = _selectedSwatch.x + ((_selectedSwatch.width  - _selectionSprite.width) / 2);
 			_selectionSprite.y = _selectedSwatch.y + ((_selectedSwatch.height - _selectionSprite.height) / 2);
+			_previewSwatch.colors = _selectedSwatch.colors; 
 		}else {
 			_selectionSprite.visible = false;
 		}
