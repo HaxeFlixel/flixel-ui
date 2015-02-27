@@ -442,12 +442,14 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	 * @param	frame_indeces array of which image frames go with which button frames (optional)
 	 */
 	
-	public function loadGraphicSlice9(assets:Array<FlxGraphicAsset>=null,W:Int=80,H:Int=20,slice9:Array<Array<Int>>=null,Tile:Int=FlxUI9SliceSprite.TILE_NONE,Resize_Ratio:Float=-1,isToggle:Bool=false,src_w:Int=0,src_h:Int=0,frame_indeces:Array<Int>=null):Void{
-	
-		if (src_w != 0) {
+	public function loadGraphicSlice9(assets:Array<FlxGraphicAsset> = null, W:Int = 80, H:Int = 20, slice9:Array<Array<Int>> = null, Tile:Int = FlxUI9SliceSprite.TILE_NONE, Resize_Ratio:Float = -1, isToggle:Bool = false, src_w:Int = 0, src_h:Int = 0, frame_indeces:Array<Int> = null):Void
+	{
+		if (src_w != 0)
+		{
 			_src_w = src_w;
 		}
-		if (src_h != 0) {
+		if (src_h != 0)
+		{
 			_src_h = src_h;
 		}
 		
@@ -466,26 +468,34 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		var arr_flx9:Array<FlxUI9SliceSprite> = [];
 		
 		//Validate frame_indeces array
-		if (frame_indeces == null) {
+		if (frame_indeces == null)
+		{
 			//if it doesn't exist, create default setup
 			if (has_toggle) { frame_indeces = [0, 1, 2, 3, 4, 5];}
 					   else { frame_indeces = [0, 1, 2];}
-		}else {
+		}
+		else
+		{
 			var max_index:Int = 2;
 			if (has_toggle) { max_index = 5;}
 			
 			//if it's less than 3 (or 6 for toggle), add missing entries
 			//and use the default frame index to fill the gap 
 			//(ie, [a,b] --> [a,b,2])
-			while (frame_indeces.length < max_index + 1) {
+			while (frame_indeces.length < max_index + 1)
+			{
 				frame_indeces.push(frame_indeces.length - 1);
-			}			
+			}
 			
 			//make sure indeces are all within bounds
-			for (i in 0...frame_indeces.length) {
-				if (frame_indeces[i] > 5) { 
+			for (i in 0...frame_indeces.length)
+			{
+				if (frame_indeces[i] > 5)
+				{
 					frame_indeces[i] = 5; 
-				}else if (frame_indeces[i] < 0) {
+				}
+				else if (frame_indeces[i] < 0)
+				{
 					frame_indeces[i] = 0;
 				}
 			}
@@ -493,10 +503,12 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		
 		_frame_indeces = frame_indeces;
 		
-		if (W == 0) {
+		if (W == 0)
+		{
 			W = 80;
 		}
-		if (H == 0) {
+		if (H == 0)
+		{
 			H = 20;
 		}
 		
@@ -542,22 +554,28 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		_flashRect2.width = W;
 		_flashRect2.height = H;
 		
-		if(assets.length == 1){								//loading everything from one graphic
+		if (assets.length == 1)
+		{
+			//loading everything from one graphic
 			var all = getBmp(assets[0]);		//load the image
 			
-			if (_src_w == 0 || _src_h == 0) {
+			if (_src_w == 0 || _src_h == 0)
+			{
 				throw new Error("Ambiguous situation! If you only provide one asset, you MUST provide src_w and src_h. Otherwise I can't tell if it's a stacked set of frames or a single frame.");
-			}else{
-			
-				if(all.height > _src_h){						//looks like a multi-frame graphic
-					for (i in 0...arr_bmpData.length) {
+			}
+			else
+			{
+				if (all.height > _src_h)
+				{
+					//looks like a multi-frame graphic
+					for (i in 0...arr_bmpData.length)
+					{
 						arr_bmpData[i] = grabButtonFrame(all, i, has_toggle, _src_w, _src_h);		//get each button frame
-						if (has_toggle) {
-							//FlxG.bmpLog.add(arr_bmpData[i]);
-						}
 					}
 					
-					if (slice9 != null && slice9[0] != []) {		//9slicesprites
+					if (slice9 != null && slice9[0] != [])
+					{
+						//9slicesprites
 						
 						//Scale each 9slicesprite
 						for (i in 0...arr_bmpData.length) {
@@ -574,26 +592,39 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 						W = arr_bmpData[0].width;
 						H = arr_bmpData[0].height;
 					}
-				}else {					//just one frame
+				}
+				else
+				{					//just one frame
 					arr_bmpData[0] = all;
 				}
 			}
-		}else {						//loading multiple image files
+		}
+		else
+		{	
+			//loading multiple image files
 			
 			//ensure asset list is at least 3 long, fill with blanks if necessary
-			if(!has_toggle){
-				while (assets.length < 3) {
+			if (!has_toggle)
+			{
+				while (assets.length < 3)
+				{
 					assets.push("");
 				}
-			}else {
-				while (assets.length < 6) {
+			}
+			else
+			{
+				while (assets.length < 6)
+				{
 					assets.push("");
 				}
 			}
 			
-			if (assets[0] != "") {
-				if (slice9 != null && slice9[0] != []) {	//load as 9slicesprites
-						
+			if (assets[0] != "")
+			{
+				if (slice9 != null && slice9[0] != [])
+				{
+					//load as 9slicesprites
+					
 					//make at least 3(or 6) long, fill with blanks if necessary
 					while (slice9.length < assets.length) {
 						slice9.push(null);
@@ -612,9 +643,10 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 					//in case the resize_ratio resulted in different dimensions
 					W = arr_bmpData[0].width;
 					H = arr_bmpData[0].height;
-				
-					
-				}else {			//load as static buttons
+				}
+				else
+				{
+					//load as static buttons
 					key = "";
 					for(i in 0...assets.length){
 						arr_bmpData[i] = getBmp(assets[i]);
@@ -626,7 +658,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 					W = arr_bmpData[0].width;
 					H = arr_bmpData[0].height;
 				}
-			}else {
+			}
+			else
+			{
 				if (W == 0) { W = 80; }
 				if (H == 0) { H = 20; }
 				arr_bmpData[0] = new BitmapData(W, H * 3, true, 0x00000000);
@@ -635,15 +669,17 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			}
 		}
 		
-		var normalPixels:BitmapData = assembleButtonFrames(arr_bmpData[frame_indeces[0]], 
-														   arr_bmpData[frame_indeces[1]], 
+		var normalPixels:BitmapData = assembleButtonFrames(arr_bmpData[frame_indeces[0]],
+														   arr_bmpData[frame_indeces[1]],
 														   arr_bmpData[frame_indeces[2]]);
-														   
-		if(!has_toggle){
+		if (!has_toggle)
+		{
 			loadGraphic(normalPixels, true, W, H, false, key);
-		}else {
- 			var togglePixels:BitmapData = assembleButtonFrames(arr_bmpData[frame_indeces[3]], 
-															   arr_bmpData[frame_indeces[4]], 
+		}
+		else
+		{
+ 			var togglePixels:BitmapData = assembleButtonFrames(arr_bmpData[frame_indeces[3]],
+															   arr_bmpData[frame_indeces[4]],
 															   arr_bmpData[frame_indeces[5]]);
 															   
 			var combinedPixels:BitmapData = combineToggleBitmaps(normalPixels, togglePixels);
