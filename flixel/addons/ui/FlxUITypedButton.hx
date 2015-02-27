@@ -396,9 +396,12 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 
 		var bd:BitmapData = null;
 		
-		if (Std.is(asset, BitmapData)) {
+		if (Std.is(asset, BitmapData))
+		{
 			bd = cast asset;
-		}else if (Std.is(asset, String)) {
+		}
+		else if (Std.is(asset, String))
+		{
 			bd = getBmp(asset);
 		}
 		
@@ -576,7 +579,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 					//looks like a multi-frame graphic
 					for (i in 0...arr_bmpData.length)
 					{
-						arr_bmpData[i] = grabButtonFrame(all, i, has_toggle, _src_w, _src_h);		//get each button frame
+						arr_bmpData[i] = grabButtonFrame(all, i, has_toggle, _src_w, _src_h, key);		//get each button frame
 					}
 					
 					if (slice9 != null && slice9[0] != [])
@@ -626,7 +629,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			}
 		}
 		else
-		{	
+		{
 			//loading multiple image files
 			
 			//ensure asset list is at least 3 long, fill with blanks if necessary
@@ -652,15 +655,18 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 					//load as 9slicesprites
 					
 					//make at least 3(or 6) long, fill with blanks if necessary
-					while (slice9.length < assets.length) {
+					while (slice9.length < assets.length)
+					{
 						slice9.push(null);
 					}
 					
 					arr_flx9[0] = new FlxUI9SliceSprite(0, 0, assets[0],_flashRect2, slice9[0], tile, false,"",resize_ratio);
 					arr_bmpData[0] = arr_flx9[0].pixels;
 					
-					for (i in 1...assets.length) {
-						if (assets[i] != "") {
+					for (i in 1...assets.length)
+					{
+						if (assets[i] != "")
+						{
 							arr_flx9[i] = new FlxUI9SliceSprite(0, 0, assets[i], _flashRect2, slice9[i], tile, false,"",resize_ratio);
 							arr_bmpData[i] = arr_flx9[i].pixels;
 						}
@@ -697,26 +703,55 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			}
 		}
 		
-		var normalPixels:BitmapData = assembleButtonFrames(arr_bmpData[frame_indeces[0]],
-														   arr_bmpData[frame_indeces[1]],
-														   arr_bmpData[frame_indeces[2]]);
+		key += "_fi" + frame_indeces;
+		
+		var normalPixels:BitmapData = null;
+		
+		var normalKey = key + "_normal";
+		var toggleKey = key + "_toggle";
+		
 		if (!has_toggle)
 		{
-			loadGraphic(normalPixels, true, W, H, false, key);
+			if (FlxG.bitmap.checkCache(normalKey))
+			{
+				normalPixels = FlxG.bitmap.get(normalKey).bitmap;
+			}
+			else
+			{
+				normalPixels = assembleButtonFrames(arr_bmpData[frame_indeces[0]],
+													arr_bmpData[frame_indeces[1]],
+													arr_bmpData[frame_indeces[2]]);
+				FlxG.bitmap.add(normalPixels, true, normalKey);
+			}
+			loadGraphic(normalKey, true, W, H);
 		}
 		else
 		{
- 			var togglePixels:BitmapData = assembleButtonFrames(arr_bmpData[frame_indeces[3]],
+			var normalPixels:BitmapData = assembleButtonFrames(arr_bmpData[frame_indeces[0]],
+															   arr_bmpData[frame_indeces[1]],
+															   arr_bmpData[frame_indeces[2]]);
+			
+			var togglePixels:BitmapData = assembleButtonFrames(arr_bmpData[frame_indeces[3]],
 															   arr_bmpData[frame_indeces[4]],
 															   arr_bmpData[frame_indeces[5]]);
 			
-			var combinedPixels:BitmapData = combineToggleBitmaps(normalPixels, togglePixels);
+			var combinedKey = key + "_combined";
+			var combinedPixels:BitmapData = null;
+			if (FlxG.bitmap.checkCache(combinedKey))
+			{
+				combinedPixels = FlxG.bitmap.get(combinedKey).bitmap;
+			}
+			else
+			{
+				var combinedPixels:BitmapData = combineToggleBitmaps(normalPixels, togglePixels);
+				FlxG.bitmap.add(combinedPixels, true, combinedKey);
+			}
 			
 			//cleanup
 			normalPixels = FlxDestroyUtil.dispose(normalPixels);
 			togglePixels = FlxDestroyUtil.dispose(togglePixels);
 			
-			loadGraphic(combinedPixels, true, W, H, false, key);
+			loadGraphic(combinedKey, true, W, H);
 		}
 		
 		//cleanup
@@ -791,37 +826,66 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	 * @return
 	 */
 	
-	public function grabButtonFrame(all_frames:BitmapData, button_state:Int, for_toggle:Bool=false, src_w:Int=0, src_h:Int=0):BitmapData{
+	public function grabButtonFrame(all_frames:BitmapData, button_state:Int, for_toggle:Bool = false, src_w:Int = 0, src_h:Int = 0, ?key:String=null):BitmapData
+	{
 		var h:Int = src_h;
-		if(h == 0){
-			if (!for_toggle) {
+		if (h == 0)
+		{
+			if (!for_toggle)
+			{
 				h = Std.int(all_frames.height / 3);
-			}else {
+			}
+			else
+			{
 				h = Std.int(all_frames.height / 6);
 			}
 		}
 		var w:Int = src_w;
-		if (w == 0) {
+		if (w == 0)
+		{
 			w = cast all_frames.width;
 		}
-		var pixels:BitmapData = new BitmapData(w,h);
+		
 		_flashRect.x = 0;
 		_flashRect.y = button_state * h;
 		_flashRect.width = w;
 		_flashRect.height = h;
-		if (_flashRect.y >= all_frames.height) {
+		if (_flashRect.y >= all_frames.height)
+		{
 			//we're off the bitmap, start making educated guesses
 			var framesHigh:Int = Std.int(all_frames.height / h);
-			if (framesHigh == 4) {
+			if (framesHigh == 4)
+			{
 				//we have exactly 4 frames, assume "up","over","down","down_over"
-				if (button_state == FlxButton.HIGHLIGHT + 3) {		//toggle-hilight
+				if (button_state == FlxButton.HIGHLIGHT + 3)
+				{
+					//toggle-hilight
 					_flashRect.y = (3) * h;								//show "down_over"
-				}else if (button_state == FlxButton.PRESSED + 3) {	//toggle-pressed
+				}
+				else if (button_state == FlxButton.PRESSED + 3)
+				{
+					//toggle-pressed
 					_flashRect.y = (2) * h;								//show "down"
 				}
 			}
 		}
+		
+		//Check to see if we can return the cached image instead
+		var frameKey = key + "{x:" + _flashRect.x + "y:" + _flashRect.y + "w:" + _flashRect.width + "h:" + _flashRect.height + "}";
+		if (key != null)
+		{
+			if (FlxG.bitmap.checkCache(frameKey))
+			{
+				return FlxG.bitmap.get(frameKey).bitmap;
+			}
+		}
+		
+		var pixels:BitmapData = new BitmapData(w,h);
 		pixels.copyPixels(all_frames, _flashRect, _flashPointZero);
+		if (key != null)
+		{
+			FlxG.bitmap.add(pixels, true, frameKey);
+		}
 		return pixels;
 	}
 	
