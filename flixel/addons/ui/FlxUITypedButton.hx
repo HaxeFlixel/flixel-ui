@@ -534,6 +534,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 				_src_h = Std.int(temp.height / 6);				//calc default source width/height
 			}
 			
+			key = assets[0] + "_slice9(" + slice9 + ")_src=" + _src_w + "x" + _src_h + "_final=" + W + "x" + H;
+			
 			temp = null;
 		}
 		
@@ -554,10 +556,12 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		_flashRect2.width = W;
 		_flashRect2.height = H;
 		
-		if (assets.length == 1)
+		if (assets != null && assets.length == 1)
 		{
 			//loading everything from one graphic
 			var all = getBmp(assets[0]);		//load the image
+			
+			key = "all(" + assets[0] + ")_slice9(" + slice9 + ")_src=" + _src_w + "x" + _src_h + "_final=" + W + "x" + H;
 			
 			if (_src_w == 0 || _src_h == 0)
 			{
@@ -567,6 +571,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			{
 				if (all.height > _src_h)
 				{
+					key += "_multiframe";
+					
 					//looks like a multi-frame graphic
 					for (i in 0...arr_bmpData.length)
 					{
@@ -578,14 +584,33 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 						//9slicesprites
 						
 						//Scale each 9slicesprite
-						for (i in 0...arr_bmpData.length) {
-							arr_flx9[i] = new FlxUI9SliceSprite(0, 0, arr_bmpData[i], _flashRect2, slice9[0], tile, false, assets[0] + ":" + i , resize_ratio);
-							arr_flx9[i].resize_point = resize_point;
+						for (i in 0...arr_bmpData.length)
+						{
+							var subkey = key +"_subkey(" + i + ")";
+							
+							//Only create a 9slicesprite if this exact image portion is new
+							if (FlxG.bitmap.checkCache(subkey) == false)
+							{
+								arr_flx9[i] = new FlxUI9SliceSprite(0, 0, arr_bmpData[i], _flashRect2, slice9[0], tile, false, assets[0] + ":" + i , resize_ratio);
+								arr_flx9[i].resize_point = resize_point;
+								FlxG.bitmap.add(arr_flx9[i].pixels, true, subkey);
+							}
 						}
 						
 						//grab the pixel data:
-						for (i in 0...arr_bmpData.length) {
-							arr_bmpData[i] = arr_flx9[i].pixels;
+						for (i in 0...arr_bmpData.length)
+						{
+							var subkey = key +"_subkey(" + i + ")";
+							
+							//Check the cache to see if we can skip drawing it
+							if (FlxG.bitmap.checkCache(subkey) == false)
+							{
+								arr_bmpData[i] = arr_flx9[i].pixels;
+							}
+							else
+							{
+								arr_bmpData[i] = FlxG.bitmap.get(subkey).bitmap;
+							}
 						}
 						
 						//in case the resize_ratio resulted in different dimensions
@@ -594,7 +619,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 					}
 				}
 				else
-				{					//just one frame
+				{
+					//just one frame
 					arr_bmpData[0] = all;
 				}
 			}
@@ -648,13 +674,15 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 				{
 					//load as static buttons
 					key = "";
-					for(i in 0...assets.length){
+					for (i in 0...assets.length)
+					{
 						arr_bmpData[i] = getBmp(assets[i]);
 						key += assets[i];
-						if (i < assets.length - 1) {
+						if (i < assets.length - 1)
+						{
 							key += ",";
 						}
-					}	
+					}
 					W = arr_bmpData[0].width;
 					H = arr_bmpData[0].height;
 				}
@@ -681,19 +709,21 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
  			var togglePixels:BitmapData = assembleButtonFrames(arr_bmpData[frame_indeces[3]],
 															   arr_bmpData[frame_indeces[4]],
 															   arr_bmpData[frame_indeces[5]]);
-															   
+			
 			var combinedPixels:BitmapData = combineToggleBitmaps(normalPixels, togglePixels);
 			
 			//cleanup
 			normalPixels = FlxDestroyUtil.dispose(normalPixels);
 			togglePixels = FlxDestroyUtil.dispose(togglePixels);
 			
-			loadGraphic(combinedPixels, true, W, H);
+			loadGraphic(combinedPixels, true, W, H, false, key);
 		}
 		
 		//cleanup
-		for (i in 0...arr_flx9.length) {
-			if (arr_flx9[i] != null) {
+		for (i in 0...arr_flx9.length)
+		{
+			if (arr_flx9[i] != null)
+			{
 				arr_flx9[i].destroy();
 				arr_flx9[i] = null;
 			}
