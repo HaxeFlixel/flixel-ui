@@ -47,15 +47,27 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	 * @param	Y			The Y position of the button.
 	 * @param	Label		The text that you want to appear on the button.
 	 * @param	OnClick		The function to call whenever the button is clicked.
+	 * @param	LoadDefaultGraphics	By default it will load up with placeholder graphics. Pass false if you want to skip this (i.e. if you will provide your own graphics subsequently, can save time)
 	 */
-	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Void->Void) {
+	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Void->Void, ?LoadDefaultGraphics:Bool=true)
+	{
 		super(X, Y, OnClick);
 		if (Label != null) {
 			//create a FlxUIText label
 			label = new FlxUIText(0, 0, 80, Label, 8);
 			label.setFormat(null, 8, 0x333333, "center");
 		}
-		resize(width, height);	//force it to be "FlxUI style"
+		if (LoadDefaultGraphics)
+		{
+			resize(width, height);	//force it to be "FlxUI style"
+		}
+		else
+		{
+			doResize(width, height, false);
+			//initialize dimensions but don't initialize any graphics yet.
+			//this is ugly, but if you're about to set the graphics 
+			//yourself in a subsequent call it's much faster to skip!
+		}
 	}
 	
 	/**
@@ -96,7 +108,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	
 	public override function clone():FlxUIButton
 	{
-		var newButton = new FlxUIButton(0, 0, (label == null) ? null : label.text, onUp.callback);
+		var newButton = new FlxUIButton(0, 0, (label == null) ? null : label.text, onUp.callback, false);
 		newButton.copyGraphic(cast this);
 		newButton.copyStyle(cast this);
 		return newButton;

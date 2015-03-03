@@ -26,6 +26,10 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 {
 	public var name:String; 
 	public var resize_ratio:Float = -1;
+	
+	//whether the resize_ratio means X in terms of Y, or Y in terms of X
+	public var resize_ratio_axis:Int = FlxUISprite.RESIZE_RATIO_Y;
+	
 	public var resize_point:FlxPoint = null;
 	public var tile:Int = FlxUI9SliceSprite.TILE_NONE;
 	
@@ -243,7 +247,13 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		}
 	}
 	
-	public function resize(W:Float, H:Float):Void {
+	public function resize(W:Float, H:Float):Void
+	{
+		doResize(W, H);
+	}
+	
+	private function doResize(W:Float, H:Float, Redraw:Bool = true):Void
+	{
 		var old_width:Float = width;
 		var old_height:Float = height;
 		
@@ -261,20 +271,23 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		if (W == 0) { W = 80; }
 		if (H == 0) { H = 20; }
 		
-		if (_slice9_assets != null) {
-			loadGraphicSlice9(_slice9_assets, Std.int(W), Std.int(H), _slice9_arrays,tile,resize_ratio,has_toggle,_src_w,_src_h,_frame_indeces);
-		} else {
-			if (_no_graphic) {
-				var upB:BitmapData;
-				if(!has_toggle){
-					upB = new BitmapData(Std.int(W), Std.int(H * 3), true, 0x00000000);
+		if (Redraw)
+		{
+			if (_slice9_assets != null) {
+				loadGraphicSlice9(_slice9_assets, Std.int(W), Std.int(H), _slice9_arrays,tile,resize_ratio,has_toggle,_src_w,_src_h,_frame_indeces);
+			} else {
+				if (_no_graphic) {
+					var upB:BitmapData;
+					if(!has_toggle){
+						upB = new BitmapData(Std.int(W), Std.int(H * 3), true, 0x00000000);
+					}else {
+						upB = new BitmapData(Std.int(W), Std.int(H * 6), true, 0x00000000);
+					}
+					loadGraphicsUpOverDown(upB);
 				}else {
-					upB = new BitmapData(Std.int(W), Std.int(H * 6), true, 0x00000000);
+					//default assets
+					loadGraphicSlice9(null, Std.int(W), Std.int(H), null,tile);
 				}
-				loadGraphicsUpOverDown(upB);
-			}else {
-				//default assets
-				loadGraphicSlice9(null, Std.int(W), Std.int(H), null,tile);
 			}
 		}
 		
@@ -465,7 +478,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		_slice9_assets = assets;
 		_slice9_arrays = slice9;
 		
-		var key:String = null;
+		var key:String = "";
 		
 		var arr_bmpData:Array<BitmapData> = [];
 		var arr_flx9:Array<FlxUI9SliceSprite> = [];
@@ -515,6 +528,10 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			H = 20;
 		}
 		
+		var pt = U.applyResize(resize_ratio, resize_ratio_axis, W, H);
+		W = Std.int(pt.x);
+		H = Std.int(pt.y);
+		
 		if (assets == null)
 		{
 			var temp:BitmapData;
@@ -537,8 +554,6 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 				_src_h = Std.int(temp.height / 6);				//calc default source width/height
 			}
 			
-			key = assets[0] + "_slice9(" + slice9 + ")_src=" + _src_w + "x" + _src_h + "_final=" + W + "x" + H;
-			
 			temp = null;
 		}
 		
@@ -559,78 +574,85 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		_flashRect2.width = W;
 		_flashRect2.height = H;
 		
-		if (assets != null && assets.length == 1)
+		key += assets + "_slice9=" + slice9 + "_src=" + _src_w + "x" + _src_h + "_final=" + W + "x" + H + "_fi=" + _frame_indeces;
+		
+		if (assets.length == 1)
 		{
 			//loading everything from one graphic
 			var all = getBmp(assets[0]);		//load the image
 			
-			key = "all(" + assets[0] + ")_slice9(" + slice9 + ")_src=" + _src_w + "x" + _src_h + "_final=" + W + "x" + H;
+			key += "_all";
 			
 			if (_src_w == 0 || _src_h == 0)
 			{
 				throw new Error("Ambiguous situation! If you only provide one asset, you MUST provide src_w and src_h. Otherwise I can't tell if it's a stacked set of frames or a single frame.");
 			}
-			else
+			
+			var multiFrame = all.height > _src_h;
+			
+			key += multiFrame ? "_multiframe" : "";
+			
+			//*************************************************************/
+			//Check if we can exit early because this key is already cached
+			if (FlxG.bitmap.checkCache(key))
 			{
-				if (all.height > _src_h)
+				loadGraphic(key, true, W, H);
+				return;
+			}
+			//*************************************************************/
+			
+			//No dice -- keep processing
+			
+			if (multiFrame)
+			{
+				//looks like a multi-frame graphic
+				for (i in 0...arr_bmpData.length)
 				{
-					key += "_multiframe";
+					arr_bmpData[i] = grabButtonFrame(all, i, has_toggle, _src_w, _src_h, key);		//get each button frame
+				}
+				
+				if (slice9 != null && slice9[0] != [])
+				{
+					//9slicesprites
 					
-					//looks like a multi-frame graphic
+					//Scale each 9slicesprite
 					for (i in 0...arr_bmpData.length)
 					{
-						arr_bmpData[i] = grabButtonFrame(all, i, has_toggle, _src_w, _src_h, key);		//get each button frame
+						arr_flx9[i] = new FlxUI9SliceSprite(0, 0, arr_bmpData[i], _flashRect2, slice9[0], tile, false, assets[0] + ":" + i , resize_ratio);
+						arr_flx9[i].resize_point = resize_point;
 					}
 					
-					if (slice9 != null && slice9[0] != [])
+					//grab the pixel data:
+					for (i in 0...arr_bmpData.length)
 					{
-						//9slicesprites
-						
-						//Scale each 9slicesprite
-						for (i in 0...arr_bmpData.length)
-						{
-							var subkey = key +"_subkey(" + i + ")";
-							
-							//Only create a 9slicesprite if this exact image portion is new
-							if (FlxG.bitmap.checkCache(subkey) == false)
-							{
-								arr_flx9[i] = new FlxUI9SliceSprite(0, 0, arr_bmpData[i], _flashRect2, slice9[0], tile, false, assets[0] + ":" + i , resize_ratio);
-								arr_flx9[i].resize_point = resize_point;
-								FlxG.bitmap.add(arr_flx9[i].pixels, true, subkey);
-							}
-						}
-						
-						//grab the pixel data:
-						for (i in 0...arr_bmpData.length)
-						{
-							var subkey = key +"_subkey(" + i + ")";
-							
-							//Check the cache to see if we can skip drawing it
-							if (FlxG.bitmap.checkCache(subkey) == false)
-							{
-								arr_bmpData[i] = arr_flx9[i].pixels;
-							}
-							else
-							{
-								arr_bmpData[i] = FlxG.bitmap.get(subkey).bitmap;
-							}
-						}
-						
-						//in case the resize_ratio resulted in different dimensions
-						W = arr_bmpData[0].width;
-						H = arr_bmpData[0].height;
+						arr_bmpData[i] = arr_flx9[i].pixels;
 					}
+					
+					//in case the resize_ratio resulted in different dimensions
+					W = arr_bmpData[0].width;
+					H = arr_bmpData[0].height;
 				}
-				else
-				{
-					//just one frame
-					arr_bmpData[0] = all;
-				}
+			}
+			else
+			{
+				//just one frame
+				arr_bmpData[0] = all;
 			}
 		}
 		else
 		{
 			//loading multiple image files
+			
+			//*************************************************************/
+			//Check if we can exit early because this key is already cached
+			if (FlxG.bitmap.checkCache(key))
+			{
+				loadGraphic(key, true, W, H);
+				return;
+			}
+			//*************************************************************/
+			
+			//No dice -- keep processing
 			
 			//ensure asset list is at least 3 long, fill with blanks if necessary
 			if (!has_toggle)
@@ -679,15 +701,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 				else
 				{
 					//load as static buttons
-					key = "";
 					for (i in 0...assets.length)
 					{
 						arr_bmpData[i] = getBmp(assets[i]);
-						key += assets[i];
-						if (i < assets.length - 1)
-						{
-							key += ",";
-						}
 					}
 					W = arr_bmpData[0].width;
 					H = arr_bmpData[0].height;
@@ -697,33 +713,24 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			{
 				if (W == 0) { W = 80; }
 				if (H == 0) { H = 20; }
+				
 				arr_bmpData[0] = new BitmapData(W, H * 3, true, 0x00000000);
-				key = "Blank_" + W + "x" + (H * 3);
+				
 				_no_graphic = true;
 			}
 		}
 		
-		key += "_fi" + frame_indeces;
+		//If we've gotten here there's no shortcuts we need to draw the actual button graphic
 		
 		var normalPixels:BitmapData = null;
 		
-		var normalKey = key + "_normal";
-		var toggleKey = key + "_toggle";
-		
 		if (!has_toggle)
 		{
-			if (FlxG.bitmap.checkCache(normalKey))
-			{
-				normalPixels = FlxG.bitmap.get(normalKey).bitmap;
-			}
-			else
-			{
-				normalPixels = assembleButtonFrames(arr_bmpData[frame_indeces[0]],
-													arr_bmpData[frame_indeces[1]],
-													arr_bmpData[frame_indeces[2]]);
-				FlxG.bitmap.add(normalPixels, true, normalKey);
-			}
-			loadGraphic(normalKey, true, W, H);
+			normalPixels = assembleButtonFrames(arr_bmpData[frame_indeces[0]],
+												arr_bmpData[frame_indeces[1]],
+												arr_bmpData[frame_indeces[2]]);
+			FlxG.bitmap.add(normalPixels, true, key);
+			loadGraphic(key, true, W, H);
 		}
 		else
 		{
@@ -735,23 +742,14 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 															   arr_bmpData[frame_indeces[4]],
 															   arr_bmpData[frame_indeces[5]]);
 			
-			var combinedKey = key + "_combined";
-			var combinedPixels:BitmapData = null;
-			if (FlxG.bitmap.checkCache(combinedKey))
-			{
-				combinedPixels = FlxG.bitmap.get(combinedKey).bitmap;
-			}
-			else
-			{
-				var combinedPixels:BitmapData = combineToggleBitmaps(normalPixels, togglePixels);
-				FlxG.bitmap.add(combinedPixels, true, combinedKey);
-			}
+			var combinedPixels:BitmapData = combineToggleBitmaps(normalPixels, togglePixels);
 			
 			//cleanup
 			normalPixels = FlxDestroyUtil.dispose(normalPixels);
 			togglePixels = FlxDestroyUtil.dispose(togglePixels);
 			
-			loadGraphic(combinedKey, true, W, H);
+			FlxG.bitmap.add(combinedPixels, true, key);
+			loadGraphic(key, true, W, H);
 		}
 		
 		//cleanup

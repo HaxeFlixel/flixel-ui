@@ -487,6 +487,37 @@ class U
 				 hex & 0xFF];		//B
 	} 
 	
+	public static function applyResize(resize_ratio:Float,resize_ratio_axis:Int,w:Float,h:Float,?pt:FlxPoint):FlxPoint
+	{
+		if (pt == null)
+		{
+			pt = new FlxPoint();
+		}
+		if(resize_ratio > 0){
+			var effective_ratio:Float = (w / h);
+			if (Math.abs(effective_ratio - resize_ratio) > 0.0001) {
+				if (resize_ratio_axis == FlxUISprite.RESIZE_RATIO_Y)
+				{
+					h = w * (1 / resize_ratio);
+				}
+				else
+				{
+					w = h * (1 / resize_ratio);
+				}
+			}
+		}
+		var iw:Int = Std.int(w); 
+		if (iw < 1) { 
+			w = 1;
+		}
+		var ih:Int = Std.int(h);
+		if (ih < 1) { 
+			h = 1;
+		}
+		pt.set(w, h);
+		return pt;
+	}
+	
 	/**
 	 * Returns the hex pixel value of 3 r, g, b ints
 	 * @param	r

@@ -731,8 +731,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 	}
 	
-	private function _postLoad(data:Fast):Void {
-		
+	private function _postLoad(data:Fast):Void
+	{
 		_postLoaded = true;
 		if (data.x.firstElement() != null) {
 			//Load the actual things
@@ -2741,7 +2741,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		if (sprite == null)
 		{
-			fb = new FlxUIButton(0, 0, label);
+			var useDefaultGraphic = (data.hasNode.graphic == false);
+			fb = new FlxUIButton(0, 0, label, null, useDefaultGraphic);
 		}
 		else
 		{
@@ -2779,7 +2780,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		{
 			var blank:Bool = U.xml_bool(data.node.graphic.x, "blank");
 			
-			if (blank) {
+			if (blank)
+			{
 				//load blank
 				#if neko
 					fb.loadGraphicSlice9(["", "", ""], W, H, null, FlxUI9SliceSprite.TILE_NONE, resize_ratio, false, 0, 0, null);

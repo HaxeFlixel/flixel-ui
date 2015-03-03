@@ -69,7 +69,7 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	 * @param
 	 */
 	
-	public function new(X:Float, Y:Float, Graphic:Dynamic, Rect:Rectangle, Slice9:Array<Int>=null, Tile:Int=TILE_NONE, Smooth:Bool=false, Id:String="",Ratio:Float=-1,Resize_point=null,Resize_axis:Int=FlxUISprite.RESIZE_RATIO_Y) 
+	public function new(X:Float, Y:Float, Graphic:Dynamic, Rect:Rectangle, Slice9:Array<Int>=null, Tile:Int=TILE_NONE, Smooth:Bool=false, Id:String="",Ratio:Float=-1,Resize_point=null,Resize_axis:Int=FlxUISprite.RESIZE_RATIO_Y,DeferResize:Bool=false) 
 	{
 		super(X, Y, null);
 		
@@ -101,7 +101,16 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 			resize_point = Resize_point;
 		}
 		
-		resize(Rect.width, Rect.height);
+		if (DeferResize)
+		{
+			var pt = U.applyResize(resize_ratio, resize_ratio_axis, Rect.width, Rect.height);
+			width = pt.x;
+			height = pt.y;
+		}
+		else
+		{
+			resize(Rect.width, Rect.height);
+		}
 	}
 	
 	public override function resize(w:Float, h:Float):Void {
@@ -116,31 +125,16 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 		var old_width:Float = width;
 		var old_height:Float = height;
 		
-		if(resize_ratio > 0){
-			var effective_ratio:Float = (w / h);
-			if (Math.abs(effective_ratio - resize_ratio) > 0.0001) {
-				if (resize_ratio_axis == FlxUISprite.RESIZE_RATIO_Y)
-				{
-					h = w * (1 / resize_ratio);
-				}
-				else
-				{
-					w = h * (1 / resize_ratio);
-				}
-			}
-		}
+		var pt = U.applyResize(resize_ratio, resize_ratio_axis, w, h);
+		
+		w = pt.x;
+		h = pt.y;
+		
+		var iw = Std.int(pt.x);
+		var ih = Std.int(pt.y);
 		
 		if (_slice9 == null || _slice9 == []) {
 			_slice9 = [4, 4, 7, 7];
-		}
-		
-		var iw:Int = Std.int(w); 
-		if (iw < 1) { 
-			iw = 1;
-		}
-		var ih:Int = Std.int(h);
-		if (ih < 1) { 
-			ih = 1;
 		}
 		
 		//for caching purposes:
