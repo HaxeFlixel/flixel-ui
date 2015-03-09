@@ -187,7 +187,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 			// Retreives the stored button image before icon was applied.
 			graphic.bitmap.fillRect(graphic.bitmap.rect, 0x0);					// clears the bitmap first.
 			graphic.bitmap.copyPixels(_noIconGraphicsBkup, new Rectangle(0, 0, _noIconGraphicsBkup.width, _noIconGraphicsBkup.height), new Point());
-			resetFrameBitmaps();
+			dirty = true;
 			
 			#if flash
 			calcFrame();
