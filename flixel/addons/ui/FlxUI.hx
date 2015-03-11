@@ -3118,7 +3118,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		{
 			//Figure out what effective scale we are using for the scaled source material
 			var origSrc = U.xml_gfx(data.x, "src");
-			var origAsset = Assets.getBitmapData(origSrc);
+			var origAsset = Assets.getBitmapData(origSrc, false);
 			var srcAsset = FlxG.bitmap.get(src);
 			var srcScaleFactor = rect_h / origAsset.height;
 			
@@ -4024,8 +4024,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return the_font;
 	}
 	
-	private function _onFinishLoad():Void {
-		if (_ptr != null) {
+	private function _onFinishLoad():Void
+	{
+		if (_ptr != null)
+		{
 			_ptr.getEvent("finish_load", this, null);
 		}
 	}

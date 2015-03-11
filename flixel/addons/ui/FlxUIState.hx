@@ -196,6 +196,21 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		#end
 		
 		super.create();
+		
+		_cleanup();
+	}
+	
+	@:access(flixel.system.frontEnds.BitmapFrontEnd)
+	private function _cleanup():Void
+	{
+		//Clean up intermediate cached graphics that are no longer necessary
+		for (key in FlxG.bitmap._cache.keys())
+		{
+			if (key.indexOf("_fuitbtn_frame") != -1)
+			{
+				FlxG.bitmap.removeByKey(key);
+			}
+		}
 	}
 	
 	public function resizeScreen(width:Float=800, height:Float=600):Void {

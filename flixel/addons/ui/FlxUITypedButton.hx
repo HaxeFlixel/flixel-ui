@@ -273,18 +273,27 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		
 		if (Redraw)
 		{
-			if (_slice9_assets != null) {
+			if (_slice9_assets != null)
+			{
 				loadGraphicSlice9(_slice9_assets, Std.int(W), Std.int(H), _slice9_arrays,tile,resize_ratio,has_toggle,_src_w,_src_h,_frame_indeces);
-			} else {
-				if (_no_graphic) {
+			}
+			else
+			{
+				if (_no_graphic)
+				{
 					var upB:BitmapData;
-					if(!has_toggle){
+					if (!has_toggle)
+					{
 						upB = new BitmapData(Std.int(W), Std.int(H * 3), true, 0x00000000);
-					}else {
+					}
+					else
+					{
 						upB = new BitmapData(Std.int(W), Std.int(H * 6), true, 0x00000000);
 					}
 					loadGraphicsUpOverDown(upB);
-				}else {
+				}
+				else
+				{
 					//default assets
 					loadGraphicSlice9(null, Std.int(W), Std.int(H), null,tile);
 				}
@@ -340,7 +349,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 				return cg.bitmap;
 			}
 		}
-		return Assets.getBitmapData(str);
+		return Assets.getBitmapData(str, false);
 	}
 	
 	/**
@@ -574,14 +583,18 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		_flashRect2.width = W;
 		_flashRect2.height = H;
 		
-		key += assets + "_slice9=" + slice9 + "_src=" + _src_w + "x" + _src_h + "_final=" + W + "x" + H + "_fi=" + _frame_indeces;
+		key += assets + "_slice9=" + slice9 + "_src=" + _src_w + "x" + _src_h;
+		
+		var midKey = key;
+		
+		key += "_final=" + W + "x" + H + "_fi=" + _frame_indeces;
 		
 		if (assets.length == 1)
 		{
 			//loading everything from one graphic
 			var all = getBmp(assets[0]);		//load the image
 			
-			key += "_all";
+			var keySuffix:String = "_all";
 			
 			if (_src_w == 0 || _src_h == 0)
 			{
@@ -590,7 +603,10 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			
 			var multiFrame = all.height > _src_h;
 			
-			key += multiFrame ? "_multiframe" : "";
+			keySuffix += multiFrame ? "_multiframe" : "";
+			
+			key += keySuffix;
+			midKey += keySuffix;
 			
 			//*************************************************************/
 			//Check if we can exit early because this key is already cached
@@ -608,7 +624,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 				//looks like a multi-frame graphic
 				for (i in 0...arr_bmpData.length)
 				{
-					arr_bmpData[i] = grabButtonFrame(all, i, has_toggle, _src_w, _src_h, key);		//get each button frame
+					arr_bmpData[i] = grabButtonFrame(all, i, has_toggle, _src_w, _src_h, midKey);		//get each button frame
 				}
 				
 				if (slice9 != null && slice9[0] != [])

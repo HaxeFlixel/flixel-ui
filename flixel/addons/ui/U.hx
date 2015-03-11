@@ -302,25 +302,33 @@ class U
 		return default_;							//if the attribute does not EXIST, return the DEFAULT VALUE
 	}
 	
-	public static inline function xml_gfx(data:Xml, att:String, test:Bool=true):String {
-		var str:String = "";				
-		if (data.get(att) != null) { 
-			str = data.get(att); 	
-			if (str == "" || str == null) {
+	public static inline function xml_gfx(data:Xml, att:String, test:Bool = true):String
+	{
+		var str:String = "";
+		if (data.get(att) != null)
+		{
+			str = data.get(att);
+			if (str == "" || str == null)
+			{
 				str = "";
-			}else{
+			}
+			else
+			{
 				str = U.gfx(str);
-				if (test) {
-					try {
-						var testbmp:BitmapData = Assets.getBitmapData(str);
-						if (testbmp == null) {
+				if (test)
+				{
+					try
+					{
+						if (!Assets.exists(str, AssetType.IMAGE))
+						{
 							throw ("couldn't load bmp \""+att+"\"");
 						}
-						testbmp = null;					
-					} catch (msg:String) {
+					}
+					catch (msg:String)
+					{
 						FlxG.log.error("FlxUI: U.xml_gfx() : " + msg);
 					}
-				}			
+				}
 			}
 		}
 		return str;
@@ -1000,7 +1008,7 @@ class U
 	public static function loadScaledImage(src:String,W:Float,H:Float):String
 	{
 		var bmpSrc:String = gfx(src);
-		var	testBmp:BitmapData = Assets.getBitmapData(bmpSrc, true);
+		var	testBmp:BitmapData = Assets.getBitmapData(bmpSrc, false);
 		
 		if (testBmp != null)	//if the master asset exists
 		{
@@ -1023,7 +1031,7 @@ class U
 				//if it doesn't exist yet, create it
 				if (FlxG.bitmap.get(scaleKey) == null)
 				{
-					var scaledBmp:BitmapData = new BitmapData(Std.int(W), Std.int(H),true,0x00000000);	//create a unique bitmap and scale it
+					var scaledBmp:BitmapData = new BitmapData(Std.int(W), Std.int(H), true, 0x00000000);	//create a unique bitmap and scale it
 					
 					var m:Matrix = getMatrix();
 					m.identity();
@@ -1049,7 +1057,7 @@ class U
 		
 		if (!checkFlxBitmap)
 		{
-			testBmp = Assets.getBitmapData(bmpSrc, true);
+			testBmp = Assets.getBitmapData(bmpSrc, false);
 		}
 		else
 		{
@@ -1076,7 +1084,7 @@ class U
 		
 		if (!checkFlxBitmap)
 		{
-			testBmp = Assets.getBitmapData(bmpSrc, true);
+			testBmp = Assets.getBitmapData(bmpSrc, false);
 		}
 		else
 		{
