@@ -347,11 +347,16 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 		}
 	}
 
-	public static function paintBitmapSection(g:BitmapData, assetId:String, src:FlxRect, dst:FlxRect, srcData:BitmapData = null, tile:Int = TILE_NONE, smooth:Bool = false, raw:BitmapData=null):Void {
-		if (srcData == null) {
-			if (raw != null) {
+	public static function paintBitmapSection(g:BitmapData, assetId:String, src:FlxRect, dst:FlxRect, srcData:BitmapData = null, tile:Int = TILE_NONE, smooth:Bool = false, raw:BitmapData = null):Void
+	{
+		if (srcData == null)
+		{
+			if (raw != null)
+			{
 				srcData = raw;
-			}else{
+			}
+			else
+			{
 				srcData = Assets.getBitmapData(assetId);
 			}
 		}
@@ -368,15 +373,18 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 		
 		var section:BitmapData = null;
 		var cacheId:String = null;
-		if (useSectionCache == true && assetId != null) {
-			if (sectionCache == null) {
+		if (useSectionCache == true && assetId != null)
+		{
+			if (sectionCache == null)
+			{
 				sectionCache = new Map<String,BitmapData>();
 			}
 			cacheId = assetId + "_" + src.left + "_" + src.top + "_" + src.width + "_" + src.height + "_";
 			section = sectionCache.get(cacheId);
 		}
 
-		if (section == null) {
+		if (section == null)
+		{
 			var fillcolor = 0x00FFFFFF;
 			section = new BitmapData(Std.int(src.width), Std.int(src.height), true, fillcolor);
 			
