@@ -793,17 +793,28 @@ class U
 		return _font(str, style);
 	}	
 	
- 	public static function font(str:String, style:String = ""):String
+ 	public static function font(str:String, style:String = "", extension:String=".ttf"):String
 	{
+		var ostr = str;
 		var str:String = _font(str, style);
-		if (str.indexOf(".ttf") == -1)
+		if (str.indexOf(extension) == -1)
 		{
-			str = str + ".ttf";
+			str = str + extension;
 		}
 		
 		#if flash
 			str = FontFixer.add(str);
 		#end
+		
+		var exists = Assets.exists(str, AssetType.FONT);
+		if (!exists && extension == ".ttf")
+		{
+			var alt = font(ostr, style, ".otf");
+			if (Assets.exists(alt, AssetType.FONT))
+			{
+				return alt;
+			}
+		}
 		
 		return str;
 	}
