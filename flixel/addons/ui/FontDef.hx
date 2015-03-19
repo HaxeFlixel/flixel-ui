@@ -4,6 +4,7 @@ import flash.text.TextFormat;
 import flixel.addons.ui.BorderDef;
 import flixel.text.FlxText;
 import openfl.Assets;
+import openfl.text.TextFormatAlign;
 
 /**
  * ...
@@ -66,10 +67,19 @@ class FontDef
 			textField.setTextFormat(format);
 		}
 		if (flxText != null) {
+			
+			var flxTxtAlign:FlxTextAlign = switch(format.align)
+			{
+				case TextFormatAlign.CENTER: FlxTextAlign.CENTER;
+				case TextFormatAlign.LEFT: FlxTextAlign.LEFT;
+				case TextFormatAlign.RIGHT: FlxTextAlign.RIGHT;
+				case TextFormatAlign.JUSTIFY: FlxTextAlign.JUSTIFY;
+			}
+			
 			if (file == "" || file == null) {
-				flxText.setFormat(null, format.size, format.color, cast format.align, border.style, border.color);	//default font
+				flxText.setFormat(null, format.size, format.color, flxTxtAlign, border.style, border.color);	//default font
 			}else {
-				flxText.setFormat(file, format.size, format.color, cast format.align, border.style, border.color);
+				flxText.setFormat(file, format.size, format.color, flxTxtAlign, border.style, border.color);
 			}
 		}
 	}
