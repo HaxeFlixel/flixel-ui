@@ -74,6 +74,7 @@ class FontDef
 				case TextFormatAlign.LEFT: FlxTextAlign.LEFT;
 				case TextFormatAlign.RIGHT: FlxTextAlign.RIGHT;
 				case TextFormatAlign.JUSTIFY: FlxTextAlign.JUSTIFY;
+				default: FlxTextAlign.LEFT;
 			}
 			
 			if (file == "" || file == null) {
