@@ -6,6 +6,5 @@
         "description": "A UI library for Flixel",
         "version": "1.0.2",
         "releasenote": "Compatibility with flixel 3.3.0, several new classes, bugfixes and improvements. See the CHANGELOG.md for more details.",
-        "contributors": ["haxeflixel"],
-        "dependencies": { "openfl": "", "flixel": "" }
+        "contributors": ["haxeflixel"]
 }
