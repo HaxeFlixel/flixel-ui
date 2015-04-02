@@ -165,6 +165,16 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		// Creates a backup of current button image.
 		_noIconGraphicsBkup = graphic.bitmap.clone();
 		
+		//create a new bitmap to avoid caching issues
+		var newBmp = _noIconGraphicsBkup.clone();
+		
+		//create a unique key for the new graphic
+		var key = graphic.key + ",icon:" + icon.graphic.key;
+		var newGraphic = FlxG.bitmap.add(newBmp, false, key);
+		
+		//load the new bitmap
+		loadGraphic(newGraphic, true, Std.int(width), Std.int(height));
+		
 		var sx:Int = X;
 		var sy:Int = Y;
 		

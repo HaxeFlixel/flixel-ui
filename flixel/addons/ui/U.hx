@@ -1280,27 +1280,39 @@ class U
 	public static function get_gfx(str:String):String {
 		var return_str:String = "";
 		
-		if (str != null && str.length > 4 && str.indexOf(".png") != -1)
+		var suffix = "";
+		
+		//If it ends with ".jpg" treat that as the suffix, otherwise treat the suffix as ".png"
+		if (str.indexOf(".jpg") != -1)
 		{
-			str = str.substr(0, str.length - 4);	//strip off the .png suffix if it exists
+			suffix = ".jpg";
+		}
+		else
+		{
+			suffix = ".png";
+		}
+		
+		if (str != null && str.length > 4 && str.indexOf(suffix) != -1)
+		{
+			str = str.substr(0, str.length - 4);	//strip off the suffix if it exists
 		}
 		if (str.indexOf("raw:") == 0 || str.indexOf("RAW:") == 0) {
 			str = str.substr(4, str.length - 4);
-			return_str = str + ".png";
+			return_str = str + suffix;
 		}
 		if (str != null && str.indexOf("assets/gfx/") == 0)
 		{
-			return_str = str + ".png";
+			return_str = str + suffix;
 		}
 		
 		if (return_str == "")
 		{
-			return_str = "assets/gfx/" + str + ".png";
+			return_str = "assets/gfx/" + str + suffix;
 		}
 		
-		if (return_str.indexOf(".stitch.txt.png") != -1)
+		if (return_str.indexOf(".stitch.txt"+suffix) != -1)
 		{
-			return_str = StringTools.replace(return_str,".stitch.txt.png", ".stitch.txt");
+			return_str = StringTools.replace(return_str,".stitch.txt"+suffix, ".stitch.txt");
 		}
 		
 		return return_str;
