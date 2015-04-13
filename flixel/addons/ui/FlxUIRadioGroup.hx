@@ -437,7 +437,10 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 		if (_list_radios.length > 0) {
 			var btn = _list_radios[0].button;
 			var t:FlxText = btn.label;
-			var cs:CheckStyle = new CheckStyle(0xFFFFFF, FontDef.copyFromFlxText(t), t.alignment, t.color, new BorderDef(t.borderStyle, t.borderColor, t.borderSize, t.borderQuality));
+			var fd:FontDef = FontDef.copyFromFlxText(t);
+			var bd:BorderDef = new BorderDef(t.borderStyle, t.borderColor, t.borderSize, t.borderQuality);
+			var cs = cast new CheckStyle(0xFFFFFF, fd, t.alignment, t.color, bd);
+			
 			return cs;
 		}
 		return null;

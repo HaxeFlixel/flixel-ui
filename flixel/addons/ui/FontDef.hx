@@ -52,7 +52,8 @@ class FontDef
 		return fd;
 	}
 	
-	public static function copyFromFlxText(t:FlxText):FontDef{
+	public static function copyFromFlxText(t:FlxText):FontDef
+	{
 		var fd = copyFromTextField(t.textField);
 		fd.fromStr(t.font);
 		fd.border.style = t.borderStyle;
