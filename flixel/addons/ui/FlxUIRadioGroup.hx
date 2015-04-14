@@ -439,12 +439,10 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 			var t:FlxText = btn.label;
 			var fd:FontDef = FontDef.copyFromFlxText(t);
 			var bd:BorderDef = new BorderDef(t.borderStyle, t.borderColor, t.borderSize, t.borderQuality);
-			var cs = cast new CheckStyle(0xFFFFFF, fd, t.alignment, t.color, bd);
-			
+			var cs = new CheckStyle(0xFFFFFF, fd, t.alignment, t.color, bd);
 			return cs;
 		}
 		return null;
-		
 	}
 	
 	private function _onCheckBoxEvent(checkBox:FlxUICheckBox):Void {

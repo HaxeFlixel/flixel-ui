@@ -16,6 +16,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import openfl.Assets;
+import openfl.text.TextFormatAlign;
 
 /**
  * This class extends FlxUITypedButton and has a Text label, and is thus
@@ -55,7 +56,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		if (Label != null) {
 			//create a FlxUIText label
 			label = new FlxUIText(0, 0, 80, Label, 8);
-			label.setFormat(null, 8, 0x333333, "center");
+			label.setFormat(null, 8, 0x333333, FlxTextAlign.CENTER);
 		}
 		if (LoadDefaultGraphics)
 		{

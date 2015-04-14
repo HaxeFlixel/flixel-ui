@@ -2098,7 +2098,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					var t:FlxText = formatButtonText(data, fc);
 					if (t != null && styleSet == false)
 					{
-						frg.activeStyle = new CheckStyle(0xffffff, FontDef.copyFromFlxText(t), t.alignment, t.color, new BorderDef(t.borderStyle, t.borderColor, t.borderSize, t.borderQuality));
+						var fd = FontDef.copyFromFlxText(t);
+						var bd = new BorderDef(t.borderStyle, t.borderColor, t.borderSize, t.borderQuality);
+						frg.activeStyle = new CheckStyle(0xffffff, fd, t.alignment, t.color, bd);
 						styleSet = true;
 					}
 					fc.textX = text_x;
