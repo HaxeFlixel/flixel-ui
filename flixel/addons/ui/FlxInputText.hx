@@ -377,8 +377,8 @@ class FlxInputText extends FlxText
 				
 				if (newText.length > 0 && (maxLength == 0 || (text.length + newText.length) < maxLength)) 
 				{
-					caretIndex++;
 					text = insertSubstring(text, newText, caretIndex);
+					caretIndex++;
 					onChange(INPUT_ACTION);
 				}
 			}
