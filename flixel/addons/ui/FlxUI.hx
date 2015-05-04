@@ -2858,50 +2858,40 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 							if (image != "") { 
 								if (!toggleState) {
 									graphic_names[0] = loadScaledSrc(graphicNode,"image","scale_src");
-									//graphic_names[0] = igfx; 
 								}else {
 									graphic_names[3] = loadScaledSrc(graphicNode,"image","scale_src");
-									//graphic_names[3] = igfx;
 								}
 							}
 							if(!toggleState)
 							{
 								slice9_names[0] = load9SliceSprite_scaleSub(slice9, graphicNode, graphic_names[0], "image");
-								//slice9_names[0] = slice9;
 							}
 							else
 							{
 								slice9_names[3] = load9SliceSprite_scaleSub(slice9, graphicNode, graphic_names[3], "image");
-								//slice9_names[3] = slice9;
 							}
 						case "active", "highlight", "hilight", "over", "hover": 
 							if (image != "") { 
 								if (!toggleState) {
 									graphic_names[1] = loadScaledSrc(graphicNode,"image","scale_src");
-									//graphic_names[1] =igfx; 
 								}else {
 									graphic_names[4] = loadScaledSrc(graphicNode,"image","scale_src");
-									//graphic_names[4] = igfx;
 								}
 							}
 							if(!toggleState)
 							{
 								slice9_names[1] = load9SliceSprite_scaleSub(slice9, graphicNode, graphic_names[1], "image");
-								//slice9_names[1] = slice9;
 							}
 							else
 							{
 								slice9_names[4] = load9SliceSprite_scaleSub(slice9, graphicNode, graphic_names[4], "image");
-								//slice9_names[4] = slice9;
 							}
 						case "down", "pressed", "pushed":
 							if (image != "") { 
 								if(!toggleState){
 									graphic_names[2] = loadScaledSrc(graphicNode,"image","scale_src");
-									//graphic_names[2] = igfx; 
 								}else {
 									graphic_names[5] = loadScaledSrc(graphicNode,"image","scale_src");
-									//graphic_names[5] = igfx;
 								}
 							}
 							if(!toggleState)
@@ -2915,18 +2905,22 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 								//slice9_names[5] = slice9;
 							}
 						case "all":
+							var tilesTall:Int = isToggle ? 6 : 3;
+							
 							if (image != "") { 
-								graphic_names = [U.gfx(image)];
+								graphic_names = [loadScaledSrc(graphicNode, "image", "scale_src", 1, tilesTall)];
+								
+								//graphic_names = [igfx];
 							}
-							slice9_names = [slice9];
+							
+							slice9_names = [load9SliceSprite_scaleSub(slice9, graphicNode, graphic_names[0], "image")];
+							//slice9_names = [slice9];
+							
 							if (src_w == 0 || src_h == 0) {		//infer these from looking at the src
-								var temp:BitmapData = Assets.getBitmapData(graphic_names[0]);
+								trace("graphic_names = " + graphic_names);
+								var temp:BitmapData = U.getBmp(graphic_names[0]);
 								src_w = temp.width;
-								if (isToggle) {
-									src_h = Std.int(temp.height / 6);
-								}else {
-									src_h = Std.int(temp.height / 3);
-								}
+								src_h = Std.int(temp.height / tilesTall);
 							}
 					}
 					
@@ -3444,7 +3438,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @return	the unique key of the scaled bitmap
 	 */
 	
-	private function loadScaledSrc(data:Fast,attName:String="src",scaleName:String="scale"):String
+	private function loadScaledSrc(data:Fast,attName:String="src",scaleName:String="scale",tilesWide:Int=1,tilesTall:Int=1):String
 	{
 		var src:String = U.xml_str(data.x, attName);					//get the original src
 		if (data.hasNode.resolve(scaleName))
@@ -3459,51 +3453,66 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					//check if our screen ratio is within bounds
 					var suffix:String = U.xml_str(scaleNode.x, "suffix");
 					var srcSuffix:String = (src + suffix);					//add the proper suffix, so "asset"->"asset_16x9"
-					
-					var returnSrc:String = "";
+					var testAsset:BitmapData = null;
+					var scale_:Float = -1;
 					
 					var to_height:Float = _loadHeight(scaleNode, -1, "to_height");
+					
 					if (to_height != -1)
 					{
-						returnSrc = U.loadImageScaleToHeight(srcSuffix, to_height, true);
+						var testAsset = U.getBmp(U.gfx(src));
+						if (testAsset != null)
+						{
+							scale_ = to_height / testAsset.height;
+						}
 					}
 					else
 					{
-						trace("scaleNode = " + scaleNode.x);
-						
-						var scale_:Float = _loadScale(scaleNode, -1);
-						var scale_x:Float = scale_ != -1 ? scale_ : _loadScaleX(scaleNode, -1);
-						var scale_y:Float = scale_ != -1 ? scale_ : _loadScaleY(scaleNode, -1);
+						scale_ = _loadScale(scaleNode, -1);
+					}
 					
-						if(scale_x > 0 && scale_y > 0)			//if we found scale_x / scale_y values...
+					var scale_x:Float = scale_ != -1 ? scale_ : _loadScaleX(scaleNode, -1);
+					var scale_y:Float = scale_ != -1 ? scale_ : _loadScaleY(scaleNode, -1);
+					
+					var sw:Float = 0;
+					var sh:Float = 0;
+					
+					if(scale_x > 0 && scale_y > 0)			//if we found scale_x / scale_y values...
+					{
+						if (scale_x <= 0) scale_x = 1.0;
+						if (scale_y <= 0) scale_y = 1.0;
+						
+						sw = _loadWidth(scaleNode, -1);
+						sh = _loadHeight(scaleNode, -1);
+						
+						if (sw == -1 || sh == -1)
 						{
-							if (scale_x <= 0) scale_x = 1.0;
-							if (scale_y <= 0) scale_y = 1.0;
-							
-							var sw = _loadWidth(scaleNode, -1);
-							var sh = _loadHeight(scaleNode, -1);
-							
-							if (sw == -1 || sh == -1)
-							{
-								var testAsset = Assets.getBitmapData(U.gfx(src));
-								sw = testAsset.width;
-								sh = testAsset.height;
-							}
-							
-							sw *= scale_x;
-							sh *= scale_y;
-							
-							returnSrc = U.loadScaledImage(srcSuffix, sw, sh);
+							testAsset = Assets.getBitmapData(U.gfx(src));
+							sw = testAsset.width;
+							sh = testAsset.height;
+						}
+						
+						sw *= scale_x;
+						sh *= scale_y;
+						
+					}
+					else
+					{
+						sw = _loadWidth(scaleNode, -1);
+						sh = _loadHeight(scaleNode, -1);
+					}
+					
+					if (sw != 0 && sh != 0)
+					{
+						if (tilesTall > 1 || tilesWide > 1)
+						{
+							testAsset = Assets.getBitmapData(U.gfx(src));
+							return U.scaleAndStoreTileset(U.gfx(srcSuffix), scale_y, Std.int(testAsset.width / tilesWide), Std.int(testAsset.height / tilesTall), Std.int(sw), Std.int(sh / tilesTall));
 						}
 						else
 						{
-							returnSrc = U.loadScaledImage(srcSuffix, _loadWidth(scaleNode, -1), _loadHeight(scaleNode, -1));
+							return U.loadScaledImage(srcSuffix, sw, sh);
 						}
-					}
-					
-					if (returnSrc != null)
-					{
-						return returnSrc;
 					}
 					break;						//stop on the first resolution test that passes
 				}
@@ -3511,7 +3520,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		return U.xml_gfx(data.x, attName); 		//no resolution tag found, just return original src
 	}
-	
 	
 	/*private function getMatrix():Matrix {
 		if (_matrix == null) {

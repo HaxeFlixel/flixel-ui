@@ -19,6 +19,7 @@ import openfl.Assets;
 import openfl.display.BitmapDataChannel;
 import openfl.geom.Matrix;
 import flixel.system.FlxAssets.FlxGraphicAsset;
+import openfl.geom.Rectangle;
 
 #if (cpp || neko)
 import sys.FileSystem;
@@ -1051,6 +1052,87 @@ class U
 	}
 	
 	/**
+	 * This scales an image that contains tiles, being super OCD about it, making sure each tile is
+	 * properly scaled and put in the correct position
+	 * @param	orig_id asset id
+	 * @param	scale the scale factor
+	 * @param	origW original width of the tile
+	 * @param	origH original height of the tile
+	 * @param	W final width of the tile
+	 * @param	H final height of the tile
+	 * @param	smooth
+	 * @return
+	 */
+	
+	public static function scaleTileBmp(orig_id:String, scale:Float, origW:Int, origH:Int, W:Int = -1, H:Int = -1, smooth:Bool = true):BitmapData
+	{
+		var orig:BitmapData = Assets.getBitmapData(orig_id, false);
+		if (orig == null) {
+			if (FlxG.bitmap.checkCache(orig_id)) {
+				orig = FlxG.bitmap.get(orig_id).bitmap;
+			}else{
+				return null;		//indicates failure
+			}
+		}
+		
+		var widthInTiles:Int = Std.int(orig.width / origW);
+		var heightInTiles:Int = Std.int(orig.height / origH);
+		
+		//if W and H are not provided, infer the correct size
+		if (W == -1)
+		{
+			W = Std.int(origW * scale);
+		}
+		if (H == -1)
+		{
+			H = Std.int(origH * scale);
+			scale = H / origH;
+		}
+		
+		if (Math.abs(scale - 1.0) > 0.001)
+		{
+			var scaled:BitmapData = new BitmapData(Std.int(W*widthInTiles), Std.int(H*heightInTiles), true, 0x00000000);
+			var rect:Rectangle = new Rectangle();
+			var pt:Point = new Point();
+			var matrix:Matrix = new Matrix();
+			matrix.scale(scale, scale);
+			for (tiley in 0...heightInTiles)
+			{
+				for (tilex in 0...widthInTiles)
+				{
+					var tile:BitmapData = new BitmapData(origW, origH, true, 0x00000000);
+					rect.setTo(tilex * origW, tiley * origH, origW, origH);
+					pt.setTo(0, 0);
+					tile.copyPixels(orig, rect, pt);
+					
+					var scaleTile:BitmapData = new BitmapData(W, H, true, 0x000000);
+					scaleTile.draw(tile, matrix, null, null, null, smooth);
+					pt.setTo(tilex * W, tiley * H);
+					scaled.copyPixels(scaleTile, scaleTile.rect, pt);
+				}
+			}
+			return scaled;
+		}
+		else
+		{
+			return orig.clone();
+		}
+	}
+	
+	public static function scaleAndStoreTileset(orig_id:String, scale:Float, OrigW:Int, OrigH:Int, TileW:Int=-1, TileH:Int=-1, Smooth:Bool = true):String
+	{
+		var assetKey:String = orig_id + "_x" + scale;
+		
+		if (FlxG.bitmap.checkCache(assetKey) == false)
+		{
+			var bmp = scaleTileBmp(orig_id, scale, OrigW, OrigH, TileW, TileH, Smooth);
+			FlxG.bitmap.add(bmp, false, assetKey);
+		}
+		
+		return assetKey;
+	}
+	
+	/**
 	 * For grabbing a resolution-specific version of an image src and dynamically scaling (and caching) it as necessary
 	 * @param	src	the asset key of the base image
 	 * @param	W	the final scaled width of the new image
@@ -1062,8 +1144,6 @@ class U
 	{
 		var bmpSrc:String = gfx(src);
 		var	testBmp:BitmapData = Assets.getBitmapData(bmpSrc, false);
-		
-		FlxG.bitmapLog.add(testBmp, "testBmp:" + bmpSrc);
 		
 		if (testBmp != null)	//if the master asset exists
 		{
@@ -1093,8 +1173,6 @@ class U
 					m.scale(W / testBmp.width, H / testBmp.height);
 					
 					scaledBmp.draw(testBmp, m, null, null, null, true);
-					
-					FlxG.bitmapLog.add(scaledBmp, scaleKey);
 					
 					FlxG.bitmap.add(scaledBmp, true, scaleKey);			//store it by the unique key
 				}
