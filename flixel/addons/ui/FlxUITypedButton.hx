@@ -326,30 +326,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	private function getBmp(asset:FlxGraphicAsset):BitmapData
 	{
-		var str:String = null;
-		if (Std.is(asset, String))
-		{
-			str = cast asset;
-		}
-		else if (Std.is(asset, FlxGraphic))
-		{
-			var fg:FlxGraphic = cast asset;
-			str = fg.key;
-		}
-		else if(Std.is(asset, BitmapData))
-		{
-			var bmp:BitmapData = cast asset;
-			return bmp;
-		}
-		if (FlxG.bitmap.checkCache(str))
-		{
-			var cg = FlxG.bitmap.get(str);
-			if (cg.bitmap != null)
-			{
-				return cg.bitmap;
-			}
-		}
-		return Assets.getBitmapData(str, false);
+		return U.getBmp(asset);
 	}
 	
 	/**

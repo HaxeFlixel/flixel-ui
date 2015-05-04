@@ -114,7 +114,7 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget im
 		newText.height = height;
 		
 		var theFont:String = font;
-		#if flash
+		#if (flash || !openfl_legacy)
 			theFont = FontFixer.fix(font);
 		#end
 		newText.setFormat(theFont, size, color);

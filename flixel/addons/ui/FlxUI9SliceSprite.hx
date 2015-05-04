@@ -285,7 +285,7 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 			var w:Int;
 			var h:Int;
 			if (raw == null) {
-				var assetBmp = Assets.getBitmapData(assetID);
+				var assetBmp = U.getBmp(assetID);
 				if (assetBmp != null)
 				{
 					w = assetBmp.width;
@@ -459,7 +459,7 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 			}
 			else
 			{
-				srcData = Assets.getBitmapData(assetId);
+				srcData = U.getBmp(assetId);
 			}
 		}
 

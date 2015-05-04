@@ -8,6 +8,7 @@ import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.graphics.FlxGraphic;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import flixel.util.FlxColor;
 import flixel.math.FlxPoint;
@@ -17,6 +18,7 @@ import haxe.xml.Printer;
 import openfl.Assets;
 import openfl.display.BitmapDataChannel;
 import openfl.geom.Matrix;
+import flixel.system.FlxAssets.FlxGraphicAsset;
 
 #if (cpp || neko)
 import sys.FileSystem;
@@ -726,6 +728,14 @@ class U
 			dir = "";
 		}
 		
+		var thePath = dir + id + "." + extension;
+		
+		var exists = Assets.exists(thePath, AssetType.TEXT);
+		
+		if (!exists) {
+			return null;
+		}
+		
 		var str:String = Assets.getText(dir + id + "." + extension);
 		if (str == null) {
 			return null;
@@ -802,7 +812,7 @@ class U
 			str = str + extension;
 		}
 		
-		#if flash
+		#if (flash || !openfl_legacy)
 			str = FontFixer.add(str);
 		#end
 		
@@ -865,11 +875,43 @@ class U
 		return str.substr(0, 1).toUpperCase() + str.substr(1, str.length - 1).toLowerCase();
 	}
 	
+	public static function getBmp(asset:FlxGraphicAsset):BitmapData
+	{
+		var str:String = null;
+		if (Std.is(asset, String))
+		{
+			str = cast asset;
+		}
+		else if (Std.is(asset, FlxGraphic))
+		{
+			var fg:FlxGraphic = cast asset;
+			str = fg.key;
+		}
+		else if(Std.is(asset, BitmapData))
+		{
+			var bmp:BitmapData = cast asset;
+			return bmp;
+		}
+		if (FlxG.bitmap.checkCache(str))
+		{
+			var cg = FlxG.bitmap.get(str);
+			if (cg.bitmap != null)
+			{
+				return cg.bitmap;
+			}
+		}
+		return Assets.getBitmapData(str, false);
+	}
+	
 	public static function checkHaxedef(str:String):Bool {
 		str = str.toLowerCase();
 		switch(str) {
 			case "cpp":
 				#if cpp
+					return true;
+				#end
+			case "neko":
+				#if neko
 					return true;
 				#end
 			case "windows":
@@ -1021,6 +1063,8 @@ class U
 		var bmpSrc:String = gfx(src);
 		var	testBmp:BitmapData = Assets.getBitmapData(bmpSrc, false);
 		
+		FlxG.bitmapLog.add(testBmp, "testBmp:" + bmpSrc);
+		
 		if (testBmp != null)	//if the master asset exists
 		{
 			if (W < 0)
@@ -1047,7 +1091,10 @@ class U
 					var m:Matrix = getMatrix();
 					m.identity();
 					m.scale(W / testBmp.width, H / testBmp.height);
+					
 					scaledBmp.draw(testBmp, m, null, null, null, true);
+					
+					FlxG.bitmapLog.add(scaledBmp, scaleKey);
 					
 					FlxG.bitmap.add(scaledBmp, true, scaleKey);			//store it by the unique key
 				}

@@ -36,7 +36,7 @@ class FontDef
 		}
 	}
 	
-	public static function copyFromTextField(t:TextField):FontDef{
+	public static function copyFromTextField(t:TextField):FontDef {
 		var dtf:TextFormat = t.defaultTextFormat;
 		var fd = new FontDef("");
 		fd.fromStr(dtf.font);
@@ -69,13 +69,18 @@ class FontDef
 		}
 		if (flxText != null) {
 			
-			var flxTxtAlign:FlxTextAlign = switch(format.align)
+			var flxTxtAlign:FlxTextAlign = null;
+			
+			if (format.align != null)
 			{
-				case TextFormatAlign.CENTER: FlxTextAlign.CENTER;
-				case TextFormatAlign.LEFT: FlxTextAlign.LEFT;
-				case TextFormatAlign.RIGHT: FlxTextAlign.RIGHT;
-				case TextFormatAlign.JUSTIFY: FlxTextAlign.JUSTIFY;
-				default: FlxTextAlign.LEFT;
+				flxTxtAlign = switch(format.align)
+				{
+					case TextFormatAlign.CENTER: FlxTextAlign.CENTER;
+					case TextFormatAlign.LEFT: FlxTextAlign.LEFT;
+					case TextFormatAlign.RIGHT: FlxTextAlign.RIGHT;
+					case TextFormatAlign.JUSTIFY: FlxTextAlign.JUSTIFY;
+					default: FlxTextAlign.LEFT;
+				}
 			}
 			
 			if (file == "" || file == null) {
@@ -97,7 +102,7 @@ class FontDef
 			return;						//no infinite loops, please
 		}
 		
-		#if flash
+		#if (flash || !openfl_legacy)
 			str = FontFixer.fix(str);
 		#end
 		
@@ -239,5 +244,10 @@ class FontDef
 				format.italic = false;
 		}
 		fixFontName();
+	}
+	
+	public function toString():String
+	{
+		return "{name:" + name+",size:" + size+",file:" + file+",extension:" + extension + ",format:" + format + ",border:" + border + "}";
 	}
 }
