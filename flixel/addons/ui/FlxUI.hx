@@ -2907,21 +2907,25 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						case "all":
 							var tilesTall:Int = isToggle ? 6 : 3;
 							
+							var temp:BitmapData = null;
+							
+							//if src_h was provided, manually calculate tilesTall in case it's non-standard (like 4 for instance, like TDRPG uses)
+							if (src_h != 0)
+							{
+								var temp:BitmapData = U.getBmp(igfx);
+								tilesTall = Std.int(temp.height / src_h);
+							}
+							
 							if (image != "") { 
 								graphic_names = [loadScaledSrc(graphicNode, "image", "scale_src", 1, tilesTall)];
-								
-								//graphic_names = [igfx];
 							}
 							
 							slice9_names = [load9SliceSprite_scaleSub(slice9, graphicNode, graphic_names[0], "image")];
-							//slice9_names = [slice9];
 							
-							if (src_w == 0 || src_h == 0) {		//infer these from looking at the src
-								trace("graphic_names = " + graphic_names);
-								var temp:BitmapData = U.getBmp(graphic_names[0]);
-								src_w = temp.width;
-								src_h = Std.int(temp.height / tilesTall);
-							}
+							//look at the scaled source to get the absolute correct final values
+							temp = U.getBmp(graphic_names[0]);
+							src_w = temp.width;
+							src_h = Std.int(temp.height / tilesTall);
 					}
 					
 					if (graphic_names[0] != "") {
