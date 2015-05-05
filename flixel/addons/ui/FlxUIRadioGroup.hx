@@ -5,6 +5,7 @@ import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
+import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.math.FlxPoint;
 
@@ -130,7 +131,20 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 			_dot_asset = FlxUIAssets.IMG_RADIO_DOT;
 		}
 		
+		if (Std.is(_box_asset, FlxSprite))
+		{
+			var fs:FlxSprite = cast _box_asset;
+			_box_asset = fs.graphic.key;
+		}
+		
+		if (Std.is(_dot_asset, FlxSprite))
+		{
+			var fs:FlxSprite = cast _dot_asset;
+			_dot_asset = fs.graphic.key;
+		}
+		
 		for (c in _list_radios) {
+			
 			c.box.loadGraphic(_box_asset, true);
 			c.mark.loadGraphic(_dot_asset);
 		}	

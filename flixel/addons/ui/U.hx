@@ -1043,7 +1043,7 @@ class U
 			case "normal" 	 : 	return BlendMode.NORMAL;
 			case "overlay" 	 : 	return BlendMode.OVERLAY;
 			case "screen" 	 : 	return BlendMode.SCREEN;
-			case "subtract"  : 	return BlendMode.SUBTRACT;			
+			case "subtract"  : 	return BlendMode.SUBTRACT;
 			#if flash
 				case "shader" 	 : 	return BlendMode.SHADER;
 			#end
