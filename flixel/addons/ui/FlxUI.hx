@@ -2069,7 +2069,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		else if (data.hasNode.box)
 		{
-			trace("custom box node!");
 			//We have a custom box node
 			if (U.xml_str(data.node.box.x, "slice9") != "")
 			{
@@ -2078,7 +2077,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 			else
 			{
-				trace("load sprite");
 				//It's a regular sprite, load the custom node
 				radio_asset = _loadSprite(data.node.box);
 			}
@@ -2091,7 +2089,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		else if (data.hasNode.dot)
 		{
-			trace("custom dot node!");
 			//We have a custom check node
 			if (U.xml_str(data.node.dot.x, "slice9") != "")
 			{
@@ -2100,7 +2097,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 			else
 			{
-				trace("load sprite");
 				//It's a regular sprite, load the custom node
 				dot_asset = _loadSprite(data.node.dot);
 			}
@@ -2878,7 +2874,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				{
 					var scale_:Float = _loadScale(data.node.scale_src, -1);
 					var scale_x:Float = scale_ != -1 ? scale_ : _loadScaleX(data.node.scale_src,-1);
-					var scale_y:Float = scale_ != -1 ? scale_ : _loadScaleY(data.node.scale_src,-1);
+					var scale_y:Float = scale_ != -1 ? scale_ : _loadScaleY(data.node.scale_src, -1);
 				}
 				
 				for (graphicNode in data.nodes.graphic) {
@@ -3226,18 +3222,21 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			return slice9;
 		}
 		
-		//Scale the 9-slice boundaries by the same amount
-		slice9[0] = Std.int(slice9[0] * srcScaleFactorX);
-		slice9[1] = Std.int(slice9[1] * srcScaleFactorY);
-		
-		var widthDiff = (origAsset.width - slice9[2]);
-		var heightDiff = (origAsset.height - slice9[3]);
-		
-		widthDiff = Std.int(widthDiff * srcScaleFactorX);
-		heightDiff = Std.int(heightDiff * srcScaleFactorY);
-		
-		slice9[2] = Std.int(srcAsset.width - widthDiff);
-		slice9[3] = Std.int(srcAsset.height - heightDiff);
+		if (slice9 != null)
+		{
+			//Scale the 9-slice boundaries by the same amount
+			slice9[0] = Std.int(slice9[0] * srcScaleFactorX);
+			slice9[1] = Std.int(slice9[1] * srcScaleFactorY);
+			
+			var widthDiff = (origAsset.width - slice9[2]);
+			var heightDiff = (origAsset.height - slice9[3]);
+			
+			widthDiff = Std.int(widthDiff * srcScaleFactorX);
+			heightDiff = Std.int(heightDiff * srcScaleFactorY);
+			
+			slice9[2] = Std.int(srcAsset.width - widthDiff);
+			slice9[3] = Std.int(srcAsset.height - heightDiff);
+		}
 		return slice9;
 	}
 	
