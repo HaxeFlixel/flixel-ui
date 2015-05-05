@@ -563,7 +563,7 @@ Attributes:
 * ```check_src``` - source image for box (not 9-sliceable, not scaleable)
 * ```box_src``` - source image for check mark (not 9-sliceable, not scaleable)
 * ```text_x``` / ```text_y``` - label offsets
-* ```label`` - text to show
+* ```label``` - text to show
 * ```context``` - FireTongue context (see Button)
 * ```code``` - Formatting code (see Button)
 * ```checked``` - (boolean) is it checked or not?
@@ -660,6 +660,10 @@ You construct a radio group by providing as many ```<radio>``` child tags as you
 Child Nodes:
 * ```<param>``` - same as ```<button>```, 
 * ```<radio>``` - two attributes, id (string) and label (string)
+* ```<dot>``` - alternate to dot_src, more powerful*
+* ```<box>``` - alternate to radio_src, more powerful*
+
+*If you supply ```<dot>``` or ```<box>``` child tags instead of their attribute equivalents, FlxUI will treat them as full-fledged ```<sprite>``` or ```<chrome>``` tags to load for the dot and radio-box assets. You'll want to use this method if you want to do something complicated, like load a scaled sprite, or a 9-slice-scaled sprite, that you can't normally accomplish with the src attributes, which just load a static image as-is.
 
 Event:
 * ```id``` - "click_radio_group"
