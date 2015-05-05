@@ -2051,20 +2051,59 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		names.reverse();		//reverse so they match the order entered in the xml
 		labels.reverse();
 		
-		var y_space:Float = U.xml_f(data.x, "y_space", 25);
+		var y_space:Float = _loadHeight(data, 25, "y_space");
 		
 		var params:Array<Dynamic> = getParams(data);
 		
-		var radio_asset:String = null;
+		
+		/*
+		 * For resolution independence you might want scaleable or 9-slice scaleable sprites for radio box & dot.
+		 * So in this case, if you supply <box> and <dot> nodes instead of "radio_src" and "dot_src", it will
+		 * let you load the radio box and dot using the full power of <sprite> and <9slicesprite> nodes.
+		 */
+		
+		var radio_asset:Dynamic = null;
 		if (radio_src != "")
 		{
 			radio_asset = U.gfx(radio_src);
 		}
+		else if (data.hasNode.box)
+		{
+			trace("custom box node!");
+			//We have a custom box node
+			if (U.xml_str(data.node.box.x, "slice9") != "")
+			{
+				//It's a 9-slice sprite, load the custom node
+				radio_asset = _load9SliceSprite(data.node.box);
+			}
+			else
+			{
+				trace("load sprite");
+				//It's a regular sprite, load the custom node
+				radio_asset = _loadSprite(data.node.box);
+			}
+		}
 		
-		var dot_asset:Dynamic=null;
+		var dot_asset:Dynamic = null;
 		if (dot_src != "")
 		{
 			dot_asset = U.gfx(dot_src);
+		}
+		else if (data.hasNode.dot)
+		{
+			trace("custom dot node!");
+			//We have a custom check node
+			if (U.xml_str(data.node.dot.x, "slice9") != "")
+			{
+				//It's a 9-slice sprite, load the custom node
+				dot_asset = _load9SliceSprite(data.node.dot);
+			}
+			else
+			{
+				trace("load sprite");
+				//It's a regular sprite, load the custom node
+				dot_asset = _loadSprite(data.node.dot);
+			}
 		}
 		
 		//if radio_src or dot_src are == "", then leave radio_asset/dot_asset == null, 
@@ -3452,9 +3491,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var ratio:Float = U.xml_f(scaleNode.x, "screen_ratio", -1);
 				var tolerance:Float = U.xml_f(scaleNode.x, "tolerance", 0.1);
 				var actualRatio:Float = FlxG.width / FlxG.height;
+				
+				//check if our screen ratio is within bounds
 				if (ratio < 0 || (ratio > 0 && Math.abs(ratio - actualRatio) <= tolerance))
 				{
-					//check if our screen ratio is within bounds
 					var suffix:String = U.xml_str(scaleNode.x, "suffix");
 					var srcSuffix:String = (src + suffix);					//add the proper suffix, so "asset"->"asset_16x9"
 					var testAsset:BitmapData = null;
@@ -4058,9 +4098,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var border_str:String = U.xml_str(data.x, "border");
 		var border_style:FlxTextBorderStyle = NONE;
 		var border_color:Int = _loadColor(data, "border_color", 0);
-		var border_size:Int = U.xml_i(data.x, "border_size", 1);
+		//var border_size:Int = U.xml_i(data.x, "border_size", 1);
+		
+		var round:Rounding = getRound(data, "floor");
+		var border_size:Int = Std.int(doRound(_getDataSize("h", "border_size", 1), round));
 		var border_quality:Float = U.xml_f(data.x, "border_quality", 0);
-
+		
 		var borderDef = new BorderDef(border_style, border_color, border_size, border_quality);
 		
 		switch(border_str)
