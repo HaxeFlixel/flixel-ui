@@ -1013,7 +1013,7 @@ Now you can just do this!
 <definition id="sans10" font="verdana" size="10pt" style="bold" color="0xffffff" outline="0x000000"/>
 ```
 
-Whenever you use the ```<point_size/>``` tag, you are defining the horizontal and vertical size of a "point", which is referenced whenever you enter a numercial value and add the letters "pt" to the end. Basically whenever it sees "10pt" it will multiply 10 by the size of the point. For font sizes this is the vertical size of the point, in other places it infers from the context (x="15pt" is horizontal pt size, y="25pt" is vertical pt size).
+Whenever you use the ```<point_size/>``` tag, you are defining the horizontal and vertical size of a "point", which is referenced whenever you enter a numerical value and add the letters "pt" to the end. Basically whenever it sees "10pt" it will multiply 10 by the size of the point. For font sizes this is the vertical size of the point, in other places it infers from the context (x="15pt" is horizontal pt size, y="25pt" is vertical pt size).
 
 If you do this:
 ```xml
