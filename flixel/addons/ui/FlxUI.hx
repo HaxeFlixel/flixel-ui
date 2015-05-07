@@ -583,11 +583,23 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 							//Search 1 level deep only!
 							//Ignore everything else in the include file
 						}
+						
+						if (inc_xml.hasNode.point_size)
+						{
+							_loadPointSize(inc_xml);
+						}
 					}
 				}
 			}
 			
-			//First, load all our definitions
+			//First, see if we defined a point size
+			
+			if (data.hasNode.point_size)
+			{
+				_loadPointSize(data);
+			}
+			
+			//Then, load all our definitions
 			if (data.hasNode.definition) {
 				for (def_data in data.nodes.definition) {
 					if (_loadTest(def_data))
@@ -625,7 +637,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 				}
 			}
-		
+			
 			//Then, load all our group definitions
 			if(data.hasNode.group){
 				for (group_data in data.nodes.group) {
@@ -673,6 +685,32 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}else {
 			_onFinishLoad();
 		}
+	}
+	
+	private function _loadPointSize(data:Fast):Void
+	{
+		var ptx = _loadX(data.node.point_size, -1.0);
+		var pty = _loadY(data.node.point_size, -1.0);
+		
+		//if neither x or y is defined look for a "value" parameter to set both
+		if (pty < 1 && ptx < 1)
+		{
+			pty = _loadHeight(data.node.point_size, 1.0, "value");
+			ptx = pty;
+		}
+		
+		//if x or y is not defined default to 1
+		if (pty < 1)
+		{
+			pty = 1;
+		}
+		if (ptx < 1)
+		{
+			ptx = 1;
+		}
+		
+		_pointX = ptx;
+		_pointY = pty;
 	}
 	
 	private function _loadSub(node:Xml,iteration:Int=0):Void
@@ -1075,6 +1113,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	@:allow(FlxUI)
 	private var _postLoaded:Bool = false;
+	
+	private var _pointX:Float = 1;
+	private var _pointY:Float = 1;
 	
 	private var _group_index:Map<String,FlxUIGroup>;
 	private var _asset_index:Map<String,IFlxUIWidget>;
@@ -3774,9 +3815,23 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				case "scale", "scale_x", "scale_y": return percf;			//return % as a float
 			}
 		}
-		else												//Next likely: is it a stretch command?
+		else
 		{
-			if (str.indexOf("stretch:") == 0)
+			if (str.indexOf("pt") == str.length - 2)		//Next likely: is it a pt value?
+			{
+				//it's a value that ends in "pt"
+				var tempStr = str.substr(0, str.length - 2);	//chop off the "pt"
+				if (U.isStrNum(tempStr))
+				{
+					var tempNum = Std.parseFloat(tempStr);
+					switch(target)
+					{
+						case "w", "width": return _pointX * tempNum;
+						case "h", "height": return _pointY * tempNum;
+					}
+				}
+			}
+			else if (str.indexOf("stretch:") == 0)			//Next likely: is it a stretch command?
 			{
 				str = StringTools.replace(str, "stretch:", "");
 				var arr:Array<String> = str.split(",");
