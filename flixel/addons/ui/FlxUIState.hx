@@ -52,6 +52,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	#end
 	private var _makeCursor:Bool;		//whether to auto-construct a cursor and load default widgets into it
 	
+	private var _ui_vars:Map<String,String>;
 	private var _ui:FlxUI;
 	private var _tongue:IFireTongue;
 	
@@ -213,6 +214,33 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		}
 	}
 	
+	private function _cleanupUIVars():Void
+	{
+		if (_ui_vars != null)
+		{
+			for (key in _ui_vars.keys())
+			{ 
+				_ui_vars.remove(key);
+			}
+			_ui_vars = null;
+		}
+	}
+	
+	public function setUIVariable(key:String, value:String):Void
+	{
+		if (_ui != null)
+		{
+			//if the UI is constructed, set the variable directly
+			_ui.setVariable(key, value);
+		}
+		else
+		{
+			//if not, store it locally until the UI is constructed, then pass it in as it's being created
+			if (_ui_vars == null) _ui_vars = new Map <String, String>();
+			_ui_vars.set(key, value);
+		}
+	}
+	
 	public function resizeScreen(width:Float=800, height:Float=600):Void {
 		/*#if sys
 			//TODO: reimplement with next OpenFL
@@ -281,7 +309,9 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	//in case you want to instantiate a custom class that extends FlxUI instead
 	private function createUI(data:Fast = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null, liveFilePath_:String=""):FlxUI
 	{
-		return new FlxUI(data, ptr, superIndex_, tongue_, liveFilePath_);
+		var flxui = new FlxUI(data, ptr, superIndex_, tongue_, liveFilePath_, _ui_vars);
+		_cleanupUIVars();	//clear out temporary _ui_vars variable if it was set
+		return flxui;
 	}
 	
 	//this makes it easy to override this function in your own FlxUIState,

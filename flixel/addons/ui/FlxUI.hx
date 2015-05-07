@@ -227,9 +227,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @param	superIndex_		(optional) another FlxUI object to search if assets are not found locally
 	 * @param	tongue_			(optional) Firetongue object for localization
 	 * @param	liveFilePath_	(optional) The path for live file loading (only works if debug && sys flags are true)
+	 * @param	uiVars_			(optional) Any variables you want to pre-load the UI with
 	 */
 	
-	public function new(data:Fast = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null, liveFilePath_:String="") 
+	public function new(data:Fast = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null, liveFilePath_:String="", uiVars_:Map<String,String>=null) 
 	{
 		super();
 		_ptr_tongue = tongue_;	//set the localization data structure, if any.
@@ -244,6 +245,17 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (superIndex_ != null) {
 			setSuperIndex(superIndex_);
 		}
+		
+		//if the state had variables for us, preload them now
+		if (uiVars_ != null)
+		{
+			_variable_index = new Map<String,String>();
+			for (key in uiVars_.keys())
+			{
+				_variable_index.set(key, uiVars_.get(key));
+			}
+		}
+		
 		if(data != null){
 			load(data);
 		}
@@ -512,7 +524,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		_group_index = new Map<String,FlxUIGroup>();
 		_asset_index = new Map<String,IFlxUIWidget>();
 		_definition_index = new Map<String,Fast>();
-		_variable_index = new Map<String,String>();
+		if (_variable_index == null)
+		{
+			_variable_index = new Map<String,String>();
+		}
 		_mode_index = new Map<String,Fast>();
 		
 		if (data != null)
@@ -993,6 +1008,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		{
 			return U.compareStringVars("", otherValue, type, operator);
 		}
+	}
+	
+	public function setVariable(key:String, value:String):Void
+	{
+		_variable_index.set(key, value);
 	}
 	
 	public function getVariable(key:String, recursive:Bool = true):String
