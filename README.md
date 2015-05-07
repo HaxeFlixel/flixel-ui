@@ -992,3 +992,35 @@ Let's say you've got a 9-slice-sprite, but for whatever reason you want to scale
 ```
 
 Here's what's happening. Let's say "ui/asset.png" is 400x50 pixels. In this case I scale it down first using the ```<scale_src>``` tag, which is unique to 9-slice-sprites. The "to_height" property scales the asset to a target height (10% of the screen height in this case), and also scales the width proportionately. (You can also use "width" and "height" parameters instead). Whenever you scale an asset like this in a 9-slice sprite, the slice9 coordinates will be automatically be scaled to match the new scaled source material. Then, your final asset will be 9-slice scaled.
+
+#5. Defining "points"
+
+So previously we had this:
+
+```xml
+<definition id="sans10" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
+```
+
+Which we changed to this:
+
+```xml
+<definition id="sans_tiny"     font="verdana" size="screen.height*0.01667" style="bold" color="0xffffff" outline="0x000000"/>
+```
+
+Now you can just do this!
+```xml
+<point_size x="screen.height*0.001667" y="screen.width*0.001667"/>
+<definition id="sans10" font="verdana" size="10pt" style="bold" color="0xffffff" outline="0x000000"/>
+```
+
+Whenever you use the ```<point_size/>``` tag, you are defining the horizontal and vertical size of a "point", which is referenced whenever you enter a numercial value and add the letters "pt" to the end. Basically whenever it sees "10pt" it will multiply 10 by the size of the point. For font sizes this is the vertical size of the point, in other places it infers from the context (x="15pt" is horizontal pt size, y="25pt" is vertical pt size).
+
+If you do this:
+```xml
+<point_size value="screen.height*0.001667"/>
+```
+It uses the same value for both vertical and horizontal point size.
+
+Only one ```<point_size/>``` tag is active at a time, the last one that the parse finds in the document. You can, however, put one in an included file and it will be loaded (so long as your current file doesn't have one that overrides it).
+
+You can use a point-number anywhere (at least, I think) you can use a normal numerical value.
