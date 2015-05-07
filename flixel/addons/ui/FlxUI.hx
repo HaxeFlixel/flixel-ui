@@ -722,7 +722,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var obj:Fast = new Fast(node);
 		
 		//if a "load_if" tag is wrapped around a block of other tags
-		//then to the load test, and if so, load all the children inside the block
+		//then do the load test, and if so, load all the children inside the block
 		if (type == "load_if")
 		{
 			if (_loadTest(obj))
@@ -819,6 +819,58 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		_onFinishLoad();
+	}
+	
+	private function _sendTo(thing:IFlxUIWidget, dir:Int):Void
+	{
+		var group:FlxUIGroup = getAssetGroup(thing);
+		if (group == null)
+		{
+			if (members.indexOf(cast thing) != -1)
+			{
+				group = this;
+			}
+			else
+			{
+				return;
+			}
+		}
+		if (dir != -1 && dir != 1)
+		{
+			return;
+		}
+		
+		group.members.remove(cast thing);
+		
+		switch(dir)
+		{
+			case -1: group.members.insert(0, cast thing);
+			case  1: group.members.push(cast thing);
+		}
+	}
+	
+	/**
+	 * Send an asset to the front of the member list that it's in
+	 * @param	name string identifier of the asset
+	 * @param	recursive whether to check superIndex if not found
+	 */
+	
+	public function sendToFront(name:String, recursive:Bool = true):Void
+	{
+		var thing = getAsset(name, recursive);
+		if (thing != null) _sendTo(thing, 1);
+	}
+	
+	/**
+	 * Send an asset to either the back of the member list that it's in
+	 * @param	name string identifier of the asset
+	 * @param	recursive whether to check superIndex if not found
+	 */
+	
+	public function sendToBack(name:String, recursive:Bool = true):Void
+	{
+		var thing = getAsset(name, recursive);
+		if (thing != null) _sendTo(thing, -1);
 	}
 	
 	public var currMode(get, set):String;
@@ -1000,6 +1052,24 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			return _superIndexUI.getAsset(key, recursive);
 		}
 		return asset;
+	}
+	
+	public function getAssetGroup(?key:String,?thing:IFlxUIWidget):FlxUIGroup
+	{
+		if (thing == null && (key == null || key == "")) return null;
+		if (thing == null) thing = getAsset(key);
+		if (thing == null) return null;
+		
+		for (key in _group_index.keys())
+		{
+			var g = _group_index.get(key);
+			if (g.members.indexOf(cast thing) != -1)
+			{
+				return g;
+			}
+		}
+		
+		return null;
 	}
 	
 	public function getMode(key:String, recursive:Bool = true):Fast
@@ -1802,6 +1872,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var name:String = U.xml_name(data.x);
 		var thing:IFlxUIWidget = getAsset(name);
+		var isGroup = type == "group";
+		if (isGroup)
+		{
+			thing = getGroup(name);
+		}
 		
 		if (type == "align") {
 			_alignThing(data);
@@ -1812,41 +1887,54 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			return;
 		}
 		
-		if (thing == null) {
+		if (thing == null && !isGroup) {
 			return;
 		}
 		
-		var use_def:String = U.xml_str(data.x, "use_def", true);
-		var definition:Fast = null;
-		if (use_def != "") {
-			definition = getDefinition(use_def);
-		}
-		
-		if (Std.is(thing, IResizable))
+		if (!isGroup)
 		{
-			var ww:Null<Float> = _getDataSize(U.xml_str(data.x, "width"), "width");
-			var hh:Null<Float> = _getDataSize(U.xml_str(data.x, "height"), "height");
-			if (ww == 0 || ww == thing.width)
-			{
-				ww = null;
-			}
-			if (hh == 0 || hh == thing.height)
-			{
-				hh = null;
+			var use_def:String = U.xml_str(data.x, "use_def", true);
+			var definition:Fast = null;
+			if (use_def != "") {
+				definition = getDefinition(use_def);
 			}
 			
-			var bounds = calcMaxMinSize(data,ww,hh);
-			
-			if (bounds != null)
+			if (Std.is(thing, IResizable))
 			{
-				_resizeThing(cast(thing, IResizable), bounds);
+				var ww:Null<Float> = _getDataSize(U.xml_str(data.x, "width"), "width");
+				var hh:Null<Float> = _getDataSize(U.xml_str(data.x, "height"), "height");
+				if (ww == 0 || ww == thing.width)
+				{
+					ww = null;
+				}
+				if (hh == 0 || hh == thing.height)
+				{
+					hh = null;
+				}
+				
+				var bounds = calcMaxMinSize(data,ww,hh);
+				
+				if (bounds != null)
+				{
+					_resizeThing(cast(thing, IResizable), bounds);
+				}
+			}
+			
+			_delta(thing, -thing.x, -thing.y);	//reset position to 0,0
+			_loadPosition(data, thing);			//reposition
+		}
+		
+		var send_to = U.xml_str(data.x, "send_to", true, "");
+		if (send_to != "")
+		{
+			switch(send_to)
+			{
+				case "back", "bottom": _sendTo(thing, -1);
+				case "front",   "top": _sendTo(thing, 1);
 			}
 		}
 		
-		_delta(thing, -thing.x, -thing.y);	//reset position to 0,0
-		_loadPosition(data, thing);			//reposition
-		
-		if (Std.is(thing, FlxUI))
+		if (!isGroup && Std.is(thing, FlxUI))
 		{
 			var fui_thing:FlxUI = cast thing;
 			if (fui_thing._postLoaded == false)
@@ -2438,6 +2526,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadTest(data:Fast):Bool {
 		var result:Bool = true;
+		
+		//If this is itself a "<load_if>" tag, return whether or not it passes the test
 		if (data.name == "load_if")
 		{
 			result = _loadTestSub(data);
@@ -2446,14 +2536,36 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				return false;
 			}
 		}
+		
+		//If this is some other tag that CONTAINS a "load_if" tag, make sure all the conditions pass
 		if (data.hasNode.load_if)
 		{
+			/*However, for this sort of operation we should ONLY consider "load_if" tags that don't themselves contain children
+			 * 
+			 <something ...>
+			   <stuff .../>
+			   <stuff .../>
+			   <stuff .../>
+			   
+			   <load_if .../> <!--some condition, better check it, if it fails, don't load parent object at all-->
+			   
+			   <load_if ...>  <!--some condition, but if it fails it just means don't load the contents of this BLOCK, you still want the parent object-->
+			     <stuff .../>
+			     <stuff .../>
+			     <stuff .../>
+			   </load_if>
+			 </something>
+			 *
+			 */
 			for (node in data.nodes.load_if)
 			{
-				result = _loadTestSub(node);
-				if (result == false)
+				if (node.x.firstChild() == null)	//as mentioned above, only run the test if this load_if does not have children
 				{
-					return false;
+					result = _loadTestSub(node);
+					if (result == false)
+					{
+						return false;
+					}
 				}
 			}
 		}
@@ -2465,7 +2577,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var matchValue:Bool = U.xml_bool(node.x, "is", true);
 		var match:Bool = matchValue;
 		
-		//check aspect ration
+		//check aspect ratio
 		var aspect_ratio:Float = U.xml_f(node.x, "aspect_ratio", -1);
 		if (aspect_ratio != -1) {
 			match = true;
@@ -2563,7 +2675,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (variable != "")
 		{
 			match = true;
-			var varData= parseVarValue(variable);
+			var varData = parseVarValue(variable);
 			if (varData != null)
 			{
 				match = checkVariable(varData.variable, varData.value, variableType, varData.operator);
