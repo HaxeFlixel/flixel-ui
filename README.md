@@ -1019,7 +1019,7 @@ If you do this:
 ```xml
 <point_size value="screen.height*0.001667"/>
 ```
-It uses the same value for both vertical and horizontal point size.
+It uses the same value for both vertical and horizontal point size. In case you were wondering, 0.001667 is the value of 1/600. So if you have a game where you do the base layout at say 800x600, then you can define this point value to make it easily scale to other resolutions.
 
 Only one ```<point_size/>``` tag is active at a time, the last one that the parse finds in the document. You can, however, put one in an included file and it will be loaded (so long as your current file doesn't have one that overrides it).
 
