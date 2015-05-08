@@ -46,6 +46,21 @@ class FontFixer
 		{
 			name = font.fontName;
 		}
+		#if flash
+			//edge case for flash: if we've got a mangled font file like "assets/fonts/Verdana Bold.ttf", strip it down to "Verdana Bold" and look up 
+			//the correct font file name
+			if ( name == null && (file.indexOf("/") != -1 || file.indexOf(".ttf") != -1 || file.indexOf(".otf") != -1))
+			{
+				var lastSlash = file.lastIndexOf("/");
+				var tempf = file.substr(lastSlash + 1, file.length - (lastSlash + 1));
+				tempf = StringTools.replace(tempf, ".ttf", "");
+				tempf = StringTools.replace(tempf, ".otf", "");
+				if (name2File.exists(tempf))
+				{
+					return name2File.get(tempf);
+				}
+			}
+		#end
 		name2File.set(name, file);
 		return fix(file);
 	}
