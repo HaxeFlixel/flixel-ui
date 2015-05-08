@@ -3929,18 +3929,19 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		else
 		{
-			if (str.indexOf("pt") == str.length - 2)		//Next likely: is it a pt value?
+			var ptStr:String = "";
+			if (str.indexOf("pt") == str.length - 2)	//Next likely: is it a pt value?
 			{
-				//it's a value that ends in "pt"
-				var tempStr = str.substr(0, str.length - 2);	//chop off the "pt"
-				if (U.isStrNum(tempStr))
+				ptStr = str.substr(0, str.length - 2);	//chop off the "pt"
+			}
+			
+			if(ptStr != "" && U.isStrNum(ptStr))			//If the rest of it is a simple number
+			{
+				var tempNum = Std.parseFloat(ptStr);		//process as a variable point value
+				switch(target)
 				{
-					var tempNum = Std.parseFloat(tempStr);
-					switch(target)
-					{
-						case "w", "width": return _pointX * tempNum;
-						case "h", "height": return _pointY * tempNum;
-					}
+					case "w", "width": return _pointX * tempNum;
+					case "h", "height": return _pointY * tempNum;
 				}
 			}
 			else if (str.indexOf("stretch:") == 0)			//Next likely: is it a stretch command?
