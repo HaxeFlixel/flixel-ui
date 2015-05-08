@@ -2747,12 +2747,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var tab_spacing_str:String = U.xml_str(data.x, "spacing", true, "");
 		var tab_spacing:Null<Float> = null;
 		if (tab_spacing_str != "") {
-			tab_spacing = Std.parseFloat(tab_spacing_str);
+			tab_spacing = _loadWidth(data, 0, "spacing");
 		}
 		
 		//x/y offsets for tabs
-		var tab_x:Float = U.xml_f(data.x, "tab_x", 0);
-		var tab_y:Float = U.xml_f(data.x, "tab_y", 0);
+		var tab_x:Float = _loadWidth(data, 0, "tab_x");
+		var tab_y:Float = _loadHeight(data, 0, "tab_y");
 		var tab_offset = FlxPoint.get(tab_x, tab_y);
 		
 		var tab_def_str:String = "";
@@ -4285,7 +4285,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var border_str:String = U.xml_str(data.x, "border");
 		var border_style:FlxTextBorderStyle = NONE;
 		var border_color:Int = _loadColor(data, "border_color", 0);
-		//var border_size:Int = U.xml_i(data.x, "border_size", 1);
 		
 		var round:Rounding = getRound(data, "floor");
 		var border_size:Int = Std.int(doRound(_getDataSize("h", "border_size", 1), round));
