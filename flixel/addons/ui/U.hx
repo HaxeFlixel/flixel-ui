@@ -1119,6 +1119,19 @@ class U
 		}
 	}
 	
+	/**
+	 * This scales an image that contains tiles, being super OCD about it, making sure each tile is
+	 * properly scaled and put in the correct position, and returns the new asset key
+	 * @param	orig_id asset id
+	 * @param	scale the scale factor
+	 * @param	OrigW original width of the tile
+	 * @param	OrigH original height of the tile
+	 * @param	TileW final width of the tile
+	 * @param	TileH final height of the tile
+	 * @param	Smooth
+	 * @return the asset key
+	 */
+	
 	public static function scaleAndStoreTileset(orig_id:String, scale:Float, OrigW:Int, OrigH:Int, TileW:Int=-1, TileH:Int=-1, Smooth:Bool = true):String
 	{
 		var assetKey:String = orig_id + "_x" + scale;

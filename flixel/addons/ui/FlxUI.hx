@@ -2055,7 +2055,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var the_font:String = _loadFontFace(data);
 		
 		var align:String = U.xml_str(data.x, "align"); if (align == "") { align = null;}
-		var size:Int = U.xml_i(data.x, "size"); if (size == 0) { size = 8;}
+		var size:Int = Std.int(_loadHeight(data, 8, "size"));
 		var color:Int = _loadColor(data);
 		
 		var border:BorderDef = _loadBorder(data);
@@ -2281,8 +2281,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			frg.loadGraphics(radio_asset,dot_asset);
 		}
 		
-		var text_x:Int = U.xml_i(data.x, "text_x");
-		var text_y:Int = U.xml_i(data.x, "text_y");
+		var text_x:Int = Std.int(_loadWidth(data, 0, "text_x"));
+		var text_y:Int = Std.int(_loadHeight(data, 0, "text_y"));
 		
 		var radios = frg.getRadios();
 		var i:Int = 0;
@@ -4337,7 +4337,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private function _loadFontDef(data:Fast):FontDef{
 		var fontFile:String = _loadFontFace(data);
 		var fontStyle:String = U.xml_str(data.x, "style");
-		var fontSize:Int = U.xml_i(data.x, "size", 8);
+		var fontSize:Int = Std.int(_loadHeight(data, 8, "size"));
 		var fd:FontDef = new FontDef(U.xml_str(data.x, "font"), ".ttf", fontFile);
 		fd.format.size = fontSize;
 		fd.setFontStyle(fontStyle);
