@@ -52,7 +52,7 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	private static var _staticFlxRect:FlxRect = FlxRect.get();
 	private static var _staticFlxRect2:FlxRect = FlxRect.get();
 	
-	//specialty smoothing modes	
+	//specialty smoothing modes
 	public static inline var TILE_NONE:Int = 0x00;
 	public static inline var TILE_BOTH:Int = 0x11;
 	public static inline var TILE_H:Int = 0x10;
@@ -262,7 +262,7 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 		}
 		return null;
 	}
-		
+	
 	//These functions were borrowed from:
 	//https://github.com/ianharrigan/YAHUI/blob/master/src/yahui/style/StyleHelper.hx
 	

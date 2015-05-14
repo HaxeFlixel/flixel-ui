@@ -1213,7 +1213,8 @@ class U
 			var flximg = FlxG.bitmap.get(bmpSrc);
 			testBmp = flximg != null ? flximg.bitmap : null;
 		}
-		var ratio:Float = Height / testBmp.height;
+		
+		var ratio:Float = (testBmp != null) ? Height / testBmp.height : 1.0;
 		return loadMonoScaledImage(bmpSrc, ratio, Smooth, checkFlxBitmap);
 	}
 	

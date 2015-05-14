@@ -695,22 +695,20 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		//if neither x or y is defined look for a "value" parameter to set both
 		if (pty < 1 && ptx < 1)
 		{
-			pty = _loadHeight(data.node.point_size, 1.0, "value");
+			pty = _loadHeight(data.node.point_size, -1, "value");
 			ptx = pty;
 		}
 		
 		//if x or y is not defined default to 1
-		if (pty < 1)
+		if (pty > 0)
 		{
-			pty = 1;
+			_pointX = ptx;
 		}
-		if (ptx < 1)
+		if (ptx > 0)
 		{
-			ptx = 1;
+			_pointY = pty;
 		}
 		
-		_pointX = ptx;
-		_pointY = pty;
 	}
 	
 	private function _loadSub(node:Xml,iteration:Int=0):Void
@@ -3842,6 +3840,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			{
 				var exact_w_str:String = U.xml_str(exactNode.x, "width");
 				var exact_h_str:String = U.xml_str(exactNode.x, "height");
+				
 				round = getRound(exactNode);
 				min_w = doRound(_getDataSize("w", exact_w_str, 0),round);
 				min_h = doRound(_getDataSize("h", exact_h_str, 0),round);
