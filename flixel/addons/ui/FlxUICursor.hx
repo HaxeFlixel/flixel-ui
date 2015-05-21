@@ -36,11 +36,11 @@ class FlxUICursor extends FlxUISprite
 	
 	//Key configurations, you can set easily with setDefaultKeys(KEYS_TAB), for instance.
 	
-	public var keysUp:Array<MultiKey>;    //List of keys (ie, tab) and/or key combinations (ie, shift+tab) that indicate intent to go "up"
-	public var keysDown:Array<MultiKey>;
-	public var keysLeft:Array<MultiKey>;
-	public var keysRight:Array<MultiKey>;
-	public var keysClick:Array<MultiKey>; //intent to "click" or select
+	public var keysUp:Array<FlxMultiInput>;    //List of keys (ie, tab) and/or key combinations (ie, shift+tab) that indicate intent to go "up"
+	public var keysDown:Array<FlxMultiInput>;
+	public var keysLeft:Array<FlxMultiInput>;
+	public var keysRight:Array<FlxMultiInput>;
+	public var keysClick:Array<FlxMultiInput>; //intent to "click" or select
 	
 	//Various default key configurations:
 	
@@ -171,44 +171,44 @@ class FlxUICursor extends FlxUISprite
 		_clearKeys();
 		_newKeys();
 		if (code & KEYS_TAB == KEYS_TAB) {
-			_addToKeys(keysRight, new MultiKey(TAB, null, [SHIFT]));  //Tab, (but NOT Shift+Tab!)
-			_addToKeys(keysLeft, new MultiKey(TAB, [SHIFT]));         //Shift+Tab
-			_addToKeys(keysClick, new MultiKey(ENTER));
+			_addToKeys(keysRight, FlxMultiInput.fromKey(TAB, null, [SHIFT]));  //Tab, (but NOT Shift+Tab!)
+			_addToKeys(keysLeft, FlxMultiInput.fromKey(TAB, [SHIFT]));         //Shift+Tab
+			_addToKeys(keysClick, FlxMultiInput.fromKey(ENTER));
 		}
 		if (code & KEYS_ARROWS == KEYS_ARROWS) {
-			_addToKeys(keysRight, new MultiKey(RIGHT));
-			_addToKeys(keysLeft, new MultiKey(LEFT));
-			_addToKeys(keysDown, new MultiKey(DOWN));
-			_addToKeys(keysUp, new MultiKey(UP));
-			_addToKeys(keysClick, new MultiKey(ENTER));
+			_addToKeys(keysRight, FlxMultiInput.fromKey(RIGHT));
+			_addToKeys(keysLeft, FlxMultiInput.fromKey(LEFT));
+			_addToKeys(keysDown, FlxMultiInput.fromKey(DOWN));
+			_addToKeys(keysUp, FlxMultiInput.fromKey(UP));
+			_addToKeys(keysClick, FlxMultiInput.fromKey(ENTER));
 		}
 		if (code & KEYS_WASD == KEYS_WASD) {
-			_addToKeys(keysRight, new MultiKey(D));
-			_addToKeys(keysLeft, new MultiKey(A));
-			_addToKeys(keysDown, new MultiKey(S));
-			_addToKeys(keysUp, new MultiKey(W));
-			_addToKeys(keysClick, new MultiKey(ENTER));
+			_addToKeys(keysRight, FlxMultiInput.fromKey(D));
+			_addToKeys(keysLeft, FlxMultiInput.fromKey(A));
+			_addToKeys(keysDown, FlxMultiInput.fromKey(S));
+			_addToKeys(keysUp, FlxMultiInput.fromKey(W));
+			_addToKeys(keysClick, FlxMultiInput.fromKey(ENTER));
 		}
 		if (code & KEYS_NUMPAD == KEYS_NUMPAD) {
-			_addToKeys(keysRight, new MultiKey(NUMPADSIX));
-			_addToKeys(keysLeft, new MultiKey(NUMPADFOUR));
-			_addToKeys(keysDown, new MultiKey(NUMPADTWO));
-			_addToKeys(keysUp, new MultiKey(NUMPADEIGHT));
-			_addToKeys(keysClick, new MultiKey(ENTER));
+			_addToKeys(keysRight, FlxMultiInput.fromKey(NUMPADSIX));
+			_addToKeys(keysLeft, FlxMultiInput.fromKey(NUMPADFOUR));
+			_addToKeys(keysDown, FlxMultiInput.fromKey(NUMPADTWO));
+			_addToKeys(keysUp, FlxMultiInput.fromKey(NUMPADEIGHT));
+			_addToKeys(keysClick, FlxMultiInput.fromKey(ENTER));
 		}
 		if (code & GAMEPAD_DPAD == GAMEPAD_DPAD) {
 			var gamepad = getGamepad();
-			_addToKeys(keysLeft, new MultiKey(gamepad, FlxGamepadID.DPAD_LEFT));
-			_addToKeys(keysRight, new MultiKey(gamepad, FlxGamepadID.DPAD_RIGHT));
-			_addToKeys(keysDown, new MultiKey(gamepad, FlxGamepadID.DPAD_DOWN));
-			_addToKeys(keysUp, new MultiKey(gamepad, FlxGamepadID.DPAD_UP));
-			_addToKeys(keysClick, new MultiKey(gamepad, FlxGamepadID.A));
+			_addToKeys(keysLeft, FlxMultiInput.fromGamepad(gamepad, FlxGamepadID.DPAD_LEFT));
+			_addToKeys(keysRight, FlxMultiInput.fromGamepad(gamepad, FlxGamepadID.DPAD_RIGHT));
+			_addToKeys(keysDown, FlxMultiInput.fromGamepad(gamepad, FlxGamepadID.DPAD_DOWN));
+			_addToKeys(keysUp, FlxMultiInput.fromGamepad(gamepad, FlxGamepadID.DPAD_UP));
+			_addToKeys(keysClick, FlxMultiInput.fromGamepad(gamepad, FlxGamepadID.A));
 		}
 		if (code & GAMEPAD_SHOULDER_BUTTONS == GAMEPAD_SHOULDER_BUTTONS) {
 			var gamepad = getGamepad();
-			_addToKeys(keysLeft, new MultiKey(gamepad, FlxGamepadID.LEFT_SHOULDER));
-			_addToKeys(keysRight, new MultiKey(gamepad, FlxGamepadID.RIGHT_SHOULDER));
-			_addToKeys(keysClick, new MultiKey(gamepad, FlxGamepadID.A));
+			_addToKeys(keysLeft, FlxMultiInput.fromGamepad(gamepad, FlxGamepadID.LEFT_SHOULDER));
+			_addToKeys(keysRight, FlxMultiInput.fromGamepad(gamepad, FlxGamepadID.RIGHT_SHOULDER));
+			_addToKeys(keysClick, FlxMultiInput.fromGamepad(gamepad, FlxGamepadID.A));
 		}
 	}
 	
@@ -245,8 +245,8 @@ class FlxUICursor extends FlxUISprite
 		return 0;
 	}
 	
-	private function _addToKeys(keys:Array<MultiKey>, m:MultiKey) {
-		var mk:MultiKey;
+	private function _addToKeys(keys:Array<FlxMultiInput>, m:FlxMultiInput) {
+		var mk:FlxMultiInput;
 		var exists:Bool = false;
 		for (mk in keys) {
 			if (m.equals(mk)) {
@@ -276,7 +276,7 @@ class FlxUICursor extends FlxUISprite
 	}
 	
 	private function _checkKeys():Void {
-		var key:MultiKey;
+		var key:FlxMultiInput;
 		
 		var upPressed:Bool = false;
 		

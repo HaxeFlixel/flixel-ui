@@ -9,7 +9,7 @@ import flixel.util.FlxDestroyUtil;
 /**
  * Makes it easier to check if, say, SHIFT+Tab is being pressed rather than just Tab by itself
  */
-class MultiKey implements IFlxDestroyable
+class FlxMultiInput implements IFlxDestroyable
 {
 	/**
 	 * The keycode for the main key itself, ie, tab
@@ -48,7 +48,18 @@ class MultiKey implements IFlxDestroyable
 	 */
 	public var forbiddenGamepadBtns:Array<FlxGamepadID>;
 	
-	public function new(?Key:FlxKey, ?ComboKeys:Array<FlxKey>, ?ForbiddenKeys:Array<FlxKey>, ?Gamepad:FlxGamepad, ?GamepadBtn:FlxGamepadID, ?ComboGamepadBtns:Array<FlxGamepadID>, ?ForbiddenGamepadBtns:Array<FlxGamepadID>) 	{
+	public static function fromKey(Key:FlxKey, ?Combos:Array<FlxKey>, ?Forbiddens:Array<FlxKey>)
+	{
+		return new FlxMultiInput(Key, Combos, Forbiddens, null, null, null, null);
+	}
+	
+	public static function fromGamepad(Gamepad:FlxGamepad, ID:FlxGamepadID, ?Combos:Array<FlxGamepadID>, ?Forbiddens:Array<FlxGamepadID>)
+	{
+		return new FlxMultiInput(null, null, null, Gamepad, ID, Combos, Forbiddens);
+	}
+	
+	private function new(Key:FlxKey, ComboKeys:Array<FlxKey>, ForbiddenKeys:Array<FlxKey>, Gamepad:FlxGamepad, GamepadBtn:FlxGamepadID, ComboGamepadBtns:Array<FlxGamepadID>, ForbiddenGamepadBtns:Array<FlxGamepadID>)
+	{
 		key = Key;
 		comboKeys = ComboKeys;
 		forbiddenKeys = ForbiddenKeys;
@@ -58,16 +69,6 @@ class MultiKey implements IFlxDestroyable
 		gamepadBtn = GamepadBtn;
 		comboGamepadBtns = ComboGamepadBtns;
 		forbiddenGamepadBtns = ForbiddenGamepadBtns;
-		
-		if (key == null && gamepadBtn == null)
-		{
-			throw "either key or gamepadBtn must be not null!";
-		}
-		
-		if (gamepadBtn != null && gamepad == null)
-		{
-			throw "gamepadBtn defined, but gamepad was null!";
-		}
 	}
 	
 	public function destroy():Void
@@ -139,7 +140,7 @@ class MultiKey implements IFlxDestroyable
 		return passCombosAndForbiddens();
 	}
 	
-	public function equals(other:MultiKey):Bool
+	public function equals(other:FlxMultiInput):Bool
 	{
 		if (key != other.key)
 		{
