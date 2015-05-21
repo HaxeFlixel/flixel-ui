@@ -136,8 +136,7 @@ class MultiKey implements IFlxDestroyable
 				return false;
 			}
 		}
-		var b = passCombosAndForbiddens();
-		return b;
+		return passCombosAndForbiddens();
 	}
 	
 	public function equals(other:MultiKey):Bool
