@@ -210,6 +210,7 @@ class FlxUICursor extends FlxUISprite
 			_addToKeys(keysRight, new MultiKey(gamepad, FlxGamepadID.RIGHT_SHOULDER));
 			_addToKeys(keysClick, new MultiKey(gamepad, FlxGamepadID.A));
 		}
+	}
 	
 	/****PRIVATE****/
 	
@@ -224,7 +225,7 @@ class FlxUICursor extends FlxUISprite
 		var gamepad = FlxG.gamepads.getFirstActiveGamepad();
 		if (gamepad == null)
 		{
-			for (i in 0...4)
+			for (i in 0...FlxG.gamepads.numActiveGamepads)
 			{
 				gamepad = FlxG.gamepads.getByID(i);
 				if (gamepad != null)
