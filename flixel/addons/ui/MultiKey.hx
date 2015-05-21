@@ -66,8 +66,6 @@ class MultiKey implements IFlxDestroyable
 		
 		if (gamepadBtn != null && gamepad == null)
 		{
-			trace("gamepadBtn = " + gamepadBtn + " gamepad = " + gamepad);
-			trace("pads = " + FlxG.gamepads.getActiveGamepads());
 			throw "gamepadBtn defined, but gamepad was null!";
 		}
 	}
