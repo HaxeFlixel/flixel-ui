@@ -156,11 +156,6 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	
 	public override function resize(W:Float, H:Float):Void {
 		super.resize(W, H);
-		/*if(label != null){
-			label.width = W;
-			label.fieldWidth = W;
-			label.resize(W, H);
-		}*/
 	}
 	
 	public function addIcon(icon:FlxSprite,X:Int=0,Y:Int=0,?center:Bool=true)

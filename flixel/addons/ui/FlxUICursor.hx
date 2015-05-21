@@ -7,6 +7,8 @@ import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxG;
 import flixel.FlxObject;
+import flixel.input.gamepad.ButtonID;
+import flixel.input.gamepad.FlxGamepad;
 import flixel.input.mouse.FlxMouse;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
@@ -42,10 +44,15 @@ class FlxUICursor extends FlxUISprite
 	
 	//Various default key configurations:
 	
-	public static inline var KEYS_DEFAULT_TAB:Int =        0x0001;	//tab to go "right", shift+tab to go "left", enter to click
-	public static inline var KEYS_DEFAULT_WASD:Int =       0x0010;	//WASD to go up/left/down/right, enter to click
-	public static inline var KEYS_DEFAULT_ARROWS:Int =     0x0100;	//Arrows to go up/left/down/right, enter to click
-	public static inline var KEYS_DEFAULT_NUMPAD:Int =     0x1000;	//Numpad numbers to go up/left/down/right, enter to click
+	public static inline var KEYS_DEFAULT_TAB:Int =                 0x00000001;	//tab to go "right", shift+tab to go "left", enter to click
+	public static inline var KEYS_DEFAULT_WASD:Int =                0x00000010;	//WASD to go up/left/down/right, enter to click
+	public static inline var KEYS_DEFAULT_ARROWS:Int =              0x00000100;	//Arrows to go up/left/down/right, enter to click
+	public static inline var KEYS_DEFAULT_NUMPAD:Int =              0x00001000;	//Numpad numbers to go up/left/down/right, enter to click
+	
+	public static inline var GAMEPAD_DEFAULT_DPAD:Int =             0x00010000;	//DPAD to go up/left/down/right, A to click
+	public static inline var GAMEPAD_DEFAULT_LEFT_STICK:Int =       0x00100000;	//Left STICK to go up/left/down/right, A to click
+	public static inline var GAMEPAD_DEFAULT_RIGHT_STICK:Int =      0x01000000;	//Right STICK to go up/left/down/right, A to click
+	public static inline var GAMEPAD_DEFAULT_SHOULDER_BUTTONS:Int = 0x10000000;	//Left / Right shoulder buttons to go left/right, A to click
 	
 	//Determines how the cursor attaches itself to the widget it's pointing to
 	public var anchor:Anchor;
@@ -119,6 +126,7 @@ class FlxUICursor extends FlxUISprite
 	}
 	
 	public override function update(elapsed:Float):Void {
+		_clickTime += elapsed;
 		super.update(elapsed);
 		_checkKeys();
 	}
@@ -188,6 +196,20 @@ class FlxUICursor extends FlxUISprite
 			_addToKeys(keysUp, new MultiKey(NUMPADEIGHT));
 			_addToKeys(keysClick, new MultiKey(ENTER));
 		}
+		if (code & GAMEPAD_DEFAULT_DPAD == GAMEPAD_DEFAULT_DPAD) {
+			var gamepad = getGamepad();
+			_addToKeys(keysLeft, new MultiKey(gamepad, ButtonID.DPAD_LEFT));
+			_addToKeys(keysRight, new MultiKey(gamepad, ButtonID.DPAD_RIGHT));
+			_addToKeys(keysDown, new MultiKey(gamepad, ButtonID.DPAD_DOWN));
+			_addToKeys(keysUp, new MultiKey(gamepad, ButtonID.DPAD_UP));
+			_addToKeys(keysClick, new MultiKey(gamepad, ButtonID.A));
+		}
+		if (code & GAMEPAD_DEFAULT_SHOULDER_BUTTONS == GAMEPAD_DEFAULT_SHOULDER_BUTTONS) {
+			var gamepad = getGamepad();
+			_addToKeys(keysLeft, new MultiKey(gamepad, ButtonID.LEFT_SHOULDER));
+			_addToKeys(keysRight, new MultiKey(gamepad, ButtonID.RIGHT_SHOULDER));
+			_addToKeys(keysClick, new MultiKey(gamepad, ButtonID.A));
+		}
 	}
 	
 	/****PRIVATE****/
@@ -195,6 +217,29 @@ class FlxUICursor extends FlxUISprite
 	private var _widgets:Array<IFlxUIWidget>;			//master list of widgets under cursor's control
 	private var _newMouse:FlxUIMouse;
 	private var _clickPressed:Bool = false;
+	
+	private var _clickTime:Float = 0;
+	
+	private function getGamepad():FlxGamepad
+	{
+		var gamepad = FlxG.gamepads.getFirstActiveGamepad();
+		if (gamepad == null)
+		{
+			for (i in 0...4)
+			{
+				gamepad = FlxG.gamepads.getByID(i);
+				if (gamepad != null)
+				{
+					return gamepad;
+				}
+			}
+		}
+		else
+		{
+			return gamepad;
+		}
+		return null;
+	}
 	
 	private function _sortXY(a:IFlxUIWidget, b:IFlxUIWidget):Int {
 		if (a.y < b.y) return -1;
@@ -267,14 +312,16 @@ class FlxUICursor extends FlxUISprite
 		if (_clickKeysJustPressed())		//JUST PRESSED: send a press event only the first time it's pressed
 		{
 			_clickPressed = true;
+			_clickTime = 0;
 			_doPress();
 		}
+		
 		if (_clickKeysPressed())			//STILL PRESSED: keep the cursor in that position while the key is down
 		{
 			_clickPressed = true;
 			_doMouseMove();
 		}
-		else								//NOT PRESSED:
+		else if(_clickTime > 0)				//NOT PRESSED and not exact same frame as when it was just pressed
 		{
 			if (_clickPressed)				//if we were previously just pressed...
 			{

@@ -1,6 +1,8 @@
 package flixel.addons.ui;
 
 import flixel.FlxG;
+import flixel.input.gamepad.ButtonID;
+import flixel.input.gamepad.FlxGamepad;
 import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxDestroyUtil;
 
@@ -12,29 +14,72 @@ class MultiKey implements IFlxDestroyable
 	/**
 	 * The keycode for the main key itself, ie, tab
 	 */
-	public var key:FlxKey;
+	public var key:Null<FlxKey>;
+	
+	/**
+	 * The buttonID for the main key itself, ie, DPAD_LEFT
+	 */
+	public var gamepadBtn:Null<ButtonID>;
+	
+	/**
+	 * The gamepad object this key is using
+	 */
+	public var gamepad:FlxGamepad;
+	
 	/**
 	 * Any other keys that must be pressed at the same time, ie, shift, alt, etc
 	 */
-	public var combos:Array<FlxKey>;
+	public var comboKeys:Array<FlxKey>;
+	
+	/**
+	 * Any other gamepad buttons that must be pressed at the same time
+	 */
+	public var comboGamepadBtns:Array<ButtonID>;
+	
 	/**
 	 * Any other keys, that if pressed at the same time, forbid the press.
 	 * (Forbidden is useful so you can distinguish a "TAB" from a "SHIFT+TAB"
 	 * -- you add "SHIFT" to the first one's forbidden list)
 	 */
-	public var forbiddens:Array<FlxKey>;
+	public var forbiddenKeys:Array<FlxKey>;
 	
-	public function new(Key:FlxKey, ?Combos:Array<FlxKey>, ?Forbiddens:Array<FlxKey>) 
+	/**
+	 * Any other gamepad buttons, that if pressed at the same time, forbid the press.
+	 */
+	public var forbiddenGamepadBtns:Array<ButtonID>;
+	
+	public function new(?Key:FlxKey, ?ComboKeys:Array<FlxKey>, ?ForbiddenKeys:Array<FlxKey>, ?Gamepad:FlxGamepad, ?GamepadBtn:ButtonID, ?ComboGamepadBtns:Array<ButtonID>, ?ForbiddenGamepadBtns:Array<ButtonID>) 
 	{
 		key = Key;
-		combos = Combos;
-		forbiddens = Forbiddens;
+		comboKeys = ComboKeys;
+		forbiddenKeys = ForbiddenKeys;
+		
+		gamepad = Gamepad;
+		
+		gamepadBtn = GamepadBtn;
+		comboGamepadBtns = ComboGamepadBtns;
+		forbiddenGamepadBtns = ForbiddenGamepadBtns;
+		
+		if (key == null && gamepadBtn == null)
+		{
+			throw "either key or gamepadBtn must be not null!";
+		}
+		
+		if (gamepadBtn != null && gamepad == null)
+		{
+			trace("gamepadBtn = " + gamepadBtn + " gamepad = " + gamepad);
+			trace("pads = " + FlxG.gamepads.getActiveGamepads());
+			throw "gamepadBtn defined, but gamepad was null!";
+		}
 	}
 	
 	public function destroy():Void
 	{
-		combos = null;
-		forbiddens = null;
+		comboKeys = null;
+		forbiddenKeys = null;
+		comboGamepadBtns = null;
+		forbiddenGamepadBtns = null;
+		gamepad = null;
 	}
 	
 	/**
@@ -43,9 +88,16 @@ class MultiKey implements IFlxDestroyable
 	
 	public function justPressed():Bool
 	{
-		if (FlxG.keys.checkStatus(key, JUST_PRESSED) == false)
+		if (key != null && FlxG.keys.checkStatus(key, JUST_PRESSED) == false)
 		{
 			return false;
+		}
+		if (gamepad != null && gamepadBtn != null)
+		{
+			if (gamepad.checkStatus(gamepadBtn, JUST_PRESSED) == false)
+			{
+				return false;
+			}
 		}
 		return passCombosAndForbiddens();
 	}
@@ -56,11 +108,18 @@ class MultiKey implements IFlxDestroyable
 	
 	public function justReleased():Bool
 	{
-		if (FlxG.keys.checkStatus(key, JUST_RELEASED) == false)
+		if (key != null && FlxG.keys.checkStatus(key, JUST_RELEASED) == false)
 		{
 			return false;
 		}
-		return forbiddens == null || checkForbiddens(false);
+		if (gamepad != null && gamepadBtn != null)
+		{
+			if (gamepad.checkStatus(gamepadBtn, JUST_RELEASED) == false)
+			{
+				return false;
+			}
+		}
+		return (forbiddenKeys == null && forbiddenGamepadBtns == null) || (checkForbiddenKeys(false) && checkForbiddenGamepadBtns(false));
 	}
 	
 	/**
@@ -69,11 +128,19 @@ class MultiKey implements IFlxDestroyable
 	
 	public function pressed():Bool
 	{
-		if (FlxG.keys.checkStatus(key, PRESSED) == false)
+		if (key != null && FlxG.keys.checkStatus(key, PRESSED) == false)
 		{
 			return false;
 		}
-		return passCombosAndForbiddens();
+		if (gamepad != null && gamepadBtn != null)
+		{
+			if (gamepad.checkStatus(gamepadBtn, PRESSED) == false)
+			{
+				return false;
+			}
+		}
+		var b = passCombosAndForbiddens();
+		return b;
 	}
 	
 	public function equals(other:MultiKey):Bool
@@ -82,29 +149,61 @@ class MultiKey implements IFlxDestroyable
 		{
 			return false;
 		}
-		if ((combos == null) != (other.combos == null)) 
+		if (gamepadBtn != other.gamepadBtn)
 		{
 			return false;
 		}
-		if ((forbiddens == null) != (other.forbiddens == null))
+		if ((comboKeys == null) != (other.comboKeys == null)) 
 		{
 			return false;
 		}
-		if (combos != null && other.combos != null)
+		if ((comboGamepadBtns == null) != (other.comboGamepadBtns == null))
 		{
-			for (i in combos)
+			return false;
+		}
+		if ((forbiddenKeys == null) != (other.forbiddenKeys == null))
+		{
+			return false;
+		}
+		if ((forbiddenGamepadBtns == null) != (other.forbiddenGamepadBtns == null))
+		{
+			return false;
+		}
+		if (comboKeys != null && other.comboKeys != null)
+		{
+			for (i in comboKeys)
 			{
-				if (other.combos.indexOf(i) == -1)
+				if (other.comboKeys.indexOf(i) == -1)
 				{
 					return false;
 				}
 			}
 		}
-		if (forbiddens != null && other.forbiddens != null)
+		if (forbiddenKeys != null && other.forbiddenKeys != null)
 		{
-			for (i in forbiddens)
+			for (i in forbiddenKeys)
 			{
-				if (other.forbiddens.indexOf(i) == -1)
+				if (other.forbiddenKeys.indexOf(i) == -1)
+				{
+					return false;
+				}
+			}
+		}
+		if (comboGamepadBtns != null && other.comboGamepadBtns != null)
+		{
+			for (i in comboGamepadBtns)
+			{
+				if (other.comboGamepadBtns.indexOf(i) == -1)
+				{
+					return false;
+				}
+			}
+		}
+		if (forbiddenGamepadBtns != null && other.forbiddenGamepadBtns != null)
+		{
+			for (i in forbiddenGamepadBtns)
+			{
+				if (other.forbiddenGamepadBtns.indexOf(i) == -1)
 				{
 					return false;
 				}
@@ -113,31 +212,41 @@ class MultiKey implements IFlxDestroyable
 		return true;
 	}
 	
-	/*********PRIVATE*********/
-	
 	/**
 	 * Check Combo/Forbidden values. Default--are combos all pressed, AND are forbiddens all NOT pressed?
 	 */
 	
-	private function passCombosAndForbiddens(comboValue:Bool=true,forbiddenValue:Bool=false):Bool
+	private function passCombosAndForbiddens(comboValue:Bool=true, forbiddenValue:Bool=false):Bool
 	{
 		//Pass if combos don't exist, or if ALL of them match the specified boolean value
-		var passCombos = combos == null || checkCombos(comboValue);
+		var passComboKeys       = (comboKeys == null)        || checkComboKeys(comboValue);
+		var passComboGamepadBns = (comboGamepadBtns == null) || checkComboGamepadBtns(comboValue);
 		
 		//Pass if forbiddens don't exist, or if ALL of them match the specified boolean value
-		var passForbids = forbiddens == null || checkForbiddens(forbiddenValue);
+		var passForbiddenKeys        = (forbiddenKeys == null)        || checkForbiddenKeys(forbiddenValue);
+		var passForbiddenGamepadBtns = (forbiddenGamepadBtns == null) || checkForbiddenGamepadBtns(forbiddenValue);
 		
-		//Both must pass!
-		return passCombos && passForbids;
+		//All must pass!
+		return passComboKeys && passComboGamepadBns && passForbiddenKeys && passForbiddenGamepadBtns;
 	}
 	
-	private function checkCombos(value:Bool):Bool
+	private function checkComboKeys(value:Bool):Bool
 	{
-		return FlxG.keys.anyPressed(combos) == value;
+		return FlxG.keys.anyPressed(comboKeys) == value;
 	}
 	
-	private function checkForbiddens(value:Bool):Bool
+	private function checkForbiddenKeys(value:Bool):Bool
 	{
-		return FlxG.keys.anyPressed(forbiddens) == value;
+		return FlxG.keys.anyPressed(forbiddenKeys) == value;
+	}
+	
+	private function checkComboGamepadBtns(value:Bool):Bool
+	{
+		return gamepad.anyPressed(comboGamepadBtns) == value;
+	}
+	
+	private function checkForbiddenGamepadBtns(value:Bool):Bool
+	{
+		return gamepad.anyPressed(forbiddenGamepadBtns) == value;
 	}
 }
