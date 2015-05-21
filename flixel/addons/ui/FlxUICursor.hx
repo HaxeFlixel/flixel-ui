@@ -233,11 +233,7 @@ class FlxUICursor extends FlxUISprite
 				}
 			}
 		}
-		else
-		{
-			return gamepad;
-		}
-		return null;
+		return gamepad;
 	}
 	
 	private function _sortXY(a:IFlxUIWidget, b:IFlxUIWidget):Int {
