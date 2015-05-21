@@ -7,7 +7,7 @@ import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxG;
 import flixel.FlxObject;
-import flixel.input.gamepad.ButtonID;
+import flixel.input.gamepad.FlxGamepadID;
 import flixel.input.gamepad.FlxGamepad;
 import flixel.input.mouse.FlxMouse;
 import flixel.math.FlxMath;
@@ -34,37 +34,37 @@ class FlxUICursor extends FlxUISprite
 		return location;
 	}
 	
-	//Key configurations, you can set easily with setDefaultKeys(KEYS_DEFAULT_TAB), for instance.
+	//Key configurations, you can set easily with setDefaultKeys(KEYS_TAB), for instance.
 	
-	public var keysUp:Array<MultiKey>;		//List of keys (ie, tab) and/or key combinations (ie, shift+tab) that indicate intent to go "up"
-	public var keysDown:Array<MultiKey>;	
-	public var keysLeft:Array<MultiKey>;	
-	public var keysRight:Array<MultiKey>;	
-	public var keysClick:Array<MultiKey>;	//intent to "click" or select
+	public var keysUp:Array<MultiKey>;    //List of keys (ie, tab) and/or key combinations (ie, shift+tab) that indicate intent to go "up"
+	public var keysDown:Array<MultiKey>;
+	public var keysLeft:Array<MultiKey>;
+	public var keysRight:Array<MultiKey>;
+	public var keysClick:Array<MultiKey>; //intent to "click" or select
 	
 	//Various default key configurations:
 	
-	public static inline var KEYS_DEFAULT_TAB:Int =                 0x00000001;	//tab to go "right", shift+tab to go "left", enter to click
-	public static inline var KEYS_DEFAULT_WASD:Int =                0x00000010;	//WASD to go up/left/down/right, enter to click
-	public static inline var KEYS_DEFAULT_ARROWS:Int =              0x00000100;	//Arrows to go up/left/down/right, enter to click
-	public static inline var KEYS_DEFAULT_NUMPAD:Int =              0x00001000;	//Numpad numbers to go up/left/down/right, enter to click
+	public static inline var KEYS_TAB:Int =                 0x00000001; //tab to go "right", shift+tab to go "left", enter to click
+	public static inline var KEYS_WASD:Int =                0x00000010; //WASD to go up/left/down/right, enter to click
+	public static inline var KEYS_ARROWS:Int =              0x00000100; //Arrows to go up/left/down/right, enter to click
+	public static inline var KEYS_NUMPAD:Int =              0x00001000; //Numpad numbers to go up/left/down/right, enter to click
 	
-	public static inline var GAMEPAD_DEFAULT_DPAD:Int =             0x00010000;	//DPAD to go up/left/down/right, A to click
-	public static inline var GAMEPAD_DEFAULT_LEFT_STICK:Int =       0x00100000;	//Left STICK to go up/left/down/right, A to click
-	public static inline var GAMEPAD_DEFAULT_RIGHT_STICK:Int =      0x01000000;	//Right STICK to go up/left/down/right, A to click
-	public static inline var GAMEPAD_DEFAULT_SHOULDER_BUTTONS:Int = 0x10000000;	//Left / Right shoulder buttons to go left/right, A to click
+	public static inline var GAMEPAD_DPAD:Int =             0x00010000; //DPAD to go up/left/down/right, A to click
+	public static inline var GAMEPAD_LEFT_STICK:Int =       0x00100000; //Left STICK to go up/left/down/right, A to click
+	public static inline var GAMEPAD_RIGHT_STICK:Int =      0x01000000; //Right STICK to go up/left/down/right, A to click
+	public static inline var GAMEPAD_SHOULDER_BUTTONS:Int = 0x10000000; //Left / Right shoulder buttons to go left/right, A to click
 	
 	//Determines how the cursor attaches itself to the widget it's pointing to
 	public var anchor:Anchor;
 	
-	public var dispatchEvents:Bool = true;					//set to false if you just want to rely on callbacks rather than low-level events
+	public var dispatchEvents:Bool = true;                  //set to false if you just want to rely on callbacks rather than low-level events
 	
 	//TODO: make this work
-	public var inputMethod:Int = 0x00;						//simple bitmask for storing what input methods can move the cursor
+	public var inputMethod:Int = 0x00;                      //simple bitmask for storing what input methods can move the cursor
 	
-	public static inline var INPUT_NONE:Int = 0x00;			//No cursor input what
-	public static inline var INPUT_KEYS:Int = 0x01;			//Use keyboard to control the cursor
-	public static inline var INPUT_GAMEPAD:Int = 0x10;		//Use gamepad to control the cursor
+	public static inline var INPUT_NONE:Int = 0x00;         //No cursor input what
+	public static inline var INPUT_KEYS:Int = 0x01;         //Use keyboard to control the cursor
+	public static inline var INPUT_GAMEPAD:Int = 0x10;      //Use gamepad to control the cursor
 	
 	/*********************************/
 	
@@ -72,10 +72,10 @@ class FlxUICursor extends FlxUISprite
 	 * Creates a cursor that can be controlled with the keyboard or gamepad
 	 * @param	Callback		callback to notify listener about when something happens
 	 * @param	InputMethod		bit-flag, accepts INPUT_KEYS, INPUT_GAMEPAD, or both using "|" operator
-	 * @param	DefaultKeys		default hotkey layouts, accepts KEYS_DEFAULT_TAB, ..._WASD, etc, combine using "|" operator
+	 * @param	DefaultKeys		default hotkey layouts, accepts KEYS_TAB, ..._WASD, etc, combine using "|" operator
 	 * @param	Asset			visual asset for the cursor. If not supplied, uses default
 	 */
-	public function new(Callback:String->IFlxUIWidget->Void,InputMethod:Int=INPUT_KEYS,DefaultKeys:Int=KEYS_DEFAULT_TAB,?Asset:Dynamic) 
+	public function new(Callback:String->IFlxUIWidget->Void,InputMethod:Int=INPUT_KEYS,DefaultKeys:Int=KEYS_TAB,?Asset:Dynamic) 
 	{
 		if (Asset == null) {							//No asset detected? Guess based on game's resolution
 			if(FlxG.height < 400){
@@ -164,53 +164,52 @@ class FlxUICursor extends FlxUISprite
 	
 	/**
 	 * Set the default key layout quickly using a constant. 
-	 * @param	code	KEYS_DEFAULT_TAB, ..._WASD, etc, combine with "|" operator
+	 * @param	code	KEYS_TAB, ..._WASD, etc, combine with "|" operator
 	 */
 	
 	public function setDefaultKeys(code:Int):Void {
 		_clearKeys();
 		_newKeys();
-		if (code & KEYS_DEFAULT_TAB == KEYS_DEFAULT_TAB) {
+		if (code & KEYS_TAB == KEYS_TAB) {
 			_addToKeys(keysRight, new MultiKey(TAB, null, [SHIFT]));  //Tab, (but NOT Shift+Tab!)
 			_addToKeys(keysLeft, new MultiKey(TAB, [SHIFT]));         //Shift+Tab
 			_addToKeys(keysClick, new MultiKey(ENTER));
 		}
-		if (code & KEYS_DEFAULT_ARROWS == KEYS_DEFAULT_ARROWS) {
+		if (code & KEYS_ARROWS == KEYS_ARROWS) {
 			_addToKeys(keysRight, new MultiKey(RIGHT));
 			_addToKeys(keysLeft, new MultiKey(LEFT));
 			_addToKeys(keysDown, new MultiKey(DOWN));
 			_addToKeys(keysUp, new MultiKey(UP));
 			_addToKeys(keysClick, new MultiKey(ENTER));
 		}
-		if (code & KEYS_DEFAULT_WASD == KEYS_DEFAULT_WASD) {
+		if (code & KEYS_WASD == KEYS_WASD) {
 			_addToKeys(keysRight, new MultiKey(D));
 			_addToKeys(keysLeft, new MultiKey(A));
 			_addToKeys(keysDown, new MultiKey(S));
 			_addToKeys(keysUp, new MultiKey(W));
 			_addToKeys(keysClick, new MultiKey(ENTER));
 		}
-		if (code & KEYS_DEFAULT_NUMPAD == KEYS_DEFAULT_NUMPAD) {
+		if (code & KEYS_NUMPAD == KEYS_NUMPAD) {
 			_addToKeys(keysRight, new MultiKey(NUMPADSIX));
 			_addToKeys(keysLeft, new MultiKey(NUMPADFOUR));
 			_addToKeys(keysDown, new MultiKey(NUMPADTWO));
 			_addToKeys(keysUp, new MultiKey(NUMPADEIGHT));
 			_addToKeys(keysClick, new MultiKey(ENTER));
 		}
-		if (code & GAMEPAD_DEFAULT_DPAD == GAMEPAD_DEFAULT_DPAD) {
+		if (code & GAMEPAD_DPAD == GAMEPAD_DPAD) {
 			var gamepad = getGamepad();
-			_addToKeys(keysLeft, new MultiKey(gamepad, ButtonID.DPAD_LEFT));
-			_addToKeys(keysRight, new MultiKey(gamepad, ButtonID.DPAD_RIGHT));
-			_addToKeys(keysDown, new MultiKey(gamepad, ButtonID.DPAD_DOWN));
-			_addToKeys(keysUp, new MultiKey(gamepad, ButtonID.DPAD_UP));
-			_addToKeys(keysClick, new MultiKey(gamepad, ButtonID.A));
+			_addToKeys(keysLeft, new MultiKey(gamepad, FlxGamepadID.DPAD_LEFT));
+			_addToKeys(keysRight, new MultiKey(gamepad, FlxGamepadID.DPAD_RIGHT));
+			_addToKeys(keysDown, new MultiKey(gamepad, FlxGamepadID.DPAD_DOWN));
+			_addToKeys(keysUp, new MultiKey(gamepad, FlxGamepadID.DPAD_UP));
+			_addToKeys(keysClick, new MultiKey(gamepad, FlxGamepadID.A));
 		}
-		if (code & GAMEPAD_DEFAULT_SHOULDER_BUTTONS == GAMEPAD_DEFAULT_SHOULDER_BUTTONS) {
+		if (code & GAMEPAD_SHOULDER_BUTTONS == GAMEPAD_SHOULDER_BUTTONS) {
 			var gamepad = getGamepad();
-			_addToKeys(keysLeft, new MultiKey(gamepad, ButtonID.LEFT_SHOULDER));
-			_addToKeys(keysRight, new MultiKey(gamepad, ButtonID.RIGHT_SHOULDER));
-			_addToKeys(keysClick, new MultiKey(gamepad, ButtonID.A));
+			_addToKeys(keysLeft, new MultiKey(gamepad, FlxGamepadID.LEFT_SHOULDER));
+			_addToKeys(keysRight, new MultiKey(gamepad, FlxGamepadID.RIGHT_SHOULDER));
+			_addToKeys(keysClick, new MultiKey(gamepad, FlxGamepadID.A));
 		}
-	}
 	
 	/****PRIVATE****/
 	

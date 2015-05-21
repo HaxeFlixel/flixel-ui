@@ -1,7 +1,7 @@
 package flixel.addons.ui;
 
 import flixel.FlxG;
-import flixel.input.gamepad.ButtonID;
+import flixel.input.gamepad.FlxGamepadID;
 import flixel.input.gamepad.FlxGamepad;
 import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxDestroyUtil;
@@ -19,7 +19,7 @@ class MultiKey implements IFlxDestroyable
 	/**
 	 * The buttonID for the main key itself, ie, DPAD_LEFT
 	 */
-	public var gamepadBtn:Null<ButtonID>;
+	public var gamepadBtn:Null<FlxGamepadID>;
 	
 	/**
 	 * The gamepad object this key is using
@@ -34,7 +34,7 @@ class MultiKey implements IFlxDestroyable
 	/**
 	 * Any other gamepad buttons that must be pressed at the same time
 	 */
-	public var comboGamepadBtns:Array<ButtonID>;
+	public var comboGamepadBtns:Array<FlxGamepadID>;
 	
 	/**
 	 * Any other keys, that if pressed at the same time, forbid the press.
@@ -46,10 +46,9 @@ class MultiKey implements IFlxDestroyable
 	/**
 	 * Any other gamepad buttons, that if pressed at the same time, forbid the press.
 	 */
-	public var forbiddenGamepadBtns:Array<ButtonID>;
+	public var forbiddenGamepadBtns:Array<FlxGamepadID>;
 	
-	public function new(?Key:FlxKey, ?ComboKeys:Array<FlxKey>, ?ForbiddenKeys:Array<FlxKey>, ?Gamepad:FlxGamepad, ?GamepadBtn:ButtonID, ?ComboGamepadBtns:Array<ButtonID>, ?ForbiddenGamepadBtns:Array<ButtonID>) 
-	{
+	public function new(?Key:FlxKey, ?ComboKeys:Array<FlxKey>, ?ForbiddenKeys:Array<FlxKey>, ?Gamepad:FlxGamepad, ?GamepadBtn:FlxGamepadID, ?ComboGamepadBtns:Array<FlxGamepadID>, ?ForbiddenGamepadBtns:Array<FlxGamepadID>) 	{
 		key = Key;
 		comboKeys = ComboKeys;
 		forbiddenKeys = ForbiddenKeys;
