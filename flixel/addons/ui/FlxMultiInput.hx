@@ -1,7 +1,7 @@
 package flixel.addons.ui;
 
 import flixel.FlxG;
-import flixel.input.gamepad.FlxGamepadID;
+import flixel.input.gamepad.FlxGamepadInputID;
 import flixel.input.gamepad.FlxGamepad;
 import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxDestroyUtil;
@@ -19,7 +19,7 @@ class FlxMultiInput implements IFlxDestroyable
 	/**
 	 * The buttonID for the main key itself, ie, DPAD_LEFT
 	 */
-	public var gamepadBtn:Null<FlxGamepadID>;
+	public var gamepadBtn:Null<FlxGamepadInputID>;
 	
 	/**
 	 * The gamepad object this key is using
@@ -34,7 +34,7 @@ class FlxMultiInput implements IFlxDestroyable
 	/**
 	 * Any other gamepad buttons that must be pressed at the same time
 	 */
-	public var comboGamepadBtns:Array<FlxGamepadID>;
+	public var comboGamepadBtns:Array<FlxGamepadInputID>;
 	
 	/**
 	 * Any other keys, that if pressed at the same time, forbid the press.
@@ -46,19 +46,19 @@ class FlxMultiInput implements IFlxDestroyable
 	/**
 	 * Any other gamepad buttons, that if pressed at the same time, forbid the press.
 	 */
-	public var forbiddenGamepadBtns:Array<FlxGamepadID>;
+	public var forbiddenGamepadBtns:Array<FlxGamepadInputID>;
 	
 	public static function fromKey(Key:FlxKey, ?Combos:Array<FlxKey>, ?Forbiddens:Array<FlxKey>)
 	{
 		return new FlxMultiInput(Key, Combos, Forbiddens, null, null, null, null);
 	}
 	
-	public static function fromGamepad(Gamepad:FlxGamepad, ID:FlxGamepadID, ?Combos:Array<FlxGamepadID>, ?Forbiddens:Array<FlxGamepadID>)
+	public static function fromGamepad(Gamepad:FlxGamepad, ID:FlxGamepadInputID, ?Combos:Array<FlxGamepadInputID>, ?Forbiddens:Array<FlxGamepadInputID>)
 	{
 		return new FlxMultiInput(null, null, null, Gamepad, ID, Combos, Forbiddens);
 	}
 	
-	private function new(Key:FlxKey, ComboKeys:Array<FlxKey>, ForbiddenKeys:Array<FlxKey>, Gamepad:FlxGamepad, GamepadBtn:FlxGamepadID, ComboGamepadBtns:Array<FlxGamepadID>, ForbiddenGamepadBtns:Array<FlxGamepadID>)
+	private function new(Key:FlxKey, ComboKeys:Array<FlxKey>, ForbiddenKeys:Array<FlxKey>, Gamepad:FlxGamepad, GamepadBtn:FlxGamepadInputID, ComboGamepadBtns:Array<FlxGamepadInputID>, ForbiddenGamepadBtns:Array<FlxGamepadInputID>)
 	{
 		key = Key;
 		comboKeys = ComboKeys;

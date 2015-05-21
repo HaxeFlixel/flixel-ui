@@ -7,7 +7,7 @@ import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxG;
 import flixel.FlxObject;
-import flixel.input.gamepad.FlxGamepadID;
+import flixel.input.gamepad.FlxGamepadInputID;
 import flixel.input.gamepad.FlxGamepad;
 import flixel.input.mouse.FlxMouse;
 import flixel.math.FlxMath;
@@ -198,17 +198,17 @@ class FlxUICursor extends FlxUISprite
 		}
 		if (code & GAMEPAD_DPAD == GAMEPAD_DPAD) {
 			var gamepad = getGamepad();
-			_addToKeys(keysLeft, FlxMultiInput.fromGamepad(gamepad, FlxGamepadID.DPAD_LEFT));
-			_addToKeys(keysRight, FlxMultiInput.fromGamepad(gamepad, FlxGamepadID.DPAD_RIGHT));
-			_addToKeys(keysDown, FlxMultiInput.fromGamepad(gamepad, FlxGamepadID.DPAD_DOWN));
-			_addToKeys(keysUp, FlxMultiInput.fromGamepad(gamepad, FlxGamepadID.DPAD_UP));
-			_addToKeys(keysClick, FlxMultiInput.fromGamepad(gamepad, FlxGamepadID.A));
+			_addToKeys(keysLeft, FlxMultiInput.fromGamepad(gamepad, FlxGamepadInputID.DPAD_LEFT));
+			_addToKeys(keysRight, FlxMultiInput.fromGamepad(gamepad, FlxGamepadInputID.DPAD_RIGHT));
+			_addToKeys(keysDown, FlxMultiInput.fromGamepad(gamepad, FlxGamepadInputID.DPAD_DOWN));
+			_addToKeys(keysUp, FlxMultiInput.fromGamepad(gamepad, FlxGamepadInputID.DPAD_UP));
+			_addToKeys(keysClick, FlxMultiInput.fromGamepad(gamepad, FlxGamepadInputID.A));
 		}
 		if (code & GAMEPAD_SHOULDER_BUTTONS == GAMEPAD_SHOULDER_BUTTONS) {
 			var gamepad = getGamepad();
-			_addToKeys(keysLeft, FlxMultiInput.fromGamepad(gamepad, FlxGamepadID.LEFT_SHOULDER));
-			_addToKeys(keysRight, FlxMultiInput.fromGamepad(gamepad, FlxGamepadID.RIGHT_SHOULDER));
-			_addToKeys(keysClick, FlxMultiInput.fromGamepad(gamepad, FlxGamepadID.A));
+			_addToKeys(keysLeft, FlxMultiInput.fromGamepad(gamepad, FlxGamepadInputID.LEFT_SHOULDER));
+			_addToKeys(keysRight, FlxMultiInput.fromGamepad(gamepad, FlxGamepadInputID.RIGHT_SHOULDER));
+			_addToKeys(keysClick, FlxMultiInput.fromGamepad(gamepad, FlxGamepadInputID.A));
 		}
 	}
 	
