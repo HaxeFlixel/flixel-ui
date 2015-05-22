@@ -33,6 +33,9 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	
 	private function get_selectedId():String { return _selectedId;}
 	private function set_selectedId(str:String):String {
+		if (_selectedId == _str)
+			return;
+		
 		var i:Int = 0;
 		for (btn in list) {
 			if (btn != null && btn.name == str) {
@@ -54,6 +57,9 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	
 	private function get_selectedLabel():String { return _selectedLabel;}
 	private function set_selectedLabel(str:String):String {
+		if (_selectedLabel == str)
+			return;
+		
 		var i:Int = 0;
 		for (btn in list) {
 			if (btn.label.text == str) {
