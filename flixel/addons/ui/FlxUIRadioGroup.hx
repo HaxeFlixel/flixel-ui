@@ -111,7 +111,7 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 		_width = width_;
 		_height = height_;
 		_label_width = label_width_;
-		if (_ids == null)
+		if (ids_ == null)
 			ids_ = [];
 		if (labels_ == null)
 			labels_ = [];
