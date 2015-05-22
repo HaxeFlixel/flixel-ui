@@ -17,29 +17,17 @@ class FlxMultiKey extends FlxBaseMultiInput
 	
 	private override function checkJustPressed():Bool
 	{
-		if (FlxG.keys.checkStatus(input, JUST_PRESSED) == false)
-		{
-			return false;
-		}
-		return true;
+		return FlxG.keys.checkStatus(input, JUST_PRESSED);
 	}
 	
 	private override function checkJustReleased():Bool
 	{
-		if (FlxG.keys.checkStatus(input, JUST_RELEASED) == false)
-		{
-			return false;
-		}
-		return true;
+		return FlxG.keys.checkStatus(input, JUST_RELEASED);
 	}
 	
 	private override function checkPressed():Bool
 	{
-		if (FlxG.keys.checkStatus(input, PRESSED) == false)
-		{
-			return false;
-		}
-		return true;
+		return FlxG.keys.checkStatus(input, PRESSED);
 	}
 	
 	private override function checkCombos(value:Bool):Bool

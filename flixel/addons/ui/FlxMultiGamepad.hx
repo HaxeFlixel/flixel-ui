@@ -27,29 +27,17 @@ class FlxMultiGamepad extends FlxBaseMultiInput
 	
 	private override function checkJustPressed():Bool
 	{
-		if (gamepad.checkStatus(input, JUST_PRESSED) == false)
-		{
-			return false;
-		}
-		return true;
+		return gamepad.checkStatus(input, JUST_PRESSED);
 	}
 	
 	private override function checkJustReleased():Bool
 	{
-		if (gamepad.checkStatus(input, JUST_RELEASED) == false)
-		{
-			return false;
-		}
-		return true;
+		return gamepad.checkStatus(input, JUST_RELEASED);
 	}
 	
 	private override function checkPressed():Bool
 	{
-		if (gamepad.checkStatus(input, PRESSED) == false)
-		{
-			return false;
-		}
-		return true;
+		return gamepad.checkStatus(input, PRESSED);
 	}
 	
 	private override function checkCombos(value:Bool):Bool
