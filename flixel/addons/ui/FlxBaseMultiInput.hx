@@ -1,34 +1,36 @@
 package flixel.addons.ui;
 
 import flixel.FlxG;
+import flixel.input.gamepad.FlxGamepadInputID;
+import flixel.input.gamepad.FlxGamepad;
 import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxDestroyUtil;
 
 /**
  * Makes it easier to check if, say, SHIFT+Tab is being pressed rather than just Tab by itself
  */
-class MultiKey implements IFlxDestroyable
+class FlxBaseMultiInput implements IFlxDestroyable
 {
 	/**
-	 * The keycode for the main key itself, ie, tab
+	 * The code for the main input itself, ie, tab, or the A button
 	 */
-	public var key:FlxKey;
+	public var input:Int;
+	
 	/**
-	 * Any other keys that must be pressed at the same time, ie, shift, alt, etc
+	 * Any other inputs that must be pressed at the same time, ie, shift, alt, etc
 	 */
-	public var combos:Array<FlxKey>;
+	public var combos:Array<Int>;
+	
 	/**
-	 * Any other keys, that if pressed at the same time, forbid the press.
+	 * Any other inputs, that if pressed at the same time, forbid the press.
 	 * (Forbidden is useful so you can distinguish a "TAB" from a "SHIFT+TAB"
 	 * -- you add "SHIFT" to the first one's forbidden list)
 	 */
-	public var forbiddens:Array<FlxKey>;
+	public var forbiddens:Array<Int>;
 	
-	public function new(Key:FlxKey, ?Combos:Array<FlxKey>, ?Forbiddens:Array<FlxKey>) 
+	public function new()
 	{
-		key = Key;
-		combos = Combos;
-		forbiddens = Forbiddens;
+		//nothing
 	}
 	
 	public function destroy():Void
@@ -37,17 +39,31 @@ class MultiKey implements IFlxDestroyable
 		forbiddens = null;
 	}
 	
+	private function checkJustPressed():Bool
+	{
+		return false;
+		//override
+	}
+	
+	private function checkJustReleased():Bool
+	{
+		return false;
+		//override
+	}
+	
+	private function checkPressed():Bool
+	{
+		return false;
+		//override
+	}
+	
 	/**
 	 * Was the main key JUST pressed, AND are all of the combo keys currently pressed? (and none of the forbiddens?)
 	 */
 	
 	public function justPressed():Bool
 	{
-		if (FlxG.keys.checkStatus(key, JUST_PRESSED) == false)
-		{
-			return false;
-		}
-		return passCombosAndForbiddens();
+		return checkJustPressed() && passCombosAndForbiddens();
 	}
 	
 	/**
@@ -56,11 +72,7 @@ class MultiKey implements IFlxDestroyable
 	
 	public function justReleased():Bool
 	{
-		if (FlxG.keys.checkStatus(key, JUST_RELEASED) == false)
-		{
-			return false;
-		}
-		return forbiddens == null || checkForbiddens(false);
+		return checkJustReleased() && ((forbiddens == null) || (checkForbiddens(false)));
 	}
 	
 	/**
@@ -69,20 +81,24 @@ class MultiKey implements IFlxDestroyable
 	
 	public function pressed():Bool
 	{
-		if (FlxG.keys.checkStatus(key, PRESSED) == false)
-		{
-			return false;
-		}
-		return passCombosAndForbiddens();
+		return checkPressed() && passCombosAndForbiddens();
 	}
 	
-	public function equals(other:MultiKey):Bool
+	public function equals(other:FlxBaseMultiInput):Bool
 	{
-		if (key != other.key)
+		if (other == null)
 		{
 			return false;
 		}
-		if ((combos == null) != (other.combos == null)) 
+		if (Type.typeof(other) != Type.typeof(this))
+		{
+			return false;
+		}
+		if (input != other.input)
+		{
+			return false;
+		}
+		if ((combos == null) != (other.combos == null))
 		{
 			return false;
 		}
@@ -113,31 +129,30 @@ class MultiKey implements IFlxDestroyable
 		return true;
 	}
 	
-	/*********PRIVATE*********/
-	
 	/**
 	 * Check Combo/Forbidden values. Default--are combos all pressed, AND are forbiddens all NOT pressed?
 	 */
 	
-	private function passCombosAndForbiddens(comboValue:Bool=true,forbiddenValue:Bool=false):Bool
+	private function passCombosAndForbiddens(comboValue:Bool=true, forbiddenValue:Bool=false):Bool
 	{
 		//Pass if combos don't exist, or if ALL of them match the specified boolean value
-		var passCombos = combos == null || checkCombos(comboValue);
-		
+		var passCombos     = (combos == null)     || checkCombos(comboValue);
 		//Pass if forbiddens don't exist, or if ALL of them match the specified boolean value
-		var passForbids = forbiddens == null || checkForbiddens(forbiddenValue);
+		var passForbiddens = (forbiddens == null) || checkForbiddens(forbiddenValue);
 		
-		//Both must pass!
-		return passCombos && passForbids;
+		//All must pass!
+		return passCombos && passForbiddens;
 	}
 	
 	private function checkCombos(value:Bool):Bool
 	{
-		return FlxG.keys.anyPressed(combos) == value;
+		//override
+		return false;
 	}
 	
 	private function checkForbiddens(value:Bool):Bool
 	{
-		return FlxG.keys.anyPressed(forbiddens) == value;
+		//override
+		return false;
 	}
 }
