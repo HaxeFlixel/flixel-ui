@@ -177,7 +177,6 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		
 		//_ui_control_callback = UIControlCallback;
 		header.button.onUp.callback = onDropdown;
-		setData(DataList);
 		add(header);
 	}
 	
