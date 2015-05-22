@@ -20,7 +20,7 @@ class FlxMultiGamepadAnalogStick extends FlxMultiGamepad
 	override public function destroy():Void 
 	{
 		super.destroy();
-		gamepad = null;
+		sInput = null;
 	}
 	
 	private override function checkJustPressed():Bool
