@@ -38,8 +38,9 @@ class FlxMultiGamepadAnalogStick extends FlxMultiGamepad
 							gamepad.analog.value.LEFT_STICK_X >  dz : 
 							gamepad.analog.value.LEFT_STICK_X < -dz;
 					}
+					false;
 				}
-				else if (sInput.axis == Y)
+				else
 				{
 					if (gamepad.analog.justMoved.LEFT_STICK_Y)
 					{
@@ -47,6 +48,7 @@ class FlxMultiGamepadAnalogStick extends FlxMultiGamepad
 							gamepad.analog.value.LEFT_STICK_Y >  dz :
 							gamepad.analog.value.LEFT_STICK_Y < -dz;
 					}
+					false;
 				}
 			case RIGHT_ANALOG_STICK:
 				if (sInput.axis == X)
@@ -57,8 +59,9 @@ class FlxMultiGamepadAnalogStick extends FlxMultiGamepad
 							gamepad.analog.value.RIGHT_STICK_X > dz :
 							gamepad.analog.value.RIGHT_STICK_X < -dz;
 					}
+					false;
 				}
-				else if (sInput.axis == Y)
+				else
 				{
 					if (gamepad.analog.justMoved.RIGHT_STICK_Y)
 					{
@@ -66,6 +69,7 @@ class FlxMultiGamepadAnalogStick extends FlxMultiGamepad
 							gamepad.analog.value.RIGHT_STICK_Y >  dz :
 							gamepad.analog.value.RIGHT_STICK_Y < -dz;
 					}
+					false;
 				}
 			default: false;
 		}
@@ -100,7 +104,7 @@ class FlxMultiGamepadAnalogStick extends FlxMultiGamepad
 						gamepad.analog.value.LEFT_STICK_X >  dz : 
 						gamepad.analog.value.LEFT_STICK_X < -dz;
 				}
-				else if (sInput.axis == Y)
+				else
 				{
 					sInput.positive ?
 						gamepad.analog.value.LEFT_STICK_Y >  dz : 
@@ -113,7 +117,7 @@ class FlxMultiGamepadAnalogStick extends FlxMultiGamepad
 						gamepad.analog.value.RIGHT_STICK_X >  dz :
 						gamepad.analog.value.RIGHT_STICK_X < -dz;
 				}
-				else if (sInput.axis == Y)
+				else
 				{
 					sInput.positive ? 
 						gamepad.analog.value.RIGHT_STICK_Y >  dz : 
