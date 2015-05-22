@@ -102,12 +102,19 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 	 * @param	NextButton		Your own custom button for the "next" scroll button
 	 */
 	
-	public function new(X:Float, Y:Float, ids_:Array<String>,labels_:Array<String>, ?callback_:String->Void=null, y_space_:Float=25, width_:Int=100, height_:Int=20, label_width_:Int=100, MoreString:String="<X> more...", PrevButtonOffset:FlxPoint=null,NextButtonOffset:FlxPoint=null, PrevButton:IFlxUIButton=null, NextButton:IFlxUIButton=null):Void {
+	public function new(X:Float, Y:Float, ?ids_:Array<String>, ?labels_:Array<String>, ?callback_:String->Void = null,
+		y_space_:Float = 25, width_:Int = 100, height_:Int = 20, label_width_:Int = 100, MoreString:String = "<X> more...",
+		PrevButtonOffset:FlxPoint=null,NextButtonOffset:FlxPoint=null, PrevButton:IFlxUIButton=null, NextButton:IFlxUIButton=null):Void {
+		
 		super();
 		_y_space = y_space_;
 		_width = width_;
 		_height = height_;
 		_label_width = label_width_;
+		if (_ids == null)
+			ids_ = [];
+		if (labels_ == null)
+			labels_ = [];
 		callback = callback_;
 		_list_radios = new Array<FlxUICheckBox>();
 		_list_active = [];
@@ -200,7 +207,7 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 		_refreshRadios();
 	}
 	
-	@:allow(flixel.addons.ui.FlxUI) private function getRadios():Array<FlxUICheckBox> {
+	public function getRadios():Array<FlxUICheckBox> {
 		return _list_radios;
 	}
 	
@@ -344,8 +351,8 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 	 */
 	
 	private function _refreshRadios():Void {
-		var xx:Float = 0;
-		var yy:Float = 0;
+		var xx:Float = x;
+		var yy:Float = y;
 		var i:Int = 0;
 		
 		var maxX:Float = 0;

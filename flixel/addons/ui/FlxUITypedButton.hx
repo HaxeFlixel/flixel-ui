@@ -195,8 +195,6 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	/**
 	 * Set all 3 sets of labelOffsets at once
-	 * @param	X
-	 * @param	Y
 	 */
 	
 	public function setAllLabelOffsets(X:Float, Y:Float):Void {
