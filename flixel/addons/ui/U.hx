@@ -351,29 +351,27 @@ class U
 	}	
 	
 	public static inline function test_int(i1:Int, test:String, i2:Int):Bool {
-		var bool:Bool = false;
-		switch(test) {
-			case "==": bool = i1 == i2;
-			case "<": bool = i1 < i2;
-			case ">": bool = i1 > i2;
-			case "<=": bool = i1 <= i2;
-			case ">=": bool = i1 >= i2;
-			case "!=": bool = i1 != i2;
+		return switch(test) {
+			case "==": i1 == i2;
+			case "<": i1 < i2;
+			case ">": i1 > i2;
+			case "<=": i1 <= i2;
+			case ">=": i1 >= i2;
+			case "!=": i1 != i2;
+			default: false;
 		}
-		return bool;
 	}
 	
 	public static inline function test_float(f1:Float, test:String, f2:Int):Bool {
-		var bool:Bool = false;
-		switch(test) {
-			case "==": bool = f1 == f2;
-			case "<": bool = f1 < f2;
-			case ">": bool = f1 > f2;
-			case "<=": bool = f1 <= f2;
-			case ">=": bool = f1 >= f2;
-			case "!=": bool = f1 != f2;
+		return switch(test) {
+			case "==": f1 == f2;
+			case "<": f1 < f2;
+			case ">": f1 > f2;
+			case "<=": f1 <= f2;
+			case ">=": f1 >= f2;
+			case "!=": f1 != f2;
+			default: false;
 		}
-		return bool;
 	}
 	
 	/**
@@ -450,20 +448,16 @@ class U
 	 */
 	
 	public static inline function hexChar2dec(hex_char:String):Int {
-		var val:Int = -1;
-		switch(hex_char) {
-			case "0","1","2","3","4","5","6","7","8","9","10":val = Std.parseInt(hex_char);
-			case "A","a": val = 10;
-			case "B", "b": val = 11; 
-			case "C", "c": val = 12; 
-			case "D", "d": val = 13; 
-			case "E", "e": val = 14; 
-			case "F", "f": val = 15; 
+		return switch(hex_char) {
+			case "0","1","2","3","4","5","6","7","8","9","10": Std.parseInt(hex_char);
+			case "A","a": 10;
+			case "B", "b": 11;
+			case "C", "c": 12;
+			case "D", "d": 13;
+			case "E", "e": 14;
+			case "F", "f": 15;
+			default: throw "U.hexChar2dec() illegal char(" + hex_char + ")";
 		}
-		if(val == -1){
-			throw "U.hexChar2dec() illegal char(" + hex_char + ")";
-		}
-		return val;
 	}
 	
 	/**
@@ -1028,27 +1022,27 @@ class U
 	public static function blendModeFromString(str:String):BlendMode
 	{
 		str = str.toLowerCase();
-		switch(str)
+		return switch(str)
 		{
-			case "add"		 : 	return BlendMode.ADD;
-			case "alpha" 	 :	return BlendMode.ALPHA;
-			case "darken" 	 : 	return BlendMode.DARKEN;
-			case "difference":  return BlendMode.DIFFERENCE;
-			case "erase" 	 :  return BlendMode.ERASE;
-			case "hardlight" : 	return BlendMode.HARDLIGHT;
-			case "invert" 	 : 	return BlendMode.INVERT;
-			case "layer" 	 : 	return BlendMode.LAYER;
-			case "lighten" 	 : 	return BlendMode.LIGHTEN;
-			case "multiply"  : 	return BlendMode.MULTIPLY;
-			case "normal" 	 : 	return BlendMode.NORMAL;
-			case "overlay" 	 : 	return BlendMode.OVERLAY;
-			case "screen" 	 : 	return BlendMode.SCREEN;
-			case "subtract"  : 	return BlendMode.SUBTRACT;
+			case "add"		 : BlendMode.ADD;
+			case "alpha" 	 : BlendMode.ALPHA;
+			case "darken" 	 : BlendMode.DARKEN;
+			case "difference": BlendMode.DIFFERENCE;
+			case "erase" 	 : BlendMode.ERASE;
+			case "hardlight" : BlendMode.HARDLIGHT;
+			case "invert" 	 : BlendMode.INVERT;
+			case "layer" 	 : BlendMode.LAYER;
+			case "lighten" 	 : BlendMode.LIGHTEN;
+			case "multiply"  : BlendMode.MULTIPLY;
+			case "normal" 	 : BlendMode.NORMAL;
+			case "overlay" 	 : BlendMode.OVERLAY;
+			case "screen" 	 : BlendMode.SCREEN;
+			case "subtract"  : BlendMode.SUBTRACT;
 			#if flash
 				case "shader" 	 : 	return BlendMode.SHADER;
 			#end
+			default: BlendMode.NORMAL;
 		}
-		return BlendMode.NORMAL;
 	}
 	
 	/**
@@ -1624,8 +1618,6 @@ class U
 	
 	/**
 	 * Get the dimensions of a bit string
-	 * @param	str
-	 * @return
 	 */
 	
 	public static inline function bitStringDimensions(str:String):Point {
@@ -1642,8 +1634,6 @@ class U
 	
 	/**
 	 * Splits a binary string with endlines into a big long int array
-	 * @param	str
-	 * @return
 	 */
 	
 	public static inline function splitBitString(str:String):Array<Int> {
@@ -1663,142 +1653,139 @@ class U
 	}
 	
 	public static function getShortTextFromFlxKeyText(str:String):String {
-		var s:String = str.toUpperCase();
-		switch(str) {
-			case "ESC": 
-			case "ESCAPE": s = "EC"; 
-			case "MINUS": s = "-"; 
-			case "PLUS": s = "+"; 
-			case "EQUALS": s = "="; 				
-			case "DELETE": s = "DE"; 
-			case "BACKSPACE": s = "BK"; 
-			case "LBRACKET": s = "["; 
-			case "RBRACKET": s = "]"; 
-			case "BACKSLASH": s = "\\"; 
-			case "SEMICOLON": s = ";"; 
-			case "QUOTE": s = "\""; 
-			case "ENTER": s = "EN"; 
-			case "SHIFT": s = "SH"; 
-			case "COMMA": s = ","; 
-			case "PERIOD": s = "."; 
-			case "SLASH": s = "/"; 
-			case "CONTROL": s = "CT"; 
-			case "ALT": s = "AT"; 
-			case "SPACE": s = "SP"; 
-			case "UP": s = "UP"; 
-			case "DOWN": s = "DN"; 
-			case "LEFT": s = "LT"; 
-			case "RIGHT": s = "RT"; 
-			case "ZERO": s = "0"; 
-			case "ONE": s = "1"; 
-			case "TWO": s = "2"; 
-			case "THREE": s = "3"; 
-			case "FOUR": s = "4"; 
-			case "FIVE": s = "5"; 
-			case "SIX": s = "6"; 
-			case "SEVEN": s = "7"; 
-			case "EIGHT": s = "8"; 
-			case "NINE": s = "9"; 
-			case "TEN": s = "10"; 
-			case "ACCENT": s = "`"; 
-			case "TAB": s = "TB"; 
-			case "CAPSLOCK": s = "CP"; 
-			case "PAUSEBREAK": s = "PB"; 
-			case "HOME": s = "HM"; 
-			case "INSERT": s = "IN"; 
-			case "PAGEUP": s = "PU"; 
-			case "PAGEDOWN": s = "PD"; 
-			case "END": s = "ED"; 
-			case "NUMLOCK": s = "NM"; 
-			case "SCROLLLOCK": s = "SC"; 
-			case "NUM0": s = "N0"; 
-			case "NUM1": s = "N1"; 
-			case "NUM2": s = "N2";  
-			case "NUM3": s = "N3";  
-			case "NUM4": s = "N4";  
-			case "NUM5": s = "N5";  
-			case "NUM6": s = "N6";  
-			case "NUM7": s = "N7";  
-			case "NUM8": s = "N8";  
-			case "NUM9": s = "N9";  
-			case "NUMDIV": s = "N/"; 
-			case "NUMMULT": s = "N*"; 
-			case "NUMPLUS": s = "N+"; 
-			case "NUMMINUS": s = "N-"; 
-			case "NUMDEC": s = "N."; 
-			case "NULL": s = " "; 
-			default: s = str; 
+		str = str.toUpperCase();
+		return switch(str) {
+			case "ESCAPE" | "ESC": "EC";
+			case "MINUS": "-";
+			case "PLUS": "+";
+			case "EQUALS": "=";
+			case "DELETE": "DE";
+			case "BACKSPACE": "BK";
+			case "LBRACKET": "[";
+			case "RBRACKET": "]";
+			case "BACKSLASH": "\\";
+			case "SEMICOLON": ";";
+			case "QUOTE": "\"";
+			case "ENTER": "EN";
+			case "SHIFT": "SH";
+			case "COMMA": ",";
+			case "PERIOD": ".";
+			case "SLASH": "/";
+			case "CONTROL": "CT";
+			case "ALT": "AT";
+			case "SPACE": "SP";
+			case "UP": "UP";
+			case "DOWN": "DN";
+			case "LEFT": "LT";
+			case "RIGHT": "RT";
+			case "ZERO": "0";
+			case "ONE": "1";
+			case "TWO": "2";
+			case "THREE": "3";
+			case "FOUR": "4";
+			case "FIVE": "5";
+			case "SIX": "6";
+			case "SEVEN": "7";
+			case "EIGHT": "8";
+			case "NINE": "9";
+			case "TEN": "10";
+			case "ACCENT": "`";
+			case "TAB": "TB";
+			case "CAPSLOCK": "CP";
+			case "PAUSEBREAK": "PB";
+			case "HOME": "HM";
+			case "INSERT": "IN";
+			case "PAGEUP": "PU";
+			case "PAGEDOWN": "PD";
+			case "END": "ED";
+			case "NUMLOCK": "NM";
+			case "SCROLLLOCK": "SC";
+			case "NUM0": "N0";
+			case "NUM1": "N1";
+			case "NUM2": "N2"; 
+			case "NUM3": "N3"; 
+			case "NUM4": "N4"; 
+			case "NUM5": "N5"; 
+			case "NUM6": "N6"; 
+			case "NUM7": "N7"; 
+			case "NUM8": "N8"; 
+			case "NUM9": "N9"; 
+			case "NUMDIV": "N/";
+			case "NUMMULT": "N*";
+			case "NUMPLUS": "N+";
+			case "NUMMINUS": "N-";
+			case "NUMDEC": "N.";
+			case "NULL": " ";
+			default: str;
 		}
-		return s;
 	}
 	
 	public static function getFlxKeyTextFromShortText(str:String):String {
-		var s:String = str.toUpperCase();
-		switch(str) {
-			case "EC": s = "ESCAPE"; 
-			case "-": s = "MINUS"; 
-			case "=": s = "EQUALS"; 
-			case "+": s = "PLUS"; 
-			case "DE": s = "DELETE"; 
-			case "BK": s = "BACKSPACE"; 
-			case "[": s = "LBRACKET"; 
-			case "]": s = "RBRACKET"; 
-			case "\\": s = "BACKSLASH"; 
-			case "CP": s = "CAPSLOCK"; 
-			case ";": s = "SEMICOLON"; 
-			case "\"": s = "QUOTE"; 
-			case "EN": s = "ENTER"; 
-			case "SH": s = "SHIFT"; 
-			case ",": s = "COMMA"; 
-			case ".": s = "PERIOD"; 
-			case "/": s = "SLASH"; 
-			case "CT": s = "CONTROL"; 
-			case "AT": s = "ALT"; 
-			case "SP": s = "SPACE"; 
-			case "UP": s = "UP"; 
-			case "DN": s = "DOWN"; 
-			case "LT": s = "LEFT"; 
-			case "RT": s = "RIGHT"; 
-			case "0": s = "ZERO"; 
-			case "1": s = "ONE"; 
-			case "2": s = "TWO"; 
-			case "3": s = "THREE"; 
-			case "4": s = "FOUR"; 
-			case "5": s = "FIVE"; 
-			case "6": s = "SIX"; 
-			case "7": s = "SEVEN"; 
-			case "8": s = "EIGHT"; 
-			case "9": s = "NINE"; 
-			case "10": s = "TEN"; 
-			case "`": s = "ACCENT"; 
-			case "TB": s = "TAB"; 
-			case "PB": s = "PAUSEBREAK"; 
-			case "HM": s = "HOME"; 
-			case "IN": s = "INSERT"; 
-			case "PU": s = "PAGEUP"; 
-			case "PD": s = "PAGEDOWN"; 
-			case "ED": s = "END"; 
-			case "NM": s = "NUMLOCK"; 
-			case "SC": s = "SCROLLLOCK"; 
-			case "N0": s = "NUM0"; 
-			case "N1": s = "NUM1"; 
-			case "N2": s = "NUM2"; 
-			case "N3": s = "NUM3"; 
-			case "N4": s = "NUM4"; 
-			case "N5": s = "NUM5"; 
-			case "N6": s = "NUM6"; 
-			case "N7": s = "NUM7"; 
-			case "N8": s = "NUM8"; 
-			case "N9": s = "NUM9"; 
-			case "N.": s = "NUMDEC"; 
-			case "N/": s = "NUMDIV"; 
-			case "N+": s = "NUMPLUS"; 
-			case "N-": s = "NUMMINUS"; 
-			case "*": s = "NUMMULT"; 
-			case "": s = " "; 
-			default: s = str; 
+		str = str.toUpperCase();
+		return switch(str) {
+			case "EC": "ESCAPE";
+			case "-": "MINUS";
+			case "=": "EQUALS";
+			case "+": "PLUS";
+			case "DE": "DELETE";
+			case "BK": "BACKSPACE";
+			case "[": "LBRACKET";
+			case "]": "RBRACKET";
+			case "\\": "BACKSLASH";
+			case "CP": "CAPSLOCK";
+			case ";": "SEMICOLON";
+			case "\"": "QUOTE";
+			case "EN": "ENTER";
+			case "SH": "SHIFT";
+			case ",": "COMMA";
+			case ".": "PERIOD";
+			case "/": "SLASH";
+			case "CT": "CONTROL";
+			case "AT": "ALT";
+			case "SP": "SPACE";
+			case "UP": "UP";
+			case "DN": "DOWN";
+			case "LT": "LEFT";
+			case "RT": "RIGHT";
+			case "0": "ZERO";
+			case "1": "ONE";
+			case "2": "TWO";
+			case "3": "THREE";
+			case "4": "FOUR";
+			case "5": "FIVE";
+			case "6": "SIX";
+			case "7": "SEVEN";
+			case "8": "EIGHT";
+			case "9": "NINE";
+			case "10": "TEN";
+			case "`": "ACCENT";
+			case "TB": "TAB";
+			case "PB": "PAUSEBREAK";
+			case "HM": "HOME";
+			case "IN": "INSERT";
+			case "PU": "PAGEUP";
+			case "PD": "PAGEDOWN";
+			case "ED": "END";
+			case "NM": "NUMLOCK";
+			case "SC": "SCROLLLOCK";
+			case "N0": "NUM0";
+			case "N1": "NUM1";
+			case "N2": "NUM2";
+			case "N3": "NUM3";
+			case "N4": "NUM4";
+			case "N5": "NUM5";
+			case "N6": "NUM6";
+			case "N7": "NUM7";
+			case "N8": "NUM8";
+			case "N9": "NUM9";
+			case "N.": "NUMDEC";
+			case "N/": "NUMDIV";
+			case "N+": "NUMPLUS";
+			case "N-": "NUMMINUS";
+			case "*": "NUMMULT";
+			case "": " ";
+			default: str;
 		}
-		return s;
 	}
 	
 	public static function formatXml(_xml:Xml):String
@@ -1841,11 +1828,12 @@ class U
 	}
 	
 	public static function strCase(str:String, code:String):String {
-		switch(code) {
-			case "u": return str.toUpperCase();		//uppercase
-			case "l": return str.toLowerCase();		//lowercase
-			case "fu": return U.FU(str);			//first letter uppercase
-			case "fu_": return U.FU_(str);			//first letter in each word uppercase
+		return switch(code) {
+			case "u": str.toUpperCase();		//uppercase
+			case "l": str.toLowerCase();		//lowercase
+			case "fu": U.FU(str);			//first letter uppercase
+			case "fu_": U.FU_(str);			//first letter in each word uppercase
+			default: str;
 		}
 		return str;
 	}
