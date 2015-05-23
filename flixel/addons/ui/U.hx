@@ -1347,27 +1347,27 @@ class U
 	
 	public static function bmpToArrayIntLayer(color_index:Int, bd:BitmapData):Array<Int>{
 		//Walk image and export pixel values
-	   var p:Int;
-	   var last_p:Int = -1;
-	   var arr:Array<Int> = [];
-	   var w:Int = bd.width;
-	   var h:Int = bd.height;
-	   for(r in 0...h){
-		   for(c in 0...w){
-			   //Decide if this pixel/tile is solid (1) or not (0)
-			   p = bd.getPixel(c, r);
-			   
-			   if(p == color_index) //it matches our color
-				   p = 1;			 //solid tile
-			   else {				//some other color, ignore it
-				   p = 0;
-			   }
-				   
-			   //Write the result to the string
-			   arr.push(p);
-		   }
-	   }
-	   return arr;
+		var p:Int;
+		var last_p:Int = -1;
+		var arr:Array<Int> = [];
+		var w:Int = bd.width;
+		var h:Int = bd.height;
+		for(r in 0...h){
+			for(c in 0...w){
+				//Decide if this pixel/tile is solid (1) or not (0)
+				p = bd.getPixel(c, r);
+				
+				if(p == color_index) //it matches our color
+					p = 1;			 //solid tile
+				else {				//some other color, ignore it
+					p = 0;
+				}
+
+				//Write the result to the string
+				arr.push(p);
+			}
+		}
+		return arr;
 	}
 	
 	/**
@@ -1380,42 +1380,42 @@ class U
 	* 
 	* @return	A comma-separated string containing the level data in a FlxTilemap-friendly format.
 	*/
-   public static function bmpToCSVLayer(color_index:Int, bd:BitmapData):String{
-	   
-	   //Walk image and export pixel values
-	   var p:Int;
-	   var last_p:Int=-1;
-	   var csv:String = "";
-	   var w:Int = bd.width;
-	   var h:Int = bd.height;
-	   for(r in 0...h){
-		   for(c in 0...w){
-			   //Decide if this pixel/tile is solid (1) or not (0)
-			   p = bd.getPixel(c, r);
-			   
-			   if(p == color_index) //it matches our color
-				   p = 1;			 //solid tile
-			   else {				//some other color, ignore it
-				   p = 0;
-			   }
-				   
-			   //Write the result to the string
-			   if(c == 0)
-			   {
-				   if(r == 0)
-					   csv += p;
-				   else {
-					   csv += "\n" + p;
-				   }
-			   }
-			   else{
-				   csv += ", " + p;
-			   }
-		   }
-	   }
-	   return csv;
-   }
-   
+	public static function bmpToCSVLayer(color_index:Int, bd:BitmapData):String{
+		
+		//Walk image and export pixel values
+		var p:Int;
+		var last_p:Int=-1;
+		var csv:String = "";
+		var w:Int = bd.width;
+		var h:Int = bd.height;
+		for(r in 0...h){
+			for(c in 0...w){
+				//Decide if this pixel/tile is solid (1) or not (0)
+				p = bd.getPixel(c, r);
+				
+				if(p == color_index) //it matches our color
+					p = 1;			 //solid tile
+				else {				//some other color, ignore it
+					p = 0;
+				}
+				
+				//Write the result to the string
+				if(c == 0)
+				{
+					if(r == 0)
+						csv += p;
+					else {
+						csv += "\n" + p;
+					}
+				}
+				else{
+					csv += ", " + p;
+				}
+			}
+		}
+		return csv;
+	}
+
 	public static function get_gfx(str:String):String {
 		var return_str:String = "";
 		
@@ -1663,199 +1663,199 @@ class U
 	}
 	
 	public static function getShortTextFromFlxKeyText(str:String):String {
-			var s:String = str.toUpperCase();
-			switch(str) {
-				case "ESC": 
-				case "ESCAPE": s = "EC"; 
-				case "MINUS": s = "-"; 
-				case "PLUS": s = "+"; 
-				case "EQUALS": s = "="; 				
-				case "DELETE": s = "DE"; 
-				case "BACKSPACE": s = "BK"; 
-				case "LBRACKET": s = "["; 
-				case "RBRACKET": s = "]"; 
-				case "BACKSLASH": s = "\\"; 
-				case "SEMICOLON": s = ";"; 
-				case "QUOTE": s = "\""; 
-				case "ENTER": s = "EN"; 
-				case "SHIFT": s = "SH"; 
-				case "COMMA": s = ","; 
-				case "PERIOD": s = "."; 
-				case "SLASH": s = "/"; 
-				case "CONTROL": s = "CT"; 
-				case "ALT": s = "AT"; 
-				case "SPACE": s = "SP"; 
-				case "UP": s = "UP"; 
-				case "DOWN": s = "DN"; 
-				case "LEFT": s = "LT"; 
-				case "RIGHT": s = "RT"; 
-				case "ZERO": s = "0"; 
-				case "ONE": s = "1"; 
-				case "TWO": s = "2"; 
-				case "THREE": s = "3"; 
-				case "FOUR": s = "4"; 
-				case "FIVE": s = "5"; 
-				case "SIX": s = "6"; 
-				case "SEVEN": s = "7"; 
-				case "EIGHT": s = "8"; 
-				case "NINE": s = "9"; 
-				case "TEN": s = "10"; 
-				case "ACCENT": s = "`"; 
-				case "TAB": s = "TB"; 
-				case "CAPSLOCK": s = "CP"; 
-				case "PAUSEBREAK": s = "PB"; 
-				case "HOME": s = "HM"; 
-				case "INSERT": s = "IN"; 
-				case "PAGEUP": s = "PU"; 
-				case "PAGEDOWN": s = "PD"; 
-				case "END": s = "ED"; 
-				case "NUMLOCK": s = "NM"; 
-				case "SCROLLLOCK": s = "SC"; 
-				case "NUM0": s = "N0"; 
-				case "NUM1": s = "N1"; 
-				case "NUM2": s = "N2";  
-				case "NUM3": s = "N3";  
-				case "NUM4": s = "N4";  
-				case "NUM5": s = "N5";  
-				case "NUM6": s = "N6";  
-				case "NUM7": s = "N7";  
-				case "NUM8": s = "N8";  
-				case "NUM9": s = "N9";  
-				case "NUMDIV": s = "N/"; 
-				case "NUMMULT": s = "N*"; 
-				case "NUMPLUS": s = "N+"; 
-				case "NUMMINUS": s = "N-"; 
-				case "NUMDEC": s = "N."; 
-				case "NULL": s = " "; 
-				default: s = str; 
-			}
-			return s;
+		var s:String = str.toUpperCase();
+		switch(str) {
+			case "ESC": 
+			case "ESCAPE": s = "EC"; 
+			case "MINUS": s = "-"; 
+			case "PLUS": s = "+"; 
+			case "EQUALS": s = "="; 				
+			case "DELETE": s = "DE"; 
+			case "BACKSPACE": s = "BK"; 
+			case "LBRACKET": s = "["; 
+			case "RBRACKET": s = "]"; 
+			case "BACKSLASH": s = "\\"; 
+			case "SEMICOLON": s = ";"; 
+			case "QUOTE": s = "\""; 
+			case "ENTER": s = "EN"; 
+			case "SHIFT": s = "SH"; 
+			case "COMMA": s = ","; 
+			case "PERIOD": s = "."; 
+			case "SLASH": s = "/"; 
+			case "CONTROL": s = "CT"; 
+			case "ALT": s = "AT"; 
+			case "SPACE": s = "SP"; 
+			case "UP": s = "UP"; 
+			case "DOWN": s = "DN"; 
+			case "LEFT": s = "LT"; 
+			case "RIGHT": s = "RT"; 
+			case "ZERO": s = "0"; 
+			case "ONE": s = "1"; 
+			case "TWO": s = "2"; 
+			case "THREE": s = "3"; 
+			case "FOUR": s = "4"; 
+			case "FIVE": s = "5"; 
+			case "SIX": s = "6"; 
+			case "SEVEN": s = "7"; 
+			case "EIGHT": s = "8"; 
+			case "NINE": s = "9"; 
+			case "TEN": s = "10"; 
+			case "ACCENT": s = "`"; 
+			case "TAB": s = "TB"; 
+			case "CAPSLOCK": s = "CP"; 
+			case "PAUSEBREAK": s = "PB"; 
+			case "HOME": s = "HM"; 
+			case "INSERT": s = "IN"; 
+			case "PAGEUP": s = "PU"; 
+			case "PAGEDOWN": s = "PD"; 
+			case "END": s = "ED"; 
+			case "NUMLOCK": s = "NM"; 
+			case "SCROLLLOCK": s = "SC"; 
+			case "NUM0": s = "N0"; 
+			case "NUM1": s = "N1"; 
+			case "NUM2": s = "N2";  
+			case "NUM3": s = "N3";  
+			case "NUM4": s = "N4";  
+			case "NUM5": s = "N5";  
+			case "NUM6": s = "N6";  
+			case "NUM7": s = "N7";  
+			case "NUM8": s = "N8";  
+			case "NUM9": s = "N9";  
+			case "NUMDIV": s = "N/"; 
+			case "NUMMULT": s = "N*"; 
+			case "NUMPLUS": s = "N+"; 
+			case "NUMMINUS": s = "N-"; 
+			case "NUMDEC": s = "N."; 
+			case "NULL": s = " "; 
+			default: s = str; 
 		}
-		
-		public static function getFlxKeyTextFromShortText(str:String):String {
-			var s:String = str.toUpperCase();
-			switch(str) {
-				case "EC": s = "ESCAPE"; 
-				case "-": s = "MINUS"; 
-				case "=": s = "EQUALS"; 
-				case "+": s = "PLUS"; 
-				case "DE": s = "DELETE"; 
-				case "BK": s = "BACKSPACE"; 
-				case "[": s = "LBRACKET"; 
-				case "]": s = "RBRACKET"; 
-				case "\\": s = "BACKSLASH"; 
-				case "CP": s = "CAPSLOCK"; 
-				case ";": s = "SEMICOLON"; 
-				case "\"": s = "QUOTE"; 
-				case "EN": s = "ENTER"; 
-				case "SH": s = "SHIFT"; 
-				case ",": s = "COMMA"; 
-				case ".": s = "PERIOD"; 
-				case "/": s = "SLASH"; 
-				case "CT": s = "CONTROL"; 
-				case "AT": s = "ALT"; 
-				case "SP": s = "SPACE"; 
-				case "UP": s = "UP"; 
-				case "DN": s = "DOWN"; 
-				case "LT": s = "LEFT"; 
-				case "RT": s = "RIGHT"; 
-				case "0": s = "ZERO"; 
-				case "1": s = "ONE"; 
-				case "2": s = "TWO"; 
-				case "3": s = "THREE"; 
-				case "4": s = "FOUR"; 
-				case "5": s = "FIVE"; 
-				case "6": s = "SIX"; 
-				case "7": s = "SEVEN"; 
-				case "8": s = "EIGHT"; 
-				case "9": s = "NINE"; 
-				case "10": s = "TEN"; 
-				case "`": s = "ACCENT"; 
-				case "TB": s = "TAB"; 
-				case "PB": s = "PAUSEBREAK"; 
-				case "HM": s = "HOME"; 
-				case "IN": s = "INSERT"; 
-				case "PU": s = "PAGEUP"; 
-				case "PD": s = "PAGEDOWN"; 
-				case "ED": s = "END"; 
-				case "NM": s = "NUMLOCK"; 
-				case "SC": s = "SCROLLLOCK"; 
-				case "N0": s = "NUM0"; 
-				case "N1": s = "NUM1"; 
-				case "N2": s = "NUM2"; 
-				case "N3": s = "NUM3"; 
-				case "N4": s = "NUM4"; 
-				case "N5": s = "NUM5"; 
-				case "N6": s = "NUM6"; 
-				case "N7": s = "NUM7"; 
-				case "N8": s = "NUM8"; 
-				case "N9": s = "NUM9"; 
-				case "N.": s = "NUMDEC"; 
-				case "N/": s = "NUMDIV"; 
-				case "N+": s = "NUMPLUS"; 
-				case "N-": s = "NUMMINUS"; 
-				case "*": s = "NUMMULT"; 
-				case "": s = " "; 
-				default: s = str; 
-			}
-			return s;
-		}
-		
-		public static function formatXml(_xml:Xml):String
-		{
-			var s:String = _xml.toString();
-			
-			var r:EReg = ~/>[^`<]*</g;
-			s = r.replace(s, ">___SPLITHERE___<"); // inserts identifier between tags.
-			
-			r = ~/___SPLITHERE___/g;
-			var split:Array<String> = r.split(s); // splits into tags using the identifier.
-			
-			// Now assembles each tag sepparated by newLines and identented according to child depth.
-			s = "";
-			var childDepht:Int = 0;
-			var whiteSpace = '\t';
-			
-			for (str in split)
-			{
-				for (i in 0...childDepht)
-				{
-					s += whiteSpace;
-				}
-				
-				if (str.charAt(0) == '<' && str.charAt(1) == '/') // If its a closing bracket
-				{
-					childDepht--;
-					s = s.substr(0, s.length - whiteSpace.length);
-				} 
-				else
-				if (str.charAt(str.length - 1) == '>' && str.charAt(str.length - 2) != '/' && str.charAt(str.length - 2) != '-') // if its an open bracket.
-				{
-					childDepht++;	
-				}
-				
-				s += str + "\n"; // Concatenates the tag in the output with a newline at the end.
-			}
-			
-			return s;
-		}
-		
-		public static function strCase(str:String, code:String):String {
-			switch(code) {
-				case "u": return str.toUpperCase();		//uppercase
-				case "l": return str.toLowerCase();		//lowercase
-				case "fu": return U.FU(str);			//first letter uppercase
-				case "fu_": return U.FU_(str);			//first letter in each word uppercase
-			}
-			return str;
-		}
-		
-		public static function getMatrix():Matrix {
-			if (_matrix == null) {
-				_matrix = new Matrix();
-			}
-			return _matrix;
-		}
+		return s;
+	}
 	
-		private static var _matrix:Matrix = null;
+	public static function getFlxKeyTextFromShortText(str:String):String {
+		var s:String = str.toUpperCase();
+		switch(str) {
+			case "EC": s = "ESCAPE"; 
+			case "-": s = "MINUS"; 
+			case "=": s = "EQUALS"; 
+			case "+": s = "PLUS"; 
+			case "DE": s = "DELETE"; 
+			case "BK": s = "BACKSPACE"; 
+			case "[": s = "LBRACKET"; 
+			case "]": s = "RBRACKET"; 
+			case "\\": s = "BACKSLASH"; 
+			case "CP": s = "CAPSLOCK"; 
+			case ";": s = "SEMICOLON"; 
+			case "\"": s = "QUOTE"; 
+			case "EN": s = "ENTER"; 
+			case "SH": s = "SHIFT"; 
+			case ",": s = "COMMA"; 
+			case ".": s = "PERIOD"; 
+			case "/": s = "SLASH"; 
+			case "CT": s = "CONTROL"; 
+			case "AT": s = "ALT"; 
+			case "SP": s = "SPACE"; 
+			case "UP": s = "UP"; 
+			case "DN": s = "DOWN"; 
+			case "LT": s = "LEFT"; 
+			case "RT": s = "RIGHT"; 
+			case "0": s = "ZERO"; 
+			case "1": s = "ONE"; 
+			case "2": s = "TWO"; 
+			case "3": s = "THREE"; 
+			case "4": s = "FOUR"; 
+			case "5": s = "FIVE"; 
+			case "6": s = "SIX"; 
+			case "7": s = "SEVEN"; 
+			case "8": s = "EIGHT"; 
+			case "9": s = "NINE"; 
+			case "10": s = "TEN"; 
+			case "`": s = "ACCENT"; 
+			case "TB": s = "TAB"; 
+			case "PB": s = "PAUSEBREAK"; 
+			case "HM": s = "HOME"; 
+			case "IN": s = "INSERT"; 
+			case "PU": s = "PAGEUP"; 
+			case "PD": s = "PAGEDOWN"; 
+			case "ED": s = "END"; 
+			case "NM": s = "NUMLOCK"; 
+			case "SC": s = "SCROLLLOCK"; 
+			case "N0": s = "NUM0"; 
+			case "N1": s = "NUM1"; 
+			case "N2": s = "NUM2"; 
+			case "N3": s = "NUM3"; 
+			case "N4": s = "NUM4"; 
+			case "N5": s = "NUM5"; 
+			case "N6": s = "NUM6"; 
+			case "N7": s = "NUM7"; 
+			case "N8": s = "NUM8"; 
+			case "N9": s = "NUM9"; 
+			case "N.": s = "NUMDEC"; 
+			case "N/": s = "NUMDIV"; 
+			case "N+": s = "NUMPLUS"; 
+			case "N-": s = "NUMMINUS"; 
+			case "*": s = "NUMMULT"; 
+			case "": s = " "; 
+			default: s = str; 
+		}
+		return s;
+	}
+	
+	public static function formatXml(_xml:Xml):String
+	{
+		var s:String = _xml.toString();
+		
+		var r:EReg = ~/>[^`<]*</g;
+		s = r.replace(s, ">___SPLITHERE___<"); // inserts identifier between tags.
+		
+		r = ~/___SPLITHERE___/g;
+		var split:Array<String> = r.split(s); // splits into tags using the identifier.
+		
+		// Now assembles each tag sepparated by newLines and identented according to child depth.
+		s = "";
+		var childDepht:Int = 0;
+		var whiteSpace = '\t';
+		
+		for (str in split)
+		{
+			for (i in 0...childDepht)
+			{
+				s += whiteSpace;
+			}
+			
+			if (str.charAt(0) == '<' && str.charAt(1) == '/') // If its a closing bracket
+			{
+				childDepht--;
+				s = s.substr(0, s.length - whiteSpace.length);
+			} 
+			else
+			if (str.charAt(str.length - 1) == '>' && str.charAt(str.length - 2) != '/' && str.charAt(str.length - 2) != '-') // if its an open bracket.
+			{
+				childDepht++;	
+			}
+			
+			s += str + "\n"; // Concatenates the tag in the output with a newline at the end.
+		}
+		
+		return s;
+	}
+	
+	public static function strCase(str:String, code:String):String {
+		switch(code) {
+			case "u": return str.toUpperCase();		//uppercase
+			case "l": return str.toLowerCase();		//lowercase
+			case "fu": return U.FU(str);			//first letter uppercase
+			case "fu_": return U.FU_(str);			//first letter in each word uppercase
+		}
+		return str;
+	}
+	
+	public static function getMatrix():Matrix {
+		if (_matrix == null) {
+			_matrix = new Matrix();
+		}
+		return _matrix;
+	}
+	
+	private static var _matrix:Matrix = null;
 }
