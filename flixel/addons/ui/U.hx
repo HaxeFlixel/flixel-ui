@@ -1039,7 +1039,7 @@ class U
 			case "screen" 	 : BlendMode.SCREEN;
 			case "subtract"  : BlendMode.SUBTRACT;
 			#if flash
-				case "shader" 	 : 	return BlendMode.SHADER;
+			case "shader"    : BlendMode.SHADER;
 			#end
 			default: BlendMode.NORMAL;
 		}
