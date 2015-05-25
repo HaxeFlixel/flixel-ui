@@ -172,42 +172,58 @@ class FlxUICursor extends FlxUISprite
 		_newKeys();
 		if (code & KEYS_TAB == KEYS_TAB) {
 			_addToKeys(keysRight, new FlxMultiKey(TAB, null, [SHIFT]));  //Tab, (but NOT Shift+Tab!)
-			_addToKeys(keysLeft, new FlxMultiKey(TAB, [SHIFT]));         //Shift+Tab
+			_addToKeys(keysLeft,  new FlxMultiKey(TAB, [SHIFT]));         //Shift+Tab
 			_addToKeys(keysClick, new FlxMultiKey(ENTER));
 		}
 		if (code & KEYS_ARROWS == KEYS_ARROWS) {
 			_addToKeys(keysRight, new FlxMultiKey(RIGHT));
-			_addToKeys(keysLeft, new FlxMultiKey(LEFT));
-			_addToKeys(keysDown, new FlxMultiKey(DOWN));
-			_addToKeys(keysUp, new FlxMultiKey(UP));
+			_addToKeys(keysLeft,  new FlxMultiKey(LEFT));
+			_addToKeys(keysDown,  new FlxMultiKey(DOWN));
+			_addToKeys(keysUp,    new FlxMultiKey(UP));
 			_addToKeys(keysClick, new FlxMultiKey(ENTER));
 		}
 		if (code & KEYS_WASD == KEYS_WASD) {
 			_addToKeys(keysRight, new FlxMultiKey(D));
-			_addToKeys(keysLeft, new FlxMultiKey(A));
-			_addToKeys(keysDown, new FlxMultiKey(S));
-			_addToKeys(keysUp, new FlxMultiKey(W));
+			_addToKeys(keysLeft,  new FlxMultiKey(A));
+			_addToKeys(keysDown,  new FlxMultiKey(S));
+			_addToKeys(keysUp,    new FlxMultiKey(W));
 			_addToKeys(keysClick, new FlxMultiKey(ENTER));
 		}
 		if (code & KEYS_NUMPAD == KEYS_NUMPAD) {
 			_addToKeys(keysRight, new FlxMultiKey(NUMPADSIX));
-			_addToKeys(keysLeft, new FlxMultiKey(NUMPADFOUR));
-			_addToKeys(keysDown, new FlxMultiKey(NUMPADTWO));
-			_addToKeys(keysUp, new FlxMultiKey(NUMPADEIGHT));
+			_addToKeys(keysLeft,  new FlxMultiKey(NUMPADFOUR));
+			_addToKeys(keysDown,  new FlxMultiKey(NUMPADTWO));
+			_addToKeys(keysUp,    new FlxMultiKey(NUMPADEIGHT));
 			_addToKeys(keysClick, new FlxMultiKey(ENTER));
 		}
 		if (code & GAMEPAD_DPAD == GAMEPAD_DPAD) {
 			var gamepad = getGamepad();
-			_addToKeys(keysLeft, new FlxMultiGamepad(gamepad, FlxGamepadInputID.DPAD_LEFT));
+			_addToKeys(keysLeft,  new FlxMultiGamepad(gamepad, FlxGamepadInputID.DPAD_LEFT));
 			_addToKeys(keysRight, new FlxMultiGamepad(gamepad, FlxGamepadInputID.DPAD_RIGHT));
-			_addToKeys(keysDown, new FlxMultiGamepad(gamepad, FlxGamepadInputID.DPAD_DOWN));
-			_addToKeys(keysUp, new FlxMultiGamepad(gamepad, FlxGamepadInputID.DPAD_UP));
+			_addToKeys(keysDown,  new FlxMultiGamepad(gamepad, FlxGamepadInputID.DPAD_DOWN));
+			_addToKeys(keysUp,    new FlxMultiGamepad(gamepad, FlxGamepadInputID.DPAD_UP));
 			_addToKeys(keysClick, new FlxMultiGamepad(gamepad, FlxGamepadInputID.A));
 		}
 		if (code & GAMEPAD_SHOULDER_BUTTONS == GAMEPAD_SHOULDER_BUTTONS) {
 			var gamepad = getGamepad();
-			_addToKeys(keysLeft, new FlxMultiGamepad(gamepad, FlxGamepadInputID.LEFT_SHOULDER));
+			_addToKeys(keysLeft,  new FlxMultiGamepad(gamepad, FlxGamepadInputID.LEFT_SHOULDER));
 			_addToKeys(keysRight, new FlxMultiGamepad(gamepad, FlxGamepadInputID.RIGHT_SHOULDER));
+			_addToKeys(keysClick, new FlxMultiGamepad(gamepad, FlxGamepadInputID.A));
+		}
+		if (code & GAMEPAD_LEFT_STICK == GAMEPAD_LEFT_STICK) {
+			var gamepad = getGamepad();
+			_addToKeys(keysLeft,  new FlxMultiGamepadAnalogStick(gamepad, {id:LEFT_ANALOG_STICK, axis:X, positive:false}));
+			_addToKeys(keysRight, new FlxMultiGamepadAnalogStick(gamepad, {id:LEFT_ANALOG_STICK, axis:X, positive:true}));
+			_addToKeys(keysUp,    new FlxMultiGamepadAnalogStick(gamepad, {id:LEFT_ANALOG_STICK, axis:Y, positive:false}));
+			_addToKeys(keysDown,  new FlxMultiGamepadAnalogStick(gamepad, {id:LEFT_ANALOG_STICK, axis:Y, positive:true}));
+			_addToKeys(keysClick, new FlxMultiGamepad(gamepad, FlxGamepadInputID.A));
+		}
+		if (code & GAMEPAD_RIGHT_STICK == GAMEPAD_RIGHT_STICK) {
+			var gamepad = getGamepad();
+			_addToKeys(keysLeft,  new FlxMultiGamepadAnalogStick(gamepad, {id:RIGHT_ANALOG_STICK, axis:X, positive:false}));
+			_addToKeys(keysRight, new FlxMultiGamepadAnalogStick(gamepad, {id:RIGHT_ANALOG_STICK, axis:X, positive:true}));
+			_addToKeys(keysUp,    new FlxMultiGamepadAnalogStick(gamepad, {id:RIGHT_ANALOG_STICK, axis:Y, positive:false}));
+			_addToKeys(keysDown,  new FlxMultiGamepadAnalogStick(gamepad, {id:RIGHT_ANALOG_STICK, axis:Y, positive:true}));
 			_addToKeys(keysClick, new FlxMultiGamepad(gamepad, FlxGamepadInputID.A));
 		}
 	}
