@@ -1,5 +1,6 @@
 package flixel.addons.ui;
 
+#if !FLX_NO_MOUSE
 import flash.display.Sprite;
 import flixel.FlxG;
 import flixel.input.mouse.FlxMouse;
@@ -36,3 +37,4 @@ class FlxUIMouse extends FlxMouse
 		}
 	}
 }
+#end

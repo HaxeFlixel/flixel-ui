@@ -93,6 +93,7 @@ class FlxUICursor extends FlxUISprite
 		setDefaultKeys(DefaultKeys);
 		callback = Callback;
 		
+		#if !FLX_NO_MOUSE
 		if (FlxG.mouse != null && Std.is(FlxG.mouse, FlxUIMouse) == false)
 		{
 			_newMouse = new FlxUIMouse(FlxG.mouse.cursorContainer);
@@ -102,16 +103,19 @@ class FlxUICursor extends FlxUISprite
 		{
 			_newMouse = cast FlxG.mouse;
 		}
+		#end
 	}
 	
 	public override function destroy():Void {
 		super.destroy();
 		
+		#if !FLX_NO_MOUSE
 		if (FlxG.mouse == _newMouse)
 		{
 			//remove the local pointer, but allow the replaced mouse object to carry on, it won't hurt anything
 			_newMouse = null;
 		}
+		#end
 		
 		keysUp = FlxDestroyUtil.destroyArray(keysUp);
 		keysDown = FlxDestroyUtil.destroyArray(keysDown);
@@ -196,6 +200,8 @@ class FlxUICursor extends FlxUISprite
 			_addToKeys(keysUp,    new FlxMultiKey(NUMPADEIGHT));
 			_addToKeys(keysClick, new FlxMultiKey(ENTER));
 		}
+		
+		#if !FLX_NO_GAMEPAD
 		if (code & GAMEPAD_DPAD == GAMEPAD_DPAD) {
 			var gamepad = getGamepad();
 			_addToKeys(keysLeft,  new FlxMultiGamepad(gamepad, FlxGamepadInputID.DPAD_LEFT));
@@ -226,16 +232,20 @@ class FlxUICursor extends FlxUISprite
 			_addToKeys(keysDown,  new FlxMultiGamepadAnalogStick(gamepad, {id:RIGHT_ANALOG_STICK, axis:Y, positive:true}));
 			_addToKeys(keysClick, new FlxMultiGamepad(gamepad, FlxGamepadInputID.A));
 		}
+		#end
 	}
 	
 	/****PRIVATE****/
 	
 	private var _widgets:Array<IFlxUIWidget>;			//master list of widgets under cursor's control
+	#if !FLX_NO_MOUSE
 	private var _newMouse:FlxUIMouse;
+	#end
 	private var _clickPressed:Bool = false;
 	
 	private var _clickTime:Float = 0;
 	
+	#if !FLX_NO_GAMEPAD
 	private function getGamepad():FlxGamepad
 	{
 		var gamepad = FlxG.gamepads.getFirstActiveGamepad();
@@ -252,6 +262,7 @@ class FlxUICursor extends FlxUISprite
 		}
 		return gamepad;
 	}
+	#end
 	
 	private function _sortXY(a:IFlxUIWidget, b:IFlxUIWidget):Int {
 		if (a.y < b.y) return -1;
@@ -410,14 +421,18 @@ class FlxUICursor extends FlxUISprite
 			var rawMouseX:Int = Std.int(pt.x * FlxG.camera.zoom);
 			var rawMouseY:Int = Std.int(pt.y * FlxG.camera.zoom);
 			
+			#if !FLX_NO_MOUSE
 			//REALLY force it to this location
 			FlxG.mouse.setGlobalScreenPositionUnsafe(rawMouseX, rawMouseY);
 			if (_newMouse != null)
 			{
 				_newMouse.updateGlobalScreenPosition = false;	//don't low-level-update the mouse while I'm overriding the mouse position
 			}
+			#end
 			
+			#if !FLX_NO_KEYBOARD
 			FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_MOVE, true, false, rawMouseX, rawMouseY, FlxG.stage, FlxG.keys.pressed.CONTROL, FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
+			#end
 		}
 		if (dispose) {
 			pt.put();
@@ -443,10 +458,13 @@ class FlxUICursor extends FlxUISprite
 		var rawMouseX:Float = pt.x * FlxG.camera.zoom;
 		var rawMouseY:Float = pt.y * FlxG.camera.zoom;
 		
+		#if !FLX_NO_KEYBOARD
 		if (dispatchEvents) {
 			//dispatch a low-level mouse event to the FlxG.stage object itself
 			FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN, true, false, rawMouseX, rawMouseY, FlxG.stage, FlxG.keys.pressed.CONTROL, FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
 		}
+		#end
+		
 		if (callback != null) {
 			//notify the listener that we just "pressed" the widget
 			callback("cursor_down", currWidget);
@@ -475,6 +493,7 @@ class FlxUICursor extends FlxUISprite
 		var rawMouseX:Float = pt.x * FlxG.camera.zoom;
 		var rawMouseY:Float = pt.y * FlxG.camera.zoom;
 		
+		#if !FLX_NO_KEYBOARD
 		if (dispatchEvents)
 		{
 			//dispatch a low-level mouse event to the FlxG.stage object itself
@@ -484,6 +503,8 @@ class FlxUICursor extends FlxUISprite
 				FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.CLICK, true, false, rawMouseX, rawMouseY, FlxG.stage, FlxG.keys.pressed.CONTROL, FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
 			}
 		}
+		#end
+		
 		if (callback != null) {
 			//notify the listener that we just "clicked" the widget
 			callback("cursor_click", currWidget);
@@ -492,11 +513,13 @@ class FlxUICursor extends FlxUISprite
 			pt.put();
 		}
 		
+		#if !FLX_NO_MOUSE
 		if (_newMouse != null)
 		{
 			_newMouse.updateGlobalScreenPosition = true;	//resume low-level-mouse updating now that I'm done overriding it
 			_newMouse.setGlobalScreenPositionUnsafe(Std.int(FlxG.game.mouseX), Std.int(FlxG.game.mouseY));
 		}
+		#end
 	}
 	
 	private function _doInput(X:Int, Y:Int):Void {
