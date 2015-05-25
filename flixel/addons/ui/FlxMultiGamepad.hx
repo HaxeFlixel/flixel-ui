@@ -18,12 +18,6 @@ class FlxMultiGamepad extends FlxBaseMultiInput
 		combos = Combos;
 		forbiddens = Forbiddens;
 	}
-
-	override public function destroy():Void 
-	{
-		super.destroy();
-		gamepad = null;
-	}
 	
 	private override function checkJustPressed():Bool
 	{

@@ -20,54 +20,73 @@ class FlxMultiGamepadAnalogStick extends FlxMultiGamepad
 	override public function destroy():Void 
 	{
 		super.destroy();
-		gamepad = null;
+		sInput = null;
 	}
 	
 	private override function checkJustPressed():Bool
 	{
 		var value = false;
 		var dz = gamepad.deadZone;
-		switch(sInput.id)
+		return switch(sInput.id)
 		{
-			case LEFT_ANALOG_STICK: if (sInput.axis == X)
-									{
-										if (gamepad.analog.justMoved.LEFT_STICK_X)
-										{
-											value = (sInput.positive ? gamepad.analog.value.LEFT_STICK_X > dz : gamepad.analog.value.LEFT_STICK_X < -dz);
-										}
-									}
-									else if (sInput.axis == Y)
-									{
-										if (gamepad.analog.justMoved.LEFT_STICK_Y)
-										{
-											value = (sInput.positive ? gamepad.analog.value.LEFT_STICK_Y > dz : gamepad.analog.value.LEFT_STICK_Y < -dz);
-										}
-									}
-			case RIGHT_ANALOG_STICK:if (sInput.axis == X)
-									{
-										if (gamepad.analog.justMoved.RIGHT_STICK_X)
-										{
-											value = (sInput.positive ? gamepad.analog.value.RIGHT_STICK_X > dz : gamepad.analog.value.RIGHT_STICK_X < -dz);
-										}
-									}
-									else if (sInput.axis == Y)
-									{
-										if (gamepad.analog.justMoved.RIGHT_STICK_Y)
-										{
-											value = (sInput.positive ? gamepad.analog.value.RIGHT_STICK_Y > dz : gamepad.analog.value.RIGHT_STICK_Y < -dz);
-										}
-									}
-			default: value = false;
+			case LEFT_ANALOG_STICK: 
+				if (sInput.axis == X)
+				{
+					if (gamepad.analog.justMoved.LEFT_STICK_X)
+					{
+						sInput.positive ?
+							gamepad.analog.value.LEFT_STICK_X >  dz : 
+							gamepad.analog.value.LEFT_STICK_X < -dz;
+					}
+					false;
+				}
+				else
+				{
+					if (gamepad.analog.justMoved.LEFT_STICK_Y)
+					{
+						sInput.positive ?
+							gamepad.analog.value.LEFT_STICK_Y >  dz :
+							gamepad.analog.value.LEFT_STICK_Y < -dz;
+					}
+					false;
+				}
+			case RIGHT_ANALOG_STICK:
+				if (sInput.axis == X)
+				{
+					if (gamepad.analog.justMoved.RIGHT_STICK_X)
+					{
+						sInput.positive ?
+							gamepad.analog.value.RIGHT_STICK_X > dz :
+							gamepad.analog.value.RIGHT_STICK_X < -dz;
+					}
+					false;
+				}
+				else
+				{
+					if (gamepad.analog.justMoved.RIGHT_STICK_Y)
+					{
+						sInput.positive ?
+							gamepad.analog.value.RIGHT_STICK_Y >  dz :
+							gamepad.analog.value.RIGHT_STICK_Y < -dz;
+					}
+					false;
+				}
+			default: false;
 		}
-		return value;
 	}
 	
 	private override function checkJustReleased():Bool
 	{
 		return switch(sInput.id)
 		{
-			case LEFT_ANALOG_STICK:  sInput.axis == X ? gamepad.analog.justReleased.LEFT_STICK_X  : gamepad.analog.justReleased.LEFT_STICK_Y;
-			case RIGHT_ANALOG_STICK: sInput.axis == X ? gamepad.analog.justReleased.RIGHT_STICK_X : gamepad.analog.justMoved.RIGHT_STICK_Y;
+			case LEFT_ANALOG_STICK:
+						sInput.axis == X ?
+							gamepad.analog.justReleased.LEFT_STICK_X :
+							gamepad.analog.justReleased.LEFT_STICK_Y;
+			case RIGHT_ANALOG_STICK: 
+						sInput.axis == X ?
+							gamepad.analog.justReleased.RIGHT_STICK_X : 
+							gamepad.analog.justReleased.RIGHT_STICK_Y;
 			default: false;
 		}
 	}
@@ -76,25 +95,33 @@ class FlxMultiGamepadAnalogStick extends FlxMultiGamepad
 	{
 		var value = false;
 		var dz = gamepad.deadZone;
-		switch(sInput.id)
+		return switch(sInput.id)
 		{
 			case LEFT_ANALOG_STICK: 
 				if (sInput.axis == X)
 				{
-					value = (sInput.positive ? gamepad.analog.value.LEFT_STICK_X > dz : gamepad.analog.value.LEFT_STICK_X  < -dz);
+					sInput.positive ?
+						gamepad.analog.value.LEFT_STICK_X >  dz : 
+						gamepad.analog.value.LEFT_STICK_X < -dz;
 				}
-				else if (sInput.axis == Y)
+				else
 				{
-					value = (sInput.positive ? gamepad.analog.value.LEFT_STICK_Y > dz : gamepad.analog.value.LEFT_STICK_Y  < -dz);
+					sInput.positive ?
+						gamepad.analog.value.LEFT_STICK_Y >  dz : 
+						gamepad.analog.value.LEFT_STICK_Y < -dz;
 				}
 			case RIGHT_ANALOG_STICK:
 				if (sInput.axis == X)
 				{
-					value = (sInput.positive ? gamepad.analog.value.RIGHT_STICK_X > dz : gamepad.analog.value.RIGHT_STICK_X  < -dz);
+					sInput.positive ?
+						gamepad.analog.value.RIGHT_STICK_X >  dz :
+						gamepad.analog.value.RIGHT_STICK_X < -dz;
 				}
-				else if (sInput.axis == Y)
+				else
 				{
-					value = (sInput.positive ? gamepad.analog.value.RIGHT_STICK_Y > dz : gamepad.analog.value.RIGHT_STICK_Y  < -dz);
+					sInput.positive ? 
+						gamepad.analog.value.RIGHT_STICK_Y >  dz : 
+						gamepad.analog.value.RIGHT_STICK_Y < -dz;
 				}
 			default: value = false;
 		}
