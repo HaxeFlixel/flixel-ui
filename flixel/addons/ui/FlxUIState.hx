@@ -259,6 +259,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	{
 		#if !FLX_NO_MOUSE
 		if (cursor != null && hideCursorOnSubstate)
+		{
 			cursor.visible = true;
 		}
 		#end
