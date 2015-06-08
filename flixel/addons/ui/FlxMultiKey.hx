@@ -1,4 +1,5 @@
 package flixel.addons.ui;
+
 import flixel.input.keyboard.FlxKey;
 
 /**
@@ -15,6 +16,7 @@ class FlxMultiKey extends FlxBaseMultiInput
 		forbiddens = Forbiddens;
 	}
 	
+	#if !FLX_NO_KEYBOARD
 	private override function checkJustPressed():Bool
 	{
 		return FlxG.keys.checkStatus(input, JUST_PRESSED);
@@ -39,4 +41,5 @@ class FlxMultiKey extends FlxBaseMultiInput
 	{
 		return FlxG.keys.anyPressed(forbiddens) == value;
 	}
+	#end
 }
