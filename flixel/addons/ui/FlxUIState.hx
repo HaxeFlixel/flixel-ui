@@ -252,7 +252,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			cursor.visible = false;
 		}
 		#end
-		super.openSubState(subState);
+		super.openSubState(SubState);
 	}
 	
 	public override function closeSubState():Void
