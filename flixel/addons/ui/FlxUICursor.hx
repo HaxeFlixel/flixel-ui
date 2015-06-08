@@ -131,6 +131,16 @@ class FlxUICursor extends FlxUISprite
 		_checkKeys();
 	}
 	
+	public function addWidgetsFromUI(ui:FlxUI)
+	{
+		for (widget in ui.members) {
+			if (Std.is(widget, ICursorPointable) || Std.is(widget, FlxUIGroup))//if it's directly pointable or a group
+			{		
+				addWidget(cast widget);	//add it
+			}
+		}
+	}
+	
 	public function addWidget(widget:IFlxUIWidget):Void 
 	{
 		if (Std.is(widget, ICursorPointable))			//directly pointable? add it
@@ -148,7 +158,7 @@ class FlxUICursor extends FlxUISprite
 				}
 			}
 		}
-		_widgets.sort(_sortXY);
+		_widgets.sort(_sortXYVisible);
 	}
 	
 	public function removeWidget(widget:IFlxUIWidget):Bool{
@@ -156,7 +166,7 @@ class FlxUICursor extends FlxUISprite
 		if (_widgets != null) {
 			if (_widgets.indexOf(widget) != -1) {
 				value = _widgets.remove(widget);
-				_widgets.sort(_sortXY);
+				_widgets.sort(_sortXYVisible);
 			}
 		}
 		return value;
@@ -234,6 +244,11 @@ class FlxUICursor extends FlxUISprite
 	private var _newMouse:FlxUIMouse;
 	private var _clickPressed:Bool = false;
 	
+	private var _rightAnchor:Anchor;
+	private var _topAnchor:Anchor;
+	private var _leftAnchor:Anchor;
+	private var _bottomAnchor:Anchor;
+	
 	private var _clickTime:Float = 0;
 	
 	private function getGamepad():FlxGamepad
@@ -253,7 +268,9 @@ class FlxUICursor extends FlxUISprite
 		return gamepad;
 	}
 	
-	private function _sortXY(a:IFlxUIWidget, b:IFlxUIWidget):Int {
+	private function _sortXYVisible(a:IFlxUIWidget, b:IFlxUIWidget):Int {
+		if (a.visible && !b.visible) return -1;
+		if (b.visible && !a.visible) return 1;
 		if (a.y < b.y) return -1;
 		if (a.y > b.y) return 1;
 		if (a.x < b.x) return -1;
@@ -499,7 +516,7 @@ class FlxUICursor extends FlxUISprite
 		}
 	}
 	
-	private function _doInput(X:Int, Y:Int):Void {
+	private function _doInput(X:Int, Y:Int, recursion:Int = 0):Void {
 		var currWidget:IFlxUIWidget=null;
 		
 		if (Y == 0) {											//just move back/forth
@@ -611,7 +628,14 @@ class FlxUICursor extends FlxUISprite
 			}
 		}
 		
-		if (callback != null) {
+		if (currWidget.visible == false && (recursion < _widgets.length))
+		{
+			_doInput(X, Y, recursion + 1);
+			return;
+		}
+		
+		if (callback != null)
+		{
 			//notify the listener that the cursor has moved
 			callback("cursor_jump", currWidget);
 		}
@@ -627,8 +651,69 @@ class FlxUICursor extends FlxUISprite
 		visible = true;
 		
 		var currWidget:IFlxUIWidget = _widgets[location];
+		var flippedX:Bool = false;
+		var flippedY:Bool = false;
+		
 		if (currWidget != null) {
 			anchor.anchorThing(this, cast currWidget);
+			if (x < 0)
+			{
+				_flipAnchor(Anchor.LEFT, cast currWidget);
+				flippedX = true;
+			}
+			else if (x > FlxG.width + width)
+			{
+				_flipAnchor(Anchor.RIGHT, cast currWidget);
+				flippedX = true;
+			}
+			if (y < 0)
+			{
+				_flipAnchor(Anchor.TOP, cast currWidget);
+				flippedY = true;
+			}
+			else if (y > FlxG.height + height)
+			{
+				_flipAnchor(Anchor.BOTTOM, cast currWidget);
+				flippedY = true;
+			}
+			this.flipX = flippedX;
+			this.flipY = flippedY;
+		}
+	}
+	
+	private function _flipAnchor(AnchorDir:String, destination:FlxObject):Void
+	{
+		var theAnchor = null;
+		switch(AnchorDir)
+		{
+			case Anchor.LEFT: 
+				if (anchor.x.side == Anchor.LEFT)
+				{
+					_leftAnchor = anchor.getFlipped(true, false, _leftAnchor);
+					theAnchor = _leftAnchor;
+				}
+			case Anchor.RIGHT: 
+				if (anchor.x.side == Anchor.RIGHT)
+				{
+					_topAnchor = anchor.getFlipped(true, false, _rightAnchor); 
+					theAnchor = _rightAnchor;
+				}
+			case Anchor.TOP: 
+				if (anchor.y.side == Anchor.TOP)
+				{
+					_topAnchor = anchor.getFlipped(true, false, _topAnchor); 
+					theAnchor = _topAnchor;
+				}
+			case Anchor.BOTTOM: 
+				if (anchor.y.side == Anchor.BOTTOM)
+				{
+					_bottomAnchor = anchor.getFlipped(true, false, _bottomAnchor); 
+					theAnchor = _bottomAnchor;
+				}
+		}
+		if (theAnchor != null)
+		{
+			theAnchor.anchorThing(this, destination);
 		}
 	}
 }

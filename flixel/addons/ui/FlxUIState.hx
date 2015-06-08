@@ -38,6 +38,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	
 	#if !FLX_NO_MOUSE
 	public var cursor:FlxUICursor = null;
+	public var hideCursorOnSubstate:Bool = false;
 	#end
 	
 	private var _xml_id:String = "";			//the xml file to load from assets
@@ -183,15 +184,9 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			}
 		}
 		#if !FLX_NO_MOUSE
-		if (cursor != null) {			//Cursor goes on top, of course
+		if (cursor != null && _ui != null) {			//Cursor goes on top, of course
 			add(cursor);
-			var widget:IFlxUIWidget;
-			for (widget in _ui.members) {
-				if (Std.is(widget, ICursorPointable) || Std.is(widget, FlxUIGroup))//if it's directly pointable or a group
-				{		
-					cursor.addWidget(cast widget);	//add it
-				}
-			}
+			cursor.addWidgetsFromUI(_ui);
 			cursor.location = 0;
 		}
 		#end
@@ -248,7 +243,28 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			onResize(Std.int(width), Std.int(height));
 		#end*/
 	}
-		
+	
+	public override function openSubState(SubState:FlxSubState):Void
+	{
+		#if !FLX_NO_MOUSE
+		if (cursor != null && hideCursorOnSubstate)
+		{
+			cursor.visible = false;
+		}
+		#end
+		super.openSubState(subState);
+	}
+	
+	public override function closeSubState():Void
+	{
+		#if !FLX_NO_MOUSE
+		if (cursor != null && hideCursorOnSubstate)
+			cursor.visible = true;
+		}
+		#end
+		super.closeSubState();
+	}
+	
 	public override function onResize(Width:Int, Height:Int):Void {
 		FlxG.resizeGame(Width, Height);	
 		_reload_countdown = 1;

@@ -26,6 +26,12 @@ import haxe.xml.Fast;
 class FlxUISubState extends FlxSubState implements IFlxUIState
 {
 	public var destroyed:Bool;
+	
+	#if !FLX_NO_MOUSE
+	public var cursor:FlxUICursor = null;
+	#end
+	private var _makeCursor:Bool;		//whether to auto-construct a cursor and load default widgets into it
+	
 	private var _xml_id:String = "";	//the xml to load
 	private var _ui:FlxUI;
 	private var _tongue:IFireTongue;
@@ -70,7 +76,7 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 		if (FlxUIState.static_tongue != null) {
 			_tongue = FlxUIState.static_tongue;
 		}
-		
+	
 		if(_xml_id != "" && _xml_id != null){
 			_ui = new FlxUI(null,this,null,_tongue);
 			add(_ui);
@@ -90,10 +96,22 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 				_ui.load(data);
 			}
 		}
-		
+	
 		#if !FLX_NO_MOUSE
+		if (_makeCursor && _ui != null) {			//Cursor goes on top, of course
+			cursor = new FlxUICursor(onCursorEvent);
+			add(cursor);
+			cursor.addWidgetsFromUI(_ui);
+			cursor.location = 0;
+		}
+		
 		FlxG.mouse.visible = true;
 		#end
+	}
+	
+	public function onCursorEvent(code:String, target:IFlxUIWidget):Void 
+	{
+		getEvent(code, target, null);
 	}
 	
 	public override function onResize(Width:Int,Height:Int):Void {
