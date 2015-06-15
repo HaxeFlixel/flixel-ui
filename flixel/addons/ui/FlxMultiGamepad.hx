@@ -8,7 +8,7 @@ import flixel.input.gamepad.FlxGamepadInputID;
  */
 class FlxMultiGamepad extends FlxBaseMultiInput
 {
-	private var gamepad:FlxGamepad;
+	public var gamepad:FlxGamepad;
 	
 	public function new(Gamepad:FlxGamepad, Input:FlxGamepadInputID, ?Combos:Array<FlxGamepadInputID>, ?Forbiddens:Array<FlxGamepadInputID>) 
 	{

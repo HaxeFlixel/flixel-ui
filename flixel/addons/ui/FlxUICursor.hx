@@ -34,6 +34,28 @@ class FlxUICursor extends FlxUISprite
 		return location;
 	}
 	
+	public var gamepad(default, set):FlxGamepad;
+	private function set_gamepad(g:FlxGamepad):FlxGamepad {
+		gamepad = g;
+		setDefaultKeys(_defaultCode);
+		var arr = [keysUp, keysDown, keysLeft, keysRight, keysClick];
+		for (list in arr)
+		{
+			if (list != null)
+			{
+				for (keys in list)
+				{
+					if (Std.is(keys, FlxMultiGamepad))
+					{
+						var fmg:FlxMultiGamepad = cast keys;
+						fmg.gamepad = gamepad;
+					}
+				}
+			}
+		}
+		return g;
+	}
+	
 	//Key configurations, you can set easily with setDefaultKeys(KEYS_TAB), for instance.
 	
 	public var keysUp:Array<FlxBaseMultiInput>;    //List of keys (ie, tab) and/or key combinations (ie, shift+tab) that indicate intent to go "up"
@@ -182,6 +204,7 @@ class FlxUICursor extends FlxUISprite
 	 */
 	
 	public function setDefaultKeys(code:Int):Void {
+		_defaultCode = code;
 		_clearKeys();
 		_newKeys();
 		if (code & KEYS_TAB == KEYS_TAB) {
@@ -252,6 +275,8 @@ class FlxUICursor extends FlxUISprite
 	private var _newMouse:FlxUIMouse;
 	#end
 	private var _clickPressed:Bool = false;
+	
+	private var _defaultCode:Int;
 	
 	private var _rightAnchor:Anchor;
 	private var _topAnchor:Anchor;
