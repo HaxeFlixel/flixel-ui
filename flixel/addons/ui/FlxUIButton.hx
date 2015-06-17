@@ -84,7 +84,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	 * @param	EmbeddedFont	Whether this text field uses embedded fonts or not
 	 * @return	This FlxText instance (nice for chaining stuff together, if you're into that).
 	 */
-	public function setLabelFormat(?Font:String, Size:Float = 8, Color:FlxColor = FlxColor.WHITE, ?Alignment:FlxTextAlign,
+	public function setLabelFormat(?Font:String, Size:Int = 8, Color:FlxColor = FlxColor.WHITE, ?Alignment:FlxTextAlign,
 		?BorderStyle:FlxTextBorderStyle, BorderColor:FlxColor = FlxColor.TRANSPARENT, Embedded:Bool = true):FlxText
 	{
 		if (label != null)
@@ -141,8 +141,14 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 			{
 				var flxAlign = FlxTextAlign.fromOpenFL(tf.align);
 				
+				#if openfl_legacy
+				var tfsize = Std.int(tf.size);
+				#else
+				var tfsize = tf.size;
+				#end
+				
 				//put "null" for the default font
-				label.setFormat(null, tf.size, tf.color, flxAlign, t.borderStyle, t.borderColor, t.embedded);
+				label.setFormat(null, tfsize, tf.color, flxAlign, t.borderStyle, t.borderColor, t.embedded);
 			}
 		}
 	}
