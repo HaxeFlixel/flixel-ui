@@ -902,13 +902,20 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					
 					var nodeName:String = xml.nodeName;
 					
+					//check if we're also setting active status
+					var activeStatus:Null<Bool> = U.xml_str(xml, "active") == "" ? null : true;
+					if (activeStatus != null)
+					{
+						activeStatus = U.xml_bool(xml, "active");
+					}
+					
 					if (_loadTest(node2))
 					{
 						switch(nodeName) {
 							case "show":
-								showThing(U.xml_name(xml), true);
+								showThing(U.xml_name(xml), true, activeStatus);
 							case "hide":
-								showThing(U.xml_name(xml), false);
+								showThing(U.xml_name(xml), false, activeStatus);
 							case "align":
 								_alignThing(node2);
 							case "change":
@@ -932,7 +939,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 	}
 	
-	private function showThing(name:String, b:Bool = true):Void
+	private function showThing(name:String, visibleStatus:Bool = true, activeStatus:Null<Bool> = null):Void
 	{
 		if (name.indexOf(",") != -1)
 		{
@@ -942,14 +949,22 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var thing = getAsset(each_name);
 				if (thing != null)
 				{
-					thing.visible = b;
+					thing.visible = visibleStatus;
+					if (activeStatus != null)
+					{
+						thing.active = activeStatus;
+					}
 				}
 				else
 				{
 					var group = getGroup(each_name);
 					if (group != null)
 					{
-						group.visible = b;
+						group.visible = visibleStatus;
+						if (activeStatus != null)
+						{
+							group.active = activeStatus;
+						}
 					}
 				}
 			}
@@ -961,14 +976,22 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var thing = getAsset(name);					//else, it's just one asset
 				if (thing != null)
 				{
-					thing.visible = b;
+					thing.visible = visibleStatus;
+					if (activeStatus != null)
+					{
+						thing.active = activeStatus;
+					}
 				}
 				else
 				{
 					var group = getGroup(name);
 					if (group != null)
 					{
-						group.visible = b;
+						group.visible = visibleStatus;
+						if (activeStatus != null)
+						{
+							group.active = activeStatus;
+						}
 					}
 				}
 			}
@@ -978,7 +1001,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				{
 					if (asset_name != "*")					//assets can't be named "*", smartass!
 					{
-						showThing(asset_name, b);				//recurse
+						showThing(asset_name, visibleStatus, activeStatus);	//recurse
 					}
 				}
 			}
