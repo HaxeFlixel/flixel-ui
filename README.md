@@ -92,7 +92,7 @@ getDefinition(key:String,recursive:Bool=true):Fast
 less commonly used public functions:
 ```haxe
 //These implement the IEventGetter interface for lightweight events
-getEvent(id:String, sender:Dynamic, data:Dynamic):Void
+getEvent(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>):Void
 getRequest(id:String, sender:Dynamic, data:Dynamic):Dynamic
 //Both are empty - to be defined by the user in extended classes
 
@@ -451,7 +451,7 @@ FlxUI.event(CLICK_EVENT, this, null, params);
 This, in turn, will call ```getEvent()``` on whatever ```IEventGetter``` "owns" this ```FlxUI``` object. In the default setup, this is your ```FlxUIState```. So extend this function in your ```FlxUIState```:
 
 ```haxe
-getEvent(id:String,sender:Dynamic,data:Dynamic):Void
+getEvent(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>):Void
 ```
 
 The "sender" parameter will be the widget that originated the event -- in this case, the button. On a ```FlxUIButton``` click, the other parameters will be:
