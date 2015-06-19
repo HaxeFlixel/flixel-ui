@@ -3451,7 +3451,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var fs:FlxUISprite = null;
 		
 		var axis:String = U.xml_str(data.x, "axis", true, "horizontal");
-		var thickness:Int = U.xml_i(data.x, "thickness", 1);
+		var thickness:Int = Std.int(_loadWidth(data, 1, "thickness"));
 		
 		var bounds: { min_width:Float, min_height:Float, 
 					  max_width:Float, max_height:Float } = calcMaxMinSize(data);
