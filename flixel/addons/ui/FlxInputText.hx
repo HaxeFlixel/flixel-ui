@@ -887,7 +887,7 @@ class FlxInputText extends FlxText
 		return forceCase;
 	}
 	
-	override private function set_size(Value:Float):Float
+	override private function set_size(Value:Int):Int
 	{
 		super.size = Value;		
 		caret.makeGraphic(1, Std.int(size + 2));
