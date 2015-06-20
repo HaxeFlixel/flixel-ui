@@ -83,17 +83,8 @@ class FontDef
 				}
 			}
 			
-			#if openfl_legacy
-			var fsize = Std.int(format.size);
-			#else
-			var fsize = format.size;
-			#end
-			
-			if (file == "" || file == null) {
-				flxText.setFormat(null, fsize, format.color, flxTxtAlign, border.style, border.color);	//default font
-			}else {
-				flxText.setFormat(file, fsize, format.color, flxTxtAlign, border.style, border.color);
-			}
+			var font = (file == "" || file == null) ? null : file;
+			flxText.setFormat(font, Std.int(format.size), format.color, flxTxtAlign, border.style, border.color);
 		}
 	}
 	

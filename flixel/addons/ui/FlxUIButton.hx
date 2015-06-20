@@ -141,14 +141,8 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 			{
 				var flxAlign = FlxTextAlign.fromOpenFL(tf.align);
 				
-				#if openfl_legacy
-				var tfsize = Std.int(tf.size);
-				#else
-				var tfsize = tf.size;
-				#end
-				
 				//put "null" for the default font
-				label.setFormat(null, tfsize, tf.color, flxAlign, t.borderStyle, t.borderColor, t.embedded);
+				label.setFormat(null, Std.int(tf.size), tf.color, flxAlign, t.borderStyle, t.borderColor, t.embedded);
 			}
 		}
 	}
