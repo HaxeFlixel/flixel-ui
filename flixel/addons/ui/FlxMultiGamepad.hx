@@ -19,6 +19,12 @@ class FlxMultiGamepad extends FlxBaseMultiInput
 		forbiddens = Forbiddens;
 	}
 	
+	override public function destroy():Void 
+	{
+		super.destroy();
+		gamepad = null;
+	}
+	
 	private override function checkJustPressed():Bool
 	{
 		return gamepad.checkStatus(input, JUST_PRESSED);

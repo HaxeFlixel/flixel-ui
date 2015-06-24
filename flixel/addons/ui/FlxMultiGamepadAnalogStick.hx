@@ -23,6 +23,29 @@ class FlxMultiGamepadAnalogStick extends FlxMultiGamepad
 		sInput = null;
 	}
 	
+	/**
+	 * Given a string of the form "left_analog_stick_x_plus", returns a StickInput object with the corresponding values
+	 * @param	str
+	 * @return
+	 */
+	
+	public static function getStickInput(str:String):StickInput
+	{
+		str = str.toLowerCase();
+		switch(str)
+		{
+			case "left_analog_stick_x_minus":  return { id:LEFT_ANALOG_STICK,  axis:X, positive:false };
+			case "left_analog_stick_x_plus" :  return { id:LEFT_ANALOG_STICK,  axis:X, positive:true  };
+			case "left_analog_stick_y_minus":  return { id:LEFT_ANALOG_STICK,  axis:Y, positive:false };
+			case "left_analog_stick_y_plus" :  return { id:LEFT_ANALOG_STICK,  axis:Y, positive:true  };
+			case "right_analog_stick_x_minus": return { id:RIGHT_ANALOG_STICK, axis:X, positive:false };
+			case "right_analog_stick_x_plus" : return { id:RIGHT_ANALOG_STICK, axis:X, positive:true  };
+			case "right_analog_stick_y_minus": return { id:RIGHT_ANALOG_STICK, axis:Y, positive:false };
+			case "right_analog_stick_y_plus" : return { id:RIGHT_ANALOG_STICK, axis:Y, positive:true  };
+		}
+		return null;
+	}
+	
 	private override function checkJustPressed():Bool
 	{
 		var value = false;
@@ -137,6 +160,7 @@ class FlxMultiGamepadAnalogStick extends FlxMultiGamepad
 	{
 		return gamepad.anyPressed(forbiddens) == value;
 	}
+	
 }
 
 enum XY
