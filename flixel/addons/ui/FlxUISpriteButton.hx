@@ -42,7 +42,7 @@ class FlxUISpriteButton extends FlxUITypedButton<FlxSprite> implements IFlxUIBut
 	{
 		super.resize(W, H);
 		autoCenterLabel();
-	}	
+	}
 	
 	public override function autoCenterLabel():Void {
 		if (label != null) {

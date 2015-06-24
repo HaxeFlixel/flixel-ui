@@ -187,6 +187,15 @@ class FlxUICursor extends FlxUISprite
 		_widgets.sort(_sortXYVisible);
 	}
 	
+	public function sortWidgets(method:SortMethod):Void
+	{
+		switch(method)
+		{
+			case XY: _widgets.sort(_sortXYVisible);
+			case ID: _widgets.sort(_sortIDVisible);
+		}
+	}
+	
 	public function removeWidget(widget:IFlxUIWidget):Bool{
 		var value:Bool = false;
 		if (_widgets != null) {
@@ -303,6 +312,14 @@ class FlxUICursor extends FlxUISprite
 		return gamepad;
 	}
 	#end
+	
+	private function _sortIDVisible(a:IFlxUIWidget, b:IFlxUIWidget):Int {
+		if (a.visible && !b.visible) return -1;
+		if (b.visible && !a.visible) return 1;
+		if (a.ID < b.ID) return -1;
+		if (a.ID > b.ID) return 1;
+		return 0;
+	}
 	
 	private function _sortXYVisible(a:IFlxUIWidget, b:IFlxUIWidget):Int {
 		if (a.visible && !b.visible) return -1;
@@ -428,14 +445,19 @@ class FlxUICursor extends FlxUISprite
 		}
 		
 		var fo:FlxObject;
-		var widgetPoint:FlxPoint;
+		var widgetPoint:FlxPoint = null;
 		
 		//Try to convert to FlxObject if possible
 		if (Std.is(currWidget, FlxObject)) {
 			fo = cast currWidget;
-			//success! Get ScreenXY, to deal with any possible scrolling/camera craziness
-			widgetPoint = fo.getScreenPosition();
-		}else {
+			if (fo.scrollFactor != null)
+			{
+				//success! Get ScreenXY, to deal with any possible scrolling/camera craziness
+				widgetPoint = fo.getScreenPosition();
+			}
+		}
+		
+		if(widgetPoint == null){
 			//otherwise just make your best guess from current raw position
 			widgetPoint = FlxPoint.get(currWidget.x, currWidget.y);
 		}
@@ -764,4 +786,10 @@ class FlxUICursor extends FlxUISprite
 			theAnchor.anchorThing(this, destination);
 		}
 	}
+}
+
+enum SortMethod
+{
+	XY;
+	ID;
 }

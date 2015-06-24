@@ -776,9 +776,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		{
 			var isVis:Bool = U.xml_bool(data.x, "visible", true);
 			var isActive:Bool = U.xml_bool(data.x, "active", true);
-		
+			var numID:Int = U.xml_i(data.x, "num_id");
+			
 			thing.visible = isVis;
 			thing.active = isActive;
+			thing.ID = numID;
 		}
 	}
 	

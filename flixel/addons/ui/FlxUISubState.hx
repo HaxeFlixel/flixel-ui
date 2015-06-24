@@ -76,6 +76,13 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 		if (FlxUIState.static_tongue != null) {
 			_tongue = FlxUIState.static_tongue;
 		}
+		
+		#if !FLX_NO_MOUSE
+		if (_makeCursor == true)
+		{
+			cursor = new FlxUICursor(onCursorEvent);
+		}
+		#end
 	
 		if(_xml_id != "" && _xml_id != null){
 			_ui = new FlxUI(null,this,null,_tongue);
@@ -97,14 +104,13 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 			}
 		}
 	
-		#if !FLX_NO_MOUSE
-		if (_makeCursor && _ui != null) {			//Cursor goes on top, of course
-			cursor = new FlxUICursor(onCursorEvent);
+		if (cursor != null && _ui != null) {			//Cursor goes on top, of course
 			add(cursor);
 			cursor.addWidgetsFromUI(_ui);
 			cursor.location = 0;
 		}
 		
+		#if !FLX_NO_MOUSE
 		FlxG.mouse.visible = true;
 		#end
 	}
