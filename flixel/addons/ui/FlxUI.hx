@@ -1369,11 +1369,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return _loadThing(type, data);
 	}
 	
-	private function _loadThing(type:String, data:Fast):IFlxUIWidget{
-		
+	private function _loadThingGetInfo(data:Fast):Fast
+	{
 		var use_def:String = U.xml_str(data.x, "use_def", true);
 		var definition:Fast = null;
-		if (use_def != "") {
+		if (use_def != "")
+		{
 			definition = getDefinition(use_def);
 		}
 		
@@ -1381,6 +1382,17 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		info = applyNodeConditionals(info);
 		
 		if (_loadTest(info) == false)
+		{
+			return null;
+		}
+		
+		return info;
+	}
+	
+	private function _loadThing(type:String, data:Fast):IFlxUIWidget{
+		
+		var info = _loadThingGetInfo(data);
+		if (info == null)
 		{
 			return null;
 		}
@@ -1426,7 +1438,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 			default: 
 				//If I don't know how to load this thing, I will request it from my pointer:
-				var result = _ptr.getRequest("ui_get:" + type, this, info);
+				var result = _ptr.getRequest("ui_get:" + type, this, info, [data]);
 				return result;
 		}
 		return null;
