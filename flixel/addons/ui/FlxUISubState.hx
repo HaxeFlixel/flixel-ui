@@ -104,13 +104,13 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 			}
 		}
 	
+		#if !FLX_NO_MOUSE
 		if (cursor != null && _ui != null) {			//Cursor goes on top, of course
 			add(cursor);
 			cursor.addWidgetsFromUI(_ui);
 			cursor.location = 0;
 		}
 		
-		#if !FLX_NO_MOUSE
 		FlxG.mouse.visible = true;
 		#end
 	}
