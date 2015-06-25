@@ -2,6 +2,7 @@ package flixel.addons.ui;
 import flash.events.MouseEvent;
 import flixel.addons.ui.Anchor;
 import flixel.addons.ui.FlxUIAssets;
+import flixel.addons.ui.FlxUICursor.WidgetList;
 import flixel.addons.ui.FlxUISprite;
 import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
@@ -12,6 +13,8 @@ import flixel.input.gamepad.FlxGamepad;
 import flixel.input.mouse.FlxMouse;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
+import flixel.util.FlxArrayUtil;
 import flixel.util.FlxDestroyUtil;
 
 /**
@@ -25,8 +28,28 @@ class FlxUICursor extends FlxUISprite
 	public var wrap:Bool=true;	//when cycling through values, loop from back to front or stop at "edges?"
 	
 	public var location(default, set):Int = -1;			//which object the cursor is pointing to (-1 means nothing)
-	private function set_location(i:Int):Int{
-		if (i >= _widgets.length) {
+	public var listIndex(default, set):Int = 0;		//which group is my location pointing to?
+	
+	private function set_listIndex(i:Int):Int
+	{
+		if (i >= _lists.length)
+		{
+			i = _lists.length - 1;
+		}
+		else if (i < 0)
+		{
+			i = 0;
+		}
+		listIndex = i;
+		location = 0;
+		_updateCursor();
+		return listIndex;
+	}
+	
+	private function set_location(i:Int):Int
+	{
+		if (i >= _widgets.length)
+		{
 			i = _widgets.length - 1;
 		}
 		location = i;
@@ -110,7 +133,8 @@ class FlxUICursor extends FlxUISprite
 		super(0, 0, Asset);
 		
 		inputMethod = InputMethod;
-		_widgets = [];
+		_lists = [{x:0,y:0,width:0,height:0,widgets:[]}];
+		_widgets = _lists[0].widgets;
 		anchor = new Anchor( -2, 0, Anchor.LEFT, Anchor.CENTER, Anchor.RIGHT, Anchor.CENTER);
 		setDefaultKeys(DefaultKeys);
 		callback = Callback;
@@ -147,7 +171,12 @@ class FlxUICursor extends FlxUISprite
 		
 		anchor = FlxDestroyUtil.destroy(anchor);
 		
-		U.clearArraySoft(_widgets);
+		for (l in _lists)
+		{
+			U.clearArraySoft(l.widgets);
+		}
+		
+		U.clearArraySoft(_lists);
 		_widgets = null;
 	}
 	
@@ -159,11 +188,111 @@ class FlxUICursor extends FlxUISprite
 	
 	public function addWidgetsFromUI(ui:FlxUI)
 	{
-		for (widget in ui.members) {
-			if (Std.is(widget, ICursorPointable) || Std.is(widget, FlxUIGroup))//if it's directly pointable or a group
-			{		
-				addWidget(cast widget);	//add it
+		if (ui.cursorLists != null)
+		{
+			for (list in ui.cursorLists)
+			{
+				addWidgetList(list);
 			}
+			_widgets = _lists[0].widgets;
+			location = 0;
+			listIndex = 0;
+		}
+		else
+		{
+			for (widget in ui.members)
+			{
+				if (Std.is(widget, ICursorPointable) || Std.is(widget, FlxUIGroup))//if it's directly pointable or a group
+				{
+					addWidget(cast widget);	//add it
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Forces the cursor to change its location to point to this widget, if the widget is in its list
+	 * @param	widget
+	 * @return	whether the widget was found or not
+	 */
+	public function jumpTo(widget:IFlxUIWidget):Bool
+	{
+		var listi:Int = 0;
+		var i:Int = 0;
+		if (_lists != null)
+		{
+			for (list in _lists)
+			{
+				i = list.widgets.indexOf(widget);
+				if (i != -1)
+				{
+					listIndex = listi;
+					location = i;
+					return true;
+				}
+				listi++;
+			}
+		}
+		else
+		{
+			i = _widgets.indexOf(widget);
+			location = i;
+			return true;
+		}
+		return false;
+	}
+	
+	public function addWidgetList(list:Array<IFlxUIWidget>):Void
+	{
+		for (l in _lists)
+		{
+			if (FlxArrayUtil.equals(l.widgets, list))
+			{
+				return;
+			}
+		}
+		
+		var x1 = Math.POSITIVE_INFINITY;
+		var y1 = Math.POSITIVE_INFINITY;
+		var x2 = Math.NEGATIVE_INFINITY;
+		var y2 = Math.NEGATIVE_INFINITY;
+		
+		for (w in list)
+		{
+			if (w.x < x1) x1 = w.x;
+			if (w.y < y1) y1 = w.y;
+			if (w.x + w.width  > x2) x2 = w.x;
+			if (w.y + w.height > y2) y2 = w.y;
+		}
+		
+		var theList:WidgetList = null;
+		if (_lists.length == 1 && _lists[0].widgets != null && _lists[0].widgets.length == 0)
+		{
+			_lists[0].widgets = [];
+			_lists[0].x = Std.int(x1);
+			_lists[0].y = Std.int(y1);
+			_lists[0].width = Std.int(x2 - x1);
+			_lists[0].height = Std.int(y2 - y1);
+			theList = _lists[0];
+		}
+		else
+		{
+			_lists.push( { x:Std.int(x1), y:Std.int(y1), width:Std.int(x2 - x1), height:Std.int(y2 - y1), widgets:[] } );
+			theList = _lists[_lists.length - 1];
+		}
+		
+		var oldWidgets = _widgets;
+		_widgets = theList.widgets;
+		for (ifw in list)
+		{
+			addWidget(ifw);
+		}
+		_widgets = oldWidgets;
+		
+		_lists.sort(_sortXYWidgetList);
+		for (widgetList in _lists)
+		{
+			widgetList.widgets.sort(_sortXYVisible);
 		}
 	}
 	
@@ -180,28 +309,37 @@ class FlxUICursor extends FlxUISprite
 			{
 				if (Std.is(member, IFlxUIWidget))
 				{
-					addWidget(cast member);					//add each member individually
+					addWidget(cast member);				//add each member individually
 				}
 			}
 		}
 		_widgets.sort(_sortXYVisible);
 	}
 	
-	public function sortWidgets(method:SortMethod):Void
+	public function sortWidgets(method:SortMethod, ?list:Array<IFlxUIWidget>):Void
 	{
+		if (list == null)
+		{
+			list = _widgets;
+		}
 		switch(method)
 		{
-			case XY: _widgets.sort(_sortXYVisible);
-			case ID: _widgets.sort(_sortIDVisible);
+			case XY: list.sort(_sortXYVisible);
+			case ID: list.sort(_sortIDVisible);
 		}
 	}
 	
-	public function removeWidget(widget:IFlxUIWidget):Bool{
+	public function removeWidget(widget:IFlxUIWidget, ?list:Array<IFlxUIWidget>):Bool {
+		if (list == null)
+		{
+			list = _widgets;
+		}
 		var value:Bool = false;
-		if (_widgets != null) {
-			if (_widgets.indexOf(widget) != -1) {
-				value = _widgets.remove(widget);
-				_widgets.sort(_sortXYVisible);
+		if (list != null)
+		{
+			if (list.indexOf(widget) != -1) {
+				value = list.remove(widget);
+				list.sort(_sortXYVisible);
 			}
 		}
 		return value;
@@ -279,7 +417,8 @@ class FlxUICursor extends FlxUISprite
 	
 	/****PRIVATE****/
 	
-	private var _widgets:Array<IFlxUIWidget>;			//master list of widgets under cursor's control
+	private var _lists:Array<WidgetList>;				//list of lists of widgets with boundary metadata
+	private var _widgets:Array<IFlxUIWidget>;			//list of widgets under cursor's control
 	#if !FLX_NO_MOUSE
 	private var _newMouse:FlxUIMouse;
 	#end
@@ -318,6 +457,14 @@ class FlxUICursor extends FlxUISprite
 		if (b.visible && !a.visible) return 1;
 		if (a.ID < b.ID) return -1;
 		if (a.ID > b.ID) return 1;
+		return 0;
+	}
+	
+	private function _sortXYWidgetList(a:WidgetList, b:WidgetList):Int {
+		if (a.y < b.y) return -1;
+		if (a.y > b.y) return 1;
+		if (a.x < b.x) return -1;
+		if (a.x > b.x) return 1;
 		return 0;
 	}
 	
@@ -586,114 +733,247 @@ class FlxUICursor extends FlxUISprite
 		#end
 	}
 	
-	private function _doInput(X:Int, Y:Int, recursion:Int = 0):Void {
-		var currWidget:IFlxUIWidget=null;
+	private function _findNextY(Y:Int, indexValue:Int, listWidget:Array<IFlxUIWidget>, listLists:Array<WidgetList>):Int
+	{
+		var currX:Int = 0;
+		var currY:Int = 0;
+		var length:Int = 0;
 		
-		if (Y == 0) {											//just move back/forth
-			//Easy: go to the next index in the array, loop around if needed
-			if (location + X < 0) {
-				if (wrap) 
-				{
-					location = (location + X) + _widgets.length;
-				}
-			}else if (location + X >= _widgets.length){
-				if (wrap)
-				{
-					location = (location + X) - _widgets.length;
-				}
-			}else{
-				location = location + X;
-			}
-			currWidget = _widgets[location];
-		}else {													//move UP/DOWN
-			//Harder: iterate through array, looking for widget with higher or lower y value
-			
-			currWidget = _widgets[location];
-			
-			var nextWidget:IFlxUIWidget = null;
-			
-			var dx:Float = Math.POSITIVE_INFINITY;
-			var dy:Float = Math.POSITIVE_INFINITY;
-			
-			var bestdx:Float = dx;
-			var bestdy:Float = dy;
-			
-			var bestWidget:IFlxUIWidget = null;
-			var besti:Int = -1;
-			
-			//DESIRED BEHAVIOR: Jump to the CLOSEST OBJECT that ALSO:
-			//is located ABOVE/BELOW me (depending on Y's sign)
-			
-			for (i in 0..._widgets.length)
+		if (listWidget != null)
+		{
+			currX = Std.int(listWidget[indexValue].x);
+			currY = Std.int(listWidget[indexValue].y);
+			length = listWidget.length;
+		}
+		else if (listLists != null)
+		{
+			currX = listLists[indexValue].x;
+			currY = listLists[indexValue].y;
+			length = listLists.length;
+		}
+		
+		var nextX:Int = 0;
+		var nextY:Int = 0;
+		
+		var dx:Float = Math.POSITIVE_INFINITY;
+		var dy:Float = Math.POSITIVE_INFINITY;
+		
+		var bestdx:Float = dx;
+		var bestdy:Float = dy;
+		
+		var bestWidget:IFlxUIWidget = null;
+		var besti:Int = -1;
+		
+		//DESIRED BEHAVIOR: Jump to the CLOSEST OBJECT that ALSO:
+		//is located ABOVE/BELOW me (depending on Y's sign)
+		
+		for (i in 0...length)
+		{
+			if (i != indexValue)
 			{
-				if (i != location)
+				if (listWidget != null)
 				{
-					nextWidget = _widgets[i];							//Check each widget
-					dy = nextWidget.y - currWidget.y;					//Get y distance
-					if (FlxMath.sameSign(dy, Y) && dy != 0)				//If it's in the right direction, and not at same Y, consider it
+					nextX = Std.int(listWidget[i].x);
+					nextY = Std.int(listWidget[i].y);
+				}
+				else if (listLists != null)
+				{
+					nextX = listLists[i].x;
+					nextY = listLists[i].y;
+				}
+				
+				dy = nextY - currY;									//Get y distance
+				if (FlxMath.sameSign(dy, Y) && dy != 0)				//If it's in the right direction, and not at same Y, consider it
+				{
+					dy = Math.abs(dy);
+					if (dy < bestdy)								//If abs. y distance is closest so far
 					{
-						dy = Math.abs(dy);
-						if (dy < bestdy)								//If abs. y distance is closest so far
+						bestdy = dy;
+						bestdx = Math.abs(currX-nextX);	//reset this every time a better dy is found
+						besti = i;
+					}
+					else if (dy == bestdy)
+					{
+						dx = Math.abs(currX - nextX);		//If abs. x distance is closest so far
+						if (dx < bestdx)
 						{
-							bestdy = dy;
-							bestdx = Math.abs(currWidget.x-nextWidget.x);	//reset this every time a better dy is found
+							bestdx = dx;
 							besti = i;
-						}
-						else if (dy == bestdy)
-						{
-							dx = Math.abs(currWidget.x - nextWidget.x);		//If abs. x distance is closest so far
-							if (dx < bestdx)
-							{
-								bestdx = dx;
-								besti = i;
-							}
 						}
 					}
 				}
 			}
-			
-			if (besti != -1)
+		}
+		return besti;
+	}
+	
+	private function _wrapX(X:Int, indexValue:Int, listLength:Int):Int
+	{
+		if (indexValue + X < 0)
+		{
+			indexValue = (indexValue + X) + listLength;
+		}
+		else if (indexValue + X >= listLength)
+		{
+			indexValue = (indexValue + X) - listLength;
+		}
+		return indexValue;
+	}
+	
+	private function _wrapY(Y:Int, indexValue:Int, listWidget:Array<IFlxUIWidget>, listLists:Array<WidgetList>):Int
+	{
+		var dx:Float = Math.POSITIVE_INFINITY;
+		var dy:Float = Math.POSITIVE_INFINITY;
+		
+		var bestdx:Float = dx;
+		var bestdy:Float = dy;
+		
+		var bestWidget:IFlxUIWidget = null;
+		var besti:Int = -1;
+		
+		bestdx = Math.POSITIVE_INFINITY;
+		bestdy = 0;							//Now we want the FURTHEST object from us
+		
+		var length = (listWidget != null ? listWidget.length : (listLists != null ? listLists.length : 0));
+		var length:Int = 0;
+		var currX:Int = 0;
+		var currY:Int = 0;
+		
+		if (listWidget != null)
+		{
+			length = listWidget.length;
+			currX = Std.int(listWidget[indexValue].x);
+			currY = Std.int(listWidget[indexValue].y);
+		}
+		if (listLists != null)
+		{
+			length = listLists.length;
+			currX = listLists[indexValue].x;
+			currY = listLists[indexValue].y;
+		}
+		
+		for (i in 0...length)
+		{
+			if (i != location)
 			{
-				location = besti;
-				currWidget = _widgets[besti];
+				var xx = 0;
+				var yy = 0;
+				if (listWidget != null)
+				{
+					xx = Std.int(listWidget[i].x);
+					yy = Std.int(listWidget[i].y);
+				}
+				else if (listLists != null)
+				{
+					xx = Std.int(listLists[i].x);
+					yy = Std.int(listLists[i].y);
+				}
+				
+				dy = yy - currY;
+				
+				if (FlxMath.sameSign(dy, Y) == false && dy != 0) {	//I want the WRONG direction this time
+					dy = Math.abs(dy);
+					if (dy > bestdy)
+					{
+						bestdy = dy;
+						bestdx = Math.abs(currX - xx);
+						besti = i;
+					}
+					else if (dy == bestdy)
+					{
+						dx = Math.abs(currX - xx);
+						if (dx < bestdx)
+						{
+							bestdx = dx;
+							besti = i;
+						}
+					}
+				}
+			}
+		}
+		if (besti != -1)
+		{
+			indexValue = besti;
+		}
+		return indexValue;
+	}
+	
+	private function _doInput(X:Int, Y:Int, recursion:Int = 0):Void {
+		var currWidget:IFlxUIWidget=null;
+		
+		if (Y == 0)	//horizontal, just move back/forth
+		{
+			//Easy: go to the next index in the array, loop around if needed
+			
+			if (location + X >= 0 && location + X < _widgets.length)	//within bounds
+			{
+				location = location + X;
+			}
+			else	//at the boundary
+			{
+				if (wrap)	//if wrapping
+				{
+					if (_lists.length == 1)	//if we only have one list, wrap within the list
+					{
+						location = _wrapX(X, location, _widgets.length);
+					}
+					else					//if we have multiple lists, go to the next list
+					{
+						if (listIndex + X >= 0 && listIndex + X < _lists.length)
+						{
+							listIndex = listIndex + X;
+						}
+						else
+						{
+							listIndex = _wrapX(X, listIndex, _lists.length);
+						}
+						if (X == -1)
+						{
+							location = _widgets.length - 1;
+						}
+					}
+				}
+			}
+			currWidget = _widgets[location];
+		}
+		else	//move UP/DOWN
+		{
+			//Harder: iterate through array, looking for widget with higher or lower y value
+			
+			var nextY = _findNextY(Y, location, _widgets, null);
+			
+			if (nextY != -1)			//found something, just jump to that
+			{
+				location = nextY;
+				currWidget = _widgets[location];
 			}
 			else						//didn't find anything
 			{
 				if (wrap)				//try wrapping around
 				{
-					bestdx = Math.POSITIVE_INFINITY;
-					bestdy = 0;							//Now we want the FURTHEST object from us
-					for (i in 0..._widgets.length)
+					if (_lists.length == 1)		//if we only have one list, wrap within list
 					{
-						if (i != location)
+						location = _wrapY(Y, location, _widgets, null);
+						currWidget = _widgets[location];
+					}
+					else						//if we have several, go to the next list
+					{
+						var nextListY = _findNextY(Y, listIndex, null, _lists);
+						if (nextListY != -1)				//within bounds, just go there
 						{
-							nextWidget = _widgets[i];
-							dy = nextWidget.y - currWidget.y;
-							if (FlxMath.sameSign(dy, Y) == false && dy != 0) {	//I want the WRONG direction this time
-								dy = Math.abs(dy);
-								if (dy > bestdy)
-								{
-									bestdy = dy;
-									bestdx = Math.abs(currWidget.x - nextWidget.x);
-									besti = i;
-								}
-								else if (dy == bestdy)
-								{
-									dx = Math.abs(currWidget.x - nextWidget.x);
-									if (dx < bestdx)
-									{
-										bestdx = dx;
-										besti = i;
-									}
-								}
-							}
+							listIndex = nextListY;
+							currWidget = _widgets[location];
+						}
+						else								//out of bounds, try wrapping
+						{
+							listIndex = _wrapY(Y, listIndex, null, _lists);
+						}
+						if (Y == -1)
+						{
+							location = _widgets.length - 1;
 						}
 					}
-				}
-				if (besti != -1)
-				{
-					location = besti;
-					currWidget = _widgets[besti];
+					currWidget = _widgets[location];
 				}
 			}
 		}
@@ -711,8 +991,11 @@ class FlxUICursor extends FlxUISprite
 		}
 	}
 	
-	private function _updateCursor():Void {
-		if (location < 0)
+	private function _updateCursor():Void
+	{
+		_widgets = _lists[listIndex].widgets;
+		
+		if (location < 0 || _lists == null || _widgets == null)
 		{
 			visible = false;
 			return;
@@ -725,25 +1008,32 @@ class FlxUICursor extends FlxUISprite
 		var flippedY:Bool = false;
 		
 		if (currWidget != null) {
-			anchor.anchorThing(this, cast currWidget);
+			var target:FlxObject = cast currWidget;
+			if (Std.is(currWidget, FlxUICheckBox))
+			{
+				var check:FlxUICheckBox = cast target;
+				target = check.box;
+			}
+			
+			anchor.anchorThing(this, target);
 			if (x < 0)
 			{
-				_flipAnchor(Anchor.LEFT, cast currWidget);
+				_flipAnchor(Anchor.LEFT, target);
 				flippedX = true;
 			}
 			else if (x > FlxG.width + width)
 			{
-				_flipAnchor(Anchor.RIGHT, cast currWidget);
+				_flipAnchor(Anchor.RIGHT, target);
 				flippedX = true;
 			}
 			if (y < 0)
 			{
-				_flipAnchor(Anchor.TOP, cast currWidget);
+				_flipAnchor(Anchor.TOP, target);
 				flippedY = true;
 			}
 			else if (y > FlxG.height + height)
 			{
-				_flipAnchor(Anchor.BOTTOM, cast currWidget);
+				_flipAnchor(Anchor.BOTTOM, target);
 				flippedY = true;
 			}
 			this.flipX = flippedX;
@@ -786,6 +1076,15 @@ class FlxUICursor extends FlxUISprite
 			theAnchor.anchorThing(this, destination);
 		}
 	}
+}
+
+typedef WidgetList =
+{
+	var x:Int;
+	var y:Int;
+	var width:Int;
+	var height:Int;
+	var widgets:Array<IFlxUIWidget>;
 }
 
 enum SortMethod

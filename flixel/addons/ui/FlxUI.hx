@@ -10,6 +10,7 @@ import flixel.addons.ui.ButtonLabelStyle;
 import flixel.addons.ui.FlxUI.Rounding;
 import flixel.addons.ui.FlxUI.VarValue;
 import flixel.addons.ui.FlxUIBar.FlxBarStyle;
+import flixel.addons.ui.FlxUICursor.WidgetList;
 import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.addons.ui.BorderDef;
 import flixel.addons.ui.FlxUIRadioGroup.CheckStyle;
@@ -94,6 +95,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	//Set this 
 	public var getTextFallback:String->String->Bool->String = null;
+	
+	/**
+	 * A useful hierarchical grouping of widgets for the FlxUICursor, null by default, populated during loading via xml:
+		 * <cursor>
+		 *   <list id="a,b,c"/>
+		 *   <list id="d,e,f"/>
+		 * </cursor>
+	 */
+	public var cursorLists(default, null):Array<Array<IFlxUIWidget>> = null;
 	
 	private var _ptr_tongue:IFireTongue;
 	private var _data:Fast;
@@ -496,7 +506,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if(_asset_index != null){
 			for (key in _asset_index.keys()) {
 				_asset_index.remove(key);
-			}_asset_index = null;			
+			}_asset_index = null;
 		}
 		if (_definition_index != null) {
 			for (key in _definition_index.keys()) {
@@ -510,6 +520,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		_superIndexUI = null;
 		_ptr_tongue = null;
+		if (cursorLists != null)
+		{
+			for (arr in cursorLists)
+			{
+				FlxArrayUtil.clearArray(arr);
+			}
+			FlxArrayUtil.clearArray(cursorLists);
+		}
+		cursorLists = null;
 		super.destroy();
 	}
 	
@@ -523,6 +542,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	{
 		_group_index = new Map<String,FlxUIGroup>();
 		_asset_index = new Map<String,IFlxUIWidget>();
+		_tag_index = new Map<String,Array<String>>();
 		_definition_index = new Map<String,Fast>();
 		if (_variable_index == null)
 		{
@@ -746,7 +766,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			group_name = obj.att.group; 
 			tempGroup = getGroup(group_name);
 		}
-		
 		//Make the thing
 		
 		var thing = _loadThing(type, obj);
@@ -766,6 +785,30 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				
 				//The widget name can be used in getEvent-handlers.
 				thing.name = thing_name;
+				
+				var thing_tags:String = U.xml_str(obj.x, "tags");
+				if (thing_tags != "")
+				{
+					var tagArr:Array<String> = thing_tags.split(",");
+					_addTags(tagArr, thing_name);
+				}
+			}
+		}
+	}
+	
+	private function _addTags(arr:Array<String>, thingName:String):Void
+	{
+		for (tag in arr)
+		{
+			var list:Array<String> = null;
+			if (!_tag_index.exists(tag))
+			{
+				_tag_index.set(tag, []);
+			}
+			list = _tag_index.get(tag);
+			if (list.indexOf(thingName) == -1)
+			{
+				list.push(thingName);
 			}
 		}
 	}
@@ -1077,6 +1120,26 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return asset;
 	}
 	
+	public function getAssetsWithTag(tag:String):Array<IFlxUIWidget>
+	{
+		if (_tag_index.exists(tag))
+		{
+			var list = _tag_index.get(tag);
+			if (list == null || list.length == 0) return null;
+			var arr = [];
+			for (key in list)
+			{
+				var widget = getAsset(key);
+				if (widget != null)
+				{
+					arr.push(widget);
+				}
+			}
+			return arr;
+		}
+		return null;
+	}
+	
 	public function getAssetGroup(?key:String,?thing:IFlxUIWidget):FlxUIGroup
 	{
 		if (thing == null && (key == null || key == "")) return null;
@@ -1212,6 +1275,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private var _group_index:Map<String,FlxUIGroup>;
 	private var _asset_index:Map<String,IFlxUIWidget>;
+	private var _tag_index:Map<String,Array<String>>;
 	private var _definition_index:Map<String,Fast>;
 	private var _variable_index:Map<String,String>;
 	private var _mode_index:Map<String,Fast>;
@@ -1402,6 +1466,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			case "chrome", "nineslicesprite", "nine_slice_sprite", "nineslice", "nine_slice": return _load9SliceSprite(info);
 			case "tile_test": return _loadTileTest(info);
 			case "line": return _loadLine(info);
+			case "box": return _loadBox(info);
 			case "sprite": return _loadSprite(info);
 			case "bar": return _loadBar(info);
 			case "text": return _loadText(info);								//if input has events
@@ -1920,6 +1985,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (type == "position") {
 			_loadPosition(data, thing);
 			return;
+		}
+		
+		if (type == "cursor") {
+			_loadCursor(data);
 		}
 		
 		if (thing == null && !isGroup) {
@@ -3459,6 +3528,54 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return tile;
 	}
 	
+	private function _loadBox(data:Fast):FlxUISprite
+	{
+		var src:String = ""; 
+		var fs:FlxUISprite = null;
+		
+		var thickness:Int = Std.int(_loadWidth(data, 1, "thickness"));
+		
+		var bounds: { min_width:Float, min_height:Float, 
+					  max_width:Float, max_height:Float } = calcMaxMinSize(data);
+		
+		if (bounds == null) {
+			bounds = { min_width:Math.NEGATIVE_INFINITY, min_height:Math.NEGATIVE_INFINITY, max_width:Math.POSITIVE_INFINITY, max_height:Math.POSITIVE_INFINITY };
+		}
+		
+		var W:Int = Std.int(_loadWidth(data));
+		var H:Int = Std.int(_loadHeight(data));
+		
+		if (bounds != null)
+		{
+			if (W < bounds.min_width) { W = Std.int(bounds.min_width); }
+			else if (W > bounds.max_width) { W = Std.int(bounds.max_width); }
+			if (H < bounds.min_height) { H = Std.int(bounds.max_height); }
+			else if (H > bounds.max_height) { H = Std.int(bounds.max_height);}
+		}
+
+		var cstr:String = U.xml_str(data.x, "color", true, "0xff000000");
+		var C:FlxColor = 0;
+		if (cstr != "")
+		{
+			C = U.parseHex(cstr, true);
+		}
+		fs = new FlxUISprite(0, 0);
+		var key = W + "x" + H + ":" + C + ":" + thickness;
+		
+		if (FlxG.bitmap.checkCache(key))
+		{
+			fs.loadGraphic(key);
+		}
+		else
+		{
+			fs.makeGraphic(W, H, C, false, key);
+			var r:Rectangle = new Rectangle(thickness, thickness, W - thickness * 2, H - thickness * 2);
+			fs.graphic.bitmap.fillRect(r, FlxColor.TRANSPARENT);
+		}
+		
+		return fs;
+	}
+	
 	private function _loadLine(data:Fast):FlxUISprite
 	{
 		var src:String = ""; 
@@ -4210,6 +4327,35 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}
 		return return_val;
+	}
+	
+	private function _loadCursor(data:Fast):Void
+	{
+		if (data.hasNode.list)
+		{
+			if (cursorLists == null)
+			{
+				cursorLists = [];
+			}
+			for (lNode in data.nodes.list)
+			{
+				var ids:String = U.xml_str(lNode.x, "ids");
+				var arr = ids.split(",");
+				if (arr != null && arr.length > 0)
+				{
+					var list:Array<IFlxUIWidget> = [];
+					for (str in arr)
+					{
+						var widget = getAsset(str);
+						if (widget != null)
+						{
+							list.push(widget);
+						}
+					}
+					cursorLists.push(list);
+				}
+			}
+		}
 	}
 	
 	private function _loadPosition(data:Fast, thing:IFlxUIWidget):Void
