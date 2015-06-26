@@ -30,6 +30,11 @@ class FlxUICursor extends FlxUISprite
 	public var location(default, set):Int = -1;			//which object the cursor is pointing to (-1 means nothing)
 	public var listIndex(default, set):Int = 0;		//which group is my location pointing to?
 	
+	/**
+	 * Exactly what it sounds like. The next input that would trigger a jump doesn't happen, then this flag is reset.
+	 */
+	public var ignoreNextInput:Bool;
+	
 	private function set_listIndex(i:Int):Int
 	{
 		if (i >= _lists.length)
@@ -56,6 +61,11 @@ class FlxUICursor extends FlxUISprite
 		_updateCursor();
 		return location;
 	}
+	
+	/**
+	 * If a gamepad's connection is suddenly lost, what should be done?
+	 */
+	public var gamepadAutoConnect:GamepadAutoConnectPreference = FirstActive;
 	
 	public var gamepad(default, set):FlxGamepad;
 	private function set_gamepad(g:FlxGamepad):FlxGamepad {
@@ -181,9 +191,22 @@ class FlxUICursor extends FlxUISprite
 	}
 	
 	public override function update(elapsed:Float):Void {
+		if (gamepad == null)
+		{
+			var g:FlxGamepad = switch(gamepadAutoConnect)
+			{
+				case FirstActive:  FlxG.gamepads.firstActive;
+				case Never:        null;
+				case GamepadID(i): FlxG.gamepads.getByID(i);
+			}
+			if (g != null)
+			{
+				gamepad = g;
+			}
+		}
+		_checkKeys();
 		_clickTime += elapsed;
 		super.update(elapsed);
-		_checkKeys();
 	}
 	
 	public function addWidgetsFromUI(ui:FlxUI)
@@ -540,9 +563,16 @@ class FlxUICursor extends FlxUISprite
 		
 		if (_clickKeysJustPressed())		//JUST PRESSED: send a press event only the first time it's pressed
 		{
-			_clickPressed = true;
-			_clickTime = 0;
-			_doPress();
+			if (!ignoreNextInput)
+			{
+				_clickPressed = true;
+				_clickTime = 0;
+				_doPress();
+			}
+			else
+			{
+				ignoreNextInput = false;
+			}
 		}
 		
 		if (_clickKeysPressed())			//STILL PRESSED: keep the cursor in that position while the key is down
@@ -898,7 +928,13 @@ class FlxUICursor extends FlxUISprite
 		return indexValue;
 	}
 	
-	private function _doInput(X:Int, Y:Int, recursion:Int = 0):Void {
+	private function _doInput(X:Int, Y:Int, recursion:Int = 0):Void
+	{
+		if (ignoreNextInput)
+		{
+			ignoreNextInput = false;
+			return;
+		}
 		var currWidget:IFlxUIWidget=null;
 		
 		if (Y == 0)	//horizontal, just move back/forth
@@ -1085,6 +1121,13 @@ typedef WidgetList =
 	var width:Int;
 	var height:Int;
 	var widgets:Array<IFlxUIWidget>;
+}
+
+enum GamepadAutoConnectPreference
+{
+	Never;
+	FirstActive;
+	GamepadID(i:Int);
 }
 
 enum SortMethod
