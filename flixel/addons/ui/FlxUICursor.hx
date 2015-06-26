@@ -193,12 +193,7 @@ class FlxUICursor extends FlxUISprite
 	public override function update(elapsed:Float):Void {
 		if (gamepad == null)
 		{
-			var g:FlxGamepad = switch(gamepadAutoConnect)
-			{
-				case FirstActive:  FlxG.gamepads.firstActive;
-				case Never:        null;
-				case GamepadID(i): FlxG.gamepads.getByID(i);
-			}
+			var g = getGamepad(false);
 			if (g != null)
 			{
 				gamepad = g;
@@ -405,8 +400,13 @@ class FlxUICursor extends FlxUISprite
 		}
 		
 		#if !FLX_NO_GAMEPAD
+		
+		if (gamepad == null)
+		{
+			gamepad = getGamepad();
+		}
+		
 		if (code & GAMEPAD_DPAD == GAMEPAD_DPAD) {
-			var gamepad = getGamepad();
 			_addToKeys(keysLeft,  new FlxMultiGamepad(gamepad, FlxGamepadInputID.DPAD_LEFT));
 			_addToKeys(keysRight, new FlxMultiGamepad(gamepad, FlxGamepadInputID.DPAD_RIGHT));
 			_addToKeys(keysDown,  new FlxMultiGamepad(gamepad, FlxGamepadInputID.DPAD_DOWN));
@@ -414,13 +414,11 @@ class FlxUICursor extends FlxUISprite
 			_addToKeys(keysClick, new FlxMultiGamepad(gamepad, FlxGamepadInputID.A));
 		}
 		if (code & GAMEPAD_SHOULDER_BUTTONS == GAMEPAD_SHOULDER_BUTTONS) {
-			var gamepad = getGamepad();
 			_addToKeys(keysLeft,  new FlxMultiGamepad(gamepad, FlxGamepadInputID.LEFT_SHOULDER));
 			_addToKeys(keysRight, new FlxMultiGamepad(gamepad, FlxGamepadInputID.RIGHT_SHOULDER));
 			_addToKeys(keysClick, new FlxMultiGamepad(gamepad, FlxGamepadInputID.A));
 		}
 		if (code & GAMEPAD_LEFT_STICK == GAMEPAD_LEFT_STICK) {
-			var gamepad = getGamepad();
 			_addToKeys(keysLeft,  new FlxMultiGamepadAnalogStick(gamepad, {id:LEFT_ANALOG_STICK, axis:X, positive:false}));
 			_addToKeys(keysRight, new FlxMultiGamepadAnalogStick(gamepad, {id:LEFT_ANALOG_STICK, axis:X, positive:true}));
 			_addToKeys(keysUp,    new FlxMultiGamepadAnalogStick(gamepad, {id:LEFT_ANALOG_STICK, axis:Y, positive:false}));
@@ -428,7 +426,6 @@ class FlxUICursor extends FlxUISprite
 			_addToKeys(keysClick, new FlxMultiGamepad(gamepad, FlxGamepadInputID.A));
 		}
 		if (code & GAMEPAD_RIGHT_STICK == GAMEPAD_RIGHT_STICK) {
-			var gamepad = getGamepad();
 			_addToKeys(keysLeft,  new FlxMultiGamepadAnalogStick(gamepad, {id:RIGHT_ANALOG_STICK, axis:X, positive:false}));
 			_addToKeys(keysRight, new FlxMultiGamepadAnalogStick(gamepad, {id:RIGHT_ANALOG_STICK, axis:X, positive:true}));
 			_addToKeys(keysUp,    new FlxMultiGamepadAnalogStick(gamepad, {id:RIGHT_ANALOG_STICK, axis:Y, positive:false}));
@@ -457,10 +454,16 @@ class FlxUICursor extends FlxUISprite
 	private var _clickTime:Float = 0;
 	
 	#if !FLX_NO_GAMEPAD
-	private function getGamepad():FlxGamepad
+	private function getGamepad(exhaustive:Bool=true):FlxGamepad
 	{
-		var gamepad = FlxG.gamepads.getFirstActiveGamepad();
-		if (gamepad == null)
+		var gamepad = switch(gamepadAutoConnect)
+		{
+			case Never:        null;
+			case FirstActive:  FlxG.gamepads.getFirstActiveGamepad();
+			case LastActive:   FlxG.gamepads.lastActive;
+			case GamepadID(i): FlxG.gamepads.getByID(i);
+		}
+		if (gamepad == null && exhaustive)
 		{
 			for (i in 0...FlxG.gamepads.numActiveGamepads)
 			{
@@ -1127,6 +1130,7 @@ enum GamepadAutoConnectPreference
 {
 	Never;
 	FirstActive;
+	LastActive;
 	GamepadID(i:Int);
 }
 
