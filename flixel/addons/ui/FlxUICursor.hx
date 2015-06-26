@@ -67,9 +67,9 @@ class FlxUICursor extends FlxUISprite
 	 */
 	public var gamepadAutoConnect:GamepadAutoConnectPreference = FirstActive;
 	
-	public var gamepad(default, set):FlxGamepad;
+	public var gamepad(get, set):FlxGamepad;
 	private function set_gamepad(g:FlxGamepad):FlxGamepad {
-		gamepad = g;
+		_gamepad = g;
 		setDefaultKeys(_defaultCode);
 		var arr = [keysUp, keysDown, keysLeft, keysRight, keysClick];
 		for (list in arr)
@@ -81,13 +81,20 @@ class FlxUICursor extends FlxUISprite
 					if (Std.is(keys, FlxMultiGamepad))
 					{
 						var fmg:FlxMultiGamepad = cast keys;
-						fmg.gamepad = gamepad;
+						fmg.gamepad = _gamepad;
 					}
 				}
 			}
 		}
 		return g;
 	}
+	
+	public function get_gamepad():FlxGamepad
+	{
+		return _gamepad;
+	}
+	
+	private var _gamepad:FlxGamepad;
 	
 	//Key configurations, you can set easily with setDefaultKeys(KEYS_TAB), for instance.
 	
@@ -403,7 +410,7 @@ class FlxUICursor extends FlxUISprite
 		
 		if (gamepad == null)
 		{
-			gamepad = getGamepad();
+			_gamepad = getGamepad();	//set _gamepad to avoid a stack overflow loop
 		}
 		
 		if (code & GAMEPAD_DPAD == GAMEPAD_DPAD) {
