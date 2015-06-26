@@ -772,13 +772,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		if (thing != null) {
 			_loadGlobals(obj, thing);
-			if (tempGroup != null) {
-				tempGroup.add(cast thing);
-			}else {
-				add(cast thing);
-			}
-		
-			_loadPosition(obj, thing);	//Position the thing if possible
 			
 			if (thing_name != null && thing_name != "") {
 				_asset_index.set(thing_name, thing);
@@ -793,6 +786,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					_addTags(tagArr, thing_name);
 				}
 			}
+			
+			if (tempGroup != null) {
+				tempGroup.add(cast thing);
+			}else {
+				add(cast thing);
+			}
+		
+			_loadPosition(obj, thing);	//Position the thing if possible
 		}
 	}
 	
