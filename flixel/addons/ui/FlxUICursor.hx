@@ -198,6 +198,7 @@ class FlxUICursor extends FlxUISprite
 	}
 	
 	public override function update(elapsed:Float):Void {
+		#if !FLX_NO_GAMEPAD
 		if (gamepad == null)
 		{
 			var g = getGamepad(false);
@@ -206,6 +207,7 @@ class FlxUICursor extends FlxUISprite
 				gamepad = g;
 			}
 		}
+		#end
 		_checkKeys();
 		_clickTime += elapsed;
 		super.update(elapsed);
