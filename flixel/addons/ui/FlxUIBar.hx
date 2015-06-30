@@ -38,6 +38,22 @@ class FlxUIBar extends FlxBar implements IResizable implements IFlxUIWidget impl
 		super(x, y, direction, width, height, parentRef, variable, min, max, showBorder);
 	}
 	
+	override public function clone():FlxSprite 
+	{
+		var w:Int = Std.int(width);
+		var h:Int = Std.int(height);
+		var showBorder = (style != null && style.borderColor != null);
+		if (showBorder)
+		{
+			w -= 2;
+			h -= 2;
+		}
+		var b:FlxUIBar = new FlxUIBar(x, y, fillDirection, w, h, parent, parentVariable, min, max, showBorder);
+		b.style = style;
+		b.value = value;
+		return b;
+	}
+	
 	/**
 	 * Applies a new style to this FlxBar and redraws it
 	 */
