@@ -5,6 +5,7 @@ import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.addons.ui.FlxUIText;
 import flixel.FlxSprite;
 import flixel.system.FlxAssets;
+import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import flixel.math.FlxPoint;
@@ -14,6 +15,8 @@ import flixel.math.FlxPoint;
  * that could be either a FlxUIButton or a FlxUISpriteButton
  * @author larsiusprime
  */
+
+@:access(flixel.ui.FlxButton)
 interface IFlxUIButton extends IFlxUIWidget extends IHasParams extends IFlxDestroyable
 {
 	public var up_color:Null<FlxColor>;
@@ -36,7 +39,7 @@ interface IFlxUIButton extends IFlxUIWidget extends IHasParams extends IFlxDestr
 	public var resize_point:FlxPoint;
 	
 	public var has_toggle:Bool;
-	public var toggled:Bool;
+	public var toggled(default,set):Bool;
 	
 	public var toggle_label(default, set):FlxSprite;
 	

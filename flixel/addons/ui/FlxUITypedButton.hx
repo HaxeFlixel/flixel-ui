@@ -34,7 +34,13 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	public var tile:Int = FlxUI9SliceSprite.TILE_NONE;
 	
 	public var has_toggle:Bool = false;
-	public var toggled:Bool = false;
+	public var toggled(default, set):Bool = false;
+	public function set_toggled(b:Bool):Bool
+	{
+		toggled = b;
+		updateStatusAnimation();
+		return toggled;
+	}
 	
 	public var broadcastToFlxUI:Bool = true;
 	
