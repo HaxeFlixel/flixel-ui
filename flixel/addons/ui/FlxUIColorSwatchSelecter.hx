@@ -1,8 +1,10 @@
 package flixel.addons.ui;
 import flash.geom.Rectangle;
+import flixel.addons.ui.FlxUIColorSwatchSelecter.SwatchGraphic;
 import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
+import flixel.system.FlxAssets.FlxGraphicAsset;
 
 /**
  * ...
@@ -67,11 +69,25 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 	 * @param	SpacingH			Horizontal spacing between swatches
 	 * @param	SpacingV			Vertical spacing between swatches
 	 * @param	MaxColumns			Number of horizontal swatches in a row before a line break
+	 * @param	Preview				Graphic information for the preview swatch
+	 * @param	Swatch				Graphic information for the regular swatches
 	 */
 	
-	public function new(X:Float,Y:Float,?SelectionSprite:FlxSprite,?list_colors:Array<Int>,?list_data:Array<SwatchData>,?list_swatches:Array<FlxUIColorSwatch>,SpacingH:Int=2, SpacingV:Int=2, MaxColumns:Int=-1) 
+	public function new(X:Float,Y:Float,?SelectionSprite:FlxSprite,?list_colors:Array<Int>,?list_data:Array<SwatchData>,?list_swatches:Array<FlxUIColorSwatch>,SpacingH:Int=2, SpacingV:Int=2, MaxColumns:Int=-1,?Preview:SwatchGraphic=null,?Swatch:SwatchGraphic=null) 
 	{
 		super(X, Y);
+		
+		_previewGraphic = Preview;
+		_swatchGraphic = Swatch;
+		
+		if (_previewGraphic == null)
+		{
+			_previewGraphic = { asset:null, width: -1, height: -1 };
+		}
+		if (_swatchGraphic == null)
+		{
+			_swatchGraphic = { asset:null, width: -1, height: -1 };
+		}
 		
 		if (SelectionSprite != null) {
 			_selectionSprite = SelectionSprite;
@@ -79,11 +95,12 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 	
 		var i:Int = 0;
 		var swatch:FlxUIColorSwatch;
+		
 		if (list_data != null)
 		{
 			for (data in list_data)
 			{
-				swatch = new FlxUIColorSwatch(0, 0, data);
+				swatch = new FlxUIColorSwatch(0, 0, null, data, _swatchGraphic.asset, null, _swatchGraphic.width, _swatchGraphic.height);
 				swatch.callback = selectCallback.bind(i);
 				swatch.broadcastToFlxUI = false;
 				swatch.name = data.name;
@@ -94,7 +111,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 		{
 			for (color in list_colors) 
 			{
-				swatch = new FlxUIColorSwatch(0, 0, color);
+				swatch = new FlxUIColorSwatch(0, 0, color, null, _swatchGraphic.asset, null, _swatchGraphic.width, _swatchGraphic.height);
 				swatch.callback = selectCallback.bind(i);
 				swatch.broadcastToFlxUI = false;
 				swatch.name = "0x"+StringTools.hex(color, 6);
@@ -143,7 +160,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 			}
 		}
 		
-		_previewSwatch = new FlxUIColorSwatch(0, 0, new SwatchData("dummy", [0xffffffff, 0xff888888, 0xff444444, 0xff000000]));
+		_previewSwatch = new FlxUIColorSwatch(0, 0, null, new SwatchData("dummy", [0xffffffff, 0xff888888, 0xff444444, 0xff000000]), _previewGraphic.asset, null, _previewGraphic.width, _previewGraphic.height);
 		_previewSwatch.broadcastToFlxUI = false;
 		add(_previewSwatch);
 		
@@ -230,7 +247,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 			}
 			
 			if (fuics == null) {
-				fuics = new FlxUIColorSwatch(0, 0, list[i]);
+				fuics = new FlxUIColorSwatch(0, 0, null, list[i], _swatchGraphic.asset, null, _swatchGraphic.width, _swatchGraphic.height);
 				fuics.name = list[i].name;
 				fuics.broadcastToFlxUI = false;
 				fuics.callback = selectCallback.bind(i);
@@ -374,7 +391,15 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 		}
 	}
 	
+	private var _previewGraphic:SwatchGraphic;
+	private var _swatchGraphic:SwatchGraphic;
 	private var _selectedSwatch:FlxUIColorSwatch;
 	private var _selectionSprite:FlxSprite;
 	private var _dirtyLayout:Bool = false;
+}
+
+typedef SwatchGraphic = {
+	var width:Int;
+	var height:Int;
+	var asset:FlxGraphicAsset;
 }
