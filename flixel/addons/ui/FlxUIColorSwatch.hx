@@ -123,7 +123,7 @@ class FlxUIColorSwatch extends FlxUIButton
 	 * @param	?Callback		Function to call when clicked
 	 */
 	
-	public function new(X:Float, Y:Float, ?Color:Int = 0xFFFFFF, ?Colors:SwatchData, ?Asset:Dynamic, ?Callback:Void->Void, ?Width:Int=-1, ?Height:Int=-1) 
+	public function new(X:Float, Y:Float, ?Color:Int = 0xFFFFFF, ?Colors:SwatchData, ?Asset:Dynamic, ?Callback:Void->Void, Width:Int=-1, Height:Int=-1) 
 	{
 		super(X, Y, onClick);
 		

@@ -3077,7 +3077,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		else
 		{
 			var tempGroup:FlxSpriteGroup = null;
-			if (label != "") {
+			if (label != "")
+			{
 				//We have a Sprite AND a Label, so we package it up in a group
 				
 				var labelTxt = new FlxUIText(0, 0, 80, label, 8);
@@ -3100,7 +3101,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		fb.resize_point = resize_point;
 		fb.autoResizeLabel = resize_label;
 		
-		if (setCallback) {
+		if (setCallback)
+		{
 			fb.params = params;
 		}
 		
@@ -4706,6 +4708,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				if (labelWidth != 0)
 				{
 					the_label.width = labelWidth;
+					the_label.resetHelpers();
 				}
 				
 				if (fb != null)

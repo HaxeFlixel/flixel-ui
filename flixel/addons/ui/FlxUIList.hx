@@ -105,6 +105,20 @@ class FlxUIList extends FlxUIGroup
 			}
 			prevButton = pButton;
 		}
+		else
+		{
+			if (Std.is(prevButton, FlxUIButton))
+			{
+				var fuib:FlxUIButton = cast prevButton;
+				fuib.onUp.callback = onClick.bind( -1);
+			}
+			if (Std.is(prevButton, FlxUISpriteButton))
+			{
+				var fusb:FlxUISpriteButton = cast prevButton;
+				fusb.onUp.callback = onClick.bind( -1);
+			}
+		}
+		
 		if (nextButton == null) {
 			var nButton = new FlxUIButton(0, 0, " ", onClick.bind( 1));
 			if(stacking == STACK_HORIZONTAL){
@@ -125,6 +139,20 @@ class FlxUIList extends FlxUIGroup
 			}
 			nextButton = nButton;
 		}
+		else
+		{
+			if (Std.is(nextButton, FlxUIButton))
+			{
+				var fuib:FlxUIButton = cast nextButton;
+				fuib.onUp.callback = onClick.bind( 1);
+			}
+			if (Std.is(nextButton, FlxUISpriteButton))
+			{
+				var fusb:FlxUISpriteButton = cast nextButton;
+				fusb.onUp.callback = onClick.bind( 1);
+			}
+		}
+		
 		if (prevButtonOffset == null) {
 			prevButtonOffset = FlxPoint.get(0, 0);
 		}
