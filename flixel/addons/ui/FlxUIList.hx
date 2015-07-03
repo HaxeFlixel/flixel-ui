@@ -55,12 +55,12 @@ class FlxUIList extends FlxUIGroup
 	 * Creates a scrollable list of widgets
 	 * @param	X			X position of the list
 	 * @param	Y			Y position of the list
-	 * @param	?Widgets	List of widgets themselves (optional)
+	 * @param	Widgets	List of widgets themselves (optional)
 	 * @param	W			Width of the invisible "canvas" available for putting widgets in before we have to scroll to see more
 	 * @param	H			Height of the invisible "canvas" available for putting widgets in before we have to scroll to see more
-	 * @param	?MoreString	String that says "<X> more..." in your language (must use <X> variable!)
-	 * @param	?Stacking	How to stack the widgets? STACK_HORIZONTAL or STACK_VERTICAL
-	 * @param	?Spacing	Space between widgets 
+	 * @param	MoreString	String that says "<X> more..." in your language (must use <X> variable!)
+	 * @param	Stacking	How to stack the widgets? STACK_HORIZONTAL or STACK_VERTICAL
+	 * @param	Spacing	Space between widgets 
 	 * @param	PrevButtonOffset	Offset for Scroll - Button
 	 * @param	NextButtonOffset	Offset for Scroll + Button
 	 * @param	PrevButton	Button to Scroll -
