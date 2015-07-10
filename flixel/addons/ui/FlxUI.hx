@@ -1510,6 +1510,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var nodeName:String = data.x.nodeName;
 		var defaultDef = getDefinition("default:" + nodeName);
 		
+		//TODO: since it looks for the default definition based on the specific node-name, there could be bugs if you mix & match synonymous tags like <9slicesprite> and <chrome>,
+		//but only specify a default for one of them. I might need to add some robustness checking later.
+		
 		var info:Fast = null;
 		if (defaultDef != null)
 		{
