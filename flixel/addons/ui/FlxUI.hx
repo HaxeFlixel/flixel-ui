@@ -1583,16 +1583,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			{
 				_loadTooltipText(tNode, "text", tt);
 			}
-			else
+			
+			if (tNode.hasNode.title)
 			{
-				if (tNode.hasNode.title)
-				{
-					_loadTooltipText(tNode.node.title, "text", tt);
-				}
-				if (tNode.hasNode.body)
-				{
-					_loadTooltipText(tNode.node.body, "text", tt);
-				}
+				_loadTooltipText(tNode.node.title, "text", tt);
+			}
+			if (tNode.hasNode.body)
+			{
+				_loadTooltipText(tNode.node.body, "text", tt);
 			}
 			
 			tt.anchor = _loadAnchor(tNode);
