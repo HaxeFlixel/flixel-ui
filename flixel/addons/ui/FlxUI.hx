@@ -1637,7 +1637,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private function _loadTooltipText(node:Fast, fieldName:String, tt:ToolTipData):Void
 	{
 		var nodeName = node.name;
-		var text   = _loadString(node, fieldName);
+		var text     = _loadString(node, fieldName);
+		
 		var offset = new FlxPoint(_loadX(node), _loadY(node));
 		
 		if (node.has.use_def)
@@ -1732,7 +1733,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 							return null;
 			case "align": 	_alignThing(info,true);				//we suppress errors first time through b/c they only matter if still present at postLoad()
 							return null;
-			case "mode", "include", "group", "load_if":			//ignore these, they are handled elsewhere
+			case "mode", "include", "inject", "default", "group", "load_if":	//ignore these, they are handled elsewhere
 							return null;
 			case "change":
 							_changeThing(info);
