@@ -1507,14 +1507,28 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadThingGetInfo(data:Fast):Fast
 	{
-		var use_def:String = U.xml_str(data.x, "use_def", true);
+		var nodeName:String = data.x.nodeName;
+		var defaultDef = getDefinition("default:" + nodeName);
+		
+		var info:Fast = null;
+		if (defaultDef != null)
+		{
+			info = consolidateData(data, defaultDef, true);
+		}
+		
+		if (info == null)
+		{
+			info = data;
+		}
+		
+		var use_def:String = U.xml_str(info.x, "use_def", true);
 		var definition:Fast = null;
 		if (use_def != "")
 		{
 			definition = getDefinition(use_def);
 		}
 		
-		var info:Fast = consolidateData(data, definition);
+		info = consolidateData(info, definition);
 		info = applyNodeConditionals(info);
 		
 		if (_loadTest(info) == false)
