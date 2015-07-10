@@ -1566,7 +1566,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			var defaultDef = getDefinition("default:tooltip");
 			if (defaultDef != null)
 			{
-				tNode = consolidateData(tNode, defaultDef);
+				tNode = consolidateData(tNode, defaultDef, true);
 			}
 			
 			if (tNode.has.use_def)
@@ -1575,7 +1575,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var def = getDefinition(defStr);
 				if (def != null)
 				{
-					tNode = consolidateData(tNode, def);
+					tNode = consolidateData(tNode, def, true);
 				}
 			}
 			
@@ -2480,8 +2480,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return ft;
 	}
 
+	/**
+	 * Takes two XML files and combines them, with "data" overriding duplicate attributes found in "definition"
+	 * @param	data		the local data tag
+	 * @param	definition	the base definition you are extending
+	 * @param	combineUniqueChildren if true, will combine child tags if they are unique. If false, inserts child tags as new ones.
+	 * @return
+	 */
 	
-	public static function consolidateData(data:Fast, definition:Fast):Fast
+	public static function consolidateData(data:Fast, definition:Fast, combineUniqueChildren:Bool=false):Fast
 	{
 		if (data == null && definition != null)
 		{
@@ -2518,7 +2525,31 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			for (element in data.x.elements())		//Loop over each node in local data
 			{
 				var nodeName = element.nodeName;
-				new_data.insertChild(U.copyXml(element), 0);	//Add the node
+				var notCombine = !combineUniqueChildren;
+				if (combineUniqueChildren)			//if we're supposed to combine it instead of inserting it
+				{
+					var new_els:Iterator<Xml> = new_data.elementsNamed(nodeName);
+					var new_el:Xml = new_els.next();
+					
+					//if there is only one child node of that name in BOTH the definition AND the target
+					if (data.nodes.resolve(nodeName).length == 1 && new_el != null && new_els.hasNext() == false)
+					{
+						//combine them
+						for (att in element.attributes())
+						{
+							new_el.set(att, element.get(att));
+						}
+					}
+					else
+					{
+						notCombine = true;
+					}
+				}
+				
+				if (notCombine)
+				{
+					new_data.insertChild(U.copyXml(element), 0);	//Add the node
+				}
 			}
 			return new Fast(new_data);
 		}
