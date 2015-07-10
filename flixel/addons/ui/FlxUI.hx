@@ -540,6 +540,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @param	data
 	 */
 	
+	@:access(Xml)
 	public function load(data:Fast):Void
 	{
 		_group_index = new Map<String,FlxUIGroup>();
@@ -563,11 +564,46 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 			
 			_data = data;
-		
+			
+			if (data.hasNode.inject)
+			{
+				//for (inj_data in data.nodes.inject)
+				while(data.hasNode.inject)
+				{
+					var inj_data = data.node.inject;
+					var inj_name:String = U.xml_name(inj_data.x);
+					var payload:Xml = U.xml(inj_name, "xml", false);
+					if (payload != null)
+					{
+						var parent = inj_data.x.parent;
+						var i:Int = 0;
+						for (child in parent.children)
+						{
+							if (child == inj_data.x)
+							{
+								break;
+							}
+							i++;
+						}
+						
+						if (parent.removeChild(inj_data.x))
+						{
+							var j:Int = 0;
+							for (e in payload.elements())
+							{
+								parent.insertChild(e, i + j);
+								j++;
+							}
+						}
+					}
+				}
+			}
+			
 			//See if there's anything to include
-			if (data.hasNode.include) {
-
-				for (inc_data in data.nodes.include) {
+			if (data.hasNode.include)
+			{
+				for (inc_data in data.nodes.include)
+				{
 					var inc_name:String = U.xml_name(inc_data.x);
 					
 					var liveFile:Fast = null;
