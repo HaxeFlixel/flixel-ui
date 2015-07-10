@@ -161,6 +161,7 @@ This is any of the many Flixel-UI widgets, such as ```<sprite>```, ```<button>``
 *Child nodes:*
 * **\<anchor>** - optional, lets you position this widget relative to another object's position.*
 * **\<param>** - optional, lets you specify parameters**
+* **\<tooltip>** - optional, lets you specify a tooltip.***
 * **size tags** - optional, lets you dynamically size a widget according to some formula.*
 * **\<locale name="xx-YY">** - optional, lets you specify a locale (like "en-US" or "nb-NO") for [fireTongue](https://github.com/larsiusprime/firetongue) integration. This lets you specify changes based on the current locale:
 Example:
@@ -178,6 +179,8 @@ Example:
 \* More info on Anchor and Size tags appears towards the bottom in the "Dynamic Position & Size" section. 
 
 \*\* More info on Parameters can be found under the Button entry in "List of Widgets". Only some widgets use parameters. 
+
+\*\*\* More info on Tooltips appears towards the bottom in the "Tooltips" section.
 
 --
 
@@ -733,6 +736,75 @@ TODO
 ##15. TileTest (FlxUITileTest) ```<tile_test>```
 
 TODO
+
+
+----
+
+#Tooltips
+
+Tooltips can be added to button and button-like widgets, including ```<button>```, ```<button_toggle>```, ```<checkbox>```, the ```<radio>``` child tags of a ```FlxUIRadioGroup```, and the ```<tab>``` child tags of a ```FlxUITabMenu```.
+
+(Note that there is a full-featured "Tooltips" demo in [flixel-demos](https://github.com/haxeflixel/flixel-demos), underneath the "User Interface" category.)
+
+Attributes:
+* ```x```/```y``` - x/y offset for the tooltip's anchor
+* ```use_def``` - you can specify a definition for a tooltip just like anything else
+* ```width```/```height```
+* ```text``` - string, set this if you only want one text field, not two (a title and a body text)
+* ```background``` - the color of the background
+* ```border``` - the size of the outline border, in pixels
+* ```border_color``` - the color of the outline border
+* ```arrow``` - string, sprite asset source for the arrow
+* ```auto_size_horizontal``` - bool, whether to crop the width of the tooltip to bounds of the visible text + padding (default true)
+* ```auto_size_vertical``` - bool, whether to crop the height of the tooltip to bounds of the visible text + padding (default true)
+* ```pad_left``` - left-side padding, in pixels
+* ```pad_right``` - right-side padding, in pixels
+* ```pad_top``` - top-side padding, in pixels
+* ```pad_bottom``` - bottom-side padding, in pixels
+* ```pad_all``` - shortcut, set all 4 padding values in one attribute
+ 
+Child Nodes:
+* ```title``` - a FlxUIText node, specifies the title text content and sty
+  * ```x```/```y``` - you can specify an x/y offset for the title text itself
+  * if you specified the tooltip text via the "text" shortcut attribute, it uses the "title" textfield and hides the body
+  * in this case you can still set a style via the "title" node
+* ```body``` - a FlxUIText node, specifies the body text content and style
+  * ```x```/```y``` - you can specify an x/y offset for the body text itself
+  * note that the default position of the ```body``` text field is directly underneath the title textfield
+* ```anchor``` - this specifies how your tooltip attaches to its parent object. 
+  * You do this the same way you would use anchor tags elsewhere, with ```x```/```y``` and ```x-flush```/```y-flush```. 
+  * Note that the ```x```/```y``` *attributes* set in the ```<tooltip>``` node itself serve as the x/y *offsets* for the anchor, just as they do with every other widget.
+
+A very basic tooltip is added like this:
+
+```xml
+<button name="basic" x="160" y="120" label="Basic">
+    <tooltip text="Basic tooltip"/>
+</button>
+```
+
+This tooltip uses both text fields:
+
+```xml
+<button name="fancier" x="basic.x" y="basic.bottom+10" label="Fancier">
+	<tooltip>
+		<title text="Fancier tooltip!" width="100"/>
+		<body text="This tooltip has a title AND a body." width="100" />
+	</tooltip>
+</button>
+```
+
+This tooltip sets just about everything:
+
+```xml
+<button name="fanciest" x="basic.x" y="even_fancier.bottom+10" label="Fanciest">
+	<tooltip pad_all="5" background="red" border="1" border_color="white">
+		<title use_def="sans12" text="Fanciest tooltip!" width="125"/>
+		<body use_def="sans10" text="This tooltip has a title and a body, custom padding and offsets, as well as custom text formatting" width="120" x="5" y="5"/>
+		<anchor x="center" x-flush="center" y="bottom" y-flush="top"/>
+	</tooltip>
+</button>
+```
 
 ----
 
