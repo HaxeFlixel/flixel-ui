@@ -32,6 +32,11 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 	#end
 	private var _makeCursor:Bool;		//whether to auto-construct a cursor and load default widgets into it
 	
+	/**
+	 * frontend for adding tooltips to things
+	 */
+	public var tooltips(default, null):FlxUITooltipManager;
+	
 	private var _xml_id:String = "";	//the xml to load
 	private var _ui:FlxUI;
 	private var _tongue:IFireTongue;
@@ -83,7 +88,9 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 			cursor = new FlxUICursor(onCursorEvent);
 		}
 		#end
-	
+		
+		tooltips = new FlxUITooltipManager(this);
+		
 		if(_xml_id != "" && _xml_id != null){
 			_ui = new FlxUI(null,this,null,_tongue);
 			add(_ui);
@@ -128,6 +135,7 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 	
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);
+		tooltips.update(elapsed);
 		#if debug
 			if (_reload) {
 				if (_reload_countdown > 0) {
@@ -143,7 +151,13 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 	
 	public override function destroy():Void {
 		destroyed = true;
-
+		
+		if (tooltips != null)
+		{
+			tooltips.destroy();
+			tooltips = null;
+		}
+		
 		if(_ui != null){
 			_ui.destroy();
 			remove(_ui, true);

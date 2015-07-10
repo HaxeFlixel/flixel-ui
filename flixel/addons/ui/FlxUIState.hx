@@ -41,6 +41,11 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	public var hideCursorOnSubstate:Bool = false;
 	#end
 	
+	/**
+	 * frontend for adding tooltips to things
+	 */
+	public var tooltips(default,null):FlxUITooltipManager;
+	
 	private var _xml_id:String = "";			//the xml file to load from assets
 	
 	#if (debug && sys)
@@ -109,6 +114,8 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			cursor = new FlxUICursor(onCursorEvent);
 		}
 		#end
+		
+		tooltips = new FlxUITooltipManager(this);
 		
 		var liveFile:Fast = null;
 		
@@ -196,6 +203,12 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		_cleanup();
 	}
 	
+	override public function update(elapsed:Float):Void 
+	{
+		super.update(elapsed);
+		tooltips.update(elapsed);
+	}
+	
 	@:access(flixel.system.frontEnds.BitmapFrontEnd)
 	private function _cleanup():Void
 	{
@@ -279,6 +292,12 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			_ui.destroy();
 			remove(_ui, true);
 			_ui = null;
+		}
+		
+		if (tooltips != null)
+		{
+			tooltips.destroy();
+			tooltips = null;
 		}
 		
 		super.destroy();
