@@ -1626,13 +1626,19 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		switch(nodeName)
 		{
 			case "tooltip", "title": 
-				tt.title = text;
+				if (text != "")
+				{
+					tt.title = text;
+				}
 				tt.style.titleOffset = offset;
 				tt.style.titleFormat = format;
 				tt.style.titleWidth = W;
 				tt.style.titleBorder = border;
 			case "body":
-				tt.body = text;
+				if (text != "")
+				{
+					tt.body = text;
+				}
 				tt.style.bodyOffset = offset;
 				tt.style.bodyFormat = format;
 				tt.style.bodyWidth = W;
