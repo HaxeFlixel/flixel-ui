@@ -27,13 +27,26 @@ class FontDef
 		extension = Extension;
 		file = File;
 		format = Format;
-		if (format == null) {
+		if (format == null)
+		{
 			format = new TextFormat();
 		}
 		border = Border;
-		if (border == null) {
+		if (border == null)
+		{
 			border = new BorderDef(NONE, 0x000000);
 		}
+	}
+	
+	public function clone():FontDef
+	{
+		var newBorder = border == null ? null : border.clone();
+		var newFormat = format == null ? null : 
+			new TextFormat(format.font, format.size, format.color, format.bold, format.italic, format.underline, format.url, format.target, format.align, format.leftMargin, format.rightMargin, format.indent, format.leading);
+		
+		var newThis = new FontDef(name, extension, file, newFormat, newBorder);
+		newThis.size = size;
+		return newThis;
 	}
 	
 	public static function copyFromTextField(t:TextField):FontDef {

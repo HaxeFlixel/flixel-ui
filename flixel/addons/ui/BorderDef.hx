@@ -15,6 +15,11 @@ class BorderDef
 		quality = Quality;
 	}
 	
+	public function clone():BorderDef
+	{
+		return new BorderDef(style, color, size, quality);
+	}
+	
 	public function apply(f:FlxText):Void {
 		f.setBorderStyle(style, color, size, quality);
 	}
