@@ -14,6 +14,7 @@ import flixel.addons.ui.FlxUICursor.WidgetList;
 import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.addons.ui.BorderDef;
 import flixel.addons.ui.FlxUIRadioGroup.CheckStyle;
+import flixel.addons.ui.FlxUITooltipManager.ToolTipData;
 import flixel.addons.ui.FontDef;
 import flixel.addons.ui.interfaces.IEventGetter;
 import flixel.addons.ui.interfaces.IFireTongue;
@@ -38,6 +39,7 @@ import flixel.math.FlxPoint;
 import flixel.util.FlxStringUtil;
 import haxe.xml.Fast;
 import openfl.Assets;
+import openfl.text.TextFormat;
 
 /**
  * A simple xml-driven user interface
@@ -625,7 +627,35 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					if (_loadTest(def_data))
 					{
 						var def_name:String = U.xml_name(def_data.x);
-						_definition_index.set(def_name, def_data);
+						var error = "";
+						if (def_name.indexOf("default:") != -1)
+						{
+							error = "'default:'";
+						}
+						if (def_name.indexOf("include:") != -1)
+						{
+							error = "'include:'";
+						}
+						if (error != "")
+						{
+							FlxG.log.warn("Can't create FlxUI definition '" + def_name + "', because '" + error + "' is a reserved name prefix!");
+						}
+						else
+						{
+							_definition_index.set(def_name, def_data);
+						}
+					}
+				}
+			}
+			
+			if (data.hasNode.resolve("default"))
+			{
+				for (defaultNode in data.nodes.resolve("default"))
+				{
+					if (_loadTest(defaultNode))
+					{
+						var defaultName:String = U.xml_name(defaultNode.x);
+						_definition_index.set("default:" + defaultName, defaultNode);
 					}
 				}
 			}
@@ -785,6 +815,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					var tagArr:Array<String> = thing_tags.split(",");
 					_addTags(tagArr, thing_name);
 				}
+			}
+			
+			if (Std.is(thing, IFlxUIButton) || Std.is(thing, IFlxUIClickable))
+			{
+				_loadTooltip(thing, obj);
 			}
 			
 			if (tempGroup != null) {
@@ -1454,6 +1489,174 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return info;
 	}
 	
+	private function _loadTooltip(thing:IFlxUIWidget, data:Fast):Void
+	{
+		
+		var state = getLeafUIState();
+		
+		var tt = {
+			title:"", 
+			body:"", 
+			anchor:null, 
+			style: {
+				titleFormat:null,
+				bodyFormat:null,
+				titleBorder:null,
+				bodyBorder:null,
+				titleOffset:null,
+				bodyOffset:null,
+				titleWidth: -1,
+				bodyWidth: -1,
+				
+				background:null,
+				borderSize:-1,
+				borderColor:null,
+				arrow:null,
+				
+				autoSizeVertical:null,
+				autoSizeHorizontal:null,
+				
+				leftPadding: -1,
+				rightPadding: -1,
+				topPadding: -1,
+				bottomPadding: -1
+			}
+		};
+		
+		if (data.hasNode.tooltip)
+		{
+			var tNode = data.node.tooltip;
+			
+			var defaultDef = getDefinition("default:tooltip");
+			if (defaultDef != null)
+			{
+				tNode = consolidateData(tNode, defaultDef);
+			}
+			
+			if (tNode.has.use_def)
+			{
+				var defStr = U.xml_str(tNode.x, "use_def", true);
+				var def = getDefinition(defStr);
+				if (def != null)
+				{
+					tNode = consolidateData(tNode, def);
+				}
+			}
+			
+			if (tNode.has.text)
+			{
+				_loadTooltipText(tNode, "text", tt);
+			}
+			else
+			{
+				if (tNode.hasNode.title)
+				{
+					_loadTooltipText(tNode.node.title, "text", tt);
+				}
+				if (tNode.hasNode.body)
+				{
+					_loadTooltipText(tNode.node.body, "text", tt);
+				}
+			}
+			
+			tt.anchor = _loadAnchor(tNode);
+			
+			_loadTooltipStyle(tNode, tt);
+			
+			if (Std.is(thing, IFlxUIButton))
+			{
+				state.tooltips.add(cast thing, tt);
+			}
+			else if (Std.is(thing, FlxUICheckBox))
+			{
+				var check:FlxUICheckBox = cast thing;
+				state.tooltips.add(check.button, tt);
+			}
+		}
+	}
+	
+	private function _loadTooltipStyle(node:Fast, tt:ToolTipData):Void
+	{
+		tt.style.background  = U.xml_color(node.x, "background");
+		tt.style.borderSize  = U.xml_i(node.x, "border", -1);
+		tt.style.borderColor = U.xml_color(node.x, "border_color");
+		
+		tt.style.arrow = node.has.arrow ? U.xml_gfx(node.x, "arrow") : null;
+		
+		tt.style.autoSizeHorizontal = U.xml_bool(node.x, "auto_size_horizontal", true);
+		tt.style.autoSizeVertical   = U.xml_bool(node.x, "auto_size_vertical", true);
+		
+		var padAll = Std.int(_loadHeight(node, -1, "pad_all"));
+		if (padAll != -1)
+		{
+			tt.style.leftPadding = tt.style.rightPadding = tt.style.topPadding = tt.style.bottomPadding = padAll;
+		}
+		else
+		{
+			tt.style.leftPadding   = Std.int(_loadWidth(node, 0, "pad_left"));
+			tt.style.rightPadding  = Std.int(_loadWidth(node, 0, "pad_right"));
+			tt.style.topPadding    = Std.int(_loadHeight(node, 0, "pad_top"));
+			tt.style.bottomPadding = Std.int(_loadHeight(node, 0, "pad_bottom"));
+		}
+	}
+	
+	private function _loadTooltipText(node:Fast, fieldName:String, tt:ToolTipData):Void
+	{
+		var nodeName = node.name;
+		var text   = _loadString(node, fieldName);
+		var offset = new FlxPoint(_loadX(node), _loadY(node));
+		
+		if (node.has.use_def)
+		{
+			var use_def = U.xml_str(node.x, "use_def", true);
+			var the_def = getDefinition(use_def);
+			if (the_def != null)
+			{
+				node = consolidateData(node, the_def);
+			}
+		}
+		
+		var border = _loadBorder(node);
+		var format = _loadFontDef(node);
+		var color:Null<FlxColor> = U.xml_color(node.x, "color", true, FlxColor.BLACK);
+		format.format.color = color;
+		
+		var W = Std.int(_loadWidth(node, -1, "width"));
+		
+		switch(nodeName)
+		{
+			case "tooltip", "title": 
+				tt.title = text;
+				tt.style.titleOffset = offset;
+				tt.style.titleFormat = format;
+				tt.style.titleWidth = W;
+				tt.style.titleBorder = border;
+			case "body":
+				tt.body = text;
+				tt.style.bodyOffset = offset;
+				tt.style.bodyFormat = format;
+				tt.style.bodyWidth = W;
+				tt.style.bodyBorder = border;
+			default:
+				//do nothing
+		}
+	}
+	
+	private function _loadAnchor(data:Fast):Anchor
+	{
+		var xOff = _loadX(data);
+		var yOff = _loadY(data);
+		if (data.hasNode.anchor)
+		{
+			var xSide = U.xml_str(data.node.anchor.x, "x", true, "right");
+			var ySide = U.xml_str(data.node.anchor.x, "y", true, "top");
+			var xFlush = U.xml_str(data.node.anchor.x, "x-flush", true, "left");
+			var yFlush = U.xml_str(data.node.anchor.x, "y-flush", true, "top");
+			return new Anchor(xOff, yOff, xSide, ySide, xFlush, yFlush);
+		}
+		return null;
+	}
+	
 	private function _loadThing(type:String, data:Fast):IFlxUIWidget{
 		
 		var info = _loadThingGetInfo(data);
@@ -2091,6 +2294,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return ftt;
 	}
 	
+	private function _loadString(data:Fast, attributeName:String):String
+	{
+		var string = U.xml_str(data.x, attributeName);
+		var context = U.xml_str(data.x, "context", true, "ui");
+		var code = U.xml_str(data.x, "code", true, "");
+		string = getText(string, context, true, code);
+		return string;
+	}
+	
 	private function _loadText(data:Fast):IFlxUIWidget
 	{
 		var text:String = U.xml_str(data.x, "text");
@@ -2392,8 +2604,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var radios = frg.getRadios();
 		var i:Int = 0;
 		var styleSet:Bool = false;
-		for (fo in radios)
+		
+		var radioList = data.x.elementsNamed("radio");
+		var radioNode:Xml = null;
+		
+		for (k in 0...radios.length)
 		{
+			var fo = radios[(radios.length - 1) - k];
+			radioNode = radioList.hasNext() ? radioList.next() : null;
 			if (fo != null)
 			{
 				if (Std.is(fo, FlxUICheckBox))
@@ -2410,6 +2628,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					fc.textX = text_x;
 					fc.textY = text_y;
 					i++;
+					if (radioNode != null)
+					{
+						_loadTooltip(fc, new Fast(radioNode));
+					}
 				}
 			}
 		}
@@ -2896,6 +3118,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					var tab:IFlxUIButton = cast _loadButton(tab_info, true, true, "tab_menu");
 					tab.name = name;
 					list_tabs.push(tab);
+					_loadTooltip(tab, tab_info);
 				}
 			}
 		}
