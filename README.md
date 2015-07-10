@@ -92,8 +92,8 @@ getDefinition(key:String,recursive:Bool=true):Fast
 less commonly used public functions:
 ```haxe
 //These implement the IEventGetter interface for lightweight events
-getEvent(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>):Void
-getRequest(id:String, sender:Dynamic, data:Dynamic):Dynamic
+getEvent(name:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>):Void
+getRequest(name:String, sender:Dynamic, data:Dynamic):Dynamic
 //Both are empty - to be defined by the user in extended classes
 
 //Get, Remove, and Replace assets:
@@ -144,10 +144,10 @@ Let's go over these one by one.
 This is any of the many Flixel-UI widgets, such as ```<sprite>```, ```<button>```, ```<checkbox>```, etc. We'll go into more detail on each one below, but all widget tags have a few things in common:
 
 *Attributes:*
-* **id** - string, optional, should be unique. Lets you reference this widget throughout the layout, and also lets you fetch it by name with FlxUI's ```getAsset("some_id")``` function.
+* **name** - string, optional, should be unique. Lets you reference this widget throughout the layout, and also lets you fetch it by name with FlxUI's ```getAsset("some_id")``` function.
 * **x** and **y** - integer, specifies position. If no anchor tag exists as a child node, the position is absolute. If an anchor tag exists, the position is relative to the anchor.*
-* **use_def** - string, optional, references a ```<definition>``` tag by id to use for this widget.
-* **group** - string, optional, references a ```<group>``` tag by id. Will make this widget the child of that group instead of the FlxUI itself.
+* **use_def** - string, optional, references a ```<definition>``` tag by name to use for this widget.
+* **group** - string, optional, references a ```<group>``` tag by name. Will make this widget the child of that group instead of the FlxUI itself.
 * **visible** - boolean, optional, sets the visibility of the widget when the layout is loaded
 * **active** - boolean, optional, controls whether a widget responds to any updates
 * **round** - if x/y (and/or width/height for a sizeable object) are calculated from formulas/anchors, specifies how rounding works. Legal values are:
@@ -162,13 +162,13 @@ This is any of the many Flixel-UI widgets, such as ```<sprite>```, ```<button>``
 * **\<anchor>** - optional, lets you position this widget relative to another object's position.*
 * **\<param>** - optional, lets you specify parameters**
 * **size tags** - optional, lets you dynamically size a widget according to some formula.*
-* **\<locale id="xx-YY">** - optional, lets you specify a locale (like "en-US" or "nb-NO") for [fireTongue](https://github.com/larsiusprime/firetongue) integration. This lets you specify changes based on the current locale:
+* **\<locale name="xx-YY">** - optional, lets you specify a locale (like "en-US" or "nb-NO") for [fireTongue](https://github.com/larsiusprime/firetongue) integration. This lets you specify changes based on the current locale:
 Example:
 
 ```xml
-<button center_x="true" x="0" y="505" id="battle" use_def="text_button" group="top" label="$TITLE_BATTLES">
+<button center_x="true" x="0" y="505" name="battle" use_def="text_button" group="top" label="$TITLE_BATTLES">
 	<param type="string" value="battle"/>
-	<locale id="nb-NO">
+	<locale name="nb-NO">
 		<change width="96"/>
 		<!--if norwegian, do 96 pixels wide instead of the default-->
 	</locale>			
@@ -182,7 +182,7 @@ Example:
 --
 
 ###2. ```<definition>```
-This lets you offload a lot of re-usable details into a separate tag with a unique id, and then call them in to another tag using the use_def="definition_id" attribute. A definition tag is exactly like a regular widget tag, except the tag name is "definition."
+This lets you offload a lot of re-usable details into a separate tag with a unique name, and then call them in to another tag using the use_def="definition_id" attribute. A definition tag is exactly like a regular widget tag, except the tag name is "definition."
 
 If you provide details in the widget tag and also use a definition, it will override the information in the definition wherever they conflict. Look at the RPG Interface demo for more details.
 
@@ -191,28 +191,28 @@ If you provide details in the widget tag and also use a definition, it will over
 A very common usage is font definitions for text widgets. Instead of typing this:
 
 ```xml
-<text id="text1" x="50" y="50" text="Text 1" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
-<text id="text2" x="50" y="50" text="Text 2" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
+<text name="text1" x="50" y="50" text="Text 1" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
+<text name="text2" x="50" y="50" text="Text 2" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
 ```
 
 You can do this instead:
 
 ```xml
-<definition id="sans10" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
-<text id="text1" use_def="sans10" x="50" y="50" text="Text 1"/>
-<text id="text2" use_def="sans10" x="50" y="50" text="Text 2"/>
+<definition name="sans10" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
+<text name="text1" use_def="sans10" x="50" y="50" text="Text 1"/>
+<text name="text2" use_def="sans10" x="50" y="50" text="Text 2"/>
 ```
 
 Notice that in this case we've created a text definition that is always bold and white with a black outline. Let's say we want some italic text instead, but we don't want to create a new definition:
 
 ```xml
-<text id="italic_text" use_def="sans10" style="italic" x="50" y="50" text="My Italic Text"/>
+<text name="italic_text" use_def="sans10" style="italic" x="50" y="50" text="My Italic Text"/>
 ```
 
 This is the same as writing
 
 ```xml
-<text id="italic_text" x="50" y="50" text="My Italic Text" font="verdana" size="10" style="italic" color="0xffffff" outline="0x000000"/>
+<text name="italic_text" x="50" y="50" text="My Italic Text" font="verdana" size="10" style="italic" color="0xffffff" outline="0x000000"/>
 ```
 
 All of the values from the "sans10" definition are inherited, and then all the local settings of the "italic_text" tag are applied, overriding style="bold" with style="italic."
@@ -235,7 +235,7 @@ This invocation will include all the definitions found in "some_other_file.xml":
 <include name="some_other_file"/>
 ```
 
-*Only* definition tags will be included. It also adds a bit of scoping to your project - in the case that an included definition has the same id as one defined locally, the local definition will be used. Only in the case that FlxUI can't find your definition locally will it check for included ones. 
+*Only* definition tags will be included. It also adds a bit of scoping to your project - in the case that an included definition has the same name as one defined locally, the local definition will be used. Only in the case that FlxUI can't find your definition locally will it check for included ones. 
 
 This recursion is only one level deep. If you put \<include> tags in your included file, they'll be ignored. 
 
@@ -249,11 +249,11 @@ This invocation will inject all the contents found in "some_other_file.xml":
 ```
 
 ###6. ```<group>```
-Creates a FlxGroup (specifically a FlxUIGroup) that you can assign widgets to. Note that you do NOT add things to a group by making widget tags as child xml nodes to the \<group\> tag, but by setting the "group" attribute in a widget tag to the group's id.
+Creates a FlxGroup (specifically a FlxUIGroup) that you can assign widgets to. Note that you do NOT add things to a group by making widget tags as child xml nodes to the \<group\> tag, but by setting the "group" attribute in a widget tag to the group's name.
 
 Groups are stacked in the order you define them, with those at the top of the file created first, and thus stacked "underneath" those that come later. 
 
-A group tag takes one attribute - id. Just define your groups somewhere in the order you want them to stack, then add widgets to them by setting the group attribute to the ids you want.
+A group tag takes one attribute - name. Just define your groups somewhere in the order you want them to stack, then add widgets to them by setting the group attribute to the ids you want.
 
 ###7. ```<align>```
 Dynamically aligns, centers, and/or spaces objects relative to one another. 
@@ -265,7 +265,7 @@ This allows you to re-position an existing asset later in the document. This is 
 ###9. ```<layout>```
 Creates a child FlxUI object inside your master FlxUI, and childs all the widgets inside to it. This is especially useful if you want to create multiple layouts for, say, different devices and screen sizes. Combined with **failure** tags, this will let you automatically calculate the best layout depending on screen size.
 
-A layout has only one attribute, id, and then its child nodes. Think of a \<layout> as its own sub-section of your xml file. It can have its own versions of anything you can put in the regular file since it is a full-fledged FlxUI - ie, definitions, groups, widgets, modes, presumably even other layout tags (haven't tested this). 
+A layout has only one attribute, name, and then its child nodes. Think of a \<layout> as its own sub-section of your xml file. It can have its own versions of anything you can put in the regular file since it is a full-fledged FlxUI - ie, definitions, groups, widgets, modes, presumably even other layout tags (haven't tested this). 
 
 Note that in a layout, scope comes into play when referencing ids. Definitions and object references will first look in the scope of the layout (ie, that FlxUI object), and if none is found, will try to find them in the parent FlxUI. 
 
@@ -300,41 +300,41 @@ Specifies UI "modes" that you can switch between. For instance, in Defender's Qu
 The "empty" and "play" modes might look like this:
 
 ```xml
-<mode id="empty">
-	<show id="new_game"/>
-	<show id="import"/>
+<mode name="empty">
+	<show name="new_game"/>
+	<show name="import"/>
 			
-	<hide id="space_icon"/>
-	<hide id="play_big"/>
-	<hide id="play_small"/>
-	<hide id="play+"/>
-	<hide id="export"/>
-	<hide id="delete"/>
-	<hide id="name"/>
-	<hide id="time"/>
-	<hide id="date"/>
-	<hide id="icon"/>
-	<hide id="new_game+"/>
+	<hide name="space_icon"/>
+	<hide name="play_big"/>
+	<hide name="play_small"/>
+	<hide name="play+"/>
+	<hide name="export"/>
+	<hide name="delete"/>
+	<hide name="name"/>
+	<hide name="time"/>
+	<hide name="date"/>
+	<hide name="icon"/>
+	<hide name="new_game+"/>
 </mode>
 		
-<mode id="play">
-	<show id="play_big"/>
-	<show id="export"/>
-	<show id="delete"/>
-	<show id="name"/>
-	<show id="time"/>
-	<show id="date"/>
-	<show id="icon"/>			
+<mode name="play">
+	<show name="play_big"/>
+	<show name="export"/>
+	<show name="delete"/>
+	<show name="name"/>
+	<show name="time"/>
+	<show name="date"/>
+	<show name="icon"/>			
 			
-	<hide id="play_small"/>
-	<hide id="play+"/>
-	<hide id="import"/>
-	<hide id="new_game"/>
-	<hide id="new_game+"/>
+	<hide name="play_small"/>
+	<hide name="play+"/>
+	<hide name="import"/>
+	<hide name="new_game"/>
+	<hide name="new_game+"/>
 </mode>
 ```
 
-Several tags are available in a **\<mode>** element. The most basic ones are ```<hide>``` and ```<show>```, which each only take id as an attribute. They just toggle the "visible" property on and off for the widget matching the "id" attribute. The full list is:
+Several tags are available in a **\<mode>** element. The most basic ones are ```<hide>``` and ```<show>```, which each only take name as an attribute. They just toggle the "visible" property on and off for the widget matching the "name" attribute. The full list is:
 
 * **show** -- turns element visible
 * **hide** -- turns element invisible
@@ -344,7 +344,7 @@ Several tags are available in a **\<mode>** element. The most basic ones are ```
 
 ###12. ```<change>```
 
-The change tag lets you modify various properties of a widget after it has already been created. The widget matching the attribute "id" will be targeted. The following attributes may be used:
+The change tag lets you modify various properties of a widget after it has already been created. The widget matching the attribute "name" will be targeted. The following attributes may be used:
 
 * **text** -- Change ```text``` property of the widget (FlxUIText or FlxUIInputText). Can also set "context" and "code" attributes for objects with text and/or labels. \*
 * **label** -- Change ```label``` property of the widget (For buttons or anything else with a text label). Can also set "context" and "code" attributes.
@@ -385,8 +385,8 @@ Attributes:
 * ```x``` and ```y```
 * ```src``` (path to source, no extension, appended to "assets/gfx/". If not present will look for "color" instead)
 * ```color``` (color of the rectangle. "color" attribute should be hexadecimal format ```0xAARRGGBB```, or ```0xRRGGBB```, or a standard color string name like "white" from ```flixl.util.FlxColor```)
-* ```use_def``` (definition id)
-* ```group``` (group id)
+* ```use_def``` (definition name)
+* ```group``` (group name)
 * ```width``` and ```height``` (optional, use exact pixel values or formulas -- will scale the image if they differ from the source image's native width/height)
 * ```resize_ratio``` (optional, if you specify width or height, you can also define this to force a scaling aspect ratio)
 * ```resize_ratio_x``` / ```resize_ratio_y``` (optional, does the same thing are resize_ratio, but only affects one axis)
@@ -454,7 +454,7 @@ A ```<param>``` tag takes two attributes: ```type``` and ```value```.
 * ```value```: the value, as a string. The type attribute will ensure it typecasts correctly.
 
 ```xml
-<button id="new_game" use_def="big_button_gold" x="594" y="11" group="top" label="New Game">
+<button name="new_game" use_def="big_button_gold" x="594" y="11" group="top" label="New Game">
 	<param type="string" value="new"/>
 </button>
 ```
@@ -468,12 +468,12 @@ FlxUI.event(CLICK_EVENT, this, null, params);
 This, in turn, will call ```getEvent()``` on whatever ```IEventGetter``` "owns" this ```FlxUI``` object. In the default setup, this is your ```FlxUIState```. So extend this function in your ```FlxUIState```:
 
 ```haxe
-getEvent(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>):Void
+getEvent(name:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>):Void
 ```
 
 The "sender" parameter will be the widget that originated the event -- in this case, the button. On a ```FlxUIButton``` click, the other parameters will be:
 
-* **event id**: "click\_button" (ie, ```FlxUITypedButton.CLICK_EVENT```)
+* **event name**: "click\_button" (ie, ```FlxUITypedButton.CLICK_EVENT```)
 * **data**: ```null```
 * **params**: an ```Array<Dynamic>``` containing all the parameters you've defined.
 
@@ -481,35 +481,35 @@ Some other interactive widgets can take parameters, and they work in basically t
 
 ###4.2 Button Graphics
 
-Graphics for buttons can be kinda complex. You can put in multiple graphic tags, one for each button state you want to specify, or just one with the id "all" that combines all the states into one vertically stacked image, and asks the FlxUIButton to sort the individual frames out itself.
+Graphics for buttons can be kinda complex. You can put in multiple graphic tags, one for each button state you want to specify, or just one with the name "all" that combines all the states into one vertically stacked image, and asks the FlxUIButton to sort the individual frames out itself.
 
 The system can sometimes infer what the frame size should be based on the image and width/height are not set, but it helps to be explicit with width/height if they are statically sized and you're not using 9-slice scaling.
 
 Static, individual frames:
 
 ```xml
-<definition id="button_blue" width="96" height="32">
-	<graphic id="up" image="ui/buttons/static_button_blue_up"/>
-	<graphic id="over" image="ui/buttons/static_button_blue_over"/>
-	<graphic id="down" image="ui/buttons/static_button_blue_down"/>
+<definition name="button_blue" width="96" height="32">
+	<graphic name="up" image="ui/buttons/static_button_blue_up"/>
+	<graphic name="over" image="ui/buttons/static_button_blue_over"/>
+	<graphic name="down" image="ui/buttons/static_button_blue_down"/>
 </definition>
 ```
 
 9-slice scaling, individual frames:
 
 ```xml
-<definition id="button_blue" width="96" height="32">
-	<graphic id="up" image="ui/buttons/9slice_button_blue_up" slice9="6,6,12,12"/>
-	<graphic id="over" image="ui/buttons/9slice_button_blue_over slice9="6,6,12,12""/>
-	<graphic id="down" image="ui/buttons/9slice_button_blue_down slice9="6,6,12,12""/>
+<definition name="button_blue" width="96" height="32">
+	<graphic name="up" image="ui/buttons/9slice_button_blue_up" slice9="6,6,12,12"/>
+	<graphic name="over" image="ui/buttons/9slice_button_blue_over slice9="6,6,12,12""/>
+	<graphic name="down" image="ui/buttons/9slice_button_blue_down slice9="6,6,12,12""/>
 </definition>
 ```
 
 9-slice scaling, all-in-one frame:
 
 ```xml
-<definition id="button_blue" width="96" height="32">
-	<graphic id="all" image="ui/buttons/button_blue_all" slice9="6,6,12,12"/>
+<definition name="button_blue" width="96" height="32">
+	<graphic name="all" image="ui/buttons/button_blue_all" slice9="6,6,12,12"/>
 <definition>
 ```
 
@@ -524,9 +524,9 @@ The main "color" attribute (hexadecimal format, "0xffffff") is the main label co
 If you want to specify colors for other states, you add ```<color>``` tags inside the ```<text>``` tag for each state:
 
 ```xml
-<button x="200" y="505" id="some_button" use_def="text_button" label="Click Me">
+<button x="200" y="505" name="some_button" use_def="text_button" label="Click Me">
 	<text use_def="vera10" color="0xffffff">
-		<color id="over" value="0xffff00"/>
+		<color name="over" value="0xffff00"/>
 	</text>
 </button>	
 ````
@@ -541,32 +541,32 @@ Toggle buttons are different in that they have 6 states, 3 for up/over/down when
 Toggle buttons need more graphics than a regular button. To do this, you need to provide graphic tags for both the regular and untoggled states. The toggled ```<graphic>``` tags are the same, they just need an additional toggle="true" attribute:
 
 ```xml
-<definition id="tab_button_toggle" width="50" height="20" text_x="-2" text_y="0">			
+<definition name="tab_button_toggle" width="50" height="20" text_x="-2" text_y="0">			
 	<text use_def="sans10c" color="0xcccccc">
-		<color id="over" value="0xccaa00"/>
-		<color id="up" toggle="true" value="0xffffff"/>
-		<color id="over" toggle="true" value="0xffff00"/>
+		<color name="over" value="0xccaa00"/>
+		<color name="up" toggle="true" value="0xffffff"/>
+		<color name="over" toggle="true" value="0xffff00"/>
 	</text>
 		
-	<graphic id="up" image="ui/buttons/tab_grey_back" slice9="6,6,12,12"/>
-	<graphic id="over" image="ui/buttons/tab_grey_back_over" slice9="6,6,12,12"/>
-	<graphic id="down" image="ui/buttons/tab_grey_back_over" slice9="6,6,12,12"/>
+	<graphic name="up" image="ui/buttons/tab_grey_back" slice9="6,6,12,12"/>
+	<graphic name="over" image="ui/buttons/tab_grey_back_over" slice9="6,6,12,12"/>
+	<graphic name="down" image="ui/buttons/tab_grey_back_over" slice9="6,6,12,12"/>
 		
-	<graphic id="up" toggle="true" image="ui/buttons/tab_grey" slice9="6,6,12,12"/>
-	<graphic id="over" toggle="true" image="ui/buttons/tab_grey_over" slice9="6,6,12,12"/>				
-	<graphic id="down" toggle="true" image="ui/buttons/tab_grey_over" slice9="6,6,12,12"/>				
+	<graphic name="up" toggle="true" image="ui/buttons/tab_grey" slice9="6,6,12,12"/>
+	<graphic name="over" toggle="true" image="ui/buttons/tab_grey_over" slice9="6,6,12,12"/>				
+	<graphic name="down" toggle="true" image="ui/buttons/tab_grey_over" slice9="6,6,12,12"/>				
 </definition>
 ```
 
 Of course, if you create a single asset with 6 images stacked vertically, you can save yourself some room:
 
 ```xml
-<definition id="button_toggle" width="50" height="20">		
+<definition name="button_toggle" width="50" height="20">		
 	<text use_def="sans10c" color="0xffffff">
-		<color id="over" value="0xffff00"/>
+		<color name="over" value="0xffff00"/>
 	</text>
 	
-	<graphic id="all" image="ui/buttons/button_blue_toggle" slice9="6,6,12,12"/>		
+	<graphic name="all" image="ui/buttons/button_blue_toggle" slice9="6,6,12,12"/>		
 </definition>
 ```
 
@@ -596,7 +596,7 @@ Child tags:
 *If you supply ```<check>``` or ```<box>``` child tags instead of their attribute equivalents, FlxUI will treat them as full-fledged ```<sprite>``` or ```<chrome>``` tags to load for the checkmark and box assets. You'll want to use this method if you want to do something complicated, like load a scaled sprite, or a 9-slice-scaled sprite, that you can't normally accomplish with the src attributes, which just load a static image as-is.
 
 Event:
-* id - "click_checkbox"
+* name - "click_checkbox"
 * params - as defined by user, but with this one automatically added to the list at the end: "checked:true" or "checked:false"
 
 ##7. Text (FlxUIText) ```<text>```
@@ -628,7 +628,7 @@ Text fields can also have borders. You can do this by specifying these four valu
 You can also use a shortcut for border value to save space by just using "shadow", "outline", or "outline_fast" directly as attributes and assigning them a color.
 
 ```xml
-<text id="my_text" text="My Text" outline="0xFF0000"/>
+<text name="my_text" text="My Text" outline="0xFF0000"/>
 ```
 
 As for fonts, FlxUI will look for a font file in your ```assets/fonts/``` directory, formatted like this:
@@ -673,18 +673,18 @@ Attributes:
 * ```radio_src``` - image src for radio button back (ie, checkbox "box")
 * ```dot_src``` - image src for radio dot (ie, checkbox "check mark")
 
-You construct a radio group by providing as many ```<radio>``` child tags as you want radio buttons. Give each of them an id and a label.
+You construct a radio group by providing as many ```<radio>``` child tags as you want radio buttons. Give each of them an name and a label.
 
 Child Nodes:
 * ```<param>``` - same as ```<button>```, 
-* ```<radio>``` - two attributes, id (string) and label (string)
+* ```<radio>``` - two attributes, name (string) and label (string)
 * ```<dot>``` - alternate to dot_src, more powerful*
 * ```<box>``` - alternate to radio_src, more powerful*
 
 *If you supply ```<dot>``` or ```<box>``` child tags instead of their attribute equivalents, FlxUI will treat them as full-fledged ```<sprite>``` or ```<chrome>``` tags to load for the dot and radio-box assets. You'll want to use this method if you want to do something complicated, like load a scaled sprite, or a 9-slice-scaled sprite, that you can't normally accomplish with the src attributes, which just load a static image as-is.
 
 Event:
-* ```id``` - "click_radio_group"
+* ```name``` - "click_radio_group"
 * ```params``` - same as Button
 
 ##10. Tabbed menu (FlxUITabMenu) ```<tab_menu>```
@@ -696,12 +696,12 @@ This provides a menu with various tabbed buttons on top. When you click on one t
 Attributes:
 * ```x```/```y```, ```use_def```, ```group```
 * ```width```/```height```
-* ```back_def``` - id for a 9-slice chrome definition (MUST be 9-sliceable!)
+* ```back_def``` - name for a 9-slice chrome definition (MUST be 9-sliceable!)
 * ```slice9```
 
 Child Nodes:
-* ```<tab>``` - attributes are "id" and "label", much like in ```<radio_group>```
-* ```<group>``` - attributes are only "id"
+* ```<tab>``` - attributes are "name" and "label", much like in ```<radio_group>```
+* ```<group>``` - attributes are only "name"
  * Put regular FlxUI content tags here, within the ```<group></group>``` node.
 
 ##11. Line (FlxUISprite) ```<line>```
@@ -733,7 +733,7 @@ TODO
 Here's an example of a health bar from an RPG:
 
 ```xml
-<9slicesprite id="health_bar" x="10" y="5" width="134" height="16" use_def="health">
+<9slicesprite name="health_bar" x="10" y="5" width="134" height="16" use_def="health">
 	<anchor x="portrait.right" y="portrait.top" x-flush="left" y-flush="top"/>
 </9slicesprite>
 ```
@@ -762,16 +762,16 @@ You can also specify a **round** attribute (up/down/round/true/false) in the anc
 --
 ##2. Position Tags
 
-Sometimes you want to be able to change the position of a widget later in the xml markup. Position tags work much like the original creation tag for the object, except you ONLY include the attribute id of the object you want to move, and any relevant position information.
+Sometimes you want to be able to change the position of a widget later in the xml markup. Position tags work much like the original creation tag for the object, except you ONLY include the attribute name of the object you want to move, and any relevant position information.
 
 ```xml
-<position id="thing" x="12" y="240"/>
+<position name="thing" x="12" y="240"/>
 ```
 
 You can use anchor tags, formulas, etc inside a position tag:
 ```xml
-<position id="thing" x="other_thing.right" y="other_thing.bottom">
-  <anchor id="other_thing" x-flush="left" y-flush="top"/>
+<position name="thing" x="other_thing.right" y="other_thing.bottom">
+  <anchor name="other_thing" x-flush="left" y-flush="top"/>
 </position>
 ```
 
@@ -780,7 +780,7 @@ You can use anchor tags, formulas, etc inside a position tag:
 
 Let's add a size tag to our health bar:
 ```xml
-<9slicesprite id="health_bar" x="10" y="5" width="134" height="16" use_def="health" group="mcguffin">
+<9slicesprite name="health_bar" x="10" y="5" width="134" height="16" use_def="health" group="mcguffin">
 	<anchor x="portrait.right" y="portrait.top" x-flush="left" y-flush="top"/>
 	<exact_size width="stretch:portrait.right+10,right-10"/>
 </9slicesprite>
@@ -835,7 +835,7 @@ Attributes:
 
 Child tags:
 * ```<bounds>``` - string, reference formula, specify left & right for horizontal, or top & bottom for vertical
-* ```<objects>``` - string, comma separated list of object id's
+* ```<objects>``` - string, comma separated list of object name's
 
 If you specify more than one "objects" tag, you can align several groups of objects at once according to the same rules. For instance, if you have obj_0 through obj_9 (10 in total), and you want two rows spaced evenly in five columns, this would do the trick:
 
@@ -897,7 +897,7 @@ Once a ```FlxUIState``` is hooked up to a ```FireTongue``` instance, it will aut
 
 Here's an example, where the word "Back" is translated via the localization flag "$MISC_BACK":
 ```haxe
-<button center_x="true" x="0" y="535" id="start" label="$MISC_BACK">		
+<button center_x="true" x="0" y="535" name="start" label="$MISC_BACK">		
 	<param type="string" value="back"/>
 </button>
 ```
@@ -952,22 +952,22 @@ There is always a FlxUIRegion defined by the system in any root-level FlxUI obje
 
 It's common for beginners to define their fonts in absolute terms like this:
 ```xml
-<definition id="sans10" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
-<definition id="sans12" font="verdana" size="12" style="bold" color="0xffffff" outline="0x000000"/>
-<definition id="sans12" font="verdana" size="16" style="bold" color="0xffffff" outline="0x000000"/>
-<definition id="sans12" font="verdana" size="20" style="bold" color="0xffffff" outline="0x000000"/>
-<definition id="sans12" font="verdana" size="30" style="bold" color="0xffffff" outline="0x000000"/>
+<definition name="sans10" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
+<definition name="sans12" font="verdana" size="12" style="bold" color="0xffffff" outline="0x000000"/>
+<definition name="sans12" font="verdana" size="16" style="bold" color="0xffffff" outline="0x000000"/>
+<definition name="sans12" font="verdana" size="20" style="bold" color="0xffffff" outline="0x000000"/>
+<definition name="sans12" font="verdana" size="30" style="bold" color="0xffffff" outline="0x000000"/>
 ```
 
 Size 10 font might look just fine if your game is 800x600, but what if you let the user choose the window/screen size, and they're viewing the game in 1920x1080? What if you're targetting multiple different devices? At 800x600, Size 10 font is 1.67% of the total screen height. At 1920x1080, it's 0.93%, almost half the size! So we should use a bigger font. But it might be a huge pain to use code to inspect every text field and update it. Here's a better way to do things:
 
 ```xml
-<definition id="sans_tiny"     font="verdana" size="screen.height*0.01667" style="bold" color="0xffffff" outline="0x000000"/>
-<definition id="sans_small"    font="verdana" size="screen.height*0.02000" style="bold" color="0xffffff" outline="0x000000"/>
-<definition id="sans_medium"   font="verdana" size="screen.height*0.02667" style="bold" color="0xffffff" outline="0x000000"/>
-<definition id="sans_large"    font="verdana" size="screen.height*0.03334" style="bold" color="0xffffff" outline="0x000000"/>
-<definition id="sans_huge"     font="verdana" size="screen.height*0.04167" style="bold" color="0xffffff" outline="0x000000"/>
-<definition id="sans_enormous" font="verdana" size="screen.height*0.05000" style="bold" color="0xffffff" outline="0x000000"/>
+<definition name="sans_tiny"     font="verdana" size="screen.height*0.01667" style="bold" color="0xffffff" outline="0x000000"/>
+<definition name="sans_small"    font="verdana" size="screen.height*0.02000" style="bold" color="0xffffff" outline="0x000000"/>
+<definition name="sans_medium"   font="verdana" size="screen.height*0.02667" style="bold" color="0xffffff" outline="0x000000"/>
+<definition name="sans_large"    font="verdana" size="screen.height*0.03334" style="bold" color="0xffffff" outline="0x000000"/>
+<definition name="sans_huge"     font="verdana" size="screen.height*0.04167" style="bold" color="0xffffff" outline="0x000000"/>
+<definition name="sans_enormous" font="verdana" size="screen.height*0.05000" style="bold" color="0xffffff" outline="0x000000"/>
 ```
 
 By defining the font size in terms of the screen height, we can achieve the same results at 800x600, but make the text grow dynamically with the size of the screen. "sans_tiny" will be 10 points high in 800x600, but 18 points high in 1920x1080, representing the same proportion of the screen.
@@ -977,7 +977,7 @@ By defining the font size in terms of the screen height, we can achieve the same
 Let's say you want to load a different asset in a 16x9 screen mode than a 4x3 mode, and fit it to the screen.
 
 ```xml
-<sprite id="thing" src="ui/asset">
+<sprite name="thing" src="ui/asset">
 	<scale screen_ratio="1.77" tolerance="0.25" suffix="_16x9" width="100%" height="100%"/>
 	<scale screen_ratio="1.33" tolerance="0.25" suffix="_4x3" width="100%" height="100%"/>
 </sprite>
@@ -992,7 +992,7 @@ So in the above example, if the screen is within 0.25 of a 16:9 ratio, it will l
 But sometimes you don't want to scale both ```width```/```height``` separately, the most common use case is to scale based on the vertical axis alone and then automatically scale width proportionately. Use "to_height" for this:
 
 ```xml
-<sprite id="thing" src="ui/asset">
+<sprite name="thing" src="ui/asset">
 	<scale screen_ratio="1.77" tolerance="0.25" suffix="_16x9" to_height="100%"/>
 	<scale screen_ratio="1.33" tolerance="0.25" suffix="_4x3" to_height="100%"/>
 </sprite>
@@ -1003,7 +1003,7 @@ But sometimes you don't want to scale both ```width```/```height``` separately, 
 Let's say you've got a 9-slice-sprite, but for whatever reason you want to scale the *source* image first, *before* you then subject it to the 9-slice matrix. You can do that like this:
 
 ```xml
-<chrome id="chrome" width="600" height="50" src="ui/asset" slice9="4,4,395,95">
+<chrome name="chrome" width="600" height="50" src="ui/asset" slice9="4,4,395,95">
 	<scale_src to_height="10%"/>
 	<anchor y="bottom" y-flush="bottom"/>
 </chrome>
@@ -1016,19 +1016,19 @@ Here's what's happening. Let's say "ui/asset.png" is 400x50 pixels. In this case
 So previously we had this:
 
 ```xml
-<definition id="sans10" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
+<definition name="sans10" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
 ```
 
 Which we changed to this:
 
 ```xml
-<definition id="sans_tiny"     font="verdana" size="screen.height*0.01667" style="bold" color="0xffffff" outline="0x000000"/>
+<definition name="sans_tiny"     font="verdana" size="screen.height*0.01667" style="bold" color="0xffffff" outline="0x000000"/>
 ```
 
 Now you can just do this!
 ```xml
 <point_size x="screen.height*0.001667" y="screen.width*0.001667"/>
-<definition id="sans10" font="verdana" size="10pt" style="bold" color="0xffffff" outline="0x000000"/>
+<definition name="sans10" font="verdana" size="10pt" style="bold" color="0xffffff" outline="0x000000"/>
 ```
 
 Whenever you use the ```<point_size/>``` tag, you are defining the horizontal and vertical size of a "point", which is referenced whenever you enter a numerical value and add the letters "pt" to the end. Basically whenever it sees "10pt" it will multiply 10 by the size of the point. For font sizes this is the vertical size of the point, in other places it infers from the context (x="15pt" is horizontal pt size, y="25pt" is vertical pt size).
