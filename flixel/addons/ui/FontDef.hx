@@ -76,28 +76,42 @@ class FontDef
 		return fd;
 	}
 	
-	public function apply(?textField:TextField, ?flxText:FlxText):Void {
-		if (textField != null) {
-			textField.setTextFormat(format);
-		}
-		if (flxText != null) {
-			
-			var flxTxtAlign:FlxTextAlign = null;
-			
-			if (format.align != null)
+	public inline function applyTxt(textField:TextField):TextField
+	{
+		textField.setTextFormat(format);
+		return textField;
+	}
+	
+	public function applyFlx(flxText:FlxText):FlxText
+	{
+		var flxTxtAlign:FlxTextAlign = null;
+		
+		if (format.align != null)
+		{
+			flxTxtAlign = switch(format.align)
 			{
-				flxTxtAlign = switch(format.align)
-				{
-					case TextFormatAlign.CENTER: FlxTextAlign.CENTER;
-					case TextFormatAlign.LEFT: FlxTextAlign.LEFT;
-					case TextFormatAlign.RIGHT: FlxTextAlign.RIGHT;
-					case TextFormatAlign.JUSTIFY: FlxTextAlign.JUSTIFY;
-					default: FlxTextAlign.LEFT;
-				}
+				case TextFormatAlign.CENTER: FlxTextAlign.CENTER;
+				case TextFormatAlign.LEFT: FlxTextAlign.LEFT;
+				case TextFormatAlign.RIGHT: FlxTextAlign.RIGHT;
+				case TextFormatAlign.JUSTIFY: FlxTextAlign.JUSTIFY;
+				default: FlxTextAlign.LEFT;
 			}
-			
-			var font = (file == "" || file == null) ? null : file;
-			flxText.setFormat(font, Std.int(format.size), format.color, flxTxtAlign, border.style, border.color);
+		}
+		
+		var font = (file == "" || file == null) ? null : file;
+		flxText.setFormat(font, Std.int(format.size), format.color, flxTxtAlign, border.style, border.color);
+		return flxText;
+	}
+	
+	public function apply(?textField:TextField, ?flxText:FlxText):Void
+	{
+		if (textField != null)
+		{
+			applyTxt(textField);
+		}
+		if (flxText != null)
+		{
+			applyFlx(flxText);
 		}
 	}
 	
