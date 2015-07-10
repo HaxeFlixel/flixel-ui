@@ -115,12 +115,10 @@ class FlxUIColorSwatch extends FlxUIButton
 	
 	/**
 	 * Creates a new color swatch that can store and display a color value
-	 * @param	X
-	 * @param	Y
-	 * @param	?Color			Single color for the swatch
-	 * @param	?Colors			Multiple colors for the swatch
-	 * @param	?Asset			An asset for the swatch graphic (optional)
-	 * @param	?Callback		Function to call when clicked
+	 * @param	Color			Single color for the swatch
+	 * @param	Colors			Multiple colors for the swatch
+	 * @param	Asset			An asset for the swatch graphic (optional)
+	 * @param	Callback		Function to call when clicked
 	 */
 	
 	public function new(X:Float, Y:Float, ?Color:Int = 0xFFFFFF, ?Colors:SwatchData, ?Asset:Dynamic, ?Callback:Void->Void, Width:Int=-1, Height:Int=-1) 

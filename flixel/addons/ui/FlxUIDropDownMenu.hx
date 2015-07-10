@@ -347,12 +347,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		
 		dropPanel = FlxDestroyUtil.destroy(dropPanel);
 		
-		for (button in list)
-		{
-			button = FlxDestroyUtil.destroy(button);
-		}
-		
-		list = null;
+		list = FlxDestroyUtil.destroyArray(list);
 		//_ui_control_callback = null;
 		callback = null;
 	}

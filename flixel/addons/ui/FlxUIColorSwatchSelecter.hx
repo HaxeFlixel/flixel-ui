@@ -62,10 +62,10 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 	 * A handy little group for selecting color swatches from
 	 * @param	X					X location
 	 * @param	Y					Y location
-	 * @param	?SelectionSprite	The selection box sprite (optional, auto-generated if not supplied)
-	 * @param	?list_colors		A list of single-colors to generate swatches from. 1st of 3 alternatives.
-	 * @param	?list_data			A list of swatch data to generate swatches from. 2nd of 3 alternatives.
-	 * @param	?list_swatches		A list of the actual swatch widgets themselves. 3rd of 3 alternatives.
+	 * @param	SelectionSprite	The selection box sprite (optional, auto-generated if not supplied)
+	 * @param	list_colors		A list of single-colors to generate swatches from. 1st of 3 alternatives.
+	 * @param	list_data			A list of swatch data to generate swatches from. 2nd of 3 alternatives.
+	 * @param	list_swatches		A list of the actual swatch widgets themselves. 3rd of 3 alternatives.
 	 * @param	SpacingH			Horizontal spacing between swatches
 	 * @param	SpacingV			Vertical spacing between swatches
 	 * @param	MaxColumns			Number of horizontal swatches in a row before a line break

@@ -133,7 +133,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @param	name	string identifier of the event -- each IFlxUIWidget has a set of string constants
 	 * @param	sender	the IFlxUIWidget that sent this event
 	 * @param	data	non-array data (boolean for a checkbox, string for a radiogroup, etc)
-	 * @param	?params	(optional) user-specified array of arbitrary data
+	 * @param	params	(optional) user-specified array of arbitrary data
 	 */
 	
 	public static function event(name:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
@@ -185,7 +185,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @param	name	string identifier of the event -- each IFlxUIWidget has a set of string constants
 	 * @param	sender	the IFlxUIWidget that sent this event
 	 * @param	data	non-array data (boolean for a checkbox, string for a radiogroup, etc)
-	 * @param	?params	(optional) user-specified array of arbitrary data
+	 * @param	params	(optional) user-specified array of arbitrary data
 	 * @return	some sort of arbitrary data from the recipient
 	 */
 	
