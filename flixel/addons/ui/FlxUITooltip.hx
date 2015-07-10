@@ -104,6 +104,11 @@ class FlxUITooltip extends FlxUIGroup
 			H = Std.int(Math.max(H, _arrowBkg.height));
 		}
 		
+		if (style.leftPadding == null) style.leftPadding = 0;
+		if (style.rightPadding == null) style.rightPadding = 0;
+		if (style.topPadding == null) style.topPadding = 0;
+		if (style.bottomPadding == null) style.bottomPadding = 0;
+		
 		//add padding to expand the background size
 		W += style.leftPadding + style.rightPadding;
 		H += style.topPadding + style.bottomPadding;
@@ -152,6 +157,20 @@ class FlxUITooltip extends FlxUIGroup
 		
 		_titleText.y += style.topPadding;
 		_bodyText.y  += style.topPadding;
+		
+		//if either text field has no text, at the last minute make sure they don't throw off the size calculation
+		
+		if (_titleText.text == "") 
+		{
+			_titleText.x = _bkg.x;
+			_titleText.y = _bkg.y;
+		}
+		
+		if (_bodyText.text == "")
+		{
+			_bodyText.x = _bkg.x;
+			_bodyText.y = _bkg.y;
+		}
 		
 		anchor.anchorThing(this, obj);			//anchor entire group to object
 		
@@ -478,17 +497,28 @@ class FlxUITooltip extends FlxUIGroup
 		if (Style.titleOffset == null) { Style.titleOffset = new FlxPoint(0, 0); }
 		if (Style.bodyOffset  == null) { Style.bodyOffset  = new FlxPoint(0, 0); }
 		if (Style.background  == null) { Style.background  = 0xFFFFCA; }
-		if (Style.borderSize    < 0  ) { Style.borderSize  = 1; }
 		if (Style.borderColor == null) { Style.borderColor = FlxColor.BLACK; }
 		if (Style.arrow       == null) { Style.arrow       = FlxUIAssets.IMG_TOOLTIP_ARROW; }
-		if (Style.titleWidth    < 0  ) { Style.titleWidth  = 100; }
-		if (Style.bodyWidth     < 0  ) { Style.bodyWidth   = 100; }
-		if (Style.autoSizeHorizontal == null) { Style.autoSizeHorizontal = true; }
-		if (Style.autoSizeVertical   == null) { Style.autoSizeVertical   = true; }
-		if (Style.leftPadding   < 0  ) { Style.leftPadding   = 0; }
-		if (Style.rightPadding  < 0  ) { Style.rightPadding  = 0; }
-		if (Style.bottomPadding < 0  ) { Style.bottomPadding = 0; }
-		if (Style.topPadding    < 0  ) { Style.topPadding    = 0; }
+		
+		if (Style.borderSize  == null || Style.borderSize  < 0)
+		                               { Style.borderSize  = 1; }
+		if (Style.titleWidth  == null || Style.titleWidth  < 0)
+		                               { Style.titleWidth  = 100; }
+		if (Style.bodyWidth   == null || Style.bodyWidth   < 0)
+		                               { Style.bodyWidth   = 100; }
+		if (Style.autoSizeHorizontal == null)
+		                               { Style.autoSizeHorizontal = true; }
+		if (Style.autoSizeVertical   == null)
+		                               { Style.autoSizeVertical   = true; }
+		
+		if (Style.leftPadding == null  || Style.leftPadding    < 0)
+		                                { Style.leftPadding    = 0; }
+		if (Style.rightPadding == null || Style.rightPadding   < 0)
+		                                { Style.rightPadding   = 0; }
+		if (Style.topPadding == null   || Style.topPadding     < 0)
+		                                { Style.topPadding     = 0; }
+		if (Style.leftPadding == null  || Style.bottomPadding  < 0)
+		                                { Style.bottomPadding  = 0; }
 		
 		return Style;
 	}
