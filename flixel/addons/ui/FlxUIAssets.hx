@@ -30,6 +30,7 @@ class FlxUIAssets
 	public static inline var IMG_HILIGHT:String = "flixel/flixel-ui/img/hilight.png";
 	public static inline var IMG_INVIS:String = "flixel/flixel-ui/img/invis.png";
 	public static inline var IMG_SWATCH:String = "flixel/flixel-ui/img/swatch.png";
+	public static inline var IMG_TOOLTIP_ARROW:String = "flixel/flixel-ui/img/tooltip_arrow.png";
 	
 	public static inline var IMG_FINGER_SMALL:String = "flixel/flixel-ui/img/finger_small.png";
 	public static inline var IMG_FINGER_BIG:String = "flixel/flixel-ui/img/finger_big.png";
