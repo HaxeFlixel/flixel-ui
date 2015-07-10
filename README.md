@@ -217,42 +217,59 @@ This is the same as writing
 
 All of the values from the "sans10" definition are inherited, and then all the local settings of the "italic_text" tag are applied, overriding style="bold" with style="italic."
 
-###3. ```<include>```
+###3. ```<default>```
+A default tag is just like a definition, with a few exceptions:
+
+1. You can only have one for each type of widget
+2. The "name" property must be the name of the widget this default definition is for
+3. You don't use these definitions with "use_def" tags
+
+Whenever a widget is loaded, it will check to see if there is a default definition set for that type of widget. If so, it will automatically apply any properties from the default definition. This is done BEFORE and in ultimately IN ADDITION TO setting any properties of a user-supplied definition tag from "use_def".
+
+###4. ```<include>```
 Include tags let you reference definitions stored in another xml file. This is a convenience feature to cut down on file bloat, and aid organization:
 
 This invocation will include all the definitions found in "some_other_file.xml":
 
 ```xml
-<include id="some_other_file"/>
+<include name="some_other_file"/>
 ```
 
 *Only* definition tags will be included. It also adds a bit of scoping to your project - in the case that an included definition has the same id as one defined locally, the local definition will be used. Only in the case that FlxUI can't find your definition locally will it check for included ones. 
 
 This recursion is only one level deep. If you put \<include> tags in your included file, they'll be ignored. 
 
+###5. ```<inject>```
+Inject tags are a more direct solution than ```<include>``` tags. You just specify the name of the other xml file like you would with ```<include>```, but instead of including only the definitions, it literally replaces the ```<inject>``` tag with the contents of the other file, minus the ```<?xml>``` and ```<data>``` wrapper tags, of course. This step happens before any processing is done.
 
-###4. ```<group>```
+This invocation will inject all the contents found in "some_other_file.xml":
+
+```xml
+<inject name="some_other_file"/>
+```
+
+###6. ```<group>```
 Creates a FlxGroup (specifically a FlxUIGroup) that you can assign widgets to. Note that you do NOT add things to a group by making widget tags as child xml nodes to the \<group\> tag, but by setting the "group" attribute in a widget tag to the group's id.
 
 Groups are stacked in the order you define them, with those at the top of the file created first, and thus stacked "underneath" those that come later. 
 
 A group tag takes one attribute - id. Just define your groups somewhere in the order you want them to stack, then add widgets to them by setting the group attribute to the ids you want.
 
-###5. ```<align>```
+###7. ```<align>```
 Dynamically aligns, centers, and/or spaces objects relative to one another. 
 This is complex enough to deserve its own section below, see "Alignment Tags" under "Dynamic Position & Size" later in the document.
 
-###6. ```<position>```
+###8. ```<position>```
 This allows you to re-position an existing asset later in the document. This is useful for complex relative positioning and other uses, and is complex enough to deserve its own section below, see "Position Tags" under "Dynamic Position & Size" later in the document.
 
-###7. ```<layout>```
+###9. ```<layout>```
 Creates a child FlxUI object inside your master FlxUI, and childs all the widgets inside to it. This is especially useful if you want to create multiple layouts for, say, different devices and screen sizes. Combined with **failure** tags, this will let you automatically calculate the best layout depending on screen size.
 
 A layout has only one attribute, id, and then its child nodes. Think of a \<layout> as its own sub-section of your xml file. It can have its own versions of anything you can put in the regular file since it is a full-fledged FlxUI - ie, definitions, groups, widgets, modes, presumably even other layout tags (haven't tested this). 
 
 Note that in a layout, scope comes into play when referencing ids. Definitions and object references will first look in the scope of the layout (ie, that FlxUI object), and if none is found, will try to find them in the parent FlxUI. 
 
-###8. ```<failure>```
+###10. ```<failure>```
 Specifies "failure" conditions for a certain layout, so FlxUI can determine which of multiple layouts to choose from in the event that one works better than another. Useful for simultaneously targeting, say, PC's with variable resolutions and mobile devices.
 
 Here's an example:
@@ -277,7 +294,7 @@ Sometimes multiple layouts have "failed" according to your rules, and you want t
 
 To *respond* to failure conditions, you need to write your own code. In the RPG Interface demo, there are two battle layouts, one that is more appropriate for 4:3 resolutions, and another that works better in 16:9. The custom FlxUIState for that state will check failure conditions on load, and set the mode depending on which layout works best. Speaking of modes...
 
-###9. ```<mode>```
+###11. ```<mode>```
 Specifies UI "modes" that you can switch between. For instance, in Defender's Quest we had four states for our save slots - empty, play, new_game+ (New Game+ eligible), and play+ (New Game+ started). This would determine what buttons were visible ("New Game", "Play", "Play+", "Import", "Export").
 
 The "empty" and "play" modes might look like this:
@@ -325,7 +342,7 @@ Several tags are available in a **\<mode>** element. The most basic ones are ```
 * **change** -- lets you change the property of a widget, see "Change Tags" later in the document.
 * **position** -- lets you re-position a widget, see "Position Tags" later in the document.
 
-###10. ```<change>```
+###12. ```<change>```
 
 The change tag lets you modify various properties of a widget after it has already been created. The widget matching the attribute "id" will be targeted. The following attributes may be used:
 
