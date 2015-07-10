@@ -226,6 +226,16 @@ A default tag is just like a definition, with a few exceptions:
 
 Whenever a widget is loaded, it will check to see if there is a default definition set for that type of widget. If so, it will automatically apply any properties from the default definition. This is done BEFORE and in ultimately IN ADDITION TO setting any properties of a user-supplied definition tag from "use_def".
 
+Default tags can be accessed like any other tag via the ```FlxUI.getDefinition``` function, they are stored under the key "default:X" where X is the name of the widget they define. So "default:text" or "default:button", etc.
+
+You define a default like this:
+
+```xml
+<default name="text" color="red"/>
+```
+
+Which will make all of your ```<text>``` objects red, unless local settings or a use_def overrides that.
+
 ###4. ```<include>```
 Include tags let you reference definitions stored in another xml file. This is a convenience feature to cut down on file bloat, and aid organization:
 
