@@ -14,7 +14,7 @@ import flixel.addons.ui.FlxUICursor.WidgetList;
 import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.addons.ui.BorderDef;
 import flixel.addons.ui.FlxUIRadioGroup.CheckStyle;
-import flixel.addons.ui.FlxUITooltipManager.ToolTipData;
+import flixel.addons.ui.FlxUITooltipManager.FlxUITooltipData;
 import flixel.addons.ui.FontDef;
 import flixel.addons.ui.interfaces.IEventGetter;
 import flixel.addons.ui.interfaces.IFireTongue;
@@ -1626,7 +1626,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 	}
 	
-	private function _loadTooltipStyle(node:Fast, tt:ToolTipData):Void
+	private function _loadTooltipStyle(node:Fast, tt:FlxUITooltipData):Void
 	{
 		tt.style.background  = U.xml_color(node.x, "background");
 		tt.style.borderSize  = U.xml_i(node.x, "border", -1);
@@ -1651,7 +1651,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 	}
 	
-	private function _loadTooltipText(node:Fast, fieldName:String, tt:ToolTipData):Void
+	private function _loadTooltipText(node:Fast, fieldName:String, tt:FlxUITooltipData):Void
 	{
 		var nodeName = node.name;
 		var text     = _loadString(node, fieldName);

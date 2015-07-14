@@ -1,5 +1,5 @@
 package flixel.addons.ui;
-import flixel.addons.ui.FlxUITooltip.ToolTipStyle;
+import flixel.addons.ui.FlxUITooltip.FlxUITooltipStyle;
 import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.util.FlxArrayUtil;
@@ -13,7 +13,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 {
 	private var listBtns:Array<IFlxUIButton>;
 	private var listCounts:Array<Float>;
-	private var listData:Array<ToolTipData>;
+	private var listData:Array<FlxUITooltipData>;
 	
 	private var tooltip:FlxUITooltip;
 	private var current:Int = -1;
@@ -34,7 +34,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 	/**
 	 * Default style for tooltips where no style is defined
 	 */
-	public var defaultStyle:ToolTipStyle = null;
+	public var defaultStyle:FlxUITooltipStyle = null;
 	public var showOnClick:Bool = false;
 	public var delay:Float = 0.1;
 	
@@ -67,7 +67,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 	 * @param	data
 	 */
 	
-	public function add(thing:IFlxUIButton, data:ToolTipData)
+	public function add(thing:IFlxUIButton, data:FlxUITooltipData)
 	{
 		if (listBtns.indexOf(thing) == -1)
 		{
@@ -179,9 +179,9 @@ class FlxUITooltipManager implements IFlxDestroyable
 	}
 }
 
-typedef ToolTipData = {
+typedef FlxUITooltipData = {
 	title:String,
 	body:String,
 	?anchor:Anchor,
-	?style:ToolTipStyle
+	?style:FlxUITooltipStyle
 }

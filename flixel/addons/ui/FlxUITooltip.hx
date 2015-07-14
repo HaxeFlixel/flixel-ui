@@ -1,5 +1,5 @@
 package flixel.addons.ui;
-import flixel.addons.ui.FlxUITooltip.ToolTipStyle;
+import flixel.addons.ui.FlxUITooltip.FlxUITooltipStyle;
 import flixel.FlxObject;
 import flixel.text.FlxText.FlxTextBorderStyle;
 import flixel.FlxSprite;
@@ -18,12 +18,12 @@ import openfl.text.TextFormat;
 class FlxUITooltip extends FlxUIGroup
 {
 
-	public var style(default, set):ToolTipStyle;
+	public var style(default, set):FlxUIFlxUITooltipStyle;
 	public var anchor(default, set):Anchor;
 	public var title(default, set):String;
 	public var body(default, set):String;
 	
-	public function new(Width:Int, Height:Int, ?Anchor_:Anchor, ?Style:ToolTipStyle)
+	public function new(Width:Int, Height:Int, ?Anchor_:Anchor, ?Style:FlxUIFlxUITooltipStyle)
 	{
 		super(0, 0);
 		
@@ -197,7 +197,7 @@ class FlxUITooltip extends FlxUIGroup
 		return a;
 	}
 	
-	public function set_style(s:ToolTipStyle):ToolTipStyle
+	public function set_style(s:FlxUIFlxUITooltipStyle):FlxUIFlxUITooltipStyle
 	{
 		style = s;
 		return s;
@@ -224,7 +224,7 @@ class FlxUITooltip extends FlxUIGroup
 	private var _arrowBkg:FlxSprite;
 	private var _anchorArrow:Anchor;
 	
-	private function refresh(Width:Int, Height:Int, Title:String, Body:String, Anchor_:Anchor, Style:ToolTipStyle)
+	private function refresh(Width:Int, Height:Int, Title:String, Body:String, Anchor_:Anchor, Style:FlxUIFlxUITooltipStyle)
 	{
 		//create the stuff
 		var newBkg = _bkg == null;
@@ -312,7 +312,7 @@ class FlxUITooltip extends FlxUIGroup
 		}
 	}
 	
-	private function refreshBkg(Width:Int,Height:Int,Style:ToolTipStyle):Void
+	private function refreshBkg(Width:Int,Height:Int,Style:FlxUIFlxUITooltipStyle):Void
 	{
 		//load the background
 		var key = getStyleKey(Width, Height, Style);
@@ -333,7 +333,7 @@ class FlxUITooltip extends FlxUIGroup
 		_bkg.loadGraphic(key);
 	}
 	
-	private function getStyleKey(W:Int,H:Int,Style:ToolTipStyle):String
+	private function getStyleKey(W:Int,H:Int,Style:FlxUIFlxUITooltipStyle):String
 	{
 		return W + "," + H + "," + Style.background.toHexString() + "," + Style.borderSize +"," + Style.borderColor.toHexString();
 	}
@@ -463,7 +463,7 @@ class FlxUITooltip extends FlxUIGroup
 	}
 	
 	@:allow(flixel.addons.ui.FlxUITooltipManager)
-	private static function styleFix(Style:ToolTipStyle):ToolTipStyle
+	private static function styleFix(Style:FlxUITooltipStyle):FlxUITooltipStyle
 	{
 		if (Style == null)
 		{
@@ -523,7 +523,7 @@ class FlxUITooltip extends FlxUIGroup
 		return Style;
 	}
 	
-	public static function cloneStyle(s:ToolTipStyle):ToolTipStyle
+	public static function cloneStyle(s:FlxUITooltipStyle):FlxUITooltipStyle
 	{
 		return {
 			titleFormat : s.titleFormat != null ? s.titleFormat.clone() : null,
@@ -548,23 +548,23 @@ class FlxUITooltip extends FlxUIGroup
 	}
 }
 
-typedef ToolTipStyle = {
-	@:optional var titleFormat:FontDef;
-	@:optional var bodyFormat:FontDef;
-	@:optional var borderSize:Int;
-	@:optional var titleWidth:Int;
-	@:optional var bodyWidth:Int;
-	@:optional var background:Null<FlxColor>;
-	@:optional var borderColor:Null<FlxColor>;
-	@:optional var arrow:FlxGraphicAsset;
-	@:optional var titleOffset:FlxPoint;
-	@:optional var bodyOffset:FlxPoint;
-	@:optional var titleBorder:BorderDef;
-	@:optional var bodyBorder:BorderDef;
-	@:optional var autoSizeVertical:Bool;
-	@:optional var autoSizeHorizontal:Bool;
-	@:optional var leftPadding:Int;
-	@:optional var rightPadding:Int;
-	@:optional var bottomPadding:Int;
-	@:optional var topPadding:Int;
+typedef FlxUITooltipStyle = {
+	?titleFormat:FontDef,
+	?bodyFormat:FontDef,
+	?borderSize:Int,
+	?titleWidth:Int,
+	?bodyWidth:Int,
+	?background:Null<FlxColor>,
+	?borderColor:Null<FlxColor>,
+	?arrow:FlxGraphicAsset,
+	?titleOffset:FlxPoint,
+	?bodyOffset:FlxPoint,
+	?titleBorder:BorderDef,
+	?bodyBorder:BorderDef,
+	?autoSizeVertical:Bool,
+	?autoSizeHorizontal:Bool,
+	?leftPadding:Int,
+	?rightPadding:Int,
+	?bottomPadding:Int,
+	?topPadding:Int
 }
