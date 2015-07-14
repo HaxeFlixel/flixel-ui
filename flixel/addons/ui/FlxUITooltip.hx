@@ -18,12 +18,12 @@ import openfl.text.TextFormat;
 class FlxUITooltip extends FlxUIGroup
 {
 
-	public var style(default, set):FlxUIFlxUITooltipStyle;
+	public var style(default, set):FlxUITooltipStyle;
 	public var anchor(default, set):Anchor;
 	public var title(default, set):String;
 	public var body(default, set):String;
 	
-	public function new(Width:Int, Height:Int, ?Anchor_:Anchor, ?Style:FlxUIFlxUITooltipStyle)
+	public function new(Width:Int, Height:Int, ?Anchor_:Anchor, ?Style:FlxUITooltipStyle)
 	{
 		super(0, 0);
 		
@@ -197,7 +197,7 @@ class FlxUITooltip extends FlxUIGroup
 		return a;
 	}
 	
-	public function set_style(s:FlxUIFlxUITooltipStyle):FlxUIFlxUITooltipStyle
+	public function set_style(s:FlxUITooltipStyle):FlxUITooltipStyle
 	{
 		style = s;
 		return s;
@@ -224,7 +224,7 @@ class FlxUITooltip extends FlxUIGroup
 	private var _arrowBkg:FlxSprite;
 	private var _anchorArrow:Anchor;
 	
-	private function refresh(Width:Int, Height:Int, Title:String, Body:String, Anchor_:Anchor, Style:FlxUIFlxUITooltipStyle)
+	private function refresh(Width:Int, Height:Int, Title:String, Body:String, Anchor_:Anchor, Style:FlxUITooltipStyle)
 	{
 		//create the stuff
 		var newBkg = _bkg == null;
@@ -312,7 +312,7 @@ class FlxUITooltip extends FlxUIGroup
 		}
 	}
 	
-	private function refreshBkg(Width:Int,Height:Int,Style:FlxUIFlxUITooltipStyle):Void
+	private function refreshBkg(Width:Int,Height:Int,Style:FlxUITooltipStyle):Void
 	{
 		//load the background
 		var key = getStyleKey(Width, Height, Style);
@@ -333,7 +333,7 @@ class FlxUITooltip extends FlxUIGroup
 		_bkg.loadGraphic(key);
 	}
 	
-	private function getStyleKey(W:Int,H:Int,Style:FlxUIFlxUITooltipStyle):String
+	private function getStyleKey(W:Int,H:Int,Style:FlxUITooltipStyle):String
 	{
 		return W + "," + H + "," + Style.background.toHexString() + "," + Style.borderSize +"," + Style.borderColor.toHexString();
 	}
