@@ -91,24 +91,33 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 		
 		tooltips = new FlxUITooltipManager(this);
 		
-		if(_xml_id != "" && _xml_id != null){
-			_ui = new FlxUI(null,this,null,_tongue);
-			add(_ui);
-			
-			_ui.getTextFallback = getTextFallback;
+		_ui = new FlxUI(null,this,null,_tongue);
+		add(_ui);
 		
+		_ui.getTextFallback = getTextFallback;
+		
+		if (_xml_id != "" && _xml_id != null)
+		{
 			var data:Fast = U.xml(_xml_id);
-			if (data == null) {
+			if (data == null)
+			{
 				data = U.xml(_xml_id, "xml", true, "");	//try without default directory prepend
 			}
 			
-			if (data == null) {
+			if (data == null)
+			{
 			#if debug
 				FlxG.log.error("FlxUISubstate: Could not load _xml_id \"" + _xml_id + "\"");
 			#end
-			}else{			
+			}
+			else
+			{
 				_ui.load(data);
 			}
+		}
+		else
+		{
+			_ui.load(null);
 		}
 	
 		#if !FLX_NO_MOUSE
