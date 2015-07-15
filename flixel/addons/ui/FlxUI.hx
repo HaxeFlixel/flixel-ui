@@ -627,13 +627,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					if (liveFile == null)
 					{
 						inc_xml = U.xml(inc_name);
-					}else
+					}
+					else
 					{
 						inc_xml = liveFile;
 					}
 					
-					if(inc_xml != null){
-						for (def_data in inc_xml.nodes.definition) {
+					if (inc_xml != null)
+					{
+						for (def_data in inc_xml.nodes.definition)
+						{
 							//add a prefix to avoid collisions:
 							var def_name:String = "include:" + U.xml_name(def_data.x);
 							_definition_index.set(def_name, def_data);
@@ -658,8 +661,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 			
 			//Then, load all our definitions
-			if (data.hasNode.definition) {
-				for (def_data in data.nodes.definition) {
+			if (data.hasNode.definition)
+			{
+				for (def_data in data.nodes.definition)
+				{
 					if (_loadTest(def_data))
 					{
 						var def_name:String = U.xml_name(def_data.x);
@@ -697,8 +702,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		
 			//Next, load all our variables
-			if (data.hasNode.variable) {
-				for (var_data in data.nodes.variable) {
+			if (data.hasNode.variable)
+			{
+				for (var_data in data.nodes.variable)
+				{
 					if (_loadTest(var_data))
 					{
 						var var_name:String = U.xml_name(var_data.x);
@@ -712,8 +719,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		
 			//Next, load all our modes
-			if (data.hasNode.mode) {
-				for (mode_data in data.nodes.mode) {
+			if (data.hasNode.mode)
+			{
+				for (mode_data in data.nodes.mode)
+				{
 					if (_loadTest(mode_data))
 					{
 						var mode_data2:Fast = applyNodeConditionals(mode_data);
@@ -725,8 +734,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 			
 			//Then, load all our group definitions
-			if(data.hasNode.group){
-				for (group_data in data.nodes.group) {
+			if (data.hasNode.group)
+			{
+				for (group_data in data.nodes.group)
+				{
 					if (_loadTest(group_data))
 					{
 						//Create FlxUIGroup's for each group we define
@@ -756,8 +767,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 				}
 			}
-		
-			if (data.x.firstElement() != null) {
+			
+			if (data.x.firstElement() != null)
+			{
 				//Load the actual things
 				var node:Xml;
 				for (node in data.x.elements()) 
@@ -768,7 +780,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 			_postLoad(data);
 			
-		}else {
+		}
+		else {
 			_onFinishLoad();
 		}
 	}
