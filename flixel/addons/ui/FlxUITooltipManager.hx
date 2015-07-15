@@ -52,6 +52,21 @@ class FlxUITooltipManager implements IFlxDestroyable
 	}
 	
 	/**
+	 * Removes all tooltips
+	 */
+	public function clear()
+	{
+		while (list.length > 0)
+		{
+			var entry = list.pop();
+			if (entry != null)
+			{
+				entry.destroy();
+			}
+		}
+	}
+	
+	/**
 	 * Adds a tooltip for this object, using the specified data.
 	 * NOTE: if thing does not implement IFlxUIButton, a new invisible
 	 * button will be created for it in order to drive tooltips.
