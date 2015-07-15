@@ -49,15 +49,23 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	 * @param	Label		The text that you want to appear on the button.
 	 * @param	OnClick		The function to call whenever the button is clicked.
 	 * @param	LoadDefaultGraphics	By default it will load up with placeholder graphics. Pass false if you want to skip this (i.e. if you will provide your own graphics subsequently, can save time)
+	 * @param	LoadBlank	Load this button without ANY visible graphics, but still functions (in case you need an invisible click area)
 	 */
-	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Void->Void, ?LoadDefaultGraphics:Bool=true)
+	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Void->Void, ?LoadDefaultGraphics:Bool=true, ?LoadBlank:Bool=false)
 	{
 		super(X, Y, OnClick);
-		if (Label != null) {
+		if (Label != null)
+		{
 			//create a FlxUIText label
 			label = new FlxUIText(0, 0, 80, Label, 8);
 			label.setFormat(null, 8, 0x333333, FlxTextAlign.CENTER);
 		}
+		
+		if (LoadBlank)
+		{
+			_no_graphic = true;
+		}
+		
 		if (LoadDefaultGraphics)
 		{
 			resize(width, height);	//force it to be "FlxUI style"
@@ -154,7 +162,8 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	
 	/**For IResizable:**/
 	
-	public override function resize(W:Float, H:Float):Void {
+	public override function resize(W:Float, H:Float):Void
+	{
 		super.resize(W, H);
 	}
 	
@@ -216,6 +225,11 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	}
 	
 	/**********PRIVATE*********/
+	
+	override function loadDefaultGraphic():Void 
+	{
+		//do nothing -- suppresses FlxTypedButton's default graphics loader
+	}
 	
 	/**
 	 * Updates the size of the text field to match the button.
