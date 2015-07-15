@@ -92,7 +92,11 @@ class FlxUITooltipManager implements IFlxDestroyable
 				//doesn't exist, make a new one
 				
 				//create a blank button to process the tooltip
-				btn = new FlxUIButton(0, 0, "", null, false);
+				var b = new FlxUIButton(0, 0, "", null, false, true);
+				b.resize(thing.width, thing.height);
+				
+				btn = b;
+				//btn = new FlxUIButton(0, 0, "", null, false, true);
 				
 				//match the properties of the sprite
 				btn.x = thing.x;
