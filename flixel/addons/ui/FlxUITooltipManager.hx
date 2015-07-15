@@ -77,12 +77,13 @@ class FlxUITooltipManager implements IFlxDestroyable
 	
 	public function add(thing:FlxObject, data:FlxUITooltipData)
 	{
+		data.style = FlxUITooltip.styleFix(data.style);		//replace null values with sensible defaults
+		
 		var btn:IFlxUIButton = null;
 		var i = -1;
 		if (Std.is(thing, IFlxUIButton))
 		{
 			btn = cast thing;
-			data.style = FlxUITooltip.styleFix(data.style);		//replace null values with sensible defaults
 			
 			i = findBtn(btn);
 			

@@ -89,20 +89,19 @@ class FlxUITooltip extends FlxUIGroup
 		_titleText.update(0);
 		_bodyText.update(0);
 		
+		var titleHeight = _titleText.textField.textHeight + 4;
+		var bodyHeight = _bodyText.textField.textHeight + 4;
+		
 		if (style.titleOffset != null)
 		{
 			_titleText.x = style.titleOffset.x;
+			_titleText.y = style.titleOffset.y;
 		}
 		if (style.bodyOffset != null)
 		{
 			_bodyText.x = style.bodyOffset.x;
+			_bodyText.y = _titleText.y + titleHeight + style.bodyOffset.y;
 		}
-		
-		var titleHeight = _titleText.textField.textHeight + 4;
-		var bodyHeight = _bodyText.textField.textHeight + 4;
-		
-		_titleText.y = style.titleOffset.y;
-		_bodyText.y = _titleText.y + titleHeight + style.bodyOffset.y;
 		
 		var W:Int = Std.int(_bkg.width);
 		var H:Int = Std.int(_bkg.height);
