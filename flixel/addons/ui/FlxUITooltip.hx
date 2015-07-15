@@ -65,11 +65,23 @@ class FlxUITooltip extends FlxUIGroup
 			_bodyText.width  = _bodyText.textField.width  = style.bodyWidth;
 		}
 		
-		style.titleFormat.apply(_titleText);
-		style.bodyFormat.apply(_bodyText);
+		if (style.titleFormat != null)
+		{
+			style.titleFormat.apply(_titleText);
+		}
+		if (style.bodyFormat != null)
+		{
+			style.bodyFormat.apply(_bodyText);
+		}
 		
-		style.titleBorder.apply(_titleText);
-		style.bodyBorder.apply(_bodyText);
+		if (style.titleBorder != null)
+		{
+			style.titleBorder.apply(_titleText);
+		}
+		if (style.bodyBorder != null)
+		{
+			style.bodyBorder.apply(_bodyText);
+		}
 		
 		_titleText.text = Title;
 		_bodyText.text = Body;
@@ -77,8 +89,14 @@ class FlxUITooltip extends FlxUIGroup
 		_titleText.update(0);
 		_bodyText.update(0);
 		
-		_titleText.x = style.titleOffset.x;
-		_bodyText.x = style.bodyOffset.x;
+		if (style.titleOffset != null)
+		{
+			_titleText.x = style.titleOffset.x;
+		}
+		if (style.bodyOffset != null)
+		{
+			_bodyText.x = style.bodyOffset.x;
+		}
 		
 		var titleHeight = _titleText.textField.textHeight + 4;
 		var bodyHeight = _bodyText.textField.textHeight + 4;
@@ -350,8 +368,14 @@ class FlxUITooltip extends FlxUIGroup
 		
 		if (!FlxG.bitmap.checkCache(key))
 		{
-			var W = Std.int(_arrow.width  + (style.borderSize * 2));
-			var H = Std.int(_arrow.height + (style.borderSize * 2));
+			var bs = style.borderSize;
+			if (bs < 0 || bs == null)
+			{
+				bs = 0;
+			}
+			
+			var W = Std.int(_arrow.width  + (bs));
+			var H = Std.int(_arrow.height + (bs));
 			
 			var bd:BitmapData = new BitmapData(W, H, true, FlxColor.TRANSPARENT);
 			FlxG.bitmap.add(bd, false, key);
