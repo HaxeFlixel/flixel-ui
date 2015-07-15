@@ -2,7 +2,9 @@ package flixel.addons.ui;
 import flixel.addons.ui.FlxUITooltip.FlxUITooltipStyle;
 import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.FlxObject;
 import flixel.util.FlxArrayUtil;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 
 /**
@@ -11,16 +13,6 @@ import flixel.util.FlxDestroyUtil.IFlxDestroyable;
  */
 class FlxUITooltipManager implements IFlxDestroyable
 {
-	private var listBtns:Array<IFlxUIButton>;
-	private var listCounts:Array<Float>;
-	private var listData:Array<FlxUITooltipData>;
-	
-	private var tooltip:FlxUITooltip;
-	private var current:Int = -1;
-	
-	private var state:FlxUIState;
-	private var subState:FlxUISubState;
-	
 	/**
 	 * Turn on flipping the anchor position around in order to keep a tooltip on screen
 	 */
@@ -40,11 +32,15 @@ class FlxUITooltipManager implements IFlxDestroyable
 	
 	public function new(?State:FlxUIState,?SubState:FlxUISubState) 
 	{
-		state = State;
-		subState = SubState;
-		listBtns = [];
-		listCounts = [];
-		listData = [];
+		if (State != null)
+		{
+			state = State;
+		}
+		else if(SubState != null)
+		{
+			subState = SubState;
+		}
+		list = [];
 		tooltip = new FlxUITooltip(100, 50);
 		defaultAnchor = tooltip.anchor.clone();
 		defaultStyle = FlxUITooltip.cloneStyle(tooltip.style);
@@ -52,49 +48,134 @@ class FlxUITooltipManager implements IFlxDestroyable
 	
 	public function destroy()
 	{
-		for (data in listData)
-		{
-			data.anchor = null;
-			data.style = null;
-		}
-		FlxArrayUtil.clearArray(listBtns);
-		FlxArrayUtil.clearArray(listData);
+		FlxDestroyUtil.destroyArray(list);
 	}
 	
 	/**
-	 * Adds a tooltip for this button, using the specified data.
-	 * @param	thing	The button you want to add a tooltip to
+	 * Adds a tooltip for this object, using the specified data.
+	 * NOTE: if thing does not implement IFlxUIButton, a new invisible
+	 * button will be created for it in order to drive tooltips.
+	 * 
+	 * @param	thing	The object you want to add a tooltip to.
 	 * @param	data
 	 */
 	
-	public function add(thing:IFlxUIButton, data:FlxUITooltipData)
+	public function add(thing:FlxObject, data:FlxUITooltipData)
 	{
-		if (listBtns.indexOf(thing) == -1)
+		var btn:IFlxUIButton = null;
+		var i = -1;
+		if (Std.is(thing, IFlxUIButton))
 		{
-			listBtns.push(thing);
+			btn = cast thing;
 			data.style = FlxUITooltip.styleFix(data.style);		//replace null values with sensible defaults
-			listData.push(data);
-			listCounts.push(0);
+			
+			i = findBtn(btn);
+			
+			if (i == -1)
+			{
+				//doesn't exist, make a new one
+				list.push(new FlxUITooltipEntry(btn, data));
+			}
+			else
+			{
+				//does exist, replace the old one
+				list[i].data = data;
+				list[i].count = 0;
+			}
+		}
+		else	//create a button to process the tooltip for this sprite
+		{
+			i = findObj(thing);
+			
+			if (i == -1)
+			{
+				//doesn't exist, make a new one
+				
+				//create a blank button to process the tooltip
+				btn = new FlxUIButton(0, 0, "", null, false);
+				
+				//match the properties of the sprite
+				btn.x = thing.x;
+				btn.y = thing.y;
+				btn.width = thing.width;
+				btn.height = thing.height;
+				btn.scrollFactor.set(thing.scrollFactor.x, thing.scrollFactor.y);
+				
+				//add it to the state
+				if (state != null)
+				{
+					state.add(cast btn);
+				}
+				else if (subState != null)
+				{
+					subState.add(cast btn);
+				}
+				
+				//add it to the list
+				list.push(new FlxUITooltipEntry(btn, data, thing));
+			}
+			else
+			{
+				//does exist, replace the old one
+				
+				list[i].data = data;
+				list[i].count = 0;
+			}
+		}
+	}
+	
+	/**
+	 * Remove a tooltip associated with this object, if there is one
+	 * @param	thing
+	 */
+	public function remove(thing:FlxObject)
+	{
+		var btn:IFlxUIButton = null;
+		var i = -1;
+		if (Std.is(thing, IFlxUIButton))
+		{
+			btn = cast thing;
+			i = findBtn(btn);
+		}
+		else
+		{
+			i = findObj(thing);
+		}
+		if (i != -1)
+		{
+			if (current == i)
+			{
+				hide(current);
+			}
+			var entry = list[i];
+			list.splice(i, 1);
+			entry.destroy();
 		}
 	}
 	
 	public function update(elapsed:Float):Void
 	{
 		//iterate over all our buttons and watch their states
-		for (i in 0...listBtns.length)
+		for (i in 0...list.length)
 		{
-			var btn = listBtns[i];
+			var btn = list[i].btn;
+			var obj = list[i].obj;
+			if (obj != null)
+			{
+				btn.x = obj.x;
+				btn.y = obj.y;
+			}
 			
 			if (btn.justMousedOver || btn.mouseIsOver)
 			{
-				listCounts[i] += elapsed;
+				list[i].count += elapsed;
 			}
-			else if(listCounts[i] > 0)
+			else if(list[i].count > 0)
 			{
-				listCounts[i] = 0;
+				list[i].count = 0;
 				hide(i);
 			}
-			if (listCounts[i] > delay)
+			if (list[i].count > delay)
 			{
 				if (current != i)
 				{
@@ -103,6 +184,20 @@ class FlxUITooltipManager implements IFlxDestroyable
 			}
 		}
 	}
+	
+	/*********PRIVATE*************/
+	
+	/**list of all the tooltip entries**/
+	private var list:Array<FlxUITooltipEntry>;
+	
+	/**we actually only ever use one tooltip object :) **/
+	private var tooltip:FlxUITooltip;
+	
+	/**the current tooltip**/
+	private var current:Int = -1;
+	
+	private var state:FlxUIState;
+	private var subState:FlxUISubState;
 	
 	private function hide(i:Int):Void
 	{
@@ -121,11 +216,37 @@ class FlxUITooltipManager implements IFlxDestroyable
 		current = -1;
 	}
 	
+	private function findBtn(btn:IFlxUIButton):Int
+	{
+		if (btn == null) return -1;
+		for (i in 0...list.length)
+		{
+			if (list[i] != null && list[i].btn == btn)
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	private function findObj(obj:FlxObject):Int
+	{
+		if (obj == null) return -1;
+		for (i in 0...list.length)
+		{
+			if (list[i] != null && list[i].obj == obj)
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+	
 	private function show(i:Int):Void
 	{
 		current = i;
-		var thing = listBtns[i];
-		var data = listData[i];
+		var btn  = list[i].btn;
+		var data = list[i].data;
 		var autoSizeVertical = true;
 		var autoSizeHorizontal = true;
 		if (data.style != null)
@@ -153,13 +274,13 @@ class FlxUITooltipManager implements IFlxDestroyable
 			subState.add(tooltip);
 		}
 		
-		tooltip.show(cast thing, data.title, data.body, autoSizeVertical, autoSizeHorizontal);
+		tooltip.show(cast btn, data.title, data.body, autoSizeVertical, autoSizeHorizontal);
 		
 		if (autoFlipAnchor)
 		{
-			if (checkAutoFlip(thing, tooltip))
+			if (checkAutoFlip(btn, tooltip))
 			{
-				tooltip.show(cast thing, data.title, data.body, autoSizeVertical, autoSizeHorizontal);
+				tooltip.show(cast btn, data.title, data.body, autoSizeVertical, autoSizeHorizontal);
 			}
 		}
 	}
@@ -176,6 +297,32 @@ class FlxUITooltipManager implements IFlxDestroyable
 		}
 		
 		return false;
+	}
+}
+
+private class FlxUITooltipEntry implements IFlxDestroyable
+{
+	public var obj:FlxObject;
+	public var btn:IFlxUIButton;
+	public var count:Float;
+	public var data:FlxUITooltipData;
+	
+	public function new(Btn:IFlxUIButton, Data:FlxUITooltipData, ?Obj:FlxObject)
+	{
+		btn = Btn;
+		data = Data;
+		obj = Obj;
+		count = 0;
+	}
+	
+	public function destroy():Void
+	{
+		count = 0;
+		obj = null;
+		btn = null;
+		data.anchor = null;
+		data.style = null;
+		data = null;
 	}
 }
 
