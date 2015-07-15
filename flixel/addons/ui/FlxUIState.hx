@@ -119,35 +119,34 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		
 		var liveFile:Fast = null;
 		
+		#if (debug && sys)
+			if (_liveFilePath != null && _liveFilePath != "")
+			{
+				try
+				{
+					liveFile = U.readFast(U.fixSlash(_liveFilePath + _xml_id));
+					trace("liveFile = " + liveFile);
+				}
+				catch(msg:String)
+				{
+					FlxG.log.warn(msg);
+					trace(msg);
+					liveFile = null;
+				}
+			}
+			_ui = createUI(null, this, null, _tongue, _liveFilePath);
+		#else
+			_ui = createUI(null, this, null, _tongue);
+		#end
+		add(_ui);
+		
+		if (getTextFallback != null)
+		{
+			_ui.getTextFallback = getTextFallback;
+		}
+		
 		if (_xml_id != null && _xml_id != "")
 		{
-			#if (debug && sys)
-				if (_liveFilePath != null && _liveFilePath != "")
-				{
-					try
-					{
-						liveFile = U.readFast(U.fixSlash(_liveFilePath + _xml_id));
-						trace("liveFile = " + liveFile);
-					}
-					catch(msg:String)
-					{
-						FlxG.log.warn(msg);
-						trace(msg);
-						liveFile = null;
-					}
-				}
-				_ui = createUI(null, this, null, _tongue, _liveFilePath);
-			#else
-				_ui = createUI(null, this, null, _tongue);
-			#end
-			add(_ui);
-			
-			if (getTextFallback != null)
-			{
-				_ui.getTextFallback = getTextFallback;
-			}
-			
-			
 			var data:Fast = null;
 			var errorMsg:String = "";
 			
@@ -190,6 +189,11 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 				loadUIFromData(data);
 			}
 		}
+		else
+		{
+			loadUIFromData(null);
+		}
+		
 		#if !FLX_NO_MOUSE
 		if (cursor != null && _ui != null) {			//Cursor goes on top, of course
 			add(cursor);
