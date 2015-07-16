@@ -32,6 +32,11 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 	#end
 	private var _makeCursor:Bool;		//whether to auto-construct a cursor and load default widgets into it
 	
+	/**
+	 * frontend for adding tooltips to things
+	 */
+	public var tooltips(default, null):FlxUITooltipManager;
+	
 	private var _xml_id:String = "";	//the xml to load
 	private var _ui:FlxUI;
 	private var _tongue:IFireTongue;
@@ -83,25 +88,36 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 			cursor = new FlxUICursor(onCursorEvent);
 		}
 		#end
-	
-		if(_xml_id != "" && _xml_id != null){
-			_ui = new FlxUI(null,this,null,_tongue);
-			add(_ui);
-			
-			_ui.getTextFallback = getTextFallback;
 		
+		tooltips = new FlxUITooltipManager(this);
+		
+		_ui = new FlxUI(null,this,null,_tongue);
+		add(_ui);
+		
+		_ui.getTextFallback = getTextFallback;
+		
+		if (_xml_id != "" && _xml_id != null)
+		{
 			var data:Fast = U.xml(_xml_id);
-			if (data == null) {
+			if (data == null)
+			{
 				data = U.xml(_xml_id, "xml", true, "");	//try without default directory prepend
 			}
 			
-			if (data == null) {
+			if (data == null)
+			{
 			#if debug
 				FlxG.log.error("FlxUISubstate: Could not load _xml_id \"" + _xml_id + "\"");
 			#end
-			}else{			
+			}
+			else
+			{
 				_ui.load(data);
 			}
+		}
+		else
+		{
+			_ui.load(null);
 		}
 	
 		#if !FLX_NO_MOUSE
@@ -128,6 +144,7 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 	
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);
+		tooltips.update(elapsed);
 		#if debug
 			if (_reload) {
 				if (_reload_countdown > 0) {
@@ -143,7 +160,13 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 	
 	public override function destroy():Void {
 		destroyed = true;
-
+		
+		if (tooltips != null)
+		{
+			tooltips.destroy();
+			tooltips = null;
+		}
+		
 		if(_ui != null){
 			_ui.destroy();
 			remove(_ui, true);

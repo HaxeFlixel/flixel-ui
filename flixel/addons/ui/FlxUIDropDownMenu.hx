@@ -186,6 +186,33 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		add(header);
 	}
 	
+	override function set_visible(Value:Bool):Bool 
+	{
+		var vDropPanel = dropPanel.visible;
+		var vButtons = [];
+		for (i in 0...list.length)
+		{
+			if (list[i] != null)
+			{
+				vButtons.push(list[i].visible);
+			}
+			else
+			{
+				vButtons.push(false);
+			}
+		}
+		super.set_visible(Value);
+		dropPanel.visible = vDropPanel;
+		for (i in 0...list.length)
+		{
+			if (list[i] != null)
+			{
+				list[i].visible = vButtons[i];
+			}
+		}
+		return Value;
+	}
+	
 	private function exceedsHeight(numElements:Int):Bool
 	{
 		return y + getPanelHeight(numElements) > FlxG.height;

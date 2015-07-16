@@ -53,6 +53,17 @@ class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 		return obj;
 	}
 	
+	public function setScrollFactor(X:Float, Y:Float):Void
+	{
+		for (obj in members)
+		{
+			if (obj != null)
+			{
+				obj.scrollFactor.set(X, Y);
+			}
+		}
+	}
+	
 	public function hasThis(Object:FlxSprite):Bool {
 		for (obj in members) {
 			if (obj == Object) {

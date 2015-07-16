@@ -14,6 +14,7 @@ import flixel.addons.ui.FlxUICursor.WidgetList;
 import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.addons.ui.BorderDef;
 import flixel.addons.ui.FlxUIRadioGroup.CheckStyle;
+import flixel.addons.ui.FlxUITooltipManager.FlxUITooltipData;
 import flixel.addons.ui.FontDef;
 import flixel.addons.ui.interfaces.IEventGetter;
 import flixel.addons.ui.interfaces.IFireTongue;
@@ -38,6 +39,7 @@ import flixel.math.FlxPoint;
 import flixel.util.FlxStringUtil;
 import haxe.xml.Fast;
 import openfl.Assets;
+import openfl.text.TextFormat;
 
 /**
  * A simple xml-driven user interface
@@ -538,6 +540,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @param	data
 	 */
 	
+	@:access(Xml)
 	public function load(data:Fast):Void
 	{
 		_group_index = new Map<String,FlxUIGroup>();
@@ -561,11 +564,46 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 			
 			_data = data;
-		
+			
+			if (data.hasNode.inject)
+			{
+				//for (inj_data in data.nodes.inject)
+				while(data.hasNode.inject)
+				{
+					var inj_data = data.node.inject;
+					var inj_name:String = U.xml_name(inj_data.x);
+					var payload:Xml = U.xml(inj_name, "xml", false);
+					if (payload != null)
+					{
+						var parent = inj_data.x.parent;
+						var i:Int = 0;
+						for (child in parent.children)
+						{
+							if (child == inj_data.x)
+							{
+								break;
+							}
+							i++;
+						}
+						
+						if (parent.removeChild(inj_data.x))
+						{
+							var j:Int = 0;
+							for (e in payload.elements())
+							{
+								parent.insertChild(e, i + j);
+								j++;
+							}
+						}
+					}
+				}
+			}
+			
 			//See if there's anything to include
-			if (data.hasNode.include) {
-
-				for (inc_data in data.nodes.include) {
+			if (data.hasNode.include)
+			{
+				for (inc_data in data.nodes.include)
+				{
 					var inc_name:String = U.xml_name(inc_data.x);
 					
 					var liveFile:Fast = null;
@@ -589,13 +627,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					if (liveFile == null)
 					{
 						inc_xml = U.xml(inc_name);
-					}else
+					}
+					else
 					{
 						inc_xml = liveFile;
 					}
 					
-					if(inc_xml != null){
-						for (def_data in inc_xml.nodes.definition) {
+					if (inc_xml != null)
+					{
+						for (def_data in inc_xml.nodes.definition)
+						{
 							//add a prefix to avoid collisions:
 							var def_name:String = "include:" + U.xml_name(def_data.x);
 							_definition_index.set(def_name, def_data);
@@ -620,19 +661,51 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 			
 			//Then, load all our definitions
-			if (data.hasNode.definition) {
-				for (def_data in data.nodes.definition) {
+			if (data.hasNode.definition)
+			{
+				for (def_data in data.nodes.definition)
+				{
 					if (_loadTest(def_data))
 					{
 						var def_name:String = U.xml_name(def_data.x);
-						_definition_index.set(def_name, def_data);
+						var error = "";
+						if (def_name.indexOf("default:") != -1)
+						{
+							error = "'default:'";
+						}
+						if (def_name.indexOf("include:") != -1)
+						{
+							error = "'include:'";
+						}
+						if (error != "")
+						{
+							FlxG.log.warn("Can't create FlxUI definition '" + def_name + "', because '" + error + "' is a reserved name prefix!");
+						}
+						else
+						{
+							_definition_index.set(def_name, def_data);
+						}
+					}
+				}
+			}
+			
+			if (data.hasNode.resolve("default"))
+			{
+				for (defaultNode in data.nodes.resolve("default"))
+				{
+					if (_loadTest(defaultNode))
+					{
+						var defaultName:String = U.xml_name(defaultNode.x);
+						_definition_index.set("default:" + defaultName, defaultNode);
 					}
 				}
 			}
 		
 			//Next, load all our variables
-			if (data.hasNode.variable) {
-				for (var_data in data.nodes.variable) {
+			if (data.hasNode.variable)
+			{
+				for (var_data in data.nodes.variable)
+				{
 					if (_loadTest(var_data))
 					{
 						var var_name:String = U.xml_name(var_data.x);
@@ -646,8 +719,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		
 			//Next, load all our modes
-			if (data.hasNode.mode) {
-				for (mode_data in data.nodes.mode) {
+			if (data.hasNode.mode)
+			{
+				for (mode_data in data.nodes.mode)
+				{
 					if (_loadTest(mode_data))
 					{
 						var mode_data2:Fast = applyNodeConditionals(mode_data);
@@ -659,8 +734,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 			
 			//Then, load all our group definitions
-			if(data.hasNode.group){
-				for (group_data in data.nodes.group) {
+			if (data.hasNode.group)
+			{
+				for (group_data in data.nodes.group)
+				{
 					if (_loadTest(group_data))
 					{
 						//Create FlxUIGroup's for each group we define
@@ -690,8 +767,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 				}
 			}
-		
-			if (data.x.firstElement() != null) {
+			
+			if (data.x.firstElement() != null)
+			{
 				//Load the actual things
 				var node:Xml;
 				for (node in data.x.elements()) 
@@ -702,7 +780,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 			_postLoad(data);
 			
-		}else {
+		}
+		else {
 			_onFinishLoad();
 		}
 	}
@@ -785,6 +864,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					var tagArr:Array<String> = thing_tags.split(",");
 					_addTags(tagArr, thing_name);
 				}
+			}
+			
+			if (Std.is(thing, IFlxUIButton) || Std.is(thing, IFlxUIClickable))
+			{
+				_loadTooltip(thing, obj);
 			}
 			
 			if (tempGroup != null) {
@@ -1436,14 +1520,31 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadThingGetInfo(data:Fast):Fast
 	{
-		var use_def:String = U.xml_str(data.x, "use_def", true);
+		var nodeName:String = data.x.nodeName;
+		var defaultDef = getDefinition("default:" + nodeName);
+		
+		//TODO: since it looks for the default definition based on the specific node-name, there could be bugs if you mix & match synonymous tags like <9slicesprite> and <chrome>,
+		//but only specify a default for one of them. I might need to add some robustness checking later.
+		
+		var info:Fast = null;
+		if (defaultDef != null)
+		{
+			info = consolidateData(data, defaultDef, true);
+		}
+		
+		if (info == null)
+		{
+			info = data;
+		}
+		
+		var use_def:String = U.xml_str(info.x, "use_def", true);
 		var definition:Fast = null;
 		if (use_def != "")
 		{
 			definition = getDefinition(use_def);
 		}
 		
-		var info:Fast = consolidateData(data, definition);
+		info = consolidateData(info, definition);
 		info = applyNodeConditionals(info);
 		
 		if (_loadTest(info) == false)
@@ -1452,6 +1553,179 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		return info;
+	}
+	
+	private function _loadTooltip(thing:IFlxUIWidget, data:Fast):Void
+	{
+		
+		var state = getLeafUIState();
+		
+		var tt = {
+			title:"", 
+			body:"", 
+			anchor:null, 
+			style: {
+				titleFormat:null,
+				bodyFormat:null,
+				titleBorder:null,
+				bodyBorder:null,
+				titleOffset:null,
+				bodyOffset:null,
+				titleWidth: -1,
+				bodyWidth: -1,
+				
+				background:null,
+				borderSize:-1,
+				borderColor:null,
+				arrow:null,
+				
+				autoSizeVertical:null,
+				autoSizeHorizontal:null,
+				
+				leftPadding: -1,
+				rightPadding: -1,
+				topPadding: -1,
+				bottomPadding: -1
+			}
+		};
+		
+		if (data.hasNode.tooltip)
+		{
+			var tNode = data.node.tooltip;
+			
+			var defaultDef = getDefinition("default:tooltip");
+			if (defaultDef != null)
+			{
+				tNode = consolidateData(tNode, defaultDef, true);
+			}
+			
+			if (tNode.has.use_def)
+			{
+				var defStr = U.xml_str(tNode.x, "use_def", true);
+				var def = getDefinition(defStr);
+				if (def != null)
+				{
+					tNode = consolidateData(tNode, def, true);
+				}
+			}
+			
+			if (tNode.has.text)
+			{
+				_loadTooltipText(tNode, "text", tt);
+			}
+			
+			if (tNode.hasNode.title)
+			{
+				_loadTooltipText(tNode.node.title, "text", tt);
+			}
+			if (tNode.hasNode.body)
+			{
+				_loadTooltipText(tNode.node.body, "text", tt);
+			}
+			
+			tt.anchor = _loadAnchor(tNode);
+			
+			_loadTooltipStyle(tNode, tt);
+			
+			if (Std.is(thing, IFlxUIButton))
+			{
+				state.tooltips.add(cast thing, tt);
+			}
+			else if (Std.is(thing, FlxUICheckBox))
+			{
+				var check:FlxUICheckBox = cast thing;
+				state.tooltips.add(check.button, tt);
+			}
+		}
+	}
+	
+	private function _loadTooltipStyle(node:Fast, tt:FlxUITooltipData):Void
+	{
+		tt.style.background  = U.xml_color(node.x, "background");
+		tt.style.borderSize  = U.xml_i(node.x, "border", -1);
+		tt.style.borderColor = U.xml_color(node.x, "border_color");
+		
+		tt.style.arrow = node.has.arrow ? U.xml_gfx(node.x, "arrow") : null;
+		
+		tt.style.autoSizeHorizontal = U.xml_bool(node.x, "auto_size_horizontal", true);
+		tt.style.autoSizeVertical   = U.xml_bool(node.x, "auto_size_vertical", true);
+		
+		var padAll = Std.int(_loadHeight(node, -1, "pad_all"));
+		if (padAll != -1)
+		{
+			tt.style.leftPadding = tt.style.rightPadding = tt.style.topPadding = tt.style.bottomPadding = padAll;
+		}
+		else
+		{
+			tt.style.leftPadding   = Std.int(_loadWidth(node, 0, "pad_left"));
+			tt.style.rightPadding  = Std.int(_loadWidth(node, 0, "pad_right"));
+			tt.style.topPadding    = Std.int(_loadHeight(node, 0, "pad_top"));
+			tt.style.bottomPadding = Std.int(_loadHeight(node, 0, "pad_bottom"));
+		}
+	}
+	
+	private function _loadTooltipText(node:Fast, fieldName:String, tt:FlxUITooltipData):Void
+	{
+		var nodeName = node.name;
+		var text     = _loadString(node, fieldName);
+		
+		var offset = new FlxPoint(_loadX(node), _loadY(node));
+		
+		if (node.has.use_def)
+		{
+			var use_def = U.xml_str(node.x, "use_def", true);
+			var the_def = getDefinition(use_def);
+			if (the_def != null)
+			{
+				node = consolidateData(node, the_def);
+			}
+		}
+		
+		var border = _loadBorder(node);
+		var format = _loadFontDef(node);
+		var color:Null<FlxColor> = U.xml_color(node.x, "color", true, FlxColor.BLACK);
+		format.format.color = color;
+		
+		var W = Std.int(_loadWidth(node, -1, "width"));
+		
+		switch(nodeName)
+		{
+			case "tooltip", "title": 
+				if (text != "")
+				{
+					tt.title = text;
+				}
+				tt.style.titleOffset = offset;
+				tt.style.titleFormat = format;
+				tt.style.titleWidth = W;
+				tt.style.titleBorder = border;
+			case "body":
+				if (text != "")
+				{
+					tt.body = text;
+				}
+				tt.style.bodyOffset = offset;
+				tt.style.bodyFormat = format;
+				tt.style.bodyWidth = W;
+				tt.style.bodyBorder = border;
+			default:
+				//do nothing
+		}
+	}
+	
+	private function _loadAnchor(data:Fast):Anchor
+	{
+		var xOff = _loadX(data);
+		var yOff = _loadY(data);
+		if (data.hasNode.anchor)
+		{
+			var xSide = U.xml_str(data.node.anchor.x, "x", true, "right");
+			var ySide = U.xml_str(data.node.anchor.x, "y", true, "top");
+			var xFlush = U.xml_str(data.node.anchor.x, "x-flush", true, "left");
+			var yFlush = U.xml_str(data.node.anchor.x, "y-flush", true, "top");
+			return new Anchor(xOff, yOff, xSide, ySide, xFlush, yFlush);
+		}
+		return null;
 	}
 	
 	private function _loadThing(type:String, data:Fast):IFlxUIWidget{
@@ -1489,7 +1763,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 							return null;
 			case "align": 	_alignThing(info,true);				//we suppress errors first time through b/c they only matter if still present at postLoad()
 							return null;
-			case "mode", "include", "group", "load_if":			//ignore these, they are handled elsewhere
+			case "mode", "include", "inject", "default", "group", "load_if":	//ignore these, they are handled elsewhere
 							return null;
 			case "change":
 							_changeThing(info);
@@ -2091,6 +2365,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return ftt;
 	}
 	
+	private function _loadString(data:Fast, attributeName:String):String
+	{
+		var string = U.xml_str(data.x, attributeName);
+		var context = U.xml_str(data.x, "context", true, "ui");
+		var code = U.xml_str(data.x, "code", true, "");
+		string = getText(string, context, true, code);
+		return string;
+	}
+	
 	private function _loadText(data:Fast):IFlxUIWidget
 	{
 		var text:String = U.xml_str(data.x, "text");
@@ -2226,8 +2509,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return ft;
 	}
 
+	/**
+	 * Takes two XML files and combines them, with "data" overriding duplicate attributes found in "definition"
+	 * @param	data		the local data tag
+	 * @param	definition	the base definition you are extending
+	 * @param	combineUniqueChildren if true, will combine child tags if they are unique. If false, inserts child tags as new ones.
+	 * @return
+	 */
 	
-	public static function consolidateData(data:Fast, definition:Fast):Fast
+	public static function consolidateData(data:Fast, definition:Fast, combineUniqueChildren:Bool=false):Fast
 	{
 		if (data == null && definition != null)
 		{
@@ -2264,7 +2554,31 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			for (element in data.x.elements())		//Loop over each node in local data
 			{
 				var nodeName = element.nodeName;
-				new_data.insertChild(U.copyXml(element), 0);	//Add the node
+				var notCombine = !combineUniqueChildren;
+				if (combineUniqueChildren)			//if we're supposed to combine it instead of inserting it
+				{
+					var new_els:Iterator<Xml> = new_data.elementsNamed(nodeName);
+					var new_el:Xml = new_els.next();
+					
+					//if there is only one child node of that name in BOTH the definition AND the target
+					if (data.nodes.resolve(nodeName).length == 1 && new_el != null && new_els.hasNext() == false)
+					{
+						//combine them
+						for (att in element.attributes())
+						{
+							new_el.set(att, element.get(att));
+						}
+					}
+					else
+					{
+						notCombine = true;
+					}
+				}
+				
+				if (notCombine)
+				{
+					new_data.insertChild(U.copyXml(element), 0);	//Add the node
+				}
 			}
 			return new Fast(new_data);
 		}
@@ -2392,8 +2706,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var radios = frg.getRadios();
 		var i:Int = 0;
 		var styleSet:Bool = false;
-		for (fo in radios)
+		
+		var radioList = data.x.elementsNamed("radio");
+		var radioNode:Xml = null;
+		
+		for (k in 0...radios.length)
 		{
+			var fo = radios[(radios.length - 1) - k];
+			radioNode = radioList.hasNext() ? radioList.next() : null;
 			if (fo != null)
 			{
 				if (Std.is(fo, FlxUICheckBox))
@@ -2410,6 +2730,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					fc.textX = text_x;
 					fc.textY = text_y;
 					i++;
+					if (radioNode != null)
+					{
+						_loadTooltip(fc, new Fast(radioNode));
+					}
 				}
 			}
 		}
@@ -2896,6 +3220,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					var tab:IFlxUIButton = cast _loadButton(tab_info, true, true, "tab_menu");
 					tab.name = name;
 					list_tabs.push(tab);
+					_loadTooltip(tab, tab_info);
 				}
 			}
 		}

@@ -16,6 +16,7 @@ class Anchor implements IFlxDestroyable
 	public static inline var TOP:String = "top";
 	public static inline var BOTTOM:String = "bottom";
 	public static inline var CENTER:String = "center";
+	public static inline var UNKNOWN:String = "unknown";
 	
 	public function new(XOff:Float,YOff:Float,XSide:String,YSide:String,XFlush:String,YFlush:String) 
 	{
@@ -91,6 +92,11 @@ class Anchor implements IFlxDestroyable
 		}
 		
 		return AnchorObject;
+	}
+	
+	public function clone():Anchor
+	{
+		return new Anchor(x.offset, y.offset, x.side, y.side, x.flush, y.flush);
 	}
 	
 	private function flipAnchorSide(str:String):String

@@ -41,6 +41,11 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	public var hideCursorOnSubstate:Bool = false;
 	#end
 	
+	/**
+	 * frontend for adding tooltips to things
+	 */
+	public var tooltips(default,null):FlxUITooltipManager;
+	
 	private var _xml_id:String = "";			//the xml file to load from assets
 	
 	#if (debug && sys)
@@ -110,37 +115,38 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		}
 		#end
 		
+		tooltips = new FlxUITooltipManager(this);
+		
 		var liveFile:Fast = null;
+		
+		#if (debug && sys)
+			if (_liveFilePath != null && _liveFilePath != "")
+			{
+				try
+				{
+					liveFile = U.readFast(U.fixSlash(_liveFilePath + _xml_id));
+					trace("liveFile = " + liveFile);
+				}
+				catch(msg:String)
+				{
+					FlxG.log.warn(msg);
+					trace(msg);
+					liveFile = null;
+				}
+			}
+			_ui = createUI(null, this, null, _tongue, _liveFilePath);
+		#else
+			_ui = createUI(null, this, null, _tongue);
+		#end
+		add(_ui);
+		
+		if (getTextFallback != null)
+		{
+			_ui.getTextFallback = getTextFallback;
+		}
 		
 		if (_xml_id != null && _xml_id != "")
 		{
-			#if (debug && sys)
-				if (_liveFilePath != null && _liveFilePath != "")
-				{
-					try
-					{
-						liveFile = U.readFast(U.fixSlash(_liveFilePath + _xml_id));
-						trace("liveFile = " + liveFile);
-					}
-					catch(msg:String)
-					{
-						FlxG.log.warn(msg);
-						trace(msg);
-						liveFile = null;
-					}
-				}
-				_ui = createUI(null, this, null, _tongue, _liveFilePath);
-			#else
-				_ui = createUI(null, this, null, _tongue);
-			#end
-			add(_ui);
-			
-			if (getTextFallback != null)
-			{
-				_ui.getTextFallback = getTextFallback;
-			}
-			
-			
 			var data:Fast = null;
 			var errorMsg:String = "";
 			
@@ -183,6 +189,11 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 				loadUIFromData(data);
 			}
 		}
+		else
+		{
+			loadUIFromData(null);
+		}
+		
 		#if !FLX_NO_MOUSE
 		if (cursor != null && _ui != null) {			//Cursor goes on top, of course
 			add(cursor);
@@ -194,6 +205,12 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		super.create();
 		
 		_cleanup();
+	}
+	
+	override public function update(elapsed:Float):Void 
+	{
+		super.update(elapsed);
+		tooltips.update(elapsed);
 	}
 	
 	@:access(flixel.system.frontEnds.BitmapFrontEnd)
@@ -279,6 +296,12 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			_ui.destroy();
 			remove(_ui, true);
 			_ui = null;
+		}
+		
+		if (tooltips != null)
+		{
+			tooltips.destroy();
+			tooltips = null;
 		}
 		
 		super.destroy();

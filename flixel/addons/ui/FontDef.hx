@@ -27,13 +27,26 @@ class FontDef
 		extension = Extension;
 		file = File;
 		format = Format;
-		if (format == null) {
+		if (format == null)
+		{
 			format = new TextFormat();
 		}
 		border = Border;
-		if (border == null) {
+		if (border == null)
+		{
 			border = new BorderDef(NONE, 0x000000);
 		}
+	}
+	
+	public function clone():FontDef
+	{
+		var newBorder = border == null ? null : border.clone();
+		var newFormat = format == null ? null : 
+			new TextFormat(format.font, format.size, format.color, format.bold, format.italic, format.underline, format.url, format.target, format.align, format.leftMargin, format.rightMargin, format.indent, format.leading);
+		
+		var newThis = new FontDef(name, extension, file, newFormat, newBorder);
+		newThis.size = size;
+		return newThis;
 	}
 	
 	public static function copyFromTextField(t:TextField):FontDef {
@@ -63,28 +76,42 @@ class FontDef
 		return fd;
 	}
 	
-	public function apply(?textField:TextField, ?flxText:FlxText):Void {
-		if (textField != null) {
-			textField.setTextFormat(format);
-		}
-		if (flxText != null) {
-			
-			var flxTxtAlign:FlxTextAlign = null;
-			
-			if (format.align != null)
+	public inline function applyTxt(textField:TextField):TextField
+	{
+		textField.setTextFormat(format);
+		return textField;
+	}
+	
+	public function applyFlx(flxText:FlxText):FlxText
+	{
+		var flxTxtAlign:FlxTextAlign = null;
+		
+		if (format.align != null)
+		{
+			flxTxtAlign = switch(format.align)
 			{
-				flxTxtAlign = switch(format.align)
-				{
-					case TextFormatAlign.CENTER: FlxTextAlign.CENTER;
-					case TextFormatAlign.LEFT: FlxTextAlign.LEFT;
-					case TextFormatAlign.RIGHT: FlxTextAlign.RIGHT;
-					case TextFormatAlign.JUSTIFY: FlxTextAlign.JUSTIFY;
-					default: FlxTextAlign.LEFT;
-				}
+				case TextFormatAlign.CENTER: FlxTextAlign.CENTER;
+				case TextFormatAlign.LEFT: FlxTextAlign.LEFT;
+				case TextFormatAlign.RIGHT: FlxTextAlign.RIGHT;
+				case TextFormatAlign.JUSTIFY: FlxTextAlign.JUSTIFY;
+				default: FlxTextAlign.LEFT;
 			}
-			
-			var font = (file == "" || file == null) ? null : file;
-			flxText.setFormat(font, Std.int(format.size), format.color, flxTxtAlign, border.style, border.color);
+		}
+		
+		var font = (file == "" || file == null) ? null : file;
+		flxText.setFormat(font, Std.int(format.size), format.color, flxTxtAlign, border.style, border.color);
+		return flxText;
+	}
+	
+	public function apply(?textField:TextField, ?flxText:FlxText):Void
+	{
+		if (textField != null)
+		{
+			applyTxt(textField);
+		}
+		if (flxText != null)
+		{
+			applyFlx(flxText);
 		}
 	}
 	

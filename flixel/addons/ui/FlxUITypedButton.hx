@@ -12,6 +12,8 @@ import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
+import flixel.input.FlxInput;
+import flixel.input.IFlxInput;
 import flixel.ui.FlxButton;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxColor;
@@ -43,6 +45,33 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	}
 	
 	public var broadcastToFlxUI:Bool = true;
+	
+	private var inputOver:FlxInput<Int>;
+	
+	public var justMousedOver(get, never):Bool;
+	public var mouseIsOver(get, never):Bool;
+	public var mouseIsOut(get, never):Bool;
+	public var justMousedOut(get, never):Bool;
+	
+	private inline function get_justMousedOver():Bool
+	{
+		return inputOver.justPressed;
+	}
+	
+	private inline function get_justMousedOut():Bool
+	{
+		return inputOver.justReleased;
+	}
+	
+	private inline function get_mouseIsOver():Bool
+	{
+		return inputOver.pressed;
+	}
+	
+	private inline function get_mouseIsOut():Bool
+	{
+		return inputOver.released;
+	}
 	
 	//Change these to something besides 0 to make the label use that color
 	//when that state is active
@@ -118,6 +147,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		statusAnimations[5] = "pressed_toggled";
 		
 		labelAlphas = [for (i in 0...3) 1];
+		
+		inputOver = new FlxInput(0);
 	}
 	
 	override public function graphicLoaded():Void {
@@ -211,6 +242,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);
+		
+		inputOver.update();
 		
 		// Label positioning
 		if (label != null)
@@ -995,6 +1028,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	override private function onOverHandler():Void
 	{
 		super.onOverHandler();
+		inputOver.press();
 		if (label != null) {
 			var theLabel = fetchAndShowCorrectLabel();
 			theLabel.visible = (toggled) ? over_toggle_visible : over_visible;
@@ -1012,6 +1046,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 	override private function onOutHandler():Void
 	{
 		super.onOutHandler();
+		inputOver.release();
 		if (label != null) {
 			var theLabel = fetchAndShowCorrectLabel();
 			theLabel.visible = (toggled) ? up_toggle_visible : up_visible;
