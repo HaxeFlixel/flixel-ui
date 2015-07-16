@@ -649,6 +649,18 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						{
 							_loadPointSize(inc_xml);
 						}
+						
+						if (inc_xml.hasNode.resolve("default"))
+						{
+							for (defaultNode in inc_xml.nodes.resolve("default"))
+							{
+								if (_loadTest(defaultNode))
+								{
+									var defaultName:String = U.xml_name(defaultNode.x);
+									_definition_index.set("default:" + defaultName, defaultNode);
+								}
+							}
+						}
 					}
 				}
 			}
@@ -1557,40 +1569,38 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadTooltip(thing:IFlxUIWidget, data:Fast):Void
 	{
-		
-		var state = getLeafUIState();
-		
-		var tt = {
-			title:"", 
-			body:"", 
-			anchor:null, 
-			style: {
-				titleFormat:null,
-				bodyFormat:null,
-				titleBorder:null,
-				bodyBorder:null,
-				titleOffset:null,
-				bodyOffset:null,
-				titleWidth: -1,
-				bodyWidth: -1,
-				
-				background:null,
-				borderSize:-1,
-				borderColor:null,
-				arrow:null,
-				
-				autoSizeVertical:null,
-				autoSizeHorizontal:null,
-				
-				leftPadding: -1,
-				rightPadding: -1,
-				topPadding: -1,
-				bottomPadding: -1
-			}
-		};
-		
 		if (data.hasNode.tooltip)
 		{
+			var state = getLeafUIState();
+			var tt = {
+				title:"", 
+				body:"", 
+				anchor:null, 
+				style: {
+					titleFormat:null,
+					bodyFormat:null,
+					titleBorder:null,
+					bodyBorder:null,
+					titleOffset:null,
+					bodyOffset:null,
+					titleWidth: -1,
+					bodyWidth: -1,
+					
+					background:null,
+					borderSize:-1,
+					borderColor:null,
+					arrow:null,
+					
+					autoSizeVertical:null,
+					autoSizeHorizontal:null,
+					
+					leftPadding: -1,
+					rightPadding: -1,
+					topPadding: -1,
+					bottomPadding: -1
+				}
+			};
+		
 			var tNode = data.node.tooltip;
 			
 			var defaultDef = getDefinition("default:tooltip");
@@ -1795,9 +1805,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return _loadHeight(data, default_, "y");
 	}
 	
-	private function _loadScale(data:Fast, default_:Float = 1.0):Float
+	private function _loadScale(data:Fast, default_:Float = 1.0, str:String="scale"):Float
 	{
-		return _loadHeight(data, default_, "scale", "none");
+		return _loadHeight(data, default_, str, "none");
 	}
 	
 	private function _loadScaleX(data:Fast, default_:Float = 1.0):Float
@@ -4165,6 +4175,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					else
 					{
 						scale_ = _loadScale(scaleNode, -1);
+						if (scale_ == -1)
+						{
+							scale_ = _loadScale(scaleNode, -1, "value");
+						}
 					}
 					
 					var scale_x:Float = scale_ != -1 ? scale_ : _loadScaleX(scaleNode, -1);

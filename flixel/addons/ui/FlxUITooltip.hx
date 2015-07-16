@@ -164,7 +164,9 @@ class FlxUITooltip extends FlxUIGroup
 		{
 			//if title is the "only" text...
 			//add additional offset for vertical centering
-			var titleOnlyOffset = Std.int((H - titleHeight) / 2);
+			//remove padding first here or it will result in a wrong placement
+			var tempH = (H - (style.topPadding + style.bottomPadding));
+			var titleOnlyOffset = Std.int((tempH - titleHeight) / 2);
 			_titleText.y += titleOnlyOffset;
 		}
 		
@@ -181,12 +183,14 @@ class FlxUITooltip extends FlxUIGroup
 		{
 			_titleText.x = _bkg.x;
 			_titleText.y = _bkg.y;
+			_titleText.width = _bkg.width;
 		}
 		
 		if (_bodyText.text == "")
 		{
 			_bodyText.x = _bkg.x;
 			_bodyText.y = _bkg.y;
+			_bodyText.width = _bkg.width;
 		}
 		
 		anchor.anchorThing(this, obj);			//anchor entire group to object
