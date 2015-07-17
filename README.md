@@ -248,7 +248,7 @@ This invocation will include all the definitions found in "some_other_file.xml":
 <include name="some_other_file"/>
 ```
 
-*Only* definition tags will be included. It also adds a bit of scoping to your project - in the case that an included definition has the same name as one defined locally, the local definition will be used. Only in the case that FlxUI can't find your definition locally will it check for included ones. 
+*Only* definition and default tags will be included. It also adds a bit of scoping to your project - in the case that an included definition has the same name as one defined locally, the local definition will be used. Only in the case that FlxUI can't find your definition locally will it check for included ones. 
 
 This recursion is only one level deep. If you put \<include> tags in your included file, they'll be ignored. 
 
@@ -401,6 +401,7 @@ Attributes:
 * ```use_def``` (definition name)
 * ```group``` (group name)
 * ```width``` and ```height``` (optional, use exact pixel values or formulas -- will scale the image if they differ from the source image's native width/height)
+* `smooth` (optional, defaults to true -- specifies how to scale the image if it's not 1:1 with the source. False for jaggies, True for smooth. Synonymous with `antialias`) 
 * ```resize_ratio``` (optional, if you specify width or height, you can also define this to force a scaling aspect ratio)
 * ```resize_ratio_x``` / ```resize_ratio_y``` (optional, does the same thing are resize_ratio, but only affects one axis)
 * ```resize_point``` - (optional, string) specify anchor for resizing
@@ -1079,6 +1080,8 @@ But sometimes you don't want to scale both ```width```/```height``` separately, 
 	<scale screen_ratio="1.33" tolerance="0.25" suffix="_4x3" to_height="100%"/>
 </sprite>
 ```
+
+Note that these `<scale>` tags accept the "smooth" attribute to turn antialiasing off/on when scaling, just like a sprite can.
 
 #4. Scaling 9-slice-sprite source BEFORE 9-slice-scaling
 
