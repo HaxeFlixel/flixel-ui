@@ -4115,7 +4115,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 				}
 				
-				fs = new FlxUISprite(0, 0, U.loadScaledImage(src, W, H));
+				var smooth = loadSmooth(data, true);
+				fs = new FlxUISprite(0, 0, U.loadScaledImage(src, W, H, smooth));
 			}
 		}
 		else
@@ -4137,13 +4138,24 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return fs;
 	}
 	
+	private function loadSmooth(scaleNode:Fast, defaultValue:Bool):Bool
+	{
+		var defaultStr:String = defaultValue ? "true" : "false";
+		var smoothStr:String = U.xml_str(scaleNode.x, "smooth", true, defaultStr);
+		if (smoothStr == "")
+		{
+			smoothStr = U.xml_str(scaleNode.x, "antialias", true, defaultStr);
+		}
+		return U.boolify(smoothStr);
+	}
+	
 	/**
 	 * For grabbing a resolution-specific version of an image src and dynamically scaling (and caching) it as necessary
 	 * @param	data	the xml node in question
 	 * @return	the unique key of the scaled bitmap
 	 */
 	
-	private function loadScaledSrc(data:Fast,attName:String="src",scaleName:String="scale",tilesWide:Int=1,tilesTall:Int=1):String
+	private function loadScaledSrc(data:Fast, attName:String="src", scaleName:String="scale", tilesWide:Int=1, tilesTall:Int=1):String
 	{
 		var src:String = U.xml_str(data.x, attName);					//get the original src
 		if (data.hasNode.resolve(scaleName))
@@ -4161,6 +4173,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					var srcSuffix:String = (src + suffix);					//add the proper suffix, so "asset"->"asset_16x9"
 					var testAsset:BitmapData = null;
 					var scale_:Float = -1;
+					var smooth = loadSmooth(scaleNode, true);
 					
 					var to_height:Float = _loadHeight(scaleNode, -1, "to_height");
 					
@@ -4217,11 +4230,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						if (tilesTall > 1 || tilesWide > 1)
 						{
 							testAsset = Assets.getBitmapData(U.gfx(src));
-							return U.scaleAndStoreTileset(U.gfx(srcSuffix), scale_y, Std.int(testAsset.width / tilesWide), Std.int(testAsset.height / tilesTall), Std.int(sw), Std.int(sh / tilesTall));
+							return U.scaleAndStoreTileset(U.gfx(srcSuffix), scale_y, Std.int(testAsset.width / tilesWide), Std.int(testAsset.height / tilesTall), Std.int(sw), Std.int(sh / tilesTall), smooth);
 						}
 						else
 						{
-							return U.loadScaledImage(srcSuffix, sw, sh);
+							return U.loadScaledImage(srcSuffix, sw, sh, smooth);
 						}
 					}
 					break;						//stop on the first resolution test that passes

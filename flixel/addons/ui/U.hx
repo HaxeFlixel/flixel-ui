@@ -1147,7 +1147,7 @@ class U
 	 * @return	the unique key of the scaled bitmap
 	 */
 	
-	public static function loadScaledImage(src:String,W:Float,H:Float):String
+	public static function loadScaledImage(src:String,W:Float,H:Float,smooth:Bool=true):String
 	{
 		var bmpSrc:String = gfx(src);
 		var	testBmp:BitmapData = Assets.getBitmapData(bmpSrc, false);
@@ -1179,7 +1179,7 @@ class U
 					m.identity();
 					m.scale(W / testBmp.width, H / testBmp.height);
 					
-					scaledBmp.draw(testBmp, m, null, null, null, true);
+					scaledBmp.draw(testBmp, m, null, null, null, smooth);
 					
 					FlxG.bitmap.add(scaledBmp, true, scaleKey);			//store it by the unique key
 				}
