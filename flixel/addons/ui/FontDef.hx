@@ -13,7 +13,7 @@ import openfl.text.TextFormatAlign;
 class FontDef
 {
 	public var name:String;			//the actual NAME of the font, say, "Verdana"
-	public var size:Int;
+	public var size(default,set):Int;
 	public var extension:String;	//the extension of the font, usuall ".ttf"
 	public var file:String;			//the actual full path to the FILE of the font, say, "assets/fonts/verdana.ttf"
 	public var format:TextFormat;	//any necessary formatting information
@@ -36,6 +36,16 @@ class FontDef
 		{
 			border = new BorderDef(NONE, 0x000000);
 		}
+	}
+	
+	public function set_size(i:Int):Int
+	{
+		size = i;
+		if (format != null)
+		{
+			format.size = size;
+		}
+		return size;
 	}
 	
 	public function clone():FontDef

@@ -801,7 +801,7 @@ class U
  	public static function font(str:String, style:String = "", extension:String=".ttf"):String
 	{
 		var ostr = str;
-		var str:String = _font(str, style);
+		str = _font(str, style);
 		if (str.indexOf(extension) == -1)
 		{
 			str = str + extension;
