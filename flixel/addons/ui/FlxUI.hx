@@ -568,7 +568,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 			if (data.hasNode.inject)
 			{
-				#if (haxe_var >= "3.2.0")
+				#if (haxe_ver >= 3.20)
 				while(data.hasNode.inject)
 				{
 					var inj_data = data.node.inject;
