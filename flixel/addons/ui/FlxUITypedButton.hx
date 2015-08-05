@@ -386,12 +386,20 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			if (assets[1] == null) { assets[1] = assets[0]; }
 			if (assets[2] == null) { assets[2] = assets[1]; }
 			key = assets.join(",");
-			var pixels = assembleButtonFrames(getBmp(assets[0]), getBmp(assets[1]), getBmp(assets[2]));
 			if (Key != "")
 			{
 				key = Key; // replaces generated key with provided key.
 			}
-			loadGraphicsUpOverDown(pixels, false, key);
+			
+			if (FlxG.bitmap.checkCache(key))
+			{
+				loadGraphicsUpOverDown(key, false, key);
+			}
+			else
+			{
+				var pixels = assembleButtonFrames(getBmp(assets[0]), getBmp(assets[1]), getBmp(assets[2]));
+				loadGraphicsUpOverDown(pixels, false, key);
+			}
 		}else if (assets.length <= 6) {
 			while (assets.length < 6) { assets.push(null); }
 			if (assets[4] == null) { assets[4] = assets[3]; }
@@ -401,12 +409,20 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			{
 				key = Key; // replaces generated key with provided key.
 			}
-			var pixels_normal = assembleButtonFrames(getBmp(assets[0]), getBmp(assets[1]), getBmp(assets[2]));
-			var pixels_toggle = assembleButtonFrames(getBmp(assets[3]), getBmp(assets[4]), getBmp(assets[5]));
-			var pixels = combineToggleBitmaps(pixels_normal, pixels_toggle);
-			loadGraphicsUpOverDown(pixels, true, key);
-			pixels_normal.dispose();
-			pixels_toggle.dispose();
+			
+			if (FlxG.bitmap.checkCache(key))
+			{
+				loadGraphicsUpOverDown(key, true, key);
+			}
+			else
+			{
+				var pixels_normal = assembleButtonFrames(getBmp(assets[0]), getBmp(assets[1]), getBmp(assets[2]));
+				var pixels_toggle = assembleButtonFrames(getBmp(assets[3]), getBmp(assets[4]), getBmp(assets[5]));
+				var pixels = combineToggleBitmaps(pixels_normal, pixels_toggle);
+				loadGraphicsUpOverDown(pixels, true, key);
+				pixels_normal.dispose();
+				pixels_toggle.dispose();
+			}
 		}
 	}
 	
@@ -441,16 +457,22 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			bd = getBmp(asset);
 		}
 		
-		upB = grabButtonFrame(bd, FlxButton.NORMAL, has_toggle);
-		overB = grabButtonFrame(bd, FlxButton.HIGHLIGHT, has_toggle);
-		downB = grabButtonFrame(bd, FlxButton.PRESSED, has_toggle);
-
-		var normalPixels:BitmapData = assembleButtonFrames(upB, overB, downB);
+		upB = grabButtonFrame(bd, FlxButton.NORMAL, has_toggle, 0, 0, key);
+		overB = grabButtonFrame(bd, FlxButton.HIGHLIGHT, has_toggle, 0, 0, key);
+		downB = grabButtonFrame(bd, FlxButton.PRESSED, has_toggle, 0, 0, key);
+		
+		var normalGraphic:FlxGraphicAsset = key;
+		if (key == null || key == "" || FlxG.bitmap.checkCache(key) == false)
+		{
+			normalGraphic = assembleButtonFrames(upB, overB, downB);
+		}
 		
 		if (has_toggle) {
-			upB = grabButtonFrame(bd, FlxButton.NORMAL + 3, true);
-			overB = grabButtonFrame(bd, FlxButton.HIGHLIGHT + 3, true);
-			downB = grabButtonFrame(bd, FlxButton.PRESSED + 3, true);
+			var normalPixels:BitmapData = assembleButtonFrames(upB, overB, downB);
+			
+			upB = grabButtonFrame(bd, FlxButton.NORMAL + 3, true, 0, 0, key);
+			overB = grabButtonFrame(bd, FlxButton.HIGHLIGHT + 3, true, 0, 0, key);
+			downB = grabButtonFrame(bd, FlxButton.PRESSED + 3, true, 0, 0, key);
 			
 			var togglePixels:BitmapData = assembleButtonFrames(upB, overB, downB);
 			var combinedPixels:BitmapData = combineToggleBitmaps(normalPixels, togglePixels);
@@ -460,7 +482,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 			
 			loadGraphic(combinedPixels, true, upB.width, upB.height, false, key);
 		}else {
-			loadGraphic(normalPixels, true, upB.width, upB.height, false, key);
+			loadGraphic(normalGraphic, true, upB.width, upB.height, false, key);
 		}
 	}
 	
@@ -900,7 +922,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResiza
 		
 		//Check to see if we can return the cached image instead
 		var frameKey = key + "{x:" + _flashRect.x + "y:" + _flashRect.y + "w:" + _flashRect.width + "h:" + _flashRect.height + "}";
-		if (key != null)
+		if (frameKey != null)
 		{
 			if (FlxG.bitmap.checkCache(frameKey))
 			{
