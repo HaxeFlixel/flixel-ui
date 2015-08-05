@@ -226,6 +226,27 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 		return null;
 	}
 	
+	public function getBack():FlxSprite{
+		return _back;
+	}
+	
+	public function replaceBack(newBack:FlxSprite):Void {
+		var i:Int = members.indexOf(_back);
+		if (i != -1)
+		{
+			var oldBack = _back;
+			if (Std.is(newBack, IResizable))
+			{
+				var ir:IResizable = cast newBack;
+				ir.resize(oldBack.width, oldBack.height);
+			}
+			members[i] = newBack;
+			newBack.x = oldBack.x;
+			newBack.y = oldBack.y;
+			oldBack.destroy();
+		}
+	}
+	
 	public function addGroup(g:FlxUIGroup):Void {
 		if (g == this) {
 			return;			//DO NOT ADD A GROUP TO ITSELF
