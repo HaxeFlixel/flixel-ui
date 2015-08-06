@@ -140,6 +140,12 @@ class FlxUITooltipManager implements IFlxDestroyable
 				
 				list[i].data = data;
 				list[i].count = 0;
+				
+				list[i].btn.x = thing.x;
+				list[i].btn.y = thing.y;
+				list[i].btn.width = thing.width;
+				list[i].btn.height = thing.height;
+				list[i].btn.scrollFactor.set(thing.scrollFactor.x, thing.scrollFactor.y);
 			}
 		}
 	}

@@ -3171,9 +3171,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (back_def == null) {
 			back_def = data;
 		}
-	
 		back_def = consolidateData(back_def, data);
-		var back:FlxUI9SliceSprite = _load9SliceSprite(back_def, "tab_menu");
+		
+		var back_type:String = U.xml_str(data.x, "back_type", true, "chrome");
+		
+		var backSprite:FlxSprite = switch(back_type)
+		{
+			case "sprite": _loadSprite(back_def);
+			case "region": new FlxUIRegion();
+			default: _load9SliceSprite(back_def, "tab_menu");
+		}
 		
 		var tab_def:Fast = null;
 		
@@ -3227,9 +3234,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					var context:String = U.xml_str(tab_node.x, "context", true, "ui");
 					var code:String = U.xml_str(tab_node.x, "code", true, "");
 					label = getText(label,context,true,code);
-			
+					
 					label = getText(label,context,true,code);
-			
+					
 					var tab_info:Fast = consolidateData(tab_node, tab_def);
 					var tab:IFlxUIButton = cast _loadButton(tab_info, true, true, "tab_menu");
 					tab.name = name;
@@ -3263,7 +3270,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var tab_stacking:Array<String> = [stackToggled, stackUntoggled];
 		
-		var fg:FlxUITabMenu = new FlxUITabMenu(back,list_tabs,tab_offset,stretch_tabs,tab_spacing,tab_stacking);
+		var fg:FlxUITabMenu = new FlxUITabMenu(backSprite,list_tabs,tab_offset,stretch_tabs,tab_spacing,tab_stacking);
 		
 		if (data.hasNode.group) {
 			for (group_node in data.nodes.group) {
