@@ -490,7 +490,7 @@ class FlxUITooltip extends FlxUIGroup
 	}
 	
 	@:allow(flixel.addons.ui.FlxUITooltipManager)
-	private static function styleFix(Style:FlxUITooltipStyle):FlxUITooltipStyle
+	private static function styleFix(Style:FlxUITooltipStyle, ?DefaultStyle:FlxUITooltipStyle):FlxUITooltipStyle
 	{
 		if (Style == null)
 		{
@@ -516,7 +516,42 @@ class FlxUITooltip extends FlxUIGroup
 					};
 		}
 		
-		//Default style if none is supplied
+		//If a Default style exists, replace null values with that
+		
+		if (DefaultStyle != null) {
+			if (Style.titleFormat == null) { Style.titleFormat = DefaultStyle.titleFormat; }
+			if (Style.bodyFormat  == null) { Style.bodyFormat  = DefaultStyle.bodyFormat; }
+			if (Style.titleBorder == null) { Style.titleBorder = DefaultStyle.titleBorder; }
+			if (Style.bodyBorder  == null) { Style.bodyBorder  = DefaultStyle.bodyBorder; }
+			if (Style.titleOffset == null) { Style.titleOffset = DefaultStyle.titleOffset; }
+			if (Style.bodyOffset  == null) { Style.bodyOffset  = DefaultStyle.bodyOffset; }
+			if (Style.background  == null) { Style.background  = DefaultStyle.background; }
+			if (Style.borderColor == null) { Style.borderColor = DefaultStyle.borderColor; }
+			if (Style.arrow       == null) { Style.arrow       = DefaultStyle.arrow; }
+			
+			if (Style.borderSize  == null || Style.borderSize  < 0)
+										{ Style.borderSize  = DefaultStyle.borderSize; }
+			if (Style.titleWidth  == null || Style.titleWidth  < 0)
+										{ Style.titleWidth  = DefaultStyle.titleWidth; }
+			if (Style.bodyWidth   == null || Style.bodyWidth   < 0)
+										{ Style.bodyWidth   = DefaultStyle.bodyWidth; }
+			if (Style.autoSizeHorizontal == null)
+										{ Style.autoSizeHorizontal = DefaultStyle.autoSizeHorizontal; }
+			if (Style.autoSizeVertical   == null)
+										{ Style.autoSizeVertical   = DefaultStyle.autoSizeVertical; }
+			
+			if (Style.leftPadding == null  || Style.leftPadding    < 0)
+											{ Style.leftPadding    = DefaultStyle.leftPadding; }
+			if (Style.rightPadding == null || Style.rightPadding   < 0)
+											{ Style.rightPadding   = DefaultStyle.rightPadding; }
+			if (Style.topPadding == null   || Style.topPadding     < 0)
+											{ Style.topPadding     = DefaultStyle.topPadding; }
+			if (Style.leftPadding == null  || Style.bottomPadding  < 0)
+											{ Style.bottomPadding  = DefaultStyle.bottomPadding; }
+		}
+		
+		//Any remaining nulls are replaced by these standard always-safe values
+		
 		if (Style.titleFormat == null) { Style.titleFormat = new FontDef(null, null, null, new TextFormat(null, 8, FlxColor.BLACK), null); }
 		if (Style.bodyFormat  == null) { Style.bodyFormat  = new FontDef(null, null, null, new TextFormat(null, 8, FlxColor.BLACK), null); }
 		if (Style.titleBorder == null) { Style.titleBorder = new BorderDef(FlxTextBorderStyle.NONE, FlxColor.TRANSPARENT, 0, 1); }
@@ -552,9 +587,12 @@ class FlxUITooltip extends FlxUIGroup
 	
 	public static function cloneStyle(s:FlxUITooltipStyle):FlxUITooltipStyle
 	{
-		return {
-			titleFormat : s.titleFormat != null ? s.titleFormat.clone() : null,
-			bodyFormat  : s.bodyFormat != null ? s.bodyFormat.clone() : null,
+		var tf = ((s.titleFormat != null) ? s.titleFormat.clone() : null);
+		var bf = ((s.bodyFormat != null) ? s.bodyFormat.clone() : null);
+		//SOMETHING IS GOING WRONG HERE
+		var obj = {
+			titleFormat : tf,
+			bodyFormat  : bf,
 			borderSize  : s.borderSize,
 			titleWidth  : s.titleWidth,
 			bodyWidth   : s.bodyWidth,
@@ -572,6 +610,7 @@ class FlxUITooltip extends FlxUIGroup
 			topPadding   : s.topPadding,
 			bottomPadding: s.bottomPadding
 		}
+		return obj;
 	}
 }
 

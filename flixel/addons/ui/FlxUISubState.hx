@@ -129,6 +129,10 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 		
 		FlxG.mouse.visible = true;
 		#end
+		
+		tooltips.init();
+		
+		super.create();
 	}
 	
 	public function onCursorEvent(code:String, target:IFlxUIWidget):Void 

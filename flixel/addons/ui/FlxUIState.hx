@@ -202,6 +202,8 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		}
 		#end
 		
+		tooltips.init();
+		
 		super.create();
 		
 		_cleanup();

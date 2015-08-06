@@ -13,7 +13,7 @@ import openfl.text.TextFormatAlign;
 class FontDef
 {
 	public var name:String;			//the actual NAME of the font, say, "Verdana"
-	public var size(default,set):Int;
+	public var size(get,set):Int;
 	public var extension:String;	//the extension of the font, usuall ".ttf"
 	public var file:String;			//the actual full path to the FILE of the font, say, "assets/fonts/verdana.ttf"
 	public var format:TextFormat;	//any necessary formatting information
@@ -38,21 +38,30 @@ class FontDef
 		}
 	}
 	
-	public function set_size(i:Int):Int
+	public function get_size():Int
 	{
-		size = i;
 		if (format != null)
 		{
-			format.size = size;
+			_size = Std.int(format.size);
 		}
-		return size;
+		return _size;
+	}
+	
+	public function set_size(i:Int):Int
+	{
+		if (format != null)
+		{
+			format.size = i;
+		}
+		_size = i;
+		return _size;
 	}
 	
 	public function clone():FontDef
 	{
-		var newBorder = border == null ? null : border.clone();
-		var newFormat = format == null ? null : 
-			new TextFormat(format.font, format.size, format.color, format.bold, format.italic, format.underline, format.url, format.target, format.align, format.leftMargin, format.rightMargin, format.indent, format.leading);
+		var newBorder = ((border == null) ? null : border.clone());
+		var newFormat = ((format == null) ? null : 
+			new TextFormat(format.font, format.size, format.color, format.bold, format.italic, format.underline, format.url, format.target, format.align, format.leftMargin, format.rightMargin, format.indent, format.leading));
 		
 		var newThis = new FontDef(name, extension, file, newFormat, newBorder);
 		newThis.size = size;
@@ -186,6 +195,8 @@ class FontDef
 		
 		setFontStyle(style);
 	}
+	
+	private var _size:Int = 0;
 	
 	/**
 	 * If a recognized font extension exists, remove it from the font str

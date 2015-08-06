@@ -1,6 +1,7 @@
 package flixel.addons.ui;
-import flixel.addons.ui.FlxUITooltip.FlxUITooltipStyle;
+import flixel.addons.ui.FlxUITooltip;
 import flixel.addons.ui.interfaces.IFlxUIButton;
+import flixel.addons.ui.interfaces.IFlxUIState;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxObject;
 import flixel.util.FlxArrayUtil;
@@ -46,6 +47,24 @@ class FlxUITooltipManager implements IFlxDestroyable
 		defaultStyle = FlxUITooltip.cloneStyle(tooltip.style);
 	}
 	
+	@:access(flixel.addons.ui.FlxUI)
+	@:access(flixel.addons.ui.FlxUIState)
+	@:access(flixel.addons.ui.FlxUISubState)
+	public function init():Void
+	{
+		var ui:FlxUI = (state != null) ? state._ui : ((subState != null) ? subState._ui : null);
+		if (ui == null) return;
+		
+		//See if there is a default tooltip definition specified in the xml, and if so, load that as our default tooltip style
+		
+		if (ui.getDefinition("default:tooltip") != null)
+		{
+			var tt = ui._loadTooltipData(null);					//passing in null causes it to load the default tooltip style
+			defaultStyle = FlxUITooltip.cloneStyle(tt.style);
+			tooltip.style = defaultStyle;
+		}
+	}
+	
 	public function destroy()
 	{
 		FlxDestroyUtil.destroyArray(list);
@@ -77,7 +96,9 @@ class FlxUITooltipManager implements IFlxDestroyable
 	
 	public function add(thing:FlxObject, data:FlxUITooltipData)
 	{
-		data.style = FlxUITooltip.styleFix(data.style);		//replace null values with sensible defaults
+		if (_init) {
+			data.style = FlxUITooltip.styleFix(data.style, defaultStyle);		//replace null values with sensible defaults
+		}
 		
 		var btn:IFlxUIButton = null;
 		var i = -1;
@@ -213,6 +234,8 @@ class FlxUITooltipManager implements IFlxDestroyable
 	
 	/*********PRIVATE*************/
 	
+	private var _init:Bool = false;
+	
 	/**list of all the tooltip entries**/
 	private var list:Array<FlxUITooltipEntry>;
 	
@@ -273,6 +296,13 @@ class FlxUITooltipManager implements IFlxDestroyable
 		current = i;
 		var btn  = list[i].btn;
 		var data = list[i].data;
+		
+		if (data.init != true)
+		{
+			data.style = FlxUITooltip.styleFix(data.style, defaultStyle);		//replace null values with sensible defaults
+			data.init = true;
+		}
+		
 		var autoSizeVertical = true;
 		var autoSizeHorizontal = true;
 		if (data.style != null)
@@ -356,5 +386,6 @@ typedef FlxUITooltipData = {
 	title:String,
 	body:String,
 	?anchor:Anchor,
-	?style:FlxUITooltipStyle
+	?style:FlxUITooltipStyle,
+	?init:Bool
 }

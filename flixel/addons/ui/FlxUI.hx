@@ -1575,71 +1575,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	{
 		if (data.hasNode.tooltip)
 		{
+			var tt    = _loadTooltipData(data.node.tooltip);
 			var state = getLeafUIState();
-			var tt = {
-				title:"", 
-				body:"", 
-				anchor:null, 
-				style: {
-					titleFormat:null,
-					bodyFormat:null,
-					titleBorder:null,
-					bodyBorder:null,
-					titleOffset:null,
-					bodyOffset:null,
-					titleWidth: -1,
-					bodyWidth: -1,
-					
-					background:null,
-					borderSize:-1,
-					borderColor:null,
-					arrow:null,
-					
-					autoSizeVertical:null,
-					autoSizeHorizontal:null,
-					
-					leftPadding: -1,
-					rightPadding: -1,
-					topPadding: -1,
-					bottomPadding: -1
-				}
-			};
-		
-			var tNode = data.node.tooltip;
-			
-			var defaultDef = getDefinition("default:tooltip");
-			if (defaultDef != null)
-			{
-				tNode = consolidateData(tNode, defaultDef, true);
-			}
-			
-			if (tNode.has.use_def)
-			{
-				var defStr = U.xml_str(tNode.x, "use_def", true);
-				var def = getDefinition(defStr);
-				if (def != null)
-				{
-					tNode = consolidateData(tNode, def, true);
-				}
-			}
-			
-			if (tNode.has.text)
-			{
-				_loadTooltipText(tNode, "text", tt);
-			}
-			
-			if (tNode.hasNode.title)
-			{
-				_loadTooltipText(tNode.node.title, "text", tt);
-			}
-			if (tNode.hasNode.body)
-			{
-				_loadTooltipText(tNode.node.body, "text", tt);
-			}
-			
-			tt.anchor = _loadAnchor(tNode);
-			
-			_loadTooltipStyle(tNode, tt);
 			
 			if (Std.is(thing, IFlxUIButton))
 			{
@@ -1651,6 +1588,74 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				state.tooltips.add(check.button, tt);
 			}
 		}
+	}
+	
+	private function _loadTooltipData(tNode:Fast):FlxUITooltipData
+	{
+		var tt = {
+			title:"", 
+			body:"", 
+			anchor:null, 
+			style: {
+				titleFormat:null,
+				bodyFormat:null,
+				titleBorder:null,
+				bodyBorder:null,
+				titleOffset:null,
+				bodyOffset:null,
+				titleWidth: -1,
+				bodyWidth: -1,
+				
+				background:null,
+				borderSize:-1,
+				borderColor:null,
+				arrow:null,
+				
+				autoSizeVertical:null,
+				autoSizeHorizontal:null,
+				
+				leftPadding: -1,
+				rightPadding: -1,
+				topPadding: -1,
+				bottomPadding: -1
+			}
+		};
+		
+		var defaultDef = getDefinition("default:tooltip");
+		if (defaultDef != null)
+		{
+			tNode = consolidateData(tNode, defaultDef, true);
+		}
+		
+		if (tNode.has.use_def)
+		{
+			var defStr = U.xml_str(tNode.x, "use_def", true);
+			var def = getDefinition(defStr);
+			if (def != null)
+			{
+				tNode = consolidateData(tNode, def, true);
+			}
+		}
+		
+		if (tNode.has.text)
+		{
+			_loadTooltipText(tNode, "text", tt);
+		}
+		
+		if (tNode.hasNode.title)
+		{
+			_loadTooltipText(tNode.node.title, "text", tt);
+		}
+		if (tNode.hasNode.body)
+		{
+			_loadTooltipText(tNode.node.body, "text", tt);
+		}
+		
+		tt.anchor = _loadAnchor(tNode);
+		
+		_loadTooltipStyle(tNode, tt);
+		
+		return tt;
 	}
 	
 	private function _loadTooltipStyle(node:Fast, tt:FlxUITooltipData):Void
@@ -4887,6 +4892,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var fontSize:Int = Std.int(_loadHeight(data, 8, "size"));
 		var fd:FontDef = new FontDef(U.xml_str(data.x, "font"), ".ttf", fontFile);
 		fd.format.size = fontSize;
+		fd.size = fontSize;
 		fd.setFontStyle(fontStyle);
 		return fd;
 	}
