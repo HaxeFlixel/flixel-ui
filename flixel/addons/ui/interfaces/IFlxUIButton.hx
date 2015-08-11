@@ -50,6 +50,8 @@ interface IFlxUIButton extends IFlxUIWidget extends IHasParams extends IFlxDestr
 	public var mouseIsOut(get, never):Bool;
 	public var justMousedOut(get, never):Bool;
 	
+	public var visible(default, set):Bool;
+	
 	public function autoCenterLabel():Void;
 	public function loadGraphicSlice9(assets:Array<FlxGraphicAsset> = null, W:Int = 80, H:Int = 20, slice9:Array<Array<Int>> = null, Tile:Int = FlxUI9SliceSprite.TILE_NONE, Resize_Ratio:Float = -1, isToggle:Bool = false, src_w:Int = 0, src_h:Int = 0, frame_indeces:Array<Int> = null):Void;
 	public function loadGraphicsMultiple(assets:Array<FlxGraphicAsset>, Key:String = ""):Void;
