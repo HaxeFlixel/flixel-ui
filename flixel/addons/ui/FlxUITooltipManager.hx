@@ -295,6 +295,12 @@ class FlxUITooltipManager implements IFlxDestroyable
 	{
 		current = i;
 		var btn  = list[i].btn;
+		
+		if (btn.visible == false || (list[i].obj != null && list[i].obj.visible == false))
+		{
+			return;
+		}
+		
 		var data = list[i].data;
 		
 		if (data.init != true)
