@@ -112,9 +112,15 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 		
 		switch(id) {
 			case FlxUITypedButton.CLICK_EVENT:
+				var str = "";
+				if (Std.is(eventParams[0], String))
+				{
+					str = Std.string(eventParams[0]);
+				}
+				
 				var buttonAmount:Int = Std.int(eventParams[0]);
 				var label:String = Std.string(eventParams[1]);
-				if (buttonAmount <= 2)
+				if (str == "affirm" || str == "cancel" || str == "alt")
 				{
 					if (Std.is(_parentState, IFlxUIState)) {
 						//This fixes a bug where the event was being sent to this popup rather than the state that created it
