@@ -8,6 +8,7 @@ import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxG;
 import flixel.FlxObject;
+import flixel.FlxSprite;
 import flixel.input.gamepad.FlxGamepadInputID;
 import flixel.input.gamepad.FlxGamepad;
 import flixel.input.mouse.FlxMouse;
@@ -28,12 +29,85 @@ class FlxUICursor extends FlxUISprite
 	public var wrap:Bool=true;	//when cycling through values, loop from back to front or stop at "edges?"
 	
 	public var location(default, set):Int = -1;			//which object the cursor is pointing to (-1 means nothing)
-	public var listIndex(default, set):Int = 0;		//which group is my location pointing to?
+	public var listIndex(default, set):Int = 0;			//which group is my location pointing to?
 	
 	/**
 	 * Exactly what it sounds like. The next input that would trigger a jump doesn't happen, then this flag is reset.
 	 */
 	public var ignoreNextInput:Bool;
+	
+	/**
+	 * Same as setting .location, but lets you specificy what to do if that object is invisible
+	 * @param	loc	the location you want to set the cursor to
+	 * @param	forwardIfInvisible if object @ loc is invisible, keep adding 1 until we find a good state. If false, subtract 1.
+	 * @param	wrap if true, wrap around if we reach the end of the list. If false, don't.
+	 */
+	public function findVisibleLocation(loc:Int, forwardIfInvisible:Bool=true, wrap:Bool=true):Void
+	{
+		location = loc;
+		if (location == -1) return;
+		
+		var wrapped = false;
+		while (_widgets[location] == null || _widgets[location].visible == false)
+		{
+			if (forwardIfInvisible)
+			{
+				if (location == _widgets.length - 1)
+				{
+					if (wrap)
+					{
+						if (!wrapped)
+						{
+							wrapped = true;
+							location = 0;
+						}
+						else
+						{
+							location = -1;
+							return;
+						}
+					}
+					else
+					{
+						location = -1;
+						return;
+					}
+				}
+				else
+				{
+					location++;
+				}
+			}
+			else
+			{
+				if (location == 0)
+				{
+					if (wrap)
+					{
+						if (!wrapped)
+						{
+							wrapped = true;
+							location = _widgets.length - 1;
+						}
+						else
+						{
+							location = -1;
+							return;
+						}
+					}
+					else
+					{
+						location = -1;
+						return;
+					}
+				}
+				else
+				{
+					location--;
+				}
+			}
+		}
+	}
 	
 	private function set_listIndex(i:Int):Int
 	{
@@ -49,6 +123,12 @@ class FlxUICursor extends FlxUISprite
 		location = 0;
 		_updateCursor();
 		return listIndex;
+	}
+	
+	private override function set_visible(b:Bool):Bool
+	{
+		b = super.set_visible(b);
+		return b;
 	}
 	
 	private function set_location(i:Int):Int
@@ -89,7 +169,7 @@ class FlxUICursor extends FlxUISprite
 		return g;
 	}
 	
-	public function get_gamepad():FlxGamepad
+	private function get_gamepad():FlxGamepad
 	{
 		return _gamepad;
 	}
@@ -155,6 +235,8 @@ class FlxUICursor extends FlxUISprite
 		anchor = new Anchor( -2, 0, Anchor.LEFT, Anchor.CENTER, Anchor.RIGHT, Anchor.CENTER);
 		setDefaultKeys(DefaultKeys);
 		callback = Callback;
+		
+		scrollFactor.set(0, 0);
 		
 		#if !FLX_NO_MOUSE
 		if (FlxG.mouse != null && Std.is(FlxG.mouse, FlxUIMouse) == false)
@@ -1057,6 +1139,16 @@ class FlxUICursor extends FlxUISprite
 		
 		if (currWidget != null) {
 			var target:FlxObject = cast currWidget;
+			
+			if (Std.is(target, FlxSprite))
+			{
+				var fs:FlxSprite = cast target;
+				if (fs != null && fs.scrollFactor != null)
+				{
+					scrollFactor.set(fs.scrollFactor.x, fs.scrollFactor.y);
+				}
+			}
+			
 			if (Std.is(currWidget, FlxUICheckBox))
 			{
 				var check:FlxUICheckBox = cast target;

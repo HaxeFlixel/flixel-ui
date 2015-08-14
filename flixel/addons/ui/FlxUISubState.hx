@@ -85,7 +85,7 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 		#if !FLX_NO_MOUSE
 		if (_makeCursor == true)
 		{
-			cursor = new FlxUICursor(onCursorEvent);
+			cursor = createCursor();
 		}
 		#end
 		
@@ -124,7 +124,7 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 		if (cursor != null && _ui != null) {			//Cursor goes on top, of course
 			add(cursor);
 			cursor.addWidgetsFromUI(_ui);
-			cursor.location = 0;
+			cursor.findVisibleLocation(0);
 		}
 		
 		FlxG.mouse.visible = true;
@@ -197,6 +197,15 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 			return getTextFallback(Flag, Context, Safe);
 		}
 		return Flag;
+	}
+	
+	/**
+	 * Creates a cursor. Makes it easy to override this function in your own FlxUIState.
+	 * @return
+	 */
+	private function createCursor():FlxUICursor
+	{
+		return new FlxUICursor(onCursorEvent);
 	}
 	
 	private function reloadUI():Void {
