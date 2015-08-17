@@ -211,6 +211,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 			{
 				btn.x = obj.x;
 				btn.y = obj.y;
+				btn.visible = obj.visible;
 			}
 			
 			if (btn.justMousedOver || btn.mouseIsOver)
