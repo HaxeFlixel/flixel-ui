@@ -1241,6 +1241,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return null;
 	}
 	
+	/**
+	 * Get the group that contains a given IFlxUIWidget
+	 * @param	key	the asset key of the IFlxUIWidget
+	 * @param	thing the IFlxUIWidget itself
+	 * @return
+	 */
+	
 	public function getAssetGroup(?key:String,?thing:IFlxUIWidget):FlxUIGroup
 	{
 		if (thing == null && (key == null || key == "")) return null;
