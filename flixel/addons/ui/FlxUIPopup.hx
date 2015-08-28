@@ -113,23 +113,26 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 		switch(id) {
 			case FlxUITypedButton.CLICK_EVENT:
 				var str = "";
-				if (Std.is(eventParams[0], String))
+				if (eventParams != null)
 				{
-					str = Std.string(eventParams[0]);
-				}
-				
-				var buttonAmount:Int = Std.int(eventParams[0]);
-				var label:String = Std.string(eventParams[1]);
-				if (str == "affirm" || str == "cancel" || str == "alt")
-				{
-					if (Std.is(_parentState, IFlxUIState)) {
-						//This fixes a bug where the event was being sent to this popup rather than the state that created it
-						castParent().getEvent(CLICK_EVENT, this, buttonAmount, eventParams);
-					}else {
-						//This is a generic fallback in case something goes wrong
-						FlxUI.event(CLICK_EVENT, this, buttonAmount, eventParams);
+					if (Std.is(eventParams[0], String))
+					{
+						str = Std.string(eventParams[0]);
 					}
-					close();
+					
+					var buttonAmount:Int = Std.int(eventParams[0]);
+					var label:String = Std.string(eventParams[1]);
+					if (str == "affirm" || str == "cancel" || str == "alt")
+					{
+						if (Std.is(_parentState, IFlxUIState)) {
+							//This fixes a bug where the event was being sent to this popup rather than the state that created it
+							castParent().getEvent(CLICK_EVENT, this, buttonAmount, eventParams);
+						}else {
+							//This is a generic fallback in case something goes wrong
+							FlxUI.event(CLICK_EVENT, this, buttonAmount, eventParams);
+						}
+						close();
+					}
 				}
 		}
 		super.getEvent(id, sender, data, eventParams);

@@ -925,6 +925,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			thing.visible = isVis;
 			thing.active = isActive;
 			thing.ID = numID;
+			if (Std.is(thing, FlxSprite))
+			{
+				var alpha:Float = U.xml_f(data.x, "alpha", 1.0);
+				var s:FlxSprite = cast thing;
+				s.alpha = alpha;
+			}
 		}
 	}
 	
