@@ -1001,6 +1001,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	
 	private function addToCleanup(str:String):Void
 	{
+		if (_assetsToCleanup == null) { _assetsToCleanup = []; }
 		if (_assetsToCleanup.indexOf(str) == -1)
 		{
 			_assetsToCleanup.push(str);

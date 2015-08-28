@@ -3770,6 +3770,18 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			fb.toggle_label = toggleSprite;
 		}
 		
+		if (Std.is(fb, FlxUITypedButton))
+		{
+			var fuitb:FlxUITypedButton<FlxSprite> = cast fb;
+			if (fuitb._assetsToCleanup != null)
+			{
+				for (key in fuitb._assetsToCleanup)
+				{
+					addToCleanup(key);
+				}
+			}
+		}
+		
 		return fb;
 	}
 	
@@ -4296,11 +4308,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						if (tilesTall > 1 || tilesWide > 1)
 						{
 							testAsset = Assets.getBitmapData(U.gfx(src));
-							return U.scaleAndStoreTileset(U.gfx(srcSuffix), scale_y, Std.int(testAsset.width / tilesWide), Std.int(testAsset.height / tilesTall), Std.int(sw), Std.int(sh / tilesTall), smooth);
+							var str = U.scaleAndStoreTileset(U.gfx(srcSuffix), scale_y, Std.int(testAsset.width / tilesWide), Std.int(testAsset.height / tilesTall), Std.int(sw), Std.int(sh / tilesTall), smooth);
+							addToScaledAssets(str);
+							return str;
 						}
 						else
 						{
-							return U.loadScaledImage(srcSuffix, sw, sh, smooth);
+							var str = U.loadScaledImage(srcSuffix, sw, sh, smooth);
+							addToScaledAssets(str);
+							return str;
 						}
 					}
 					break;						//stop on the first resolution test that passes
