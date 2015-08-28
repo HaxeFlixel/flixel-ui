@@ -3188,6 +3188,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 	}
 	
+	private function addToScaledAssets(str:String):Void
+	{
+		if (_scaledAssets.indexOf(str) == -1)
+		{
+			_scaledAssets.push(str);
+		}
+	}
+	
 	private function cleanup():Void
 	{
 		for (key in _assetsToCleanUp)
@@ -3415,6 +3423,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return new FlxPoint( -1, -1);
 	}
 	
+	@:access(flixel.addons.ui.FlxUITypedButton)
 	private function _loadButton(data:Fast, setCallback:Bool = true, isToggle:Bool = false, load_code:String = ""):IFlxUIWidget
 	{
 		var src:String = ""; 
@@ -3458,6 +3467,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		{
 			var useDefaultGraphic = (data.hasNode.graphic == false);
 			fb = new FlxUIButton(0, 0, label, null, useDefaultGraphic);
+			var fuib:FlxUIButton = cast fb;
+			fuib._autoCleanup = false;
 		}
 		else
 		{

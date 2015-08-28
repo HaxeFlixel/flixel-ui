@@ -157,6 +157,11 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 		setupAnimation("normal_toggled", 3);
 		setupAnimation("highlight_toggled", 4);
 		setupAnimation("pressed_toggled", 5);
+		
+		if (_autoCleanup)
+		{
+			cleanup();
+		}
 	}
 	
 	public function copyGraphic(other:FlxUITypedButton<FlxSprite>):Void {
@@ -935,6 +940,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 		if (key != null)
 		{
 			FlxG.bitmap.add(pixels, true, frameKey);
+			addToCleanup(frameKey);
 		}
 		return pixels;
 	}
@@ -1003,6 +1009,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	
 	private function cleanup():Void
 	{
+		if (_assetsToCleanup == null)
+		return;
+		
 		for (key in _assetsToCleanup)
 		{
 			FlxG.bitmap.removeByKey(key);
@@ -1138,6 +1147,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	}
 	
 	/*********PRIVATE************/
+	
+	private var _autoCleanup:Bool = true;
+	private var _assetsToCleanup:Array<String> = [];
 	
 	private var _no_graphic:Bool = false;
 	
