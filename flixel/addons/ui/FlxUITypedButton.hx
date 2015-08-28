@@ -24,7 +24,7 @@ import openfl.Assets;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 
 @:allow(FlxUITypedButton)
-class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IResizable implements IFlxUIWidget implements IFlxUIClickable implements IHasParams implements ICursorPointable
+class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIButton implements IResizable implements IFlxUIWidget implements IFlxUIClickable implements IHasParams implements ICursorPointable
 {
 	public var name:String; 
 	public var resize_ratio:Float = -1;
