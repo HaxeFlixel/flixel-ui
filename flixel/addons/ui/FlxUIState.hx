@@ -206,7 +206,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		
 		super.create();
 		
-		_cleanup();
+		cleanup();
 	}
 	
 	override public function update(elapsed:Float):Void 
@@ -215,17 +215,11 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		tooltips.update(elapsed);
 	}
 	
-	@:access(flixel.system.frontEnds.BitmapFrontEnd)
-	private function _cleanup():Void
+	@:access(flixel.addons.ui.FlxUI)
+	private function cleanup():Void
 	{
 		//Clean up intermediate cached graphics that are no longer necessary
-		for (key in FlxG.bitmap._cache.keys())
-		{
-			if (key.indexOf("_fuitbtn_frame") != -1)
-			{
-				FlxG.bitmap.removeByKey(key);
-			}
-		}
+		_ui.cleanup();
 	}
 	
 	private function _cleanupUIVars():Void

@@ -1403,6 +1403,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private var _failure_checks:Array<Fast>;
 	
+	private var _assetsToCleanUp:Array<String>=[]; //assets to remove from the cache after the state is initialized
+	private var _scaledAssets:Array<String> = [];
+	
 	/**
 	 * Replace an object in whatever group it is in
 	 * @param	original the original object
@@ -3177,6 +3180,24 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return _ui;
 	}
 	
+	private function addToCleanup(str:String):Void
+	{
+		if (_assetsToCleanUp.indexOf(str) == -1)
+		{
+			_assetsToCleanUp.push(str);
+		}
+	}
+	
+	private function cleanup():Void
+	{
+		for (key in _assetsToCleanUp)
+		{
+			FlxG.bitmap.removeByKey(key);
+		}
+		_assetsToCleanUp = null;
+		_scaledAssets = null;
+	}
+	
 	private function createUI(data:Fast):FlxUI
 	{
 		return new FlxUI(data, this, this, _ptr_tongue, liveFilePath);
@@ -3576,12 +3597,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 							if(!toggleState)
 							{
 								slice9_names[2] = load9SliceSprite_scaleSub(slice9, graphicNode, graphic_names[2], "image");
-								//slice9_names[2] = slice9;
 							}
 							else
 							{
 								slice9_names[5] = load9SliceSprite_scaleSub(slice9, graphicNode, graphic_names[5], "image");
-								//slice9_names[5] = slice9;
 							}
 						case "all":
 							var tilesTall:Int = isToggle ? 6 : 3;

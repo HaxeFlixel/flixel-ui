@@ -133,6 +133,8 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 		tooltips.init();
 		
 		super.create();
+		
+		cleanup();
 	}
 	
 	public function onCursorEvent(code:String, target:IFlxUIWidget):Void 
@@ -197,6 +199,13 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 			return getTextFallback(Flag, Context, Safe);
 		}
 		return Flag;
+	}
+	
+	@:access(flixel.addons.ui.FlxUI)
+	private function cleanup():Void
+	{
+		//Clean up intermediate cached graphics that are no longer necessary
+		_ui.cleanup();
 	}
 	
 	/**

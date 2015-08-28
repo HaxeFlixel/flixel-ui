@@ -993,6 +993,23 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 		}
 	}
 	
+	private function addToCleanup(str:String):Void
+	{
+		if (_assetsToCleanup.indexOf(str) == -1)
+		{
+			_assetsToCleanup.push(str);
+		}
+	}
+	
+	private function cleanup():Void
+	{
+		for (key in _assetsToCleanup)
+		{
+			FlxG.bitmap.removeByKey(key);
+		}
+		_assetsToCleanup = null;
+	}
+	
 	private function fetchAndShowCorrectLabel():FlxSprite {
 		if (has_toggle) {
 			if (toggled && toggle_label != null) {
