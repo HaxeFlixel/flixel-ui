@@ -3822,7 +3822,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		{
 			//We are scaling a base image first BEFORE we 9-slice scale it. Advanced trick!
 			//Load that first at the appropriate scale and cache it
+			var origSrc = src;
+			
 			src = loadScaledSrc(data, "src", "scale_src");
+			
+			if (src != origSrc)
+			{
+				addToCleanup(origSrc);
+			}
 		}
 		
 		if (src == "") { src = null; }
