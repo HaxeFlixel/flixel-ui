@@ -568,7 +568,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 			if (data.hasNode.inject)
 			{
-				#if (haxe_ver >= 3.20)
 				while(data.hasNode.inject)
 				{
 					var inj_data = data.node.inject;
@@ -598,9 +597,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						}
 					}
 				}
-				#else
-				FlxG.log.warn("FlxUI: the <inject> tag requires Haxe version 3.2.0 or greater, ignoring for now.");
-				#end
 			}
 			
 			//See if there's anything to include
