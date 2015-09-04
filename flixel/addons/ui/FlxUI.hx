@@ -4948,7 +4948,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return color;
 	}
 	
-	private function _loadFontDef(data:Fast):FontDef{
+	private function _loadFontDef(data:Fast):FontDef {
 		var fontFile:String = _loadFontFace(data);
 		var fontStyle:String = U.xml_str(data.x, "style");
 		var fontSize:Int = Std.int(_loadHeight(data, 8, "size"));

@@ -3,6 +3,7 @@ import flash.text.TextField;
 import flash.text.TextFormat;
 import flixel.addons.ui.BorderDef;
 import flixel.text.FlxText;
+import flixel.util.FlxColor;
 import openfl.Assets;
 import openfl.text.TextFormatAlign;
 
@@ -38,7 +39,7 @@ class FontDef
 		}
 	}
 	
-	public function get_size():Int
+	private function get_size():Int
 	{
 		if (format != null)
 		{
@@ -47,7 +48,7 @@ class FontDef
 		return _size;
 	}
 	
-	public function set_size(i:Int):Int
+	private function set_size(i:Int):Int
 	{
 		if (format != null)
 		{
@@ -289,6 +290,36 @@ class FontDef
 				format.italic = false;
 		}
 		fixFontName();
+	}
+	
+	public static function fromXML(data:Xml):FontDef {
+		var fontFace:String = U.xml_str(data, "font"); 
+		var fontStyle:String = U.xml_str(data, "style");
+		var fontFile:String = null;
+		if (fontFace != "")
+		{
+			fontFile = U.font(fontFace, fontStyle);
+		}
+		var fontStyle:String = U.xml_str(data, "style");
+		var fontSize:Int = U.xml_i(data, "size", 8);
+		var fontColor:FlxColor = U.parseHex(U.xml_str(data, "color"));
+		var fontAlign:String = U.xml_str(data, "align");
+		var align:TextFormatAlign = switch(fontAlign.toLowerCase())
+		{
+			case "center" : TextFormatAlign.CENTER;
+			case "left"   : TextFormatAlign.LEFT;
+			case "right"  : TextFormatAlign.RIGHT;
+			case "justify": TextFormatAlign.JUSTIFY;
+			default       : TextFormatAlign.LEFT;
+		}
+		var fd:FontDef = new FontDef(U.xml_str(data, "font"), ".ttf", fontFile);
+		fd.format.color = fontColor;
+		fd.format.size = fontSize;
+		fd.format.align = align;
+		fd.size = fontSize;
+		fd.setFontStyle(fontStyle);
+		fd.border = BorderDef.fromXML(data);
+		return fd;
 	}
 	
 	public function toString():String
