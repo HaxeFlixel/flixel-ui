@@ -3186,7 +3186,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function addToScaledAssets(str:String):Void
 	{
-		if (_scaledAssets.indexOf(str) == -1)
+		if (_scaledAssets != null && _scaledAssets.indexOf(str) == -1)
 		{
 			_scaledAssets.push(str);
 		}
