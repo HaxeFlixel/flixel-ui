@@ -89,20 +89,57 @@ class U
 		return col;
 	}
 	
-	public static function xml_colorArray(data:Xml, att:String, cast32Bit:Bool = true):Array<FlxColor>
+	public static function xml_iArray(data:Xml, att:String):Array<Int>
 	{
-		var cols:Array<FlxColor> = null;
+		var arr = xml_strArray(data, att);
+		var ints:Array<Int> = null;
+		if (arr != null && arr.length > 0)
+		{
+			ints = [];
+			for (i in 0...arr.length)
+			{
+				ints[i] = Std.parseInt(arr[i]);
+			}
+		}
+		return ints;
+	}
+	
+	public static function xml_fArray(data:Xml, att:String):Array<Float>
+	{
+		var arr = xml_strArray(data, att);
+		var fs:Array<Float> = null;
+		if (arr != null && arr.length > 0)
+		{
+			fs = [];
+			for (i in 0...arr.length)
+			{
+				fs[i] = Std.parseFloat(arr[i]);
+			}
+		}
+		return fs;
+	}
+	
+	public static function xml_strArray(data:Xml, att:String):Array<String>
+	{
 		var str:String = U.xml_str(data, att, true);
 		if (str != "")
 		{
 			var arr = str.split(",");
-			if (arr != null && arr.length > 0)
+			return arr;
+		}
+		return null;
+	}
+	
+	public static function xml_colorArray(data:Xml, att:String, cast32Bit:Bool = true):Array<FlxColor>
+	{
+		var arr = xml_strArray(data, att);
+		var cols:Array<FlxColor> = null;
+		if (arr != null && arr.length > 0)
+		{
+			cols = [];
+			for (i in 0...arr.length)
 			{
-				cols = [];
-				for (i in 0...arr.length)
-				{
-					cols[i] = U.parseHex(arr[i], cast32Bit);
-				}
+				cols[i] = U.parseHex(arr[i], cast32Bit);
 			}
 		}
 		return cols;
@@ -1017,6 +1054,11 @@ class U
 			}
 		}
 		return str;
+	}
+	
+	public static function xml_blend(x:Xml, att:String):BlendMode
+	{
+		return blendModeFromString(xml_str(x, att, true, "normal"));
 	}
 	
 	public static function blendModeFromString(str:String):BlendMode
