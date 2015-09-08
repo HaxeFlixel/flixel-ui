@@ -4,6 +4,7 @@ import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIState;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxObject;
+import flixel.math.FlxPoint;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
@@ -43,6 +44,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 		}
 		list = [];
 		tooltip = new FlxUITooltip(100, 50);
+		lastPosition = new FlxPoint(0, 0);
 		defaultAnchor = tooltip.anchor.clone();
 		defaultStyle = FlxUITooltip.cloneStyle(tooltip.style);
 	}
@@ -117,7 +119,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 	 * @param	data
 	 */
 	
-	public function add(thing:FlxObject, data:FlxUITooltipData)
+	public function add(thing:FlxObject, data:FlxUITooltipData):Void
 	{
 		if (_init) {
 			data.style = FlxUITooltip.styleFix(data.style, defaultStyle);		//replace null values with sensible defaults
@@ -251,14 +253,20 @@ class FlxUITooltipManager implements IFlxDestroyable
 			{
 				list[i].count += elapsed;
 			}
-			else if(list[i].count > 0)
+			
+			if (btn.justMousedOut || btn.mouseIsOut)
 			{
 				list[i].count = 0;
 				hide(i);
 			}
-			if (list[i].count > delay)
+			
+			if (list[i].count > delay || (list[i].data.delay >= 0 && list[i].count > list[i].data.delay))
 			{
 				if (current != i)
+				{
+					show(i); 
+				}
+				else if (list[i].data.moving)
 				{
 					show(i);
 				}
@@ -278,6 +286,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 	
 	/**the current tooltip**/
 	private var current:Int = -1;
+	private var lastPosition:FlxPoint;
 	
 	private var state:FlxUIState;
 	private var subState:FlxUISubState;
@@ -295,8 +304,8 @@ class FlxUITooltipManager implements IFlxDestroyable
 			{
 				subState.remove(tooltip, true);
 			}
+			current = -1;
 		}
-		current = -1;
 	}
 	
 	private function findBtn(btn:IFlxUIButton):Int
@@ -327,13 +336,27 @@ class FlxUITooltipManager implements IFlxDestroyable
 	
 	private function show(i:Int):Void
 	{
-		current = i;
 		var btn  = list[i].btn;
 		
 		if (btn.visible == false || (list[i].obj != null && list[i].obj.visible == false))
 		{
 			return;
 		}
+		
+		if (current == i)
+		{
+			var deltaX = btn.x - lastPosition.x;
+			var deltaY = btn.y - lastPosition.y;
+			
+			lastPosition.x = btn.x;
+			lastPosition.y = btn.y;
+			
+			tooltip.x += deltaX;
+			tooltip.y += deltaY;
+			return;
+		}
+		
+		current = i;
 		
 		var data = list[i].data;
 		
@@ -379,6 +402,8 @@ class FlxUITooltipManager implements IFlxDestroyable
 				tooltip.show(cast btn, data.title, data.body, autoSizeVertical, autoSizeHorizontal);
 			}
 		}
+		
+		lastPosition.set(btn.x, btn.y);
 	}
 	
 	private function checkAutoFlip(thing:IFlxUIButton, tooltip:FlxUITooltip):Bool
