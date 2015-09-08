@@ -86,6 +86,29 @@ class FlxUITooltipManager implements IFlxDestroyable
 	}
 	
 	/**
+	 * Allows you to turn tooltips on or off for an object that has already been added
+	 * @param	thing	The object you want to turn tooltips on or off for
+	 * @param	b		On or off
+	 * 
+	 * @return	true if the object was found and the property set, false if the object has not been added to the tooltip manager
+	 */
+	public function enableTooltipFor(thing:FlxObject, enabled:Bool):Bool
+	{
+		if (thing == null) return false;
+		
+		for (entry in list)
+		{
+			if (entry.obj == thing || (Std.is(thing,IFlxUIButton) && cast(thing,IFlxUIButton) == entry.btn))
+			{
+				entry.enabled = enabled;
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
 	 * Adds a tooltip for this object, using the specified data.
 	 * NOTE: if thing does not implement IFlxUIButton, a new invisible
 	 * button will be created for it in order to drive tooltips.
@@ -207,6 +230,16 @@ class FlxUITooltipManager implements IFlxDestroyable
 		{
 			var btn = list[i].btn;
 			var obj = list[i].obj;
+			
+			if (list[i].enabled == false)
+			{
+				if (current == i)
+				{
+					hide(i);
+				}
+				continue;
+			}
+			
 			if (obj != null)
 			{
 				btn.x = obj.x;
@@ -369,6 +402,7 @@ private class FlxUITooltipEntry implements IFlxDestroyable
 	public var btn:IFlxUIButton;
 	public var count:Float;
 	public var data:FlxUITooltipData;
+	public var enabled:Bool;
 	
 	public function new(Btn:IFlxUIButton, Data:FlxUITooltipData, ?Obj:FlxObject)
 	{
@@ -376,6 +410,12 @@ private class FlxUITooltipEntry implements IFlxDestroyable
 		data = Data;
 		obj = Obj;
 		count = 0;
+		enabled = true;
+		if (data != null)
+		{
+			if (data.delay == null) data.delay = -1;
+			if (data.moving == null) data.moving = false;
+		}
 	}
 	
 	public function destroy():Void
@@ -394,5 +434,7 @@ typedef FlxUITooltipData = {
 	body:String,
 	?anchor:Anchor,
 	?style:FlxUITooltipStyle,
-	?init:Bool
+	?init:Bool,
+	?delay:Int,
+	?moving:Bool
 }
