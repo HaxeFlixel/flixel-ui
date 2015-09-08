@@ -4897,43 +4897,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadBorder(data:Fast):BorderDef
 	{
-		var border_str:String = U.xml_str(data.x, "border");
-		var border_style:FlxTextBorderStyle = NONE;
-		var border_color:Int = _loadColor(data, "border_color", 0);
+		var borderDef = BorderDef.fromXML(data.x);
 		
 		var round:Rounding = getRound(data, "floor");
 		var border_size:Int = Std.int(doRound(_getDataSize("h", "border_size", 1), round));
-		var border_quality:Float = U.xml_f(data.x, "border_quality", 0);
 		
-		var borderDef = new BorderDef(border_style, border_color, border_size, border_quality);
-		
-		switch(border_str)
-		{
-			case "false", "none": borderDef.style = NONE;
-			case "shadow": borderDef.style = SHADOW;
-			case "outline": borderDef.style = OUTLINE;
-			case "outline_fast": borderDef.style = OUTLINE_FAST;
-			case "":
-				//no "border" value, check for shortcuts:
-				//try "outline"
-				border_str = U.xml_str(data.x, "shadow", true, "");
-				if (border_str != "" && border_str != "false" && border_str != "none") {
-					borderDef.style = SHADOW;
-					borderDef.color = U.parseHex(border_str, false, true);
-				}else{
-					border_str = U.xml_str(data.x, "outline", true, "");
-					if (border_str != "" && border_str != "false" && border_str != "none") {
-						borderDef.style = OUTLINE;
-						borderDef.color = U.parseHex(border_str, false, true);
-					}else{
-						border_str = U.xml_str(data.x, "outline_fast");
-						if (border_str != "" && border_str != "false" && border_str != "none") {
-							borderDef.style = OUTLINE_FAST;
-							borderDef.color = U.parseHex(border_str, false, true);
-						}
-					}
-				}	
-		}	
+		borderDef.size = border_size;
 		
 		return borderDef;
 	}
@@ -4949,13 +4918,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	private function _loadFontDef(data:Fast):FontDef {
-		var fontFile:String = _loadFontFace(data);
-		var fontStyle:String = U.xml_str(data.x, "style");
+		var fd:FontDef = FontDef.fromXML(data.x);
 		var fontSize:Int = Std.int(_loadHeight(data, 8, "size"));
-		var fd:FontDef = new FontDef(U.xml_str(data.x, "font"), ".ttf", fontFile);
 		fd.format.size = fontSize;
 		fd.size = fontSize;
-		fd.setFontStyle(fontStyle);
 		return fd;
 	}
 	
