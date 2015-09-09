@@ -23,9 +23,6 @@ import flixel.util.FlxStringUtil;
 import openfl.Assets;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 
-#if !display
-@:generic
-#end
 class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIButton implements IResizable implements IFlxUIWidget implements IFlxUIClickable implements IHasParams implements ICursorPointable
 {
 	public var name:String; 
