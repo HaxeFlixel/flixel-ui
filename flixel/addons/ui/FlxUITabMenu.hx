@@ -331,7 +331,7 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 		for (tab in _tabs)
 		{
 			tab.toggled = false;
-			tab.forceStateHandler(FlxUITypedButton.OUT_EVENT);
+			tab.forceStateHandler(FlxUIButton.OUT_EVENT);
 			if (tab.name == name) {
 				tab.toggled = true;
 				_selected_tab_id = name;

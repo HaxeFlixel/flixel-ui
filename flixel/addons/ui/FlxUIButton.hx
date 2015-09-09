@@ -41,6 +41,11 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	public var over_toggle_style:ButtonLabelStyle = null;
 	public var down_toggle_style:ButtonLabelStyle = null;
 	
+	public static inline var CLICK_EVENT:String = "click_button";
+	public static inline var OVER_EVENT:String = "over_button";
+	public static inline var DOWN_EVENT:String = "down_button";
+	public static inline var OUT_EVENT:String = "out_button";
+	
 	/**
 	 * Creates a new FlxUIButton.
 	 * 
