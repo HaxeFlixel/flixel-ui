@@ -2,7 +2,7 @@ package flixel.addons.ui;
 import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.addons.ui.FlxUIPopup;
 import flixel.addons.ui.FlxUIText;
-import flixel.addons.ui.FlxUITypedButton;
+import flixel.addons.ui.FlxUITypedButton.FlxUITypedButton;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxG;
 import flixel.util.FlxTimer;
@@ -133,7 +133,7 @@ class FlxUILoadingScreen extends FlxUIPopup
 	public override function getEvent(name:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void 
 	{
 		switch(name) {
-			case FlxUIButton.CLICK_EVENT:
+			case FlxUITypedButton.CLICK_EVENT:
 				var btnName:String = cast data;
 				if (btnName == "ok")
 				{

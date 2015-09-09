@@ -104,6 +104,11 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	//you can still use floats for _centerLabelOffset and labelOffets, it's rounded as the very last step in placement
 	public var round_labels:Bool = true;
 	
+	public static inline var CLICK_EVENT:String = "click_button";
+	public static inline var OVER_EVENT:String = "over_button";
+	public static inline var DOWN_EVENT:String = "down_button";
+	public static inline var OUT_EVENT:String = "out_button";
+	
 	public var skipButtonUpdate(default, set):Bool = false;
 	private function set_skipButtonUpdate(b:Bool):Bool {
 		skipButtonUpdate = b;
@@ -853,10 +858,10 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	
 	public function forceStateHandler(event:String):Void {
 		switch(event) {
-			case FlxUIButton.OUT_EVENT:		onOutHandler();
-			case FlxUIButton.OVER_EVENT:	onOverHandler();
-			case FlxUIButton.DOWN_EVENT:	onDownHandler();
-			case FlxUIButton.CLICK_EVENT:	onUpHandler();
+			case OUT_EVENT:		onOutHandler();
+			case OVER_EVENT:	onOverHandler();
+			case DOWN_EVENT:	onDownHandler();
+			case CLICK_EVENT:	onUpHandler();
 		}
 	}
 	
@@ -1048,7 +1053,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 			}
 		}
 		if (broadcastToFlxUI) {
-			FlxUI.event(FlxUIButton.CLICK_EVENT, this, null, params);
+			FlxUI.event(CLICK_EVENT, this, null, params);
 		}
 	}
 	
@@ -1065,7 +1070,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 			}
 		}
 		if (broadcastToFlxUI) {
-			FlxUI.event(FlxUIButton.DOWN_EVENT, this, null, params);
+			FlxUI.event(DOWN_EVENT, this, null, params);
 		}
 	}
 	
@@ -1083,7 +1088,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 			}
 		}
 		if (broadcastToFlxUI) {
-			FlxUI.event(FlxUIButton.OVER_EVENT, this, null, params);
+			FlxUI.event(OVER_EVENT, this, null, params);
 		}
 	}
 	
@@ -1101,7 +1106,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 			}
 		}
 		if (broadcastToFlxUI) {
-			FlxUI.event(FlxUIButton.OUT_EVENT, this, null, params);
+			FlxUI.event(OUT_EVENT, this, null, params);
 		}
 	}
 	

@@ -111,7 +111,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 		}
 		
 		switch(id) {
-			case FlxUIButton.CLICK_EVENT:
+			case FlxUITypedButton.CLICK_EVENT:
 				var str = "";
 				if (eventParams != null)
 				{
