@@ -23,7 +23,6 @@ import flixel.util.FlxStringUtil;
 import openfl.Assets;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 
-@:allow(FlxUITypedButton)
 class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIButton implements IResizable implements IFlxUIWidget implements IFlxUIClickable implements IHasParams implements ICursorPointable
 {
 	public var name:String; 
@@ -163,7 +162,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 			cleanup();
 		}
 	}
-	
+
+	@:access(flixel.addons.ui.FlxUITypedButton)
 	public function copyGraphic(other:FlxUITypedButton<FlxSprite>):Void {
 		_src_w = other._src_w;
 		_src_h = other._src_h;
@@ -303,8 +303,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 		var label_diffy:Float = 0;
 		if (label != null)
 		{
-			label_diffx = width - label.width;
-			label_diffy = height - label.height;
+			label_diffx = width - _spriteLabel.width;
+			label_diffy = height - _spriteLabel.height;
 		}
 		
 		var old_offx:Float = 0;
@@ -831,15 +831,15 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 			var offX:Float = 0;
 			var offY:Float = 0;
 			
-			offX = (width - label.width);
+			offX = (width - _spriteLabel.width);
 			
 			if (Std.is(label, FlxUIText)) {
 				var tlabel:FlxUIText = cast label;
 				offX = (width - tlabel.fieldWidth) / 2;
 				offY = (height - tlabel.height) / 2;
 			}else {
-				offX = (width - label.width) / 2;
-				offY = (height - label.height)/2;
+				offX = (width - _spriteLabel.width) / 2;
+				offY = (height - _spriteLabel.height)/2;
 			}
 			
 			_centerLabelOffset.x = offX;
@@ -1023,14 +1023,14 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	private function fetchAndShowCorrectLabel():FlxSprite {
 		if (has_toggle) {
 			if (toggled && toggle_label != null) {
-				label.visible = false;
+				_spriteLabel.visible = false;
 				toggle_label.visible = true;
 				return toggle_label;
 			}else {
 				if(toggle_label != null){
 					toggle_label.visible = false;
 				}
-				label.visible = true;
+				_spriteLabel.visible = true;
 				return label;
 			}
 		}
@@ -1114,15 +1114,15 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	{
 		super.set_x(NewX);
 		
-		if (label != null)
+		if (_spriteLabel != null)
 		{
-			label.x = x + _centerLabelOffset.x + labelOffsets[status].x;
+			_spriteLabel.x = x + _centerLabelOffset.x + labelOffsets[status].x;
 			
 			if (round_labels) {
-				label.x = Std.int(label.x + 0.5);
+				_spriteLabel.x = Std.int(_spriteLabel.x + 0.5);
 			}
 			if (has_toggle && toggle_label != null) {
-				toggle_label.x = label.x;
+				toggle_label.x = _spriteLabel.x;
 			}
 		}
 		
@@ -1135,13 +1135,13 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 		
 		if (label != null)
 		{
-			label.y = y + _centerLabelOffset.y + labelOffsets[status].y;
+			_spriteLabel.y = y + _centerLabelOffset.y + labelOffsets[status].y;
 			
 			if (round_labels) {
-				label.y = Std.int(label.y + 0.5);
+				_spriteLabel.y = Std.int(_spriteLabel.y + 0.5);
 			}
 			if (has_toggle && toggle_label != null) {
-				toggle_label.y = label.y;
+				toggle_label.y = _spriteLabel.y;
 			}
 		}
 		return NewY;

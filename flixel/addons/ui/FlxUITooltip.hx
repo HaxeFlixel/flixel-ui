@@ -550,10 +550,31 @@ class FlxUITooltip extends FlxUIGroup
 											{ Style.bottomPadding  = DefaultStyle.bottomPadding; }
 		}
 		
-		//Any remaining nulls are replaced by these standard always-safe values
+		//Fill any null gaps in the Style.titleFormat with the DefaultStyle.titleFormat
+		if (DefaultStyle != null)
+		{
+			if (Style.titleFormat != null)
+			{
+				fillFontDefNulls(Style.titleFormat, DefaultStyle.titleFormat);
+				if (Style.titleFormat.format != null && DefaultStyle.titleFormat.format != null)
+				{
+					fillFormatNulls(Style.titleFormat.format, DefaultStyle.titleFormat.format);
+				}
+			}
+			if (Style.bodyFormat != null)
+			{
+				fillFontDefNulls(Style.bodyFormat, DefaultStyle.bodyFormat);
+				if (Style.bodyFormat.format != null && DefaultStyle.bodyFormat.format != null)
+				{
+					fillFormatNulls(Style.bodyFormat.format, DefaultStyle.bodyFormat.format);
+				}
+			}
+		}
 		
+		//Any remaining nulls are replaced by these standard always-safe values
 		if (Style.titleFormat == null) { Style.titleFormat = new FontDef(null, null, null, new TextFormat(null, 8, FlxColor.BLACK), null); }
 		if (Style.bodyFormat  == null) { Style.bodyFormat  = new FontDef(null, null, null, new TextFormat(null, 8, FlxColor.BLACK), null); }
+		
 		if (Style.titleBorder == null) { Style.titleBorder = new BorderDef(FlxTextBorderStyle.NONE, FlxColor.TRANSPARENT, 0, 1); }
 		if (Style.bodyBorder  == null) { Style.bodyBorder  = new BorderDef(FlxTextBorderStyle.NONE, FlxColor.TRANSPARENT, 0, 1); }
 		if (Style.titleOffset == null) { Style.titleOffset = new FlxPoint(0, 0); }
@@ -611,6 +632,36 @@ class FlxUITooltip extends FlxUIGroup
 			bottomPadding: s.bottomPadding
 		}
 		return obj;
+	}
+	
+	private static function fillFontDefNulls(a:FontDef, b:FontDef):Void
+	{
+		if (a.size == 0) a.size = b.size;
+		if (a.name == null || a.name == "") a.name = b.name;
+		if (a.file == null || a.file == "") a.file = b.file;
+		if (a.extension == null || a.extension == "") a.extension = b.extension;
+		if (a.border == null) a.border = (b.border != null) ? b.border.clone() : null;
+	}
+	private static function fillFormatNulls(a:TextFormat, b:TextFormat):Void
+	{
+		if (a.align == null) a.align = b.align;
+		if (a.blockIndent == null) a.blockIndent = b.blockIndent;
+		if (a.bold  == null) a.bold  = b.bold;
+		if (a.bullet == null) a.bullet = b.bullet;
+		if (a.color == null) a.color = b.color;
+		if (a.font == null) a.font = b.font;
+		if (a.indent == null) a.indent = b.indent;
+		if (a.italic == null) a.italic = b.italic;
+		if (a.kerning == null) a.kerning = b.kerning;
+		if (a.leading == null) a.leading = b.leading;
+		if (a.leftMargin == null) a.leftMargin = b.leftMargin;
+		if (a.letterSpacing == null) a.letterSpacing = b.letterSpacing;
+		if (a.rightMargin == null) a.rightMargin = b.rightMargin;
+		if (a.size == null) a.size = b.size;
+		if (a.tabStops == null) a.tabStops = b.tabStops;
+		if (a.target == null) a.target = b.target;
+		if (a.underline == null) a.underline = b.underline;
+		if (a.url == null) a.url = b.url;
 	}
 }
 
