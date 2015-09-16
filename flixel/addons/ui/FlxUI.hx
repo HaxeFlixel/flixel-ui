@@ -639,6 +639,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						{
 							//add a prefix to avoid collisions:
 							var def_name:String = "include:" + U.xml_name(def_data.x);
+							
+							unparentXML(def_data);
+							
 							_definition_index.set(def_name, def_data);
 							//DON'T recursively search for further includes. 
 							//Search 1 level deep only!
@@ -657,6 +660,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 								if (_loadTest(defaultNode))
 								{
 									var defaultName:String = U.xml_name(defaultNode.x);
+									
+									unparentXML(defaultNode);
+									
 									_definition_index.set("default:" + defaultName, defaultNode);
 								}
 							}
@@ -695,6 +701,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						}
 						else
 						{
+							unparentXML(def_data);
+							
 							_definition_index.set(def_name, def_data);
 						}
 					}
@@ -708,6 +716,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					if (_loadTest(defaultNode))
 					{
 						var defaultName:String = U.xml_name(defaultNode.x);
+						
+						unparentXML(defaultNode);
+						
 						_definition_index.set("default:" + defaultName, defaultNode);
 					}
 				}
@@ -740,6 +751,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						var mode_data2:Fast = applyNodeConditionals(mode_data);
 						var mode_name:String = U.xml_name(mode_data.x);
 						//mode_data
+						
+						unparentXML(mode_data2);
+						
 						_mode_index.set(mode_name, mode_data2);
 					}
 				}
@@ -796,6 +810,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		else {
 			_onFinishLoad();
 		}
+	}
+	
+	private function unparentXML(f:Fast):Fast
+	{
+		if (f.x.parent != null)
+		{
+			f.x.parent.removeChild(f.x);
+		}
+		return f;
 	}
 	
 	private function _loadPointSize(data:Fast):Void
@@ -1790,6 +1813,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			case "radio_group": return _loadRadioGroup(info);					//has events, params
 			case "layout", "ui": return _loadLayout(info);
 			case "failure": if (_failure_checks == null) { _failure_checks = new Array<Fast>(); }
+							unparentXML(info);
 							_failure_checks.push(info);
 							return null;
 			case "align": 	_alignThing(info,true);				//we suppress errors first time through b/c they only matter if still present at postLoad()
