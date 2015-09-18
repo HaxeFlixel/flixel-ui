@@ -531,7 +531,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 		var key:String = "";
 		
 		var arr_bmpData:Array<BitmapData> = [];
-		var arr_flx9:Array<FlxUI9SliceSprite> = [];
+		var arr_flx9:Array<FlxUISprite> = [];
 		
 		//Validate frame_indeces array
 		if (frame_indeces == null)
@@ -739,14 +739,28 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 						slice9.push(null);
 					}
 					
-					arr_flx9[0] = new FlxUI9SliceSprite(0, 0, assets[0],_flashRect2, slice9[0], tile, false,"",resize_ratio);
+					if (slice9[0] != null)
+					{
+						arr_flx9[0] = new FlxUI9SliceSprite(0, 0, assets[0], _flashRect2, slice9[0], tile, false, "", resize_ratio);
+					}
+					else
+					{
+						arr_flx9[0] = new FlxUISprite(0, 0, assets[0]);
+					}
 					arr_bmpData[0] = arr_flx9[0].pixels;
 					
 					for (i in 1...assets.length)
 					{
 						if (assets[i] != "")
 						{
-							arr_flx9[i] = new FlxUI9SliceSprite(0, 0, assets[i], _flashRect2, slice9[i], tile, false,"",resize_ratio);
+							if (slice9[i] != null)
+							{
+								arr_flx9[i] = new FlxUI9SliceSprite(0, 0, assets[i], _flashRect2, slice9[i], tile, false, "", resize_ratio);
+							}
+							else
+							{
+								arr_flx9[i] = new FlxUISprite(0, 0, assets[i]);
+							}
 							arr_bmpData[i] = arr_flx9[i].pixels;
 						}
 					}
