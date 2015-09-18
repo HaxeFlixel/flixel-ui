@@ -32,7 +32,7 @@ class BorderDef
 		var border_str:String = U.xml_str(data, "border");
 		var border_style:FlxTextBorderStyle = NONE;
 		var border_color:Int = U.xml_color(data, "border_color");
-		var border_size:Int = U.xml_i(data, "border_size", 1);
+		var border_size:Float = U.xml_f(data, "border_size", 1);
 		var border_quality:Float = U.xml_f(data, "border_quality", 0);
 		
 		var borderDef = new BorderDef(border_style, border_color, border_size, border_quality);

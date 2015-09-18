@@ -4534,7 +4534,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			{
 				case "w", "width":	return thisWidth() * percf;		//return % of screen size
 				case "h", "height": return thisHeight() * percf;
-				case "scale", "scale_x", "scale_y": return percf;			//return % as a float
+				case "scale", "scale_x", "scale_y": return percf;	//return % as a float
 			}
 		}
 		else
@@ -4548,6 +4548,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			if(ptStr != "" && U.isStrNum(ptStr))			//If the rest of it is a simple number
 			{
 				var tempNum = Std.parseFloat(ptStr);		//process as a variable point value
+				
 				switch(target)
 				{
 					case "w", "width": return _pointX * tempNum;
@@ -4924,7 +4925,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var borderDef = BorderDef.fromXML(data.x);
 		
 		var round:Rounding = getRound(data, "floor");
-		var border_size:Int = Std.int(doRound(_getDataSize("h", "border_size", 1), round));
+		var dataSize = _getDataSize("h", U.xml_str(data.x, "border_size") , 1);
+		var border_size:Int = Std.int(doRound(dataSize, round));
 		
 		borderDef.size = border_size;
 		
