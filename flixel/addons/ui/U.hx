@@ -1316,14 +1316,16 @@ class U
 					
 					FlxG.bitmap.add(scaledBmp, true, scaleKey);			//store it by the unique key
 				}
+				
 				return scaleKey;										//return the final scaled key
 			}
-			else 
+			else
 			{
 				FlxG.bitmap.add(testBmp, false, bmpSrc);
 				return bmpSrc;		//couldn't scale it, return master asset key
 			}
 		}
+		
 		return null; 				//failure
 	}
 
@@ -1878,6 +1880,15 @@ class U
 			default: str;
 		}
 		return str;
+	}
+	
+	public static function unparentXML(f:Fast):Fast
+	{
+		if (f.x.parent != null)
+		{
+			f.x.parent.removeChild(f.x);
+		}
+		return f;
 	}
 	
 	public static function getMatrix():Matrix {
