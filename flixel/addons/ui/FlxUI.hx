@@ -814,11 +814,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function unparentXML(f:Fast):Fast
 	{
-		if (f.x.parent != null)
-		{
-			f.x.parent.removeChild(f.x);
-		}
-		return f;
+		return U.unparentXML(f);
 	}
 	
 	private function _loadPointSize(data:Fast):Void
