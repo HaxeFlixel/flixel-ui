@@ -39,6 +39,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	#if !FLX_NO_MOUSE
 	public var cursor:FlxUICursor = null;
 	public var hideCursorOnSubstate:Bool = false;
+	private var _cursorHidden:Bool = false;
 	#end
 	
 	/**
@@ -260,8 +261,9 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	public override function openSubState(SubState:FlxSubState):Void
 	{
 		#if !FLX_NO_MOUSE
-		if (cursor != null && hideCursorOnSubstate)
+		if (cursor != null && hideCursorOnSubstate && cursor.visible == true)
 		{
+			_cursorHidden = true;
 			cursor.visible = false;
 		}
 		#end
@@ -271,8 +273,9 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	public override function closeSubState():Void
 	{
 		#if !FLX_NO_MOUSE
-		if (cursor != null && hideCursorOnSubstate)
+		if (cursor != null && hideCursorOnSubstate && _cursorHidden)
 		{
+			_cursorHidden = false;
 			cursor.visible = true;
 		}
 		#end

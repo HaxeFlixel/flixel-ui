@@ -291,6 +291,11 @@ class FlxUITooltip extends FlxUIGroup
 		//load the arrow
 		_arrow.color = Style.background;
 		var test = FlxG.bitmap.add(Style.arrow);
+		if (Style.arrow == null)
+		{
+			Style.arrow = FlxUIAssets.IMG_TOOLTIP_ARROW;
+			FlxG.bitmap.add(Style.arrow);
+		}
 		_arrow.loadGraphic(Style.arrow, true, test.height, test.height);
 		
 		if (newArrow)
