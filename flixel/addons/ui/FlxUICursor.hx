@@ -630,6 +630,9 @@ class FlxUICursor extends FlxUISprite
 		
 		var upPressed:Bool = false;
 		
+		var wasInvisible = (visible == false);
+		var lastLocation = location;
+		
 		for (key in keysUp) {
 			if (key.justPressed()) {
 				_doInput(0, -1);
@@ -653,6 +656,11 @@ class FlxUICursor extends FlxUISprite
 				_doInput(1, 0);
 				break;
 			}
+		}
+		
+		if (wasInvisible && visible)
+		{
+			location = lastLocation;
 		}
 		
 		if (_clickKeysJustPressed())		//JUST PRESSED: send a press event only the first time it's pressed
