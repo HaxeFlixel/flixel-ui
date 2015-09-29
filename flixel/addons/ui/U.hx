@@ -1266,11 +1266,16 @@ class U
 	public static function loadMonoScaledImage(src:String,Scale:Float,smooth:Bool=true,checkFlxBitmap:Bool=false,fixAlphaChannel:Bool=false):String
 	{
 		var bmpSrc:String = gfx(src);
+		
 		var	testBmp:BitmapData = null;
 		
 		if (!checkFlxBitmap)
 		{
 			testBmp = Assets.getBitmapData(bmpSrc, false);
+			if (testBmp == null)
+			{
+				testBmp = Assets.getBitmapData(bmpSrc, true);
+			}
 		}
 		else
 		{
@@ -1314,7 +1319,7 @@ class U
 						temp.dispose();
 					}
 					
-					FlxG.bitmap.add(scaledBmp, true, scaleKey);			//store it by the unique key
+					var finalKey = FlxG.bitmap.add(scaledBmp, true, scaleKey);			//store it by the unique key
 				}
 				
 				return scaleKey;										//return the final scaled key
