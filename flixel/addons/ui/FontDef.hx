@@ -304,7 +304,7 @@ class FontDef
 		var fontSize:Int = U.xml_i(data, "size", 8);
 		var fontColor:FlxColor = U.xml_color(data, "color", true, 0xFFFFFFFF);
 		var fontAlign:String = U.xml_str(data, "align");
-		var align:TextFormatAlign = switch(fontAlign.toLowerCase())
+		var align = switch(fontAlign.toLowerCase())
 		{
 			case "center" : TextFormatAlign.CENTER;
 			case "left"   : TextFormatAlign.LEFT;
