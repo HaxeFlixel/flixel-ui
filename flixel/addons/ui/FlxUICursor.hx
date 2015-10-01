@@ -16,6 +16,7 @@ import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.util.FlxArrayUtil;
+import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 
 /**
@@ -1139,7 +1140,7 @@ class FlxUICursor extends FlxUISprite
 			return;
 		}
 		
-		visible = true;
+		visible = active = true;
 		
 		var currWidget:IFlxUIWidget = _widgets[location];
 		var flippedX:Bool = false;
