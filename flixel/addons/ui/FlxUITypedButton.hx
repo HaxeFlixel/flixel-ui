@@ -729,7 +729,25 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 			
 			if (assets[0] != "")
 			{
-				if (slice9 != null && slice9[0] != [])
+				var pass = true;
+				if (pass)
+				{
+					pass = (slice9 != null);
+				}
+				if (pass)
+				{
+					pass = (slice9.length > 0);
+				}
+				if (pass)
+				{
+					pass = (slice9[0] != null);
+				}
+				if (pass)
+				{
+					pass = (slice9[0].length > 0);
+				}
+				
+				if (pass)
 				{
 					//load as 9slicesprites
 					
