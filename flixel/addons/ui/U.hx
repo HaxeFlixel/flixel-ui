@@ -119,13 +119,17 @@ class U
 		return fs;
 	}
 	
-	public static function xml_strArray(data:Xml, att:String):Array<String>
+	public static function xml_strArray(data:Xml, att:String, lowerCase:Bool=true, default_:Array<String>=null):Array<String>
 	{
-		var str:String = U.xml_str(data, att, true);
+		var str:String = U.xml_str(data, att, lowerCase);
 		if (str != "")
 		{
 			var arr = str.split(",");
 			return arr;
+		}
+		else
+		{
+			return default_;
 		}
 		return null;
 	}
