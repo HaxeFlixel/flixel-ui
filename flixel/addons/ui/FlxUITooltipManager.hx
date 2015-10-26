@@ -4,7 +4,9 @@ import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIState;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxObject;
+import flixel.FlxSprite;
 import flixel.math.FlxPoint;
+import flixel.ui.FlxButton.FlxTypedButton;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
@@ -85,6 +87,56 @@ class FlxUITooltipManager implements IFlxDestroyable
 				entry.destroy();
 			}
 		}
+	}
+	
+	/**
+	 * Hides the tooltip that is being displayed right now
+	 */
+	
+	public function hideCurrent()
+	{
+		if (current > 0)
+		{
+			hide(current);
+		}
+	}
+	
+	/**
+	 * Checks whether the currently shown tooltip belongs to a given FlxSprite, or optionally, any of its children (if it is a FlxUIGroup or FlxUI)
+	 * @param	thing			the FlxSprite to check
+	 * @param	checkChildren	whether or not to check its children (default: true)
+	 * @return
+	 */
+	public function doesCurrentTooltipBelongTo(thing:FlxSprite, checkChildren:Bool = true):Bool
+	{
+		if (Std.is(thing, FlxUIGroup))
+		{
+			var i = findObj(cast thing);
+			if (i != -1) return true;
+			
+			if (checkChildren)
+			{
+				var fuig:FlxUIGroup = cast thing;
+				for (member in fuig.members)
+				{
+					if (doesCurrentTooltipBelongTo(member))
+					{
+						return true;
+					}
+				}
+			}
+		}
+		else if (Std.is(thing, FlxUIButton))
+		{
+			var i = findBtn(cast thing);
+			if (i != -1) return true;
+		}
+		else if(Std.is(thing, FlxObject))
+		{
+			var i = findObj(cast thing);
+			if (i != -1) return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -239,6 +291,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 				{
 					hide(i);
 				}
+				list[i].count = 0;
 				continue;
 			}
 			
@@ -249,15 +302,17 @@ class FlxUITooltipManager implements IFlxDestroyable
 				btn.visible = obj.visible;
 			}
 			
-			if (btn.justMousedOver || btn.mouseIsOver)
-			{
-				list[i].count += elapsed;
-			}
-			
-			if (btn.justMousedOut || btn.mouseIsOut)
+			if (false == btn.visible || btn.justMousedOut || btn.mouseIsOut)
 			{
 				list[i].count = 0;
 				hide(i);
+			}
+			else if (btn.justMousedOver || btn.mouseIsOver)
+			{
+				if (btn.mouseIsOver)
+				{
+					list[i].count += elapsed;
+				}
 			}
 			
 			if (list[i].count > delay || (list[i].data.delay >= 0 && list[i].count > list[i].data.delay))
