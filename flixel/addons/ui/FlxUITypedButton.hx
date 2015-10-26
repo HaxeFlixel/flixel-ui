@@ -100,6 +100,15 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 		return null;
 	}
 	
+	override function set_visible(Value:Bool):Bool 
+	{
+		if (visible && Value == false)
+		{
+			inputOver.release();
+		}
+		return super.set_visible(Value);
+	}
+	
 	//If this is true, the label object's actual coordinates are rounded to the nearest pixel
 	//you can still use floats for _centerLabelOffset and labelOffets, it's rounded as the very last step in placement
 	public var round_labels:Bool = true;
