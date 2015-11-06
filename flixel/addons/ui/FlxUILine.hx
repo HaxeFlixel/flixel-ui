@@ -19,7 +19,7 @@ class FlxUILine extends FlxUISprite implements IResizable
 		makeGraphic(1, 1, FlxColor.WHITE);
 		color = Color;
 		axis = Axis;
-		length = length;
+		length = Length;
 	}
 	
 	private function set_axis(a:LineAxis):LineAxis
