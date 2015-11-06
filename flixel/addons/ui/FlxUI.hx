@@ -13,6 +13,7 @@ import flixel.addons.ui.FlxUIBar.FlxBarStyle;
 import flixel.addons.ui.FlxUICursor.WidgetList;
 import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.addons.ui.BorderDef;
+import flixel.addons.ui.FlxUILine.LineAxis;
 import flixel.addons.ui.FlxUIRadioGroup.CheckStyle;
 import flixel.addons.ui.FlxUITooltipManager.FlxUITooltipData;
 import flixel.addons.ui.FontDef;
@@ -4008,10 +4009,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return fs;
 	}
 	
-	private function _loadLine(data:Fast):FlxUISprite
+	private function _loadLine(data:Fast):FlxUILine
 	{
 		var src:String = ""; 
-		var fs:FlxUISprite = null;
 		
 		var axis:String = U.xml_str(data.x, "axis", true, "horizontal");
 		var thickness:Int = Std.int(_loadWidth(data, 1, "thickness"));
@@ -4020,7 +4020,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					  max_width:Float, max_height:Float } = calcMaxMinSize(data);
 		
 		if (bounds == null) {
-			bounds = { min_width:Math.NEGATIVE_INFINITY, min_height:Math.NEGATIVE_INFINITY, max_width:Math.POSITIVE_INFINITY, max_height:Math.POSITIVE_INFINITY };
+			bounds = { min_width:1, min_height:1, max_width:Math.POSITIVE_INFINITY, max_height:Math.POSITIVE_INFINITY };
 		}
 		switch(axis) {
 				case "h", "horz", "horizontal":	bounds.max_height = thickness; bounds.min_height = thickness;
@@ -4042,10 +4042,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (cstr != "") {
 			C = U.parseHex(cstr, true);
 		}
-		fs = new FlxUISprite(0, 0);
-		fs.makeGraphic(W, H, C);
 		
-		return fs;
+		var lineAxis:LineAxis = (axis == "horizontal") ? LineAxis.HORIZONTAL : LineAxis.VERTICAL;
+		var lineLength:Float = (lineAxis == LineAxis.HORIZONTAL) ? W : H;
+		var lineThickness:Float = (lineAxis == LineAxis.HORIZONTAL) ? H : W;
+		
+		var fl = new FlxUILine(0, 0, lineAxis, lineLength, lineThickness, C);
+		
+		return fl;
 	}
 	
 	private function _loadBar(data:Fast):FlxUIBar
@@ -4553,7 +4557,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 			else if (str.indexOf("stretch:") == 0)			//Next likely: is it a stretch command?
 			{
-				str = StringTools.replace(str, "stretch:", "");
+ 				str = StringTools.replace(str, "stretch:", "");
 				var arr:Array<String> = str.split(",");
 				var stretch_0:Float = _getStretch(0, target, arr[0]);
 				var stretch_1:Float = _getStretch(1, target, arr[1]);
