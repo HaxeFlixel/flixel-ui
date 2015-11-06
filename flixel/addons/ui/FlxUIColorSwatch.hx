@@ -208,41 +208,6 @@ class FlxUIColorSwatch extends FlxUIButton
 					U.clearArray(tempCols);
 					tempCols = null;
 					
-					/*
-					var h:Int = hilight;
-					var m:Int = midtone;
-					var sm:Int = shadowMid;
-					var sd:Int = shadowDark;
-					
-					if(h == 0){h = 0xFF000000;}
-					if(m == 0){m = 0xFF000000;}
-					if(sm == 0){sm = 0xFF000000;}
-					if(sd == 0){sd = 0xFF000000;}
-					
-					makeGraphic(Std.int(width), Std.int(height), 0xFFFFFFFF, true, key);
-					_flashRect.x = 0; _flashRect.y = 0;
-					_flashRect.width = pixels.width;
-					_flashRect.height = pixels.height;
-					pixels.fillRect(_flashRect, 0xFF000000);		//outline
-					_flashRect.x = 1; _flashRect.y = 1;
-					_flashRect.width -= 2;
-					_flashRect.height -= 2;
-					pixels.fillRect(_flashRect, sd);		//dark shadow
-					_flashRect.x = 2; _flashRect.y = 1;
-					_flashRect.width -= 1;
-					_flashRect.height -= 1;
-					pixels.fillRect(_flashRect, sm);		//mid shadow
-					_flashRect.x = 4; _flashRect.y = 2;
-					_flashRect.width -= 3;
-					_flashRect.height -= 3;
-					pixels.fillRect(_flashRect, m);		//midtone
-					_flashRect.x = pixels.width - 7; 
-					_flashRect.y = 3;
-					_flashRect.width = 4;
-					_flashRect.height = 4;
-					pixels.fillRect(_flashRect, h);		//hilight
-					*/
-					
 					calcFrame();
 				}else{
 					loadGraphic(key);

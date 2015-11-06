@@ -257,6 +257,14 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);
 		
+		if (status == FlxButton.NORMAL && mouseIsOver && input.justReleased == false)
+		{
+			//Detect rare edge case:
+			//The button is not in a hilight/pressed state, but the button has ALSO not just been released, HOWEVER it thinks the mouse is still hovering
+			//Tell the mouseOver to release:
+			inputOver.release();
+		}
+		
 		inputOver.update();
 		
 		// Label positioning
@@ -1068,6 +1076,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 		if(has_toggle){
 			toggled = !toggled;
 		}
+		
 		super.onUpHandler();
 		if (label != null) {
 			var theLabel = fetchAndShowCorrectLabel();
