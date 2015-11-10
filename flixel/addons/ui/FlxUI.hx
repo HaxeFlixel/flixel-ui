@@ -2332,8 +2332,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 			if (Std.is(thing, IResizable))
 			{
-				var ww:Null<Float> = _getDataSize(U.xml_str(data.x, "width"), "width");
-				var hh:Null<Float> = _getDataSize(U.xml_str(data.x, "height"), "height");
+				var ww:Null<Float> = _getDataSize("w", U.xml_str(data.x, "width"));
+				var hh:Null<Float> = _getDataSize("h", U.xml_str(data.x, "height"));
 				if (ww == 0 || ww == thing.width)
 				{
 					ww = null;
@@ -4637,7 +4637,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					
 					//Check for "pt" syntax and handle it properly
 					var ptIndex = secondBit.indexOf("pt");
-					if (secondBit.indexOf("pt") == secondBit.length - 2)
+					if (ptIndex != -1 && ptIndex == secondBit.length - 2)
 					{
 						var sansPt = StringTools.replace(secondBit, "pt", "");
 						f = Std.parseFloat(sansPt);
