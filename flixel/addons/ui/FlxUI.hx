@@ -2310,6 +2310,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			_alignThing(data);
 		}
 		
+		if (type == "change") {
+			_changeThing(data);
+		}
+		
 		if (type == "position") {
 			_loadPosition(data, thing);
 			return;
