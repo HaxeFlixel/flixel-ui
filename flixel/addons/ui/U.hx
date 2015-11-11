@@ -172,6 +172,7 @@ class U
 	}
 	
 	public static function isStrNum(str:String):Bool {
+		if (str == null || str == "") return false;
 		var r:EReg = ~/-?([0-9]+)?(\.)?([0-9]*)?/;
 			if (r.match(str)) {
 				var p: { pos:Int, len:Int } = r.matchedPos();

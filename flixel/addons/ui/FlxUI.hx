@@ -2298,6 +2298,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		var name:String = U.xml_name(data.x);
+		
 		var thing:IFlxUIWidget = getAsset(name);
 		var isGroup = type == "group";
 		if (isGroup)
@@ -2343,10 +2344,21 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					hh = null;
 				}
 				
-				var bounds = calcMaxMinSize(data,ww,hh);
+				var bounds = calcMaxMinSize(data);
 				
 				if (bounds != null)
 				{
+					if (ww != null) {
+						if (ww < bounds.min_width) { ww = bounds.min_width; }
+						if (ww > bounds.max_width) { ww = bounds.max_width; }
+						bounds.min_width = bounds.max_width = ww;
+					}
+					if (hh != null) {
+						if (hh < bounds.min_height){ hh = bounds.min_height;}
+						if (hh > bounds.max_height){ hh = bounds.max_height;}
+						bounds.min_height = bounds.max_height = hh;
+					}
+					
 					_resizeThing(cast(thing, IResizable), bounds);
 				}
 			}
@@ -3832,8 +3844,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _load9SliceSprite(data:Fast, load_code:String = ""):FlxUI9SliceSprite
 	{
-		var src:String = ""; 
+		var src:String = "";
 		var f9s:FlxUI9SliceSprite = null;
+		
+		var thename = U.xml_name(data.x);
 		
 		var resize:FlxPoint = getResizeRatio(data);
 		
