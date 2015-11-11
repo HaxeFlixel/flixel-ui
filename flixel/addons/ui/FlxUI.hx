@@ -2332,8 +2332,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 			if (Std.is(thing, IResizable))
 			{
-				var ww:Null<Float> = _getDataSize(U.xml_str(data.x, "width"), "width");
-				var hh:Null<Float> = _getDataSize(U.xml_str(data.x, "height"), "height");
+				var ww:Null<Float> = _getDataSize("w", U.xml_str(data.x, "width"));
+				var hh:Null<Float> = _getDataSize("h", U.xml_str(data.x, "height"));
 				if (ww == 0 || ww == thing.width)
 				{
 					ww = null;
@@ -4539,23 +4539,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		else
 		{
-			var ptStr:String = "";
-			if (str.indexOf("pt") == str.length - 2)	//Next likely: is it a pt value?
-			{
-				ptStr = str.substr(0, str.length - 2);	//chop off the "pt"
-			}
-			
-			if(ptStr != "" && U.isStrNum(ptStr))			//If the rest of it is a simple number
-			{
-				var tempNum = Std.parseFloat(ptStr);		//process as a variable point value
-				
-				switch(target)
-				{
-					case "w", "width": return _pointX * tempNum;
-					case "h", "height": return _pointY * tempNum;
-				}
-			}
-			else if (str.indexOf("stretch:") == 0)			//Next likely: is it a stretch command?
+			if (str.indexOf("stretch:") == 0)			//Next likely: is it a stretch command?
 			{
  				str = StringTools.replace(str, "stretch:", "");
 				var arr:Array<String> = str.split(",");
@@ -4585,6 +4569,24 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					return assetValue;
 				}
 			}
+			
+			var ptStr:String = "";
+			
+			if (str.indexOf("pt") == str.length - 2)	//Next likely: is it a pt value?
+			{
+				ptStr = str.substr(0, str.length - 2);	//chop off the "pt"
+			}
+			
+			if(ptStr != "" && U.isStrNum(ptStr))			//If the rest of it is a simple number
+			{
+				var tempNum = Std.parseFloat(ptStr);		//process as a variable point value
+				
+				switch(target)
+				{
+					case "w", "width": return _pointX * tempNum;
+					case "h", "height": return _pointY * tempNum;
+				}
+			}
 		}
 		return default_;
 	}
@@ -4603,7 +4605,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var temp:Array<String> = null;
 		
 		var operator:String = "";
-		var besti:Int = 999999;
+		var besti:Float = Math.POSITIVE_INFINITY;
 		
 		for (op in list)
 		{
@@ -4618,6 +4620,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}
 		
+		var hasPoint:Bool = false;
+		
 		if (operator != "")
 		{
 			if (str.indexOf(operator) != -1)		//return on the FIRST valid operator match found
@@ -4629,7 +4633,21 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					var firstBit:String = str.substr(0, opindex);
 					var secondBit:String = str.substr(opindex + 1, str.length - (opindex+1));
 					
-					var f:Float = Std.parseFloat(secondBit);	//try to read the operand as a number
+					var f:Float = 0;
+					
+					//Check for "pt" syntax and handle it properly
+					var ptIndex = secondBit.indexOf("pt");
+					if (ptIndex != -1 && ptIndex == secondBit.length - 2)
+					{
+						var sansPt = StringTools.replace(secondBit, "pt", "");
+						f = Std.parseFloat(sansPt);
+						hasPoint = true;
+					}
+					else
+					{
+						f = Std.parseFloat(secondBit);
+					}
+					
 					if (Math.isNaN(f))
 					{
 						f = getAssetProperty(1,"",secondBit);
@@ -4640,7 +4658,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 					else
 					{
-						return [firstBit, operator, f];	//proper operand and operator
+						return [firstBit, operator, f, hasPoint];	//proper operand and operator
 					}
 				}
 			}
@@ -4668,6 +4686,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var operator:String = "";
 		var operand:Float = 0;
+		var hasPoint = false;
 		
 		arr = _getOperation(str);
 		
@@ -4676,9 +4695,21 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			str = cast arr[0];
 			operator = cast arr[1];
 			operand = cast arr[2];
+			hasPoint = cast arr[3];
+			
+			if (hasPoint) {
+				switch(target) {
+					case "width", "w":
+						operand *= _pointX;
+					case "height", "h":
+						operand *= _pointY;
+					default:
+						operand *= _pointY;
+				}
+			}
 		}
 		
-		var return_val:Float = getAssetProperty(index,target,str);
+		var return_val:Float = getAssetProperty(index, target, str);
 		
 		if (return_val != -1 && operator != "")
 		{
@@ -4879,14 +4910,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			{
 				thing.y = anchor_y;
 			}
-			//_delta(thing, anchor_x, anchor_y);
+			
 		}
 		
 		//Try to center the object on the screen:
 		if (ctrX || ctrY) {
 			_center(thing,ctrX,ctrY);
 		}
-				
+		
 		//Then, try to center it on another object:
 		if (center_on != "")
 		{
