@@ -414,6 +414,7 @@ class FlxUICursor extends FlxUISprite
 				return true;
 			}
 		}
+		location = -1;
 		return false;
 	}
 	
