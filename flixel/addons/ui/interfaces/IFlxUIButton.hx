@@ -55,4 +55,6 @@ interface IFlxUIButton extends IFlxUIWidget extends IHasParams extends IFlxDestr
 	public function loadGraphicsMultiple(assets:Array<FlxGraphicAsset>, Key:String = ""):Void;
 	public function loadGraphicsUpOverDown(asset:Dynamic, for_toggle:Bool = false, ?key:String):Void;
 	public function forceStateHandler(event:String):Void;
+	
+	public var status(default, set):Int;
 }
