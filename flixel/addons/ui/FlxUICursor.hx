@@ -352,6 +352,72 @@ class FlxUICursor extends FlxUISprite
 		return false;
 	}
 	
+	/**
+	 * Forces the cursor to to point to whatever widget's center is closest to X,Y -- IF the widget is in its list
+	 * @param	X
+	 * @param	Y
+	 * @return
+	 */
+	public function jumpToXY(X:Float, Y:Float):Bool
+	{
+		var listi:Int = 0;
+		var i:Int = 0;
+		
+		var bestd2 = Math.POSITIVE_INFINITY;
+		var d2 = 0.0;
+		var bestli = -1;
+		var besti = -1;
+		
+		if (_lists != null)
+		{
+			for (list in _lists)
+			{
+				for(i in 0...list.widgets.length) {
+					var w:IFlxUIWidget = list.widgets[i];
+					if (w.visible == true && X >= w.x && Y >= w.y && X <= w.x + w.width && Y <= w.y + w.height) {
+						
+						var dx = ((w.x + w.width / 2) - X);
+						var dy = ((w.y + w.height / 2) - Y);
+						var d2 = dx * dx + dy * dy;
+						if (d2 < bestd2) {
+							bestd2 = d2;
+							bestli = listi;
+							besti = i;
+						}
+					}
+				}
+				listi++;
+			}
+			if (bestli != -1 && besti != -1) {
+				listIndex = bestli;
+				location = besti;
+				return true;
+			}
+		}
+		else
+		{
+			for (i in 0..._widgets.length) {
+				var w:IFlxUIWidget = _widgets[i];
+				if (w.visible == true && X >= w.x && Y >= w.y && X <= w.x + w.width && Y <= w.y + w.height) {
+					
+					var dx = ((w.x + w.width / 2) - X);
+					var dy = ((w.y + w.height / 2) - Y);
+					var d2 = dx * dx + dy * dy;
+					if (d2 < bestd2) {
+						bestd2 = d2;
+						besti = i;
+					}
+				}
+			}
+			if (besti != -1) {
+				location = besti;
+				return true;
+			}
+		}
+		location = -1;
+		return false;
+	}
+	
 	public function addWidgetList(list:Array<IFlxUIWidget>):Void
 	{
 		for (l in _lists)
