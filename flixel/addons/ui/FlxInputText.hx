@@ -601,7 +601,7 @@ class FlxInputText extends FlxText
 			#if !js
 				textField.scrollH = diffW;
 			#end
-			calcFrame(true);
+			calcFrame();
 		}
 		#end
 	}
