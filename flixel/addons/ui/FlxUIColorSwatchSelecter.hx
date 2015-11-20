@@ -331,7 +331,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 		updateSelected();
 	}
 	
-	public function selectByColors(Data:SwatchData, PickClosest:Bool = true, IgnoreInvisible:Bool = true, ignoreDummy:Bool = false):Void {
+	public function selectByColors(Data:SwatchData, PickClosest:Bool = true, IgnoreInvisible:Bool = true):Void {
 		var best_delta:Int = 99999999;
 		var curr_delta:Int = 0;
 		var best_swatch:FlxUIColorSwatch = null;
@@ -343,8 +343,8 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 				var swatchData:SwatchData = swatch.colors;
 				if (PickClosest) {
 					
-					// FIX - dummmy swatch always get better delta when comparing colors.
-					if (ignoreDummy && swatch.colors.name == "dummy") {
+					//Ignore the "dummy" swatch
+					if (swatch.colors.name == "dummy" && Data.name == "dummy") {
 						continue;
 					}
 					
