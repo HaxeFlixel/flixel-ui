@@ -4827,9 +4827,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var Y:Float = _loadY(data);
 		
 		var name = U.xml_name(data.x);
-		if (name == "item_1") {
-			trace("BOINK");
-		}
 		
 		//if you don't define x or y in an anchor, they default to 0
 		//but if you set x="same" / y="same", you default to whatever it was before
