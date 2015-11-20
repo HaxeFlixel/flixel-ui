@@ -172,6 +172,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 	public override function update(elapsed:Float):Void {
 		if (_dirtyLayout) {
 			updateLayout();
+			updateSelected(); // FIX - update selected sprite position
 		}
 		super.update(elapsed);
 	}
@@ -319,7 +320,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 		_selectedSwatch = null;
 		
 		for (sprite in members) {
-			if (sprite != _selectedSwatch) {
+			if (sprite != _selectedSwatch && Std.is(sprite, FlxUIColorSwatch)) {
 				var swatch:FlxUIColorSwatch = cast sprite;
 				if (swatch.color == Color) {
 					_selectedSwatch = swatch;
@@ -330,7 +331,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 		updateSelected();
 	}
 	
-	public function selectByColors(Data:SwatchData, PickClosest:Bool = true, IgnoreInvisible:Bool = true):Void {
+	public function selectByColors(Data:SwatchData, PickClosest:Bool = true, IgnoreInvisible:Bool = true, ignoreDummy:Bool = false):Void {
 		var best_delta:Int = 99999999;
 		var curr_delta:Int = 0;
 		var best_swatch:FlxUIColorSwatch = null;
@@ -341,7 +342,13 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 				var swatch:FlxUIColorSwatch = cast sprite;
 				var swatchData:SwatchData = swatch.colors;
 				if (PickClosest) {
-					curr_delta = Data.getRawDifference(swatchData,IgnoreInvisible);
+					
+					// FIX - dummmy swatch always get better delta when comparing colors.
+					if (ignoreDummy && swatch.colors.name == "dummy") {
+						continue;
+					}
+					
+					curr_delta = Data.getRawDifference(swatchData, IgnoreInvisible);
 					if (curr_delta < best_delta) {
 						best_swatch = swatch;
 						best_delta = curr_delta;
@@ -380,7 +387,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 		updateSelected();
 	}
 	
-	private function updateSelected():Void {
+	public function updateSelected():Void {
 		if (_selectedSwatch != null) {
 			_selectionSprite.visible = true;
 			_selectionSprite.x = _selectedSwatch.x + ((_selectedSwatch.width  - _selectionSprite.width) / 2);

@@ -197,21 +197,11 @@ class SwatchData implements IFlxDestroyable {
 		var ra:Int = a >> 16 & 0xFF;
 		var ga:Int = a >> 8 & 0xFF;
 		var ba:Int = a & 0xFF;
+		
 		var rb:Int = b >> 16 & 0xFF;
 		var gb:Int = b >> 8 & 0xFF;
 		var bb:Int = b & 0xFF;
-		var diff:Int = 0;
-		var delta:Int = 0;
 		
-		diff = ra - rb; if (diff < 0) { diff *= -1; };
-		delta += diff;
-		
-		diff = ga - gb; if (diff < 0) { diff *= -1; };
-		delta += diff;
-		
-		diff = ba - bb; if (diff < 0) { diff *= -1; };
-		delta += diff;
-		
-		return delta;
+		return Std.int(Math.abs(ra - rb) + Math.abs(ga - gb) + Math.abs(ba - bb));
 	}
 }
