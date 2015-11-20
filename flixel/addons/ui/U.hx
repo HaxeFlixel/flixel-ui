@@ -979,6 +979,10 @@ class U
 				#if ios
 					return true;
 				#end
+			case "tvos":
+				#if tvos
+					return true;
+				#end
 			case "flash":
 				#if flash
 					return true;
@@ -999,6 +1003,45 @@ class U
 				#if sys
 					return true;
 				#end
+			case "demo":
+				#if demo
+					return true;
+				#end
+			case "next", "lime_next":
+				var val = true;
+				#if (lime_legacy || legacy)
+					val = false;
+				#end
+				return val;
+			case "legacy", "lime_legacy":
+				#if (lime_legacy || legacy)
+					return true;
+				#end
+			case "console_pc", "console-pc":
+				#if console_pc
+					return true;
+				#end
+			case "ps4":
+				#if ps4
+					return true;
+				#end
+			case "ps3":
+				#if ps3
+					return true;
+				#end
+			case "vita":
+				#if vita
+					return true;
+				#end
+			case "wiiu":
+				#if wiiu
+					return true;
+				#end
+			case "xbox1":
+				#if xbox1
+					return true;
+				#end
+			
 		}
 		return false;
 	}

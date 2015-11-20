@@ -2094,14 +2094,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		for (nameStr in objects)
 		{
 			var widget:IFlxUIWidget = getAsset(nameStr);
-			var theval:Float = 0;
-			
-			switch(size_prop) {
-				case "width": theval = widget.width;
-				case "height": theval = widget.height;
+			if (widget != null) {
+				
+				var theval:Float = 0;
+				switch(size_prop) {
+					case "width": theval = widget.width;
+					case "height": theval = widget.height;
+				}
+				
+				total_size += theval;
 			}
-			
-			total_size += theval;
 		}
 		
 		if (resize == false)	//not resizing, so space evenly
@@ -2119,68 +2121,68 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		object_size = Std.int(object_size);
 		space_size = Std.int(space_size);
 		
-		var i:Int = 0;
 		var last_pos:Float = bounds.x;
 		for (nameStr in objects)
 		{
 			var widget:IFlxUIWidget = getAsset(nameStr);
-			var pos:Float = last_pos;
-			if (!resize)
-			{
-				switch(size_prop)
+			if(widget != null) {
+				var pos:Float = last_pos;
+				if (!resize)
 				{
-					case "width": object_size = widget.width;
-					case "height": object_size = widget.height;
-				}
-			}
-			else
-			{
-				//if we are resizing, resize it to the target size now
-				if (Std.is(widget, IResizable))
-				{
-					var allow:Bool = true;
-					var widgetr:IResizable = cast widget;
-					if (axis == "vertical")
+					switch(size_prop)
 					{
-						if (object_size > widgetr.width)
-						{
-							allow = allowGrow;
-						}
-						else if (object_size < widgetr.width)
-						{
-							allow = allowShrink;
-						}
-						if (allow)
-						{
-							widgetr.resize(widgetr.width, object_size);
-						}
-					}
-					else if (axis == "horizontal")
-					{
-						if (object_size > widgetr.height)
-						{
-							allow = allowGrow;
-						}
-						else if (object_size < widgetr.height)
-						{
-							allow = allowShrink;
-						}
-						if (allow)
-						{
-							widgetr.resize(object_size, widgetr.height);
-						}
+						case "width": object_size = widget.width;
+						case "height": object_size = widget.height;
 					}
 				}
-			}
-			last_pos = pos + object_size + space_size;
+				else
+				{
+					//if we are resizing, resize it to the target size now
+					if (Std.is(widget, IResizable))
+					{
+						var allow:Bool = true;
+						var widgetr:IResizable = cast widget;
+						if (axis == "vertical")
+						{
+							if (object_size > widgetr.width)
+							{
+								allow = allowGrow;
+							}
+							else if (object_size < widgetr.width)
+							{
+								allow = allowShrink;
+							}
+							if (allow)
+							{
+								widgetr.resize(widgetr.width, object_size);
+							}
+						}
+						else if (axis == "horizontal")
+						{
+							if (object_size > widgetr.height)
+							{
+								allow = allowGrow;
+							}
+							else if (object_size < widgetr.height)
+							{
+								allow = allowShrink;
+							}
+							if (allow)
+							{
+								widgetr.resize(object_size, widgetr.height);
+							}
+						}
+					}
+				}
 			
-			switch(pos_prop)
-			{
-				case "x": widget.x = pos;
-				case "y": widget.y = pos;
+				last_pos = pos + object_size + space_size;
+				
+				switch(pos_prop)
+				{
+					case "x": widget.x = pos;
+					case "y": widget.y = pos;
+				}
 			}
-			
-			i++;
 		}
 	}
 	
@@ -3113,56 +3115,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		if (haxeDef != "") {
 			match = true;
-			var defValue:Bool = false;
-			switch(haxeDef) {
-				case "linux":
-					#if linux
-						defValue = true;
-					#end
-				case "mac":
-					#if mac
-						defValue = true;
-					#end
-				case "windows":
-					#if windows
-						defValue = true;
-					#end
-				case "flash":
-					#if flash
-						defValue = true;
-					#end
-				case "sys":
-					#if sys
-						defValue = true;
-					#end
-				case "cpp":
-					#if cpp
-						defValue = true;
-					#end
-				case "3ds": 
-					#if NINTENDO_3DS
-						defValue = true;
-					#end
-				case "wiiu":
-					#if NINTENDO_WIIU
-						defValue = true;
-					#end
-				case "vita":
-					#if PS_VITA
-						defValue = true;
-					#end
-				case "ps3":
-					#if PS_3
-						defValue = true;
-					#end
-				case "ps4":
-					#if PS_4
-						defValue = true;
-					#end
-			}
+			var defValue:Bool = U.checkHaxedef(haxeDef);
 			match = (defValue == haxeVal);
 			if (match != matchValue) {
-			return false;
+				return false;
 			}
 		}
 		
@@ -4869,6 +4825,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	{
 		var X:Float = _loadX(data);			//position offset from 0,0
 		var Y:Float = _loadY(data);
+		
+		var name = U.xml_name(data.x);
+		if (name == "item_1") {
+			trace("BOINK");
+		}
 		
 		//if you don't define x or y in an anchor, they default to 0
 		//but if you set x="same" / y="same", you default to whatever it was before
