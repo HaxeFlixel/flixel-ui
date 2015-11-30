@@ -3671,11 +3671,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 			}else{
 				//load default graphics
-				if(W > 0 && H > 0){
-					fb.loadGraphicSlice9(null, W, H, null, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);
-				}else {
-					fb.loadGraphicSlice9(null, 80, 20, null, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);
-				}
+				if (W <= 0) W = 80;
+				if (H <= 0) H = 20;
+				fb.loadGraphicSlice9(null, W, H, null, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);
 			}
 		}
 		
