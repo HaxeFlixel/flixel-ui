@@ -56,11 +56,14 @@ class FlxUITooltipManager implements IFlxDestroyable
 	public function init():Void
 	{
 		var ui:FlxUI = (state != null) ? state._ui : ((subState != null) ? subState._ui : null);
-		if (ui == null) return;
+		if (ui == null)
+		{
+			return;
+		}
 		
 		//See if there is a default tooltip definition specified in the xml, and if so, load that as our default tooltip style
 		
-		if (ui.getDefinition("default:tooltip") != null)
+		if (ui != null && ui.getDefinition("default:tooltip") != null)
 		{
 			var tt = ui._loadTooltipData(null);					//passing in null causes it to load the default tooltip style
 			defaultStyle = FlxUITooltip.cloneStyle(tt.style);
