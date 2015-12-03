@@ -511,6 +511,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				_asset_index.remove(key);
 			}_asset_index = null;
 		}
+		if(_tag_index != null){
+			for (key in _tag_index.keys()) {
+				FlxArrayUtil.clearArray(_tag_index.get(key));
+				_tag_index.remove(key);
+			}_tag_index = null;
+		}
 		if (_definition_index != null) {
 			for (key in _definition_index.keys()) {
 				_definition_index.remove(key);
@@ -521,6 +527,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				_variable_index.remove(key);
 			}_variable_index = null;
 		}
+		if (_mode_index != null) {
+			for (key in _mode_index.keys()) {
+				_mode_index.remove(key);
+			}_mode_index = null;
+		}
+		_ptr = null;
 		_superIndexUI = null;
 		_ptr_tongue = null;
 		if (cursorLists != null)
@@ -532,6 +544,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			FlxArrayUtil.clearArray(cursorLists);
 		}
 		cursorLists = null;
+		FlxArrayUtil.clearArray(_failure_checks); _failure_checks = null;
+		FlxArrayUtil.clearArray(_assetsToCleanUp); _assetsToCleanUp = null;
+		FlxArrayUtil.clearArray(_scaledAssets); _scaledAssets = null;
 		super.destroy();
 	}
 	
