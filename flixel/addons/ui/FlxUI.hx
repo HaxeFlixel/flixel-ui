@@ -3186,6 +3186,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function addToCleanup(str:String):Void
 	{
+		if (_assetsToCleanUp == null) return;
 		if (_assetsToCleanUp.indexOf(str) == -1)
 		{
 			_assetsToCleanUp.push(str);
