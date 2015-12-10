@@ -197,6 +197,13 @@ class FlxUITooltip extends FlxUIGroup
 		
 		_arrowBkg.x = _arrow.x - style.borderSize;
 		_arrowBkg.y = _arrow.y - style.borderSize;
+		
+		_bkg.x = Std.int(_bkg.x);
+		_bkg.y = Std.int(_bkg.y);
+		_arrowBkg.x = Std.int(_arrowBkg.x);
+		_arrowBkg.y = Std.int(_arrowBkg.y);
+		_arrow.x = Std.int(_arrow.x);
+		_arrow.y = Std.int(_arrow.y);
 	}
 	
 	public function hide():Void
