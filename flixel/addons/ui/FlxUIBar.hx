@@ -73,9 +73,10 @@ class FlxUIBar extends FlxBar implements IResizable implements IFlxUIWidget impl
 		barWidth = cast width;
 		barHeight = cast height;
 		
-		#if FLX_RENDER_BLIT
-		makeGraphic(cast width, cast height, FlxColor.TRANSPARENT, true);
-		#end
+		if (FlxG.renderBlit)
+		{
+			makeGraphic(cast width, cast height, FlxColor.TRANSPARENT, true);
+		}
 		
 		var showBorder = (style.borderColor != null);
 		

@@ -130,6 +130,9 @@ class FlxUITooltip extends FlxUIGroup
 		W += style.leftPadding + style.rightPadding;
 		H += style.topPadding + style.bottomPadding;
 		
+		W = Std.int(W);
+		H = Std.int(H);
+		
 		refreshBkg(W, H, style);
 		
 		var oldOffX = _anchorArrow.x.offset;
@@ -198,6 +201,8 @@ class FlxUITooltip extends FlxUIGroup
 		_arrowBkg.x = _arrow.x - style.borderSize;
 		_arrowBkg.y = _arrow.y - style.borderSize;
 		
+		_titleText.x = Std.int(_titleText.x);
+		_bodyText.x = Std.int(_bodyText.x);
 		_bkg.x = Std.int(_bkg.x);
 		_bkg.y = Std.int(_bkg.y);
 		_arrowBkg.x = Std.int(_arrowBkg.x);
