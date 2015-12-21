@@ -172,6 +172,9 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		dropPanel.y = header.background.y;
 		if (reverse)
 			dropPanel.y -= panelHeight;
+		else
+			dropPanel.y += header.background.height;
+		
 		dropPanel.resize(header.background.width, panelHeight);
 		dropPanel.visible = false;
 		add(dropPanel);
