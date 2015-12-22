@@ -172,6 +172,9 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		dropPanel.y = header.background.y;
 		if (reverse)
 			dropPanel.y -= panelHeight;
+		else
+			dropPanel.y += header.background.height;
+		
 		dropPanel.resize(header.background.width, panelHeight);
 		dropPanel.visible = false;
 		add(dropPanel);
@@ -357,10 +360,10 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	{
 		super.update(elapsed);
 		
-		#if (!FLX_NO_MOUSE && !FLX_NO_TOUCH)
+		#if !FLX_NO_MOUSE
 		if (dropPanel.visible && FlxG.mouse.justPressed) 
 		{
-			if (!FlxG.mouse.overlaps(dropPanel)) 
+			if (!FlxG.mouse.overlaps(this)) 
 			{
 				showList(false);
 			}
