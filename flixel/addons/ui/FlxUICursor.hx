@@ -291,6 +291,21 @@ class FlxUICursor extends FlxUISprite
 			}
 		}
 		#end
+		
+		#if !FLX_NO_MOUSE
+		if (lastMouseX != FlxG.mouse.x || lastMouseY != FlxG.mouse.y)
+		{
+			var oldVis = visible;
+			jumpToXY(FlxG.mouse.x, FlxG.mouse.y);
+			visible = oldVis;
+			
+			#if !FLX_NO_MOUSE
+			lastMouseX = FlxG.mouse.x;
+			lastMouseY = FlxG.mouse.y;
+			#end
+		}
+		#end
+		
 		_checkKeys();
 		_clickTime += elapsed;
 		super.update(elapsed);
@@ -599,6 +614,8 @@ class FlxUICursor extends FlxUISprite
 	private var _widgets:Array<IFlxUIWidget>;			//list of widgets under cursor's control
 	#if !FLX_NO_MOUSE
 	private var _newMouse:FlxUIMouse;
+	private var lastMouseX:Float = 0;
+	private var lastMouseY:Float = 0;
 	#end
 	private var _clickPressed:Bool = false;
 	
@@ -725,36 +742,39 @@ class FlxUICursor extends FlxUISprite
 			}
 		}
 		
-		if (wasInvisible && visible)
+		if (wasInvisible && visible && lastLocation != -1)
 		{
 			location = lastLocation;
 		}
 		
-		if (_clickKeysJustPressed())		//JUST PRESSED: send a press event only the first time it's pressed
+		//if (visible && active && location != -1)
 		{
-			if (!ignoreNextInput)
+			if (_clickKeysJustPressed())		//JUST PRESSED: send a press event only the first time it's pressed
+			{
+				if (!ignoreNextInput)
+				{
+					_clickPressed = true;
+					_clickTime = 0;
+					_doPress();
+				}
+				else
+				{
+					ignoreNextInput = false;
+				}
+			}
+			
+			if (_clickKeysPressed())			//STILL PRESSED: keep the cursor in that position while the key is down
 			{
 				_clickPressed = true;
-				_clickTime = 0;
-				_doPress();
+				_doMouseMove();
 			}
-			else
+			else if(_clickTime > 0)				//NOT PRESSED and not exact same frame as when it was just pressed
 			{
-				ignoreNextInput = false;
-			}
-		}
-		
-		if (_clickKeysPressed())			//STILL PRESSED: keep the cursor in that position while the key is down
-		{
-			_clickPressed = true;
-			_doMouseMove();
-		}
-		else if(_clickTime > 0)				//NOT PRESSED and not exact same frame as when it was just pressed
-		{
-			if (_clickPressed)				//if we were previously just pressed...
-			{
-				_clickPressed = false;		//count this as "just released"
-				_doRelease();				//do the release action
+				if (_clickPressed)				//if we were previously just pressed...
+				{
+					_clickPressed = false;		//count this as "just released"
+					_doRelease();				//do the release action
+				}
 			}
 		}
 	}
@@ -1183,10 +1203,13 @@ class FlxUICursor extends FlxUISprite
 			}
 		}
 		
-		if (currWidget.visible == false && (recursion < _widgets.length))
+		if (currWidget != null && _widgets != null)
 		{
-			_doInput(X, Y, recursion + 1);
-			return;
+			if (currWidget.visible == false && (recursion < _widgets.length))
+			{
+				_doInput(X, Y, recursion + 1);
+				return;
+			}
 		}
 		
 		if (callback != null)
