@@ -47,25 +47,21 @@ class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIW
 		makeTiles(tileWidth,tileHeight,_tilesWide,_tilesTall,_color1,_color2);
 	}
 
-	private function makeTiles(tileWidth:Int,tileHeight:Int,tilesWide:Int,tilesTall:Int,color1:Int=0xff808080,color2:Int=0xffc4c4c4):Void {
+	private function makeTiles(tileWidth:Int,tileHeight:Int,tilesWide:Int,tilesTall:Int,color1:FlxColor=0xff808080,color2:FlxColor=0xffc4c4c4):Void {
 		var size:FlxPoint = constrain(tileWidth*_tilesWide, tileHeight*_tilesTall);
 		
 		tileWidth = Std.int(size.x);
 		tileHeight = Std.int(size.y);
 		
-		makeGraphic(tileWidth * tilesWide, tileHeight * tilesTall, color1);
+		makeGraphic(tilesWide, tilesTall, color1);
 		
-		var brush:BitmapData = new BitmapData(tileWidth, tileHeight, true, color2);
 		var canvas:BitmapData = pixels;
 		
 		var j:Int = 0;
-		var pt:Point = new Point(0, 0);
 		for (ix in 0...tilesWide) {
 			for (iy in 0...tilesTall) {
 				if (j % 2 == 0) {
-					pt.x = ix * tileWidth;
-					pt.y = iy * tileHeight;
-					canvas.copyPixels(brush, brush.rect, pt);
+					canvas.setPixel(ix, iy, color2);
 				}
 				j++;
 			}
@@ -74,8 +70,9 @@ class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIW
 			}
 		}
 		
-		pt = null;
 		pixels = canvas;
+		scale.set(tileWidth, tileHeight);
+		updateHitbox();
 	}
 	
 	private function constrain(w:Float,h:Float):FlxPoint
