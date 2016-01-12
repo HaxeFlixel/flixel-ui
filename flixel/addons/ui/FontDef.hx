@@ -63,7 +63,9 @@ class FontDef
 		var newBorder = ((border == null) ? null : border.clone());
 		var newFormat = ((format == null) ? null : 
 			new TextFormat(format.font, format.size, format.color, format.bold, format.italic, format.underline, format.url, format.target, format.align, format.leftMargin, format.rightMargin, format.indent, format.leading));
-		
+		if (format != null) { 
+			newFormat.letterSpacing = format.letterSpacing;
+		}
 		var newThis = new FontDef(name, extension, file, newFormat, newBorder);
 		newThis.size = size;
 		return newThis;
@@ -80,6 +82,8 @@ class FontDef
 		fd.format.italic = dtf.italic;
 		fd.format.underline = dtf.underline;
 		fd.format.url = dtf.url;
+		fd.format.letterSpacing = dtf.letterSpacing;
+		fd.format.leading = dtf.leading;
 		fd.format.target = dtf.target;
 		fd.format.align = dtf.align;
 		return fd;
@@ -119,7 +123,10 @@ class FontDef
 		}
 		
 		var font = (file == "" || file == null) ? null : file;
+		
 		flxText.setFormat(font, Std.int(format.size), format.color, flxTxtAlign, border.style, border.color);
+		flxText.textField.defaultTextFormat.leading = format.leading;
+		flxText.textField.defaultTextFormat.letterSpacing = format.letterSpacing;
 		return flxText;
 	}
 	
