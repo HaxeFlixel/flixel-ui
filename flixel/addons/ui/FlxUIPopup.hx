@@ -77,6 +77,9 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 		if (_quickSetupParams != null) {
 			_doQuickSetup();
 		}
+		
+		scrollFactor.set(0, 0);
+		_ui.setScrollFactor(0, 0);
 	}
 	
 	/**
