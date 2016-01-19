@@ -2911,8 +2911,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		fc = new FlxUICheckBox(0, 0, box_asset, check_asset, label, labelW, params);
 		formatButtonText(data, fc);
 		
-		var text_x:Int = U.xml_i(data.x, "text_x");
-		var text_y:Int = U.xml_i(data.x, "text_y");
+		var text_x:Int = Std.int(_loadWidth(data, 0, "text_x"));
+		var text_y:Int = Std.int(_loadHeight(data, 0, "text_y"));
 		
 		fc.textX = text_x;
 		fc.textY = text_y;
@@ -3727,14 +3727,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var text_x:Int = 0;
 		var text_y:Int = 0;
 		if (data.x.get("text_x") != null) {
-			text_x = U.xml_i(data.x, "text_x");
+			text_x =  Std.int(_loadWidth(data, 0, "text_x"));
 		}else if (data.x.get("label_x") != null) {
-			text_x = U.xml_i(data.x, "label_x");
+			text_x =  Std.int(_loadWidth(data, 0, "label_x"));
 		}
 		if (data.x.get("text_y") != null) {
-			text_y = U.xml_i(data.x, "text_y");
+			text_y = Std.int(_loadHeight(data, 0, "text_y")); 
 		}else if (data.x.get("label_y") != null) {
-			text_y = U.xml_i(data.x, "label_y");
+			text_y = Std.int(_loadHeight(data, 0, "label_y"));
 		}
 		
 		if (Std.is(fb, FlxUISpriteButton))
