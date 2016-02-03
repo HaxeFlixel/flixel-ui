@@ -443,11 +443,17 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 	
 	private function updateActives():Void {
 		var i:Int = 0;
-		for (r in _list_radios) {
+		for (r in _list_radios)
+		{
 			r.active = _list_active[i];
-			if (_list_active[i] == false && inactiveStyle != null){
+			
+			if (_list_active[i] == false && inactiveStyle != null)
+			{
 				inactiveStyle.applyToCheck(r);
-			}else if (_list_active[i] == true && activeStyle != null) {
+			}
+			
+			else if (_list_active[i] == true && activeStyle != null)
+			{
 				activeStyle.applyToCheck(r);
 			}
 			i++;
