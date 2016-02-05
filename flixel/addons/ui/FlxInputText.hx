@@ -288,7 +288,7 @@ class FlxInputText extends FlxText
 		{
 			if (FlxG.mouse.overlaps(this)) 
 			{
-				caretIndex = getCaretIndexFromPoint(FlxG.mouse.toPoint());
+				caretIndex = getCaretIndex();
 				hasFocus = true;
 			}
 			else 
@@ -415,15 +415,14 @@ class FlxInputText extends FlxText
 	}
 	
 	/**
-	 * Gets the index of a character in this box at a point
-	 * @param	Landing			The point to check for.
-	 * @return					The index of the character hit by the point. 
-	 * 							Returns -1 if the point is not found.
+	 * Gets the index of a character in this box
+	 * @return The index of the character hit by the point. 
+	 *         Returns -1 if the point is not found.
 	 */
-	private function getCaretIndexFromPoint(Landing:FlxPoint):Int
+	private function getCaretIndex():Int
 	{
 	#if !FLX_NO_MOUSE
-		var hit:FlxPoint = FlxPoint.get(FlxG.mouse.x - x, FlxG.mouse.y - y);
+		var hit = FlxPoint.get(FlxG.mouse.x - x, FlxG.mouse.y - y);
 		return getCharIndexAtPoint(hit.x, hit.y);
 	#else
 		return 0;
