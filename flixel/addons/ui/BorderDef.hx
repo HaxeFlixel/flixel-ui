@@ -5,11 +5,11 @@ import flixel.util.FlxColor;
 class BorderDef
 {
 	public var style:FlxTextBorderStyle; 
-	public var color:Int; 
+	public var color:FlxColor; 
 	public var size:Float;
 	public var quality:Float;
 	
-	public function new(Style:FlxTextBorderStyle, Color:Int, Size:Float=1, Quality:Float=1) {
+	public function new(Style:FlxTextBorderStyle, Color:FlxColor, Size:Float=1, Quality:Float=1) {
 		style = Style;
 		color = Color;
 		size = Size;
@@ -31,7 +31,7 @@ class BorderDef
 	{
 		var border_str:String = U.xml_str(data, "border");
 		var border_style:FlxTextBorderStyle = NONE;
-		var border_color:Int = U.xml_color(data, "border_color");
+		var border_color:Int = U.xml_color(data, "border_color", true, FlxColor.TRANSPARENT);
 		var border_size:Float = U.xml_f(data, "border_size", 1);
 		var border_quality:Float = U.xml_f(data, "border_quality", 0);
 		
