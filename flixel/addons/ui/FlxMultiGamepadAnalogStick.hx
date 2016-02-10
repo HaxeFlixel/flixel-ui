@@ -48,6 +48,8 @@ class FlxMultiGamepadAnalogStick extends FlxMultiGamepad
 	
 	private override function checkJustPressed():Bool
 	{
+		if (gamepad == null) return false;
+
 		var value = false;
 		var dz = gamepad.deadZone;
 		return switch(sInput.id)
