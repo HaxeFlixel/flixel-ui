@@ -991,7 +991,7 @@ In English (en-US) this will be "Back," in Norwegian (nb-NO) this will be "Tilba
 [1] Here's the source code snippet for ```FireTongueEx.hx```:
 ```haxe
 import firetongue.FireTongue;
-import flixel.addons.ui.IFireTongue;
+import flixel.addons.ui.interfaces.IFireTongue;
 
 /**
  * This is a simple wrapper class to solve a dilemma:
