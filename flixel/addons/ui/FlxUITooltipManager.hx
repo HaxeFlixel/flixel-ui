@@ -137,12 +137,14 @@ class FlxUITooltipManager implements IFlxDestroyable
 		else if (Std.is(thing, FlxUIButton))
 		{
 			var i = findBtn(cast thing);
-			if (i != -1) return true;
+			if (i == -1) return false;
+			return i == current;
 		}
 		else if(Std.is(thing, FlxObject))
 		{
 			var i = findObj(cast thing);
-			if (i != -1) return true;
+			if (i == -1) return false;
+			return i == current;
 		}
 		return false;
 	}
