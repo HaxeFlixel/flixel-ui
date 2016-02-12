@@ -429,7 +429,6 @@ class FlxUICursor extends FlxUISprite
 				return true;
 			}
 		}
-		location = -1;
 		return false;
 	}
 	
@@ -1164,7 +1163,6 @@ class FlxUICursor extends FlxUISprite
 		else	//move UP/DOWN
 		{
 			//Harder: iterate through array, looking for widget with higher or lower y value
-			
 			var nextY = _findNextY(Y, location, _widgets, null);
 			
 			if (nextY != -1)			//found something, just jump to that
