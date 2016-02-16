@@ -1,3 +1,84 @@
+2.0.0
+------------------------------
+* Compatibility with flixel 4.0.0
+* `FlxUI`:
+   * added `getAllAssets()`
+   * added `getAssetKeys()`
+   * added support for auto-scaled images in xml
+   * added `<position>`
+   * added `liveFilePath` and support for live reloading
+   * added support for different rounding modes in xml
+   * added basic support for setting and comparing variables in xml
+   * added `<load_if>`
+   * the `spacing` attribute in `<align>` can now use formulas
+   * added `to_height` attribute to `<scale>`
+   * 9-slice sprites can now be scaled before 9-slice-scaling in xml
+   * added `setVariable()`
+   * added `sendToFront()` and `sendToBack()`
+   * added `getAssetGroup()`
+   * added `<inject>`
+   * added support for an `alpha` attribute to all widget tags
+* `IFlxUIWidget`:
+   * renamed `id` to `name` 
+* `FlxUITypedButton`:
+   * can now have a separate toggle label
+   * added `copyStyle()`
+   * added `getCenterLabelOffset()`
+   * added `clone()`
+   * `active` can now be set in xml
+   * added `autoResizeLabel`
+   * `up` / `over` / `down` colors are now nullable
+   * `loadGraphicSlice9()` and `loadGraphicsMultiple()` now take an array of `FlxGraphicAsset`s instead of `String`
+* `FlxUIText`:
+   * now implements `IHasParams`
+   * `border="none"` / `border="false"` is now supported in xml
+   * added `clone()`
+   * added support for resizing
+* `FlxUISprite`:
+   * added support for resizing
+   * now automatically scales if `width`, `height` or `resize_ratio` are specified in xml
+* `FlxUIRadioGroup`:
+   * added `getLabel()`
+   * added `getId()`
+   * added support for active / inactive states
+* `FlxUIRadioButton`:
+   * the box and dot can now be loaded as sprites (`<dot>` and `<box>`)
+* `FlxUIInputText`:
+   * `password_mode` can now be set in xml
+* `FlxUIState`:
+   * added `loadUIFromData()`
+   * added `createUI()`
+   * no longer sets `FlxG.mouse.visible` to `true` automatically
+   * added `setUIVariable()`
+   * added `tooltips`
+* `FlxUISubState`:
+   * added `BGColor` argument to `new()`
+   * added `tooltips`
+* `FlxUINumericStepper`:
+   * addeds support for decimals
+* `FlxUICursor`:
+   * added gamepad support
+* `FlxUIDropDownMenu`:
+   * now drops upwards if height exceeds `FlxG.height`
+   * added `dropDirection` and `FlxUIDropDownMenuDropDirection`
+* `FlxUIColorSwatchSelecter`:
+   * added support for custom swatch graphics
+* `FlxUIGroup`:
+   * added `setScrollFactor()` 
+* `U`:
+   * added `endline()`
+   * added `loadImageScaleToHeight()`
+   * added `unparentXML()`
+* Added `FontDef`
+* Added `BorderDef`
+* Added `ButtonLabelStyle`
+* Added `FlxUIBar`
+* Added `FlxMultiGamepad`
+* Added `FlxMultiGamepadAnalogStick`
+* Renamed `MultiKey` to `FlxMultiKey`
+* Added `FlxUITooltip` and `FlxUITooltipManager`
+* Added `FlxUILine`
+
 1.0.2
 ------------------------------
 * Compatibility with flixel 3.3.0
