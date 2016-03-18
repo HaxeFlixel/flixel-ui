@@ -327,8 +327,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 		var old_offx:Float = 0;
 		var old_offy:Float = 0;
 		
-		if (W == 0) { W = 80; }
-		if (H == 0) { H = 20; }
+		if (W <= 0) { W = 80; }
+		if (H <= 0) { H = 20; }
 		
 		if (Redraw)
 		{

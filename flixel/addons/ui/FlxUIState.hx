@@ -213,7 +213,10 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	override public function update(elapsed:Float):Void 
 	{
 		super.update(elapsed);
-		tooltips.update(elapsed);
+		if (tooltips != null)
+		{
+			tooltips.update(elapsed);
+		}
 	}
 	
 	@:access(flixel.addons.ui.FlxUI)

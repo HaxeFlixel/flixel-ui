@@ -3095,11 +3095,33 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var aspect_ratio:Float = U.xml_f(node.x, "aspect_ratio", -1);
 		if (aspect_ratio != -1) {
 			match = true;
-			var tolerance:Float = U.xml_f(node.x, "tolerance", 0.1);
 			var screen_ratio:Float = cast(FlxG.width, Float) / cast(FlxG.height, Float);
 			var diff:Float = Math.abs(screen_ratio - aspect_ratio);
-			if (diff > tolerance) {
-				match = false;
+			if (node.has.tolerance)
+			{
+				var tolerance:Float = U.xml_f(node.x, "tolerance", 0.1);
+				if (diff > tolerance) {
+					match = false;
+				}
+			}
+			else if (node.has.tolerance_plus || node.has.tolerance_minus)
+			{
+				var tolerance_minus:Float = U.xml_f(node.x, "tolerance_minus", -1);
+				var tolerance_plus:Float = U.xml_f(node.x, "tolerance_plus", -1);
+				if (screen_ratio > aspect_ratio && tolerance_plus != -1)
+				{
+					if (diff > tolerance_plus)
+					{
+						match = false;
+					}
+				}
+				if (screen_ratio < aspect_ratio && tolerance_minus != -1)
+				{
+					if (diff > tolerance_minus)
+					{
+						match = false;
+					}
+				}
 			}
 			if (match != matchValue) {
 				return false;
