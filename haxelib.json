@@ -4,7 +4,7 @@
 	"license": "MIT",
 	"tags": ["game", "openfl", "flash", "neko", "cpp", "android", "ios", "cross"],
 	"description": "A UI library for Flixel",
-	"version": "1.0.2",
-	"releasenote": "Compatibility with flixel 3.3.0, several new classes, bugfixes and improvements. See the CHANGELOG.md for more details.",
+	"version": "2.0.0",
+	"releasenote": "Compatibility with flixel 4.0.0, support for tooltips, as well as many improvements and fixes. See the CHANGELOG.md for more details.",
 	"contributors": ["haxeflixel"]
 }
