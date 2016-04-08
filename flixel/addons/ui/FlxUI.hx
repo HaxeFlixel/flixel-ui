@@ -2013,11 +2013,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var spacing:Float = -1;
 				if (axis == "horizontal")
 				{
-					spacing = _getDataSize("h", U.xml_str(data.x,"spacing",true), -1);
+					spacing = _getDataSize("w", U.xml_str(data.x,"spacing",true), -1);
 				}
 				else
 				{
-					spacing = _getDataSize("w", U.xml_str(data.x,"spacing",true), -1);
+					spacing = _getDataSize("h", U.xml_str(data.x,"spacing",true), -1);
 				}
 				
 				var resize:Bool = U.xml_bool(data.x, "resize");
