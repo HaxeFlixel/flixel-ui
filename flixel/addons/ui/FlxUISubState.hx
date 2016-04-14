@@ -91,7 +91,7 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 		
 		tooltips = new FlxUITooltipManager(this);
 		
-		_ui = new FlxUI(null,this,null,_tongue);
+		_ui = createUI(null,this,null,_tongue);
 		add(_ui);
 		
 		_ui.getTextFallback = getTextFallback;
@@ -216,6 +216,13 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 	{
 		return new FlxUICursor(onCursorEvent);
 	}
+
+	//this makes it easy to override this function in your own FlxUIState,
+	//in case you want to instantiate a custom class that extends FlxUI instead
+	private function createUI(data:Fast = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null, liveFilePath_:String=""):FlxUI
+	{
+		return new FlxUI(data, ptr, superIndex_, tongue_, liveFilePath_);
+	}
 	
 	private function reloadUI():Void {
 		if (_ui != null) {
@@ -224,7 +231,7 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 			_ui = null;
 		}
 		
-		_ui = new FlxUI(null,this,null,_tongue);
+		_ui = createUI(null,this,null,_tongue);
 		add(_ui);
 		
 		var data:Fast = U.xml(_xml_id);
