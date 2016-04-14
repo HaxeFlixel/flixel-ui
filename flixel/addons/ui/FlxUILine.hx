@@ -16,10 +16,11 @@ class FlxUILine extends FlxUISprite implements IResizable
 	public function new(X:Int,Y:Int,Axis:LineAxis,Length:Float,Thickness:Float,Color:FlxColor) 
 	{
 		super(X, Y);
-		makeGraphic(1, 1, FlxColor.WHITE);
+		makeGraphic(2, 2, FlxColor.WHITE);
 		color = Color;
 		axis = Axis;
 		length = Length;
+		thickness = Thickness;
 	}
 	
 	private function set_axis(a:LineAxis):LineAxis
@@ -46,11 +47,11 @@ class FlxUILine extends FlxUISprite implements IResizable
 	private function refresh():Void {
 		if (axis == HORIZONTAL)
 		{
-			scale.set(length, thickness);
+			scale.set(0.5*length, 0.5*thickness);
 		}
 		else
 		{
-			scale.set(thickness, length);
+			scale.set(0.5*thickness, 0.5*length);
 		}
 		updateHitbox();
 	}
