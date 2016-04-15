@@ -2013,11 +2013,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var spacing:Float = -1;
 				if (axis == "horizontal")
 				{
-					spacing = _getDataSize("h", U.xml_str(data.x,"spacing",true), -1);
+					spacing = _getDataSize("w", U.xml_str(data.x,"spacing",true), -1);
 				}
 				else
 				{
-					spacing = _getDataSize("w", U.xml_str(data.x,"spacing",true), -1);
+					spacing = _getDataSize("h", U.xml_str(data.x,"spacing",true), -1);
 				}
 				
 				var resize:Bool = U.xml_bool(data.x, "resize");
@@ -4024,7 +4024,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var src:String = ""; 
 		
 		var axis:String = U.xml_str(data.x, "axis", true, "horizontal");
-		var thickness:Int = Std.int(_loadWidth(data, 1, "thickness"));
+		var thickness:Int = Std.int(_loadWidth(data, -1, "thickness"));
 		
 		var bounds: { min_width:Float, min_height:Float, 
 					  max_width:Float, max_height:Float } = calcMaxMinSize(data);
@@ -4055,7 +4055,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var lineAxis:LineAxis = (axis == "horizontal") ? LineAxis.HORIZONTAL : LineAxis.VERTICAL;
 		var lineLength:Float = (lineAxis == LineAxis.HORIZONTAL) ? W : H;
-		var lineThickness:Float = (lineAxis == LineAxis.HORIZONTAL) ? H : W;
+		var lineThickness:Float = thickness != -1 ? thickness : (lineAxis == LineAxis.HORIZONTAL) ? H : W;
 		
 		var fl = new FlxUILine(0, 0, lineAxis, lineLength, lineThickness, C);
 		

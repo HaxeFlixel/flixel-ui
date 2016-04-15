@@ -58,11 +58,11 @@ class FlxUITooltip extends FlxUIGroup
 		
 		if (style.titleWidth > 0)
 		{
-			_titleText.width = _titleText.textField.width = style.titleWidth;
+			_titleText.width = Std.int(_titleText.textField.width = style.titleWidth);
 		}
 		if (style.bodyWidth > 0)
 		{
-			_bodyText.width  = _bodyText.textField.width  = style.bodyWidth;
+			_bodyText.width  = Std.int(_bodyText.textField.width  = style.bodyWidth);
 		}
 		
 		if (style.titleFormat != null)
@@ -89,18 +89,18 @@ class FlxUITooltip extends FlxUIGroup
 		_titleText.update(0);
 		_bodyText.update(0);
 		
-		var titleHeight = _titleText.textField.textHeight + 4;
-		var bodyHeight = _bodyText.textField.textHeight + 4;
+		var titleHeight = Std.int(_titleText.textField.textHeight + 4);
+		var bodyHeight = Std.int(_bodyText.textField.textHeight + 4);
 		
 		if (style.titleOffset != null)
 		{
-			_titleText.x = style.titleOffset.x;
-			_titleText.y = style.titleOffset.y;
+			_titleText.x = Std.int(style.titleOffset.x);
+			_titleText.y = Std.int(style.titleOffset.y);
 		}
 		if (style.bodyOffset != null)
 		{
-			_bodyText.x = style.bodyOffset.x;
-			_bodyText.y = _titleText.y + titleHeight + style.bodyOffset.y;
+			_bodyText.x = Std.int(style.bodyOffset.x);
+			_bodyText.y = Std.int(_titleText.y + titleHeight + style.bodyOffset.y);
 		}
 		
 		var W:Int = Std.int(_bkg.width);
@@ -135,11 +135,14 @@ class FlxUITooltip extends FlxUIGroup
 		
 		refreshBkg(W, H, style);
 		
-		var oldOffX = _anchorArrow.x.offset;
-		var oldOffY = _anchorArrow.y.offset;
+		var oldOffX = Std.int(_anchorArrow.x.offset);
+		var oldOffY = Std.int(_anchorArrow.y.offset);
 		
 		_anchorArrow.x.offset -= anchor.x.offset;
 		_anchorArrow.y.offset += anchor.y.offset;
+		
+		_anchorArrow.x.offset = Std.int(_anchorArrow.x.offset);
+		_anchorArrow.y.offset = Std.int(_anchorArrow.y.offset);
 		
 		_anchorArrow.anchorThing(_arrow, _bkg);	//anchor arrow to background
 		
@@ -198,8 +201,11 @@ class FlxUITooltip extends FlxUIGroup
 		
 		anchor.anchorThing(this, obj);			//anchor entire group to object
 		
-		_arrowBkg.x = _arrow.x - style.borderSize;
-		_arrowBkg.y = _arrow.y - style.borderSize;
+		x = Std.int(x);
+		y = Std.int(y);
+		
+		_arrowBkg.x = Std.int(_arrow.x - style.borderSize);
+		_arrowBkg.y = Std.int(_arrow.y - style.borderSize);
 		
 		_titleText.x = Std.int(_titleText.x);
 		_bodyText.x = Std.int(_bodyText.x);
