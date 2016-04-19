@@ -577,6 +577,18 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var screenRegion = new FlxUIRegion(0, 0, FlxG.width, FlxG.height);
 				screenRegion.name = "screen";
 				addAsset(screenRegion, "screen");
+				
+				if (data.hasNode.screen_override)
+				{
+					if(_loadTest(data.node.screen_override))
+					{
+						var screenNode = data.node.screen_override;
+						_loadPosition(screenNode, screenRegion);
+						screenRegion.width = _loadWidth(screenNode, FlxG.width);
+						screenRegion.height = _loadHeight(screenNode, FlxG.height);
+						
+					}
+				}
 			}
 			
 			_data = data;
@@ -1410,6 +1422,24 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return thing;
 	}
 	
+	private function screenWidth():Int
+	{
+		if (hasAsset("screen"))
+		{
+			return Std.int(getAsset("screen").width);
+		}
+		return FlxG.width;
+	}
+	
+	private function screenHeight():Float
+	{
+		if (hasAsset("height"))
+		{
+			return Std.int(getAsset("screen").height);
+		}
+		return FlxG.height;
+	}
+	
 	/***PRIVATE***/
 	
 	@:allow(FlxUI)
@@ -2231,8 +2261,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}else {
 			switch(property) {
-				case "w", "width": val_f = p * thisWidth(); 
-				case "h", "height": val_f = p * thisHeight();
+				case "w", "width": val_f = p * screenWidth(); 
+				case "h", "height": val_f = p * screenHeight();
 			}
 		}
 				
@@ -4385,19 +4415,19 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		{
 			case "": return 0;
 			case "left": return 0;
-			case "right": return thisWidth();
+			case "right": return screenWidth();
 			case "center":
-						 if (axis == "x") { return thisWidth() / 2; }
-					else if (axis == "y") { return thisHeight() / 2; }
+						 if (axis == "x") { return screenWidth() / 2; }
+					else if (axis == "y") { return screenHeight() / 2; }
 			case "top", "up": return 0;
-			case "bottom", "down": return thisHeight();
+			case "bottom", "down": return screenHeight();
 			default:
 				var perc:Float = U.perc_to_float(str);
 				if (!Math.isNaN(perc)) {			//it's a percentage
 					if (axis == "x") {
-						return perc * thisWidth();
+						return perc * screenWidth();
 					}else if (axis == "y") {
-						return perc * thisHeight();
+						return perc * screenHeight();
 					}
 				}else {
 					var r:EReg = ~/[\w]+\.[\w]+/;
@@ -4542,8 +4572,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		{
 			switch(target)
 			{
-				case "w", "width":	return thisWidth() * percf;		//return % of screen size
-				case "h", "height": return thisHeight() * percf;
+				case "w", "width":	return screenWidth() * percf;		//return % of screen size
+				case "h", "height": return screenHeight() * percf;
 				case "scale", "scale_x", "scale_y": return percf;	//return % as a float
 			}
 		}
@@ -4750,9 +4780,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			switch(str)
 			{
 				case "top", "up": return_val = 0;
-				case "bottom", "down": return_val = thisHeight();
+				case "bottom", "down": return_val = screenHeight();
 				case "left": return_val = 0;
-				case "right": return_val = thisWidth();
+				case "right": return_val = screenWidth();
 				default:
 					if (U.isStrNum(str))
 					{
