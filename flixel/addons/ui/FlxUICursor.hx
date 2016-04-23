@@ -519,6 +519,11 @@ class FlxUICursor extends FlxUISprite
 		}
 	}
 	
+	public function clearWidgets():Void
+	{
+		FlxArrayUtil.clearArray(_widgets);
+	}
+	
 	public function removeWidget(widget:IFlxUIWidget, ?list:Array<IFlxUIWidget>):Bool {
 		if (list == null)
 		{

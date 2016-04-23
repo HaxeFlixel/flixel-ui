@@ -38,7 +38,7 @@ class FlxUITooltip extends FlxUIGroup
 		setScrollFactor(0, 0);
 	}
 	
-	public function show(obj:FlxObject, Title:String = "", Body:String = "", AutoSizeVertical:Bool = true, AutoSizeHorizontal:Bool = true):Void
+	public function show(obj:FlxObject, Title:String = "", Body:String = "", AutoSizeVertical:Bool = true, AutoSizeHorizontal:Bool = true, ShowArrow:Bool = true):Void
 	{
 		visible = true;
 		active = true;
@@ -55,6 +55,8 @@ class FlxUITooltip extends FlxUIGroup
 		
 		_arrowBkg = makeArrowBkg(_arrowBkg);
 		_arrow.color = style.background;
+		
+		_arrow.visible = _arrowBkg.visible = ShowArrow;
 		
 		if (style.titleWidth > 0)
 		{

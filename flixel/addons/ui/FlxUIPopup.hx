@@ -1,5 +1,6 @@
 package flixel.addons.ui;
 
+import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIState;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.math.FlxPoint;
@@ -192,7 +193,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 		}
 		
 		for (btn in arr) {
-			var the_btn:FlxUIButton;
+			var the_btn:IFlxUIButton;
 			if (_ui.hasAsset(btn)) {
 				the_btn = cast _ui.getAsset(btn);
 				if (_quickSetupParams.button_labels.length > i) {
@@ -203,14 +204,14 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 					switch(btnlabel) {
 						case "<yes>", "<no>", "<cancel>": btnlabel = btnlabel.substr(1, btnlabel.length - 2).toUpperCase();	//carve off the "<>", so "yes", "no", etc
 														  newlabel = "$POPUP_" + btnlabel;									//make it "$POPUP_YES", "$POPUP_NO", etc
-														  newlabel = _ui.getText(newlabel, "ui", false);					//localize it														  
+														  newlabel = _ui.getText(newlabel, "ui", false);					//localize it
 														  if (newlabel == null || newlabel == "") {		//if failed
 															newlabel = btnlabel;
 														  }
 														  btnlabel = newlabel;
-					}					
+					}
 					
-					the_btn.label.text = newlabel;
+					U.setButtonLabel(the_btn, newlabel);
 				}
 			}
 			i++;
