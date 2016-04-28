@@ -205,7 +205,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 		if (i >= 0 && i < list.length)
 		{
 			var entry = list[i];
-			entry.enabled = true;
+			entry.enabled = enabled;
 			return true;
 		}
 		return false;
