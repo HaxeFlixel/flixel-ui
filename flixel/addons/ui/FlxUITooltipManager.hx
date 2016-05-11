@@ -115,6 +115,11 @@ class FlxUITooltipManager implements IFlxDestroyable
 		}
 	}
 	
+	public function isVisible():Bool
+	{
+		return current > 0;
+	}
+	
 	/**
 	 * Checks whether the currently shown tooltip belongs to a given FlxSprite, or optionally, any of its children (if it is a FlxUIGroup or FlxUI)
 	 * @param	thing			the FlxSprite to check
@@ -126,7 +131,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 		if (Std.is(thing, FlxUIGroup))
 		{
 			var i = findObj(cast thing);
-			if (i != -1) return true;
+			if (i != -1) return i == current;
 			
 			if (checkChildren)
 			{
@@ -209,18 +214,6 @@ class FlxUITooltipManager implements IFlxDestroyable
 			return true;
 		}
 		return false;
-		/*if (thing == null) return false;
-		
-		for (entry in list)
-		{
-			if (entry.obj == thing || (Std.is(thing,IFlxUIButton) && cast(thing,IFlxUIButton) == entry.btn))
-			{
-				entry.enabled = enabled;
-				return true;
-			}
-		}
-		
-		return false;*/
 	}
 	
 	/**
