@@ -751,34 +751,31 @@ class FlxUICursor extends FlxUISprite
 			location = lastLocation;
 		}
 		
-		//if (visible && active && location != -1)
+		if (_clickKeysJustPressed())		//JUST PRESSED: send a press event only the first time it's pressed
 		{
-			if (_clickKeysJustPressed())		//JUST PRESSED: send a press event only the first time it's pressed
-			{
-				if (!ignoreNextInput)
-				{
-					_clickPressed = true;
-					_clickTime = 0;
-					_doPress();
-				}
-				else
-				{
-					ignoreNextInput = false;
-				}
-			}
-			
-			if (_clickKeysPressed())			//STILL PRESSED: keep the cursor in that position while the key is down
+			if (!ignoreNextInput)
 			{
 				_clickPressed = true;
-				_doMouseMove();
+				_clickTime = 0;
+				_doPress();
 			}
-			else if(_clickTime > 0)				//NOT PRESSED and not exact same frame as when it was just pressed
+			else
 			{
-				if (_clickPressed)				//if we were previously just pressed...
-				{
-					_clickPressed = false;		//count this as "just released"
-					_doRelease();				//do the release action
-				}
+				ignoreNextInput = false;
+			}
+		}
+		
+		if (_clickKeysPressed())			//STILL PRESSED: keep the cursor in that position while the key is down
+		{
+			_clickPressed = true;
+			_doMouseMove();
+		}
+		else if(_clickTime > 0)				//NOT PRESSED and not exact same frame as when it was just pressed
+		{
+			if (_clickPressed)				//if we were previously just pressed...
+			{
+				_doRelease();				//do the release action
+				_clickPressed = false;		//count this as "just released"
 			}
 		}
 	}
@@ -807,7 +804,10 @@ class FlxUICursor extends FlxUISprite
 		return false;
 	}
 	
-	private function _getWidgetPoint():FlxPoint {
+	private function _getWidgetPoint(?Camera:FlxCamera):FlxPoint {
+		
+		if (Camera == null) Camera = FlxG.camera;
+		
 		//get the widget;
 		var currWidget:IFlxUIWidget = _widgets[location];
 		if (currWidget == null) {
@@ -820,12 +820,12 @@ class FlxUICursor extends FlxUISprite
 		//Try to convert to FlxObject if possible
 		if (Std.is(currWidget, FlxObject)) {
 			fo = cast currWidget;
-			if (fo.scrollFactor != null)
-			{
-				//success! Get ScreenXY, to deal with any possible scrolling/camera craziness
-				widgetPoint = fo.getScreenPosition();
-			}
+			//success! Get ScreenXY, to deal with any possible scrolling/camera craziness
+			widgetPoint = fo.getScreenPosition();
 		}
+		
+		widgetPoint.x *= Camera.totalScaleX;
+		widgetPoint.y *= Camera.totalScaleY;
 		
 		if(widgetPoint == null){
 			//otherwise just make your best guess from current raw position
@@ -850,23 +850,23 @@ class FlxUICursor extends FlxUISprite
 			dispose = true;
 		}
 		if (dispatchEvents) {
-			//dispatch a low-level mouse event to the FlxG.stage object itself
-			
-			var rawMouseX:Int = Std.int(pt.x * FlxG.camera.zoom);
-			var rawMouseY:Int = Std.int(pt.y * FlxG.camera.zoom);
 			
 			#if !FLX_NO_MOUSE
+			
 			//REALLY force it to this location
-			FlxG.mouse.setGlobalScreenPositionUnsafe(rawMouseX, rawMouseY);
+			FlxG.mouse.setGlobalScreenPositionUnsafe(pt.x, pt.y);
+			
 			if (_newMouse != null)
 			{
 				_newMouse.updateGlobalScreenPosition = false;	//don't low-level-update the mouse while I'm overriding the mouse position
 			}
+			
+				#if !FLX_NO_KEYBOARD
+				FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_MOVE, true, false, pt.x, pt.y, FlxG.stage, FlxG.keys.pressed.CONTROL, FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
+				#end
+				
 			#end
 			
-			#if !FLX_NO_KEYBOARD
-			FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_MOVE, true, false, rawMouseX, rawMouseY, FlxG.stage, FlxG.keys.pressed.CONTROL, FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
-			#end
 		}
 		if (dispose) {
 			pt.put();
@@ -889,13 +889,15 @@ class FlxUICursor extends FlxUISprite
 			dispose = true;
 		}
 		
-		var rawMouseX:Float = pt.x * FlxG.camera.zoom;
-		var rawMouseY:Float = pt.y * FlxG.camera.zoom;
-		
-		#if !FLX_NO_KEYBOARD
+		#if !FLX_NO_MOUSE
 		if (dispatchEvents) {
-			//dispatch a low-level mouse event to the FlxG.stage object itself
-			FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN, true, false, rawMouseX, rawMouseY, FlxG.stage, FlxG.keys.pressed.CONTROL, FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
+			var rawMouseX:Float = pt.x * FlxG.camera.zoom;
+			var rawMouseY:Float = pt.y * FlxG.camera.zoom;
+			#if !FLX_NO_KEYBOARD
+				FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN, true, false, rawMouseX, rawMouseY, FlxG.stage, FlxG.keys.pressed.CONTROL, FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
+			#else
+				FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN, true, false, rawMouseX, rawMouseY, FlxG.stage));
+			#end
 		}
 		#end
 		
@@ -924,19 +926,23 @@ class FlxUICursor extends FlxUISprite
 			dispose = true;
 		}
 		
-		var rawMouseX:Float = pt.x * FlxG.camera.zoom;
-		var rawMouseY:Float = pt.y * FlxG.camera.zoom;
-		
-		#if !FLX_NO_KEYBOARD
-		if (dispatchEvents)
-		{
-			//dispatch a low-level mouse event to the FlxG.stage object itself
-			FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP, true, false, rawMouseX, rawMouseY, FlxG.stage, FlxG.keys.pressed.CONTROL, FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
-			if (_clickPressed)
+		#if !FLX_NO_MOUSE
+			var rawMouseX:Float = pt.x * FlxG.camera.zoom;
+			var rawMouseY:Float = pt.y * FlxG.camera.zoom;
+			
+			if (dispatchEvents)
 			{
-				FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.CLICK, true, false, rawMouseX, rawMouseY, FlxG.stage, FlxG.keys.pressed.CONTROL, FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
+				//dispatch a low-level mouse event to the FlxG.stage object itself
+				#if !FLX_NO_KEYBOARD
+					FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP, true, false, rawMouseX, rawMouseY, FlxG.stage, FlxG.keys.pressed.CONTROL, FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
+					if (_clickPressed)
+						FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.CLICK, true, false, rawMouseX, rawMouseY, FlxG.stage, FlxG.keys.pressed.CONTROL, FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
+				#else
+					FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP, true, false, rawMouseX, rawMouseY, FlxG.stage));
+					if (_clickPressed)
+						FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.CLICK, true, false, rawMouseX, rawMouseY, FlxG.stage));
+				#end
 			}
-		}
 		#end
 		
 		if (callback != null) {
