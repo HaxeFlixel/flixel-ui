@@ -110,6 +110,19 @@ class FlxUICursor extends FlxUISprite
 		}
 	}
 	
+	/**
+	 * Returns the current widget the cursor is pointing to, if any
+	 * @return
+	 */
+	public function getCurrentWidget():IFlxUIWidget
+	{
+		if (_widgets != null && location >= 0 && location < _widgets.length)
+		{
+			return _widgets[location];
+		}
+		return null;
+	}
+	
 	private function set_listIndex(i:Int):Int
 	{
 		if (i >= _lists.length)
