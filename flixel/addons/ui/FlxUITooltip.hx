@@ -1,6 +1,7 @@
 package flixel.addons.ui;
 import flixel.addons.ui.FlxUITooltip.FlxUITooltipStyle;
 import flixel.FlxObject;
+import flixel.text.FlxText;
 import flixel.text.FlxText.FlxTextBorderStyle;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
