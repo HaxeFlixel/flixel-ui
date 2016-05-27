@@ -219,6 +219,36 @@ class FlxUITooltip extends FlxUIGroup
 		_arrow.y = Std.int(_arrow.y);
 	}
 	
+	//dirty hack, but it makes tooltips work -- simply exclude FlxTexts from height calculations
+	override private function get_height():Float
+	{
+		if (length == 0)
+		{
+			return 0;
+		}
+		
+		var minY:Float = Math.POSITIVE_INFINITY;
+		var maxY:Float = Math.NEGATIVE_INFINITY;
+		
+		for (member in _sprites)
+		{
+			if (member == null) continue;
+			if (Std.is(member, FlxText)) continue;
+			var minMemberY:Float = member.y;
+			var maxMemberY:Float = minMemberY + member.height;
+			
+			if (maxMemberY > maxY)
+			{
+				maxY = maxMemberY;
+			}
+			if (minMemberY < minY)
+			{
+				minY = minMemberY;
+			}
+		}
+		return maxY - minY;
+	}
+	
 	public function hide():Void
 	{
 		visible = false;
