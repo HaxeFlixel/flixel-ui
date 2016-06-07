@@ -838,11 +838,23 @@ class U
 		thing = null;
 	}
 	
-	
+	/**
+	 * Given something like "verdana" and "bold" returns "assets/fonts/verdanab"
+	 * @param	str
+	 * @param	style
+	 * @return
+	 */
 	public static inline function fontStr(str:String, style:String=""):String {
 		return _font(str, style);
-	}	
+	}
 	
+	/**
+	 * Given something like "verdana", "bold", ".ttf", returns "assets/fonts/verdanab.ttf"
+	 * @param	str
+	 * @param	style
+	 * @param	extension
+	 * @return
+	 */
  	public static function font(str:String, style:String = "", extension:String=".ttf"):String
 	{
 		var ostr = str;

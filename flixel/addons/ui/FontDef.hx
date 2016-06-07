@@ -305,10 +305,10 @@ class FontDef
 		var fontFile:String = null;
 		if (fontFace != "")
 		{
-			fontFile = U.font(fontFace, fontStyle);
+			fontFile = FlxUI.font(fontFace, fontStyle);
 		}
 		var fontStyle:String = U.xml_str(data, "style");
-		var fontSize:Int = U.xml_i(data, "size", 8);
+		var fontSize:Int = FlxUI.fontSize(fontFile,U.xml_i(data, "size", 8));
 		var fontColor:FlxColor = U.xml_color(data, "color", true, 0xFFFFFFFF);
 		var fontAlign:String = U.xml_str(data, "align");
 		var align = switch(fontAlign.toLowerCase())

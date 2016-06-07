@@ -291,6 +291,11 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		_reload = true;
 	}
 	
+	public function onShowTooltip(t:FlxUITooltip):Void
+	{
+		//override per subclass
+	}
+	
 	public override function destroy():Void {
 		destroyed = true;
 

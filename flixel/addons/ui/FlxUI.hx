@@ -148,6 +148,61 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	/**
+	 * Given something like "verdana" and "bold" returns "assets/fonts/verdanab"
+	 * Also: checks Firetongue (if available) for font replacement rules
+	 * @param	str
+	 * @param	style
+	 * @return
+	 */
+	public static inline function fontStr(str:String, style:String = ""):String
+	{
+		var t = __getTongue();
+		if (t != null) { str = t.getFont(str); }
+		return U.fontStr(str, style);
+	}
+	
+	/**
+	 * Given a font name & size, returns the correct size for that font in the current locale
+	 * (Only really useful if you're using Firetongue with font replacement rules)
+	 * @param	str
+	 * @param	size
+	 * @return
+	 */
+	public static function fontSize(str:String, size:Int):Int
+	{
+		var t = __getTongue();
+		if (t != null) { size = t.getFontSize(str, size); }
+		return size;
+	}
+	
+	/**
+	 * Given something like "verdana", "bold", ".ttf", returns "assets/fonts/verdanab.ttf"
+	 * Also: checks Firetongue (if available) for font replacement rules
+	 * @param	str
+	 * @param	style
+	 * @param	extension
+	 * @return
+	 */
+ 	public static function font(str:String, style:String = "", extension:String=".ttf"):String
+	{
+		var t = __getTongue();
+		if (t != null) { str = t.getFont(str); }
+		return U.font(str, style, extension);
+	}
+	
+	@:access(flixel.addons.ui.interfaces.IFlxUIState)
+	private static inline function __getTongue():IFireTongue
+	{
+		var currState:IFlxUIState = getLeafUIState();
+		var tongue:IFireTongue = currState._tongue;
+		if (tongue != null)
+		{
+			return tongue;
+		}
+		return null;
+	}
+	
+	/**
 	 * Static-level function used to force giving a certain widget focus (useful for e.g. enforcing overlap logic)
 	 * @param	b
 	 * @param	thing
@@ -5019,7 +5074,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private function _loadFontDef(data:Fast):FontDef {
 		var fd:FontDef = FontDef.fromXML(data.x);
 		var fontSize:Int = Std.int(_loadHeight(data, 8, "size"));
-		fd.format.size = fontSize;
+		fd.format.size = FlxUI.fontSize(fd.file,fontSize);
 		fd.size = fontSize;
 		return fd;
 	}
@@ -5028,7 +5083,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var fontFace:String = U.xml_str(data.x, "font"); 
 		var fontStyle:String = U.xml_str(data.x, "style");
 		var the_font:String = null;
-		if (fontFace != "") { the_font = U.font(fontFace, fontStyle); }
+		if (fontFace != "") { the_font = FlxUI.font(fontFace, fontStyle); }
 		return the_font;
 	}
 	

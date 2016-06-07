@@ -561,6 +561,15 @@ class FlxUITooltipManager implements IFlxDestroyable
 		}
 		
 		lastPosition.set(btn.x, btn.y);
+		
+		if (state != null)
+		{
+			state.onShowTooltip(tooltip);
+		}
+		else if (subState != null)
+		{
+			subState.onShowTooltip(tooltip);
+		}
 	}
 	
 	private function checkAutoFlip(tooltip:FlxUITooltip, ?anchor:Anchor=null):Bool

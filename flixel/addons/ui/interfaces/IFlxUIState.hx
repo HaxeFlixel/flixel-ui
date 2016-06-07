@@ -11,4 +11,5 @@ interface IFlxUIState extends IEventGetter
 	#if !FLX_NO_MOUSE
 	public var cursor:FlxUICursor;
 	#end
+	private var _tongue:IFireTongue;
 }
