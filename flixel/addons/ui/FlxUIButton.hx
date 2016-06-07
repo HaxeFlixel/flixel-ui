@@ -11,6 +11,7 @@ import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.ILabeled;
 import flixel.FlxSprite;
+import flixel.math.FlxMath;
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
@@ -200,7 +201,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		// Stamps the icon in every frame of this button.
 		for (i in 0...numFrames)
 		{
-			stamp(icon, sx, sy + Std.int(i * height));
+			stamp(icon, sx + Std.int(labelOffsets[FlxMath.minInt(i, 2)].x), sy + Std.int(i * height) + Std.int(labelOffsets[FlxMath.minInt(i, 2)].y));
 		}
 	}
 	
