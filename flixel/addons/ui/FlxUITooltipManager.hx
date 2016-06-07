@@ -27,11 +27,17 @@ class FlxUITooltipManager implements IFlxDestroyable
 	public var defaultAnchor:Anchor = null;
 	
 	/**
+	 * Optional fixed position to use for ALL tooltips
+	 */
+	public var fixedPosition(default, set):{object:FlxObject, anchor:Anchor} = null;
+	
+	/**
 	 * Default style for tooltips where no style is defined
 	 */
 	public var defaultStyle:FlxUITooltipStyle = null;
 	public var showOnClick:Bool = false;
 	public var delay:Float = 0.1;
+	public var showTooltipArrow(default, set):Bool;
 	
 	public function new(?State:FlxUIState,?SubState:FlxUISubState) 
 	{
@@ -109,6 +115,11 @@ class FlxUITooltipManager implements IFlxDestroyable
 		}
 	}
 	
+	public function isVisible():Bool
+	{
+		return current > 0;
+	}
+	
 	/**
 	 * Checks whether the currently shown tooltip belongs to a given FlxSprite, or optionally, any of its children (if it is a FlxUIGroup or FlxUI)
 	 * @param	thing			the FlxSprite to check
@@ -120,7 +131,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 		if (Std.is(thing, FlxUIGroup))
 		{
 			var i = findObj(cast thing);
-			if (i != -1) return true;
+			if (i != -1) return i == current;
 			
 			if (checkChildren)
 			{
@@ -150,6 +161,43 @@ class FlxUITooltipManager implements IFlxDestroyable
 	}
 	
 	/**
+	 * Set an object's tooltip's stickiness (whether it disappears when the mouse moves off of it or not)
+	 * @param	thing	the thing you want to modify the tooltip for
+	 * @param	sticky	if true, this tooltip will not disappear until explicitly hidden or until another tooltip is triggered
+	 */
+	public function stickyTooltipFor(thing:FlxObject, sticky:Bool = true):Void
+	{
+		var i = findThing(thing);
+		if (i != -1)
+		{
+			list[i].sticky = sticky;
+		}
+	}
+	
+	/**
+	 * Show the tooltip for the given object, if one exists
+	 * @param	thing	the thing you want to display a tooltip for
+	 * @param	value	whether to show or hide the tooltip
+	 */
+	public function showTooltipFor(thing:FlxObject, value:Bool=true):Void
+	{
+		var i = findThing(thing);
+		if (i != -1)
+		{
+			current = -1;		//reset for good measure
+			
+			if (value)
+			{
+				show(i);
+			}
+			else
+			{
+				hide(i);
+			}
+		}
+	}
+	
+	/**
 	 * Allows you to turn tooltips on or off for an object that has already been added
 	 * @param	thing	The object you want to turn tooltips on or off for
 	 * @param	b		On or off
@@ -158,17 +206,13 @@ class FlxUITooltipManager implements IFlxDestroyable
 	 */
 	public function enableTooltipFor(thing:FlxObject, enabled:Bool):Bool
 	{
-		if (thing == null) return false;
-		
-		for (entry in list)
+		var i = findThing(thing);
+		if (i >= 0 && i < list.length)
 		{
-			if (entry.obj == thing || (Std.is(thing,IFlxUIButton) && cast(thing,IFlxUIButton) == entry.btn))
-			{
-				entry.enabled = enabled;
-				return true;
-			}
+			var entry = list[i];
+			entry.enabled = enabled;
+			return true;
 		}
-		
 		return false;
 	}
 	
@@ -312,7 +356,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 				btn.visible = obj.visible;
 			}
 			
-			if (false == btn.visible || btn.justMousedOut || btn.mouseIsOut)
+			if (list[i].sticky == false && (false == btn.visible || btn.justMousedOut || btn.mouseIsOut))
 			{
 				list[i].count = 0;
 				hide(i);
@@ -373,6 +417,20 @@ class FlxUITooltipManager implements IFlxDestroyable
 		}
 	}
 	
+	private function findThing(thing:FlxObject):Int
+	{
+		if (thing == null) return -1;
+		for (entry in list)
+		{
+			if (entry.obj == thing || (Std.is(thing,IFlxUIButton) && cast(thing,IFlxUIButton) == entry.btn))
+			{
+				return list.indexOf(entry);
+			}
+		}
+		
+		return -1;
+	}
+	
 	private function findBtn(btn:IFlxUIButton):Int
 	{
 		if (btn == null) return -1;
@@ -399,8 +457,30 @@ class FlxUITooltipManager implements IFlxDestroyable
 		return -1;
 	}
 	
+	private function set_fixedPosition(value:{object:FlxObject,anchor:Anchor}):{object:FlxObject,anchor:Anchor}
+	{
+		fixedPosition = value;
+		if (tooltip != null && tooltip.visible)
+		{
+			show(current);
+		}
+		return fixedPosition;
+	}
+	
+	@:access(flixel.addons.ui.FlxUITooltip)
+	private function set_showTooltipArrow(b:Bool):Bool
+	{
+		showTooltipArrow = b;
+		if (tooltip != null && tooltip.visible)
+		{
+			tooltip._arrow.visible = tooltip._arrowBkg.visible = b;
+		}
+		return showTooltipArrow;
+	}
+	
 	private function show(i:Int):Void
 	{
+		if (i < 0 || i >= list.length) return;
 		var btn  = list[i].btn;
 		
 		if (btn.visible == false || (list[i].obj != null && list[i].obj.visible == false))
@@ -460,25 +540,50 @@ class FlxUITooltipManager implements IFlxDestroyable
 		
 		tooltip.show(cast btn, data.title, data.body, autoSizeVertical, autoSizeHorizontal);
 		
+		if (fixedPosition != null)
+		{
+			fixedPosition.anchor.anchorThing(tooltip, fixedPosition.object);
+		}
+		
 		if (autoFlipAnchor)
 		{
-			if (checkAutoFlip(btn, tooltip))
+			if (checkAutoFlip(tooltip, fixedPosition != null ? fixedPosition.anchor : null))
 			{
-				tooltip.show(cast btn, data.title, data.body, autoSizeVertical, autoSizeHorizontal);
+				if (fixedPosition != null)
+				{
+					fixedPosition.anchor.anchorThing(tooltip, fixedPosition.object);
+				}
+				else
+				{
+					tooltip.show(cast btn, data.title, data.body, autoSizeVertical, autoSizeHorizontal, showTooltipArrow);
+				}
 			}
 		}
 		
 		lastPosition.set(btn.x, btn.y);
+		
+		if (state != null)
+		{
+			state.onShowTooltip(tooltip);
+		}
+		else if (subState != null)
+		{
+			subState.onShowTooltip(tooltip);
+		}
 	}
 	
-	private function checkAutoFlip(thing:IFlxUIButton, tooltip:FlxUITooltip):Bool
+	private function checkAutoFlip(tooltip:FlxUITooltip, ?anchor:Anchor=null):Bool
 	{
 		var flipX = (tooltip.x < 0 || (tooltip.x + tooltip.width  > FlxG.width));
 		var flipY = (tooltip.y < 0 || (tooltip.y + tooltip.height > FlxG.height));
 		
 		if (flipX || flipY)
 		{
-			tooltip.anchor = tooltip.anchor.getFlipped(flipX, flipY);
+			if (anchor == null)
+			{
+				anchor = tooltip.anchor;
+			}
+			anchor = anchor.getFlipped(flipX, flipY);
 			return true;
 		}
 		
@@ -493,6 +598,11 @@ private class FlxUITooltipEntry implements IFlxDestroyable
 	public var count:Float;
 	public var data:FlxUITooltipData;
 	public var enabled:Bool;
+	
+	/**
+	 * Intentionally shown by the programmer, when shown will only unshow when explicitly hidden or another tooltip is shown
+	 */
+	public var sticky:Bool = false;
 	
 	public function new(Btn:IFlxUIButton, Data:FlxUITooltipData, ?Obj:FlxObject)
 	{

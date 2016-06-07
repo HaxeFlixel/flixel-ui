@@ -48,6 +48,7 @@ class FlxMultiGamepadAnalogStick extends FlxMultiGamepad
 	
 	private override function checkJustPressed():Bool
 	{
+		if (gamepad == null) return false;
 		var value = false;
 		var dz = gamepad.deadZone;
 		return switch(sInput.id)
@@ -114,6 +115,7 @@ class FlxMultiGamepadAnalogStick extends FlxMultiGamepad
 	
 	private override function checkJustReleased():Bool
 	{
+		if (gamepad == null) return false;
 		return switch(sInput.id)
 		{
 			case LEFT_ANALOG_STICK:
@@ -130,6 +132,7 @@ class FlxMultiGamepadAnalogStick extends FlxMultiGamepad
 	
 	private override function checkPressed():Bool
 	{
+		if (gamepad == null) return false;
 		var value = false;
 		var dz = gamepad.deadZone;
 		return switch(sInput.id)
@@ -167,11 +170,13 @@ class FlxMultiGamepadAnalogStick extends FlxMultiGamepad
 	
 	private override function checkCombos(value:Bool):Bool
 	{
+		if (gamepad == null) return false;
 		return gamepad.anyPressed(combos) == value;
 	}
 	
 	private override function checkForbiddens(value:Bool):Bool
 	{
+		if (gamepad == null) return false;
 		return gamepad.anyPressed(forbiddens) == value;
 	}
 	

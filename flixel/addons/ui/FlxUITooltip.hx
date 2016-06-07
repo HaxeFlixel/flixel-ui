@@ -1,6 +1,7 @@
 package flixel.addons.ui;
 import flixel.addons.ui.FlxUITooltip.FlxUITooltipStyle;
 import flixel.FlxObject;
+import flixel.text.FlxText;
 import flixel.text.FlxText.FlxTextBorderStyle;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
@@ -38,7 +39,7 @@ class FlxUITooltip extends FlxUIGroup
 		setScrollFactor(0, 0);
 	}
 	
-	public function show(obj:FlxObject, Title:String = "", Body:String = "", AutoSizeVertical:Bool = true, AutoSizeHorizontal:Bool = true):Void
+	public function show(obj:FlxObject, Title:String = "", Body:String = "", AutoSizeVertical:Bool = true, AutoSizeHorizontal:Bool = true, ShowArrow:Bool = true):Void
 	{
 		visible = true;
 		active = true;
@@ -55,6 +56,8 @@ class FlxUITooltip extends FlxUIGroup
 		
 		_arrowBkg = makeArrowBkg(_arrowBkg);
 		_arrow.color = style.background;
+		
+		_arrow.visible = _arrowBkg.visible = ShowArrow;
 		
 		if (style.titleWidth > 0)
 		{
@@ -215,6 +218,36 @@ class FlxUITooltip extends FlxUIGroup
 		_arrowBkg.y = Std.int(_arrowBkg.y);
 		_arrow.x = Std.int(_arrow.x);
 		_arrow.y = Std.int(_arrow.y);
+	}
+	
+	//dirty hack, but it makes tooltips work -- simply exclude FlxTexts from height calculations
+	override private function get_height():Float
+	{
+		if (length == 0)
+		{
+			return 0;
+		}
+		
+		var minY:Float = Math.POSITIVE_INFINITY;
+		var maxY:Float = Math.NEGATIVE_INFINITY;
+		
+		for (member in _sprites)
+		{
+			if (member == null) continue;
+			if (Std.is(member, FlxText)) continue;
+			var minMemberY:Float = member.y;
+			var maxMemberY:Float = minMemberY + member.height;
+			
+			if (maxMemberY > maxY)
+			{
+				maxY = maxMemberY;
+			}
+			if (minMemberY < minY)
+			{
+				minY = minMemberY;
+			}
+		}
+		return maxY - minY;
 	}
 	
 	public function hide():Void

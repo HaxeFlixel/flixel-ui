@@ -124,14 +124,12 @@ class FlxUIList extends FlxUIGroup
 			if(stacking == STACK_HORIZONTAL){
 				nButton.loadGraphicsUpOverDown(FlxUIAssets.IMG_BUTTON_ARROW_RIGHT);
 				nButton.label.width = nButton.label.fieldWidth = 100;
-				//nButton.autoCenterLabel();
 				nButton.label.text = getMoreString(0);
 				nButton.setAllLabelOffsets(0, nButton.height + 2);
 				nButton.label.alignment = "left";
 			}else {
 				nButton.loadGraphicsUpOverDown(FlxUIAssets.IMG_BUTTON_ARROW_DOWN);
 				nButton.label.width = nButton.label.fieldWidth = 100;
-				//nButton.autoCenterLabel();
 				nButton.label.text = getMoreString(0);
 				nButton.setAllLabelOffsets(0, 0);
 				nButton.setCenterLabelOffset(nButton.width+2, 0);
@@ -254,6 +252,11 @@ class FlxUIList extends FlxUIGroup
 			nextButton.x = nextButtonOffset.x;
 			nextButton.y = nextButtonOffset.y + height + 2;
 		}
+		
+		prevButton.x = Std.int(prevButton.x);
+		prevButton.y = Std.int(prevButton.y);
+		nextButton.x = Std.int(nextButton.x);
+		nextButton.y = Std.int(nextButton.y);
 		
 		var highestIndex:Int = 0;
 		

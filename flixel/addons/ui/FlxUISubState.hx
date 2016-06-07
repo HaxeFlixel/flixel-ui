@@ -142,6 +142,11 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 		getEvent(code, target, null);
 	}
 	
+	public function onShowTooltip(t:FlxUITooltip):Void
+	{
+		//override per subclass
+	}
+	
 	public override function onResize(Width:Int,Height:Int):Void {
 		FlxG.resizeGame(Width, Height);
 		_reload_countdown = 5;

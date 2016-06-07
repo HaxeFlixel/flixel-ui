@@ -8,7 +8,10 @@ import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.graphics.FlxGraphic;
+import flixel.group.FlxSpriteGroup;
+import flixel.text.FlxText;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import flixel.util.FlxColor;
 import flixel.math.FlxPoint;
@@ -835,11 +838,23 @@ class U
 		thing = null;
 	}
 	
-	
+	/**
+	 * Given something like "verdana" and "bold" returns "assets/fonts/verdanab"
+	 * @param	str
+	 * @param	style
+	 * @return
+	 */
 	public static inline function fontStr(str:String, style:String=""):String {
 		return _font(str, style);
-	}	
+	}
 	
+	/**
+	 * Given something like "verdana", "bold", ".ttf", returns "assets/fonts/verdanab.ttf"
+	 * @param	str
+	 * @param	style
+	 * @param	extension
+	 * @return
+	 */
  	public static function font(str:String, style:String = "", extension:String=".ttf"):String
 	{
 		var ostr = str;
@@ -1942,6 +1957,38 @@ class U
 			f.x.parent.removeChild(f.x);
 		}
 		return f;
+	}
+	
+	public static function setButtonLabel(btn:IFlxUIButton, str:String):Void
+	{
+		if (btn == null) return;
+		
+		if (Std.is(btn, FlxUIButton))
+		{
+			//if it's a FlxUIButton, just apply the text and stop
+			cast(btn, FlxUIButton).label.text = str;
+		}
+		else if (Std.is(btn, FlxUISpriteButton))
+		{
+			//if it's a FlxUISpriteButton, and the label is a group,
+			//search for the first text field, apply the text, and stop
+			var fuisb:FlxUISpriteButton = cast btn;
+			if (fuisb.label == null) return;
+			if (Std.is(fuisb.label, FlxSpriteGroup))
+			{
+				var g:FlxSpriteGroup = cast fuisb.label;
+				if (g.members == null) return;
+				for (sprite in g.members)
+				{
+					if (sprite == null) continue;
+					if (Std.is(sprite, FlxText))
+					{
+						cast(sprite, FlxText).text = str;
+						return;
+					}
+				}
+			}
+		}
 	}
 	
 	public static function getMatrix():Matrix {
