@@ -102,6 +102,16 @@ class FlxInputText extends FlxText
 	public var caretIndex(default, set):Int = 0;
 	
 	/**
+	 * callback that is triggered when this text field gets focus
+	 */
+	public var gotFocusCallback:Void->Void = null;
+	
+	/**
+	 * callback that is triggered when this text field loses focus
+	 */
+	public var lostFocusCallback:Void->Void = null;
+	
+	/**
 	 * The Case that's being enforced. Either ALL_CASES, UPPER_CASE or LOWER_CASE.
 	 */
 	public var forceCase(default, set):Int = ALL_CASES;
@@ -286,14 +296,20 @@ class FlxInputText extends FlxText
 		// Set focus and caretIndex as a response to mouse press
 		if (FlxG.mouse.justPressed) 
 		{
+			var hadFocus:Bool = hasFocus;
 			if (FlxG.mouse.overlaps(this)) 
 			{
-				caretIndex = getCaretIndex();
+				caretIndex = getCaretIndex();				
 				hasFocus = true;
+				if (!hadFocus && gotFocusCallback != null)
+					gotFocusCallback();
+				
 			}
 			else 
 			{
 				hasFocus = false;
+				if (hadFocus && lostFocusCallback != null)
+					lostFocusCallback();
 			}
 		}
 		#end
