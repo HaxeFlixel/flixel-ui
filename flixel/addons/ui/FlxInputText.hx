@@ -104,12 +104,12 @@ class FlxInputText extends FlxText
 	/**
 	 * callback that is triggered when this text field gets focus
 	 */
-	public var gotFocusCallback:Void->Void = null;
+	public var focusGained:Void->Void = null;
 	
 	/**
 	 * callback that is triggered when this text field loses focus
 	 */
-	public var lostFocusCallback:Void->Void = null;
+	public var focusLost:Void->Void = null;
 	
 	/**
 	 * The Case that's being enforced. Either ALL_CASES, UPPER_CASE or LOWER_CASE.
@@ -301,15 +301,15 @@ class FlxInputText extends FlxText
 			{
 				caretIndex = getCaretIndex();				
 				hasFocus = true;
-				if (!hadFocus && gotFocusCallback != null)
-					gotFocusCallback();
+				if (!hadFocus && focusGained != null)
+					focusGained();
 				
 			}
 			else 
 			{
 				hasFocus = false;
-				if (hadFocus && lostFocusCallback != null)
-					lostFocusCallback();
+				if (hadFocus && focusLost != null)
+					focusLost();
 			}
 		}
 		#end
