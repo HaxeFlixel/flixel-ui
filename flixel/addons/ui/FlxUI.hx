@@ -194,6 +194,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private static inline function __getTongue():IFireTongue
 	{
 		var currState:IFlxUIState = getLeafUIState();
+		if (currState == null) return null;
 		var tongue:IFireTongue = currState._tongue;
 		if (tongue != null)
 		{
@@ -224,7 +225,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var state:FlxState = FlxG.state;
 		if (state != null) 
 		{
-			while (state.subState != null) 
+			while (state.subState != null && Std.is(state.subState, IFlxUIState)) 
 			{
 				state = state.subState;
 			}

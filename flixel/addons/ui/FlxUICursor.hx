@@ -268,6 +268,8 @@ class FlxUICursor extends FlxUISprite
 	public override function destroy():Void {
 		super.destroy();
 		
+		callback = null;
+		
 		#if !FLX_NO_MOUSE
 		if (FlxG.mouse == _newMouse)
 		{

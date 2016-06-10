@@ -80,7 +80,11 @@ class FlxUITooltipManager implements IFlxDestroyable
 	public function destroy()
 	{
 		FlxDestroyUtil.destroyArray(list); list = null;
-		tooltip = null;
+		if (tooltip != null)
+		{
+			tooltip.destroy();
+			tooltip = null;
+		}
 		lastPosition = null;
 		state = null;
 		subState = null;
