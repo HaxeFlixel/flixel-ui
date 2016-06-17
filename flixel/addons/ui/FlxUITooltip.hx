@@ -347,7 +347,13 @@ class FlxUITooltip extends FlxUIGroup
 			Style.arrow = FlxUIAssets.IMG_TOOLTIP_ARROW;
 			FlxG.bitmap.add(Style.arrow);
 		}
-		_arrow.loadGraphic(Style.arrow, true, test.height, test.height);
+		if (_arrow != null)
+		{
+			if (Style != null && Style.arrow != null && test != null)
+			{
+				_arrow.loadGraphic(Style.arrow, true, test.height, test.height);
+			}
+		}
 		
 		if (newArrow)
 		{
