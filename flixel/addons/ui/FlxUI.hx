@@ -221,7 +221,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @return
 	 */
 	
-	private static function getLeafUIState():IFlxUIState{
+	public static function getLeafUIState():IFlxUIState{
 		var state:FlxState = FlxG.state;
 		if (state != null) 
 		{
