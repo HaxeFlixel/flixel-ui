@@ -5,12 +5,19 @@ import flash.display.Sprite;
 import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flixel.FlxSprite;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
 import flixel.graphics.FlxGraphic;
+import flixel.group.FlxSpriteGroup;
+import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
+import flixel.system.FlxAssets.FlxTilemapGraphicAsset;
+import flixel.tile.FlxTilemap;
+import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
+import flixel.tile.FlxBaseTilemap.FlxTilemapAutoTiling;
 import openfl.Assets;
 
 /**
@@ -38,6 +45,10 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	private var _smooth:Bool = false;
 	
 	private var _asset_id:String = "";
+	
+	private var _useSubSprites:Bool = false;
+	private var _subSprites:FlxSpriteGroup;
+	private var _subSpriteTiles:Array<FlxTilemap>;
 	
 	private var _raw_pixels:BitmapData;
 	
@@ -76,9 +87,27 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	 * @param
 	 */
 	
-	public function new(X:Float, Y:Float, Graphic:Dynamic, Rect:Rectangle, Slice9:Array<Int>=null, Tile:Int=TILE_NONE, Smooth:Bool=false, Id:String="",Ratio:Float=-1,Resize_point=null,Resize_axis:Int=FlxUISprite.RESIZE_RATIO_Y,DeferResize:Bool=false) 
+	public function new(X:Float, Y:Float, Graphic:Dynamic, Rect:Rectangle, Slice9:Array<Int>=null, Tile:Int=TILE_NONE, Smooth:Bool=false, Id:String="",Ratio:Float=-1,Resize_point=null,Resize_axis:Int=FlxUISprite.RESIZE_RATIO_Y,DeferResize:Bool=false,UseSubSprites:Bool=false) 
 	{
 		super(X, Y, null);
+		
+		_useSubSprites = UseSubSprites;
+		if (_useSubSprites)
+		{
+			_subSprites = new FlxSpriteGroup();
+			while(_subSprites.length < 9)
+			{
+				_subSprites.add(new FlxSprite(0, 0));
+			}
+			if (Tile != TILE_NONE)
+			{
+				_subSpriteTiles = [];
+				while (_subSpriteTiles.length < 5)
+				{
+					_subSpriteTiles.push(new FlxTilemap());
+				}
+			}
+		}
 		
 		_slice9 = Slice9;
 		_tile = Tile;
@@ -150,6 +179,29 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 			_slice9 = [4, 4, 7, 7];
 		}
 		
+		if (_useSubSprites)
+		{
+			resizeWithSubSprites(iw, ih);
+		}
+		else
+		{
+			resizeStandard(iw, ih);
+		}
+		
+		var diff_w:Float = width - old_width;
+		var diff_h:Float = height - old_height;
+		
+		if (resize_point != null)
+		{
+			var delta_x:Float = diff_w * resize_point.x;
+			var delta_y:Float = diff_h * resize_point.y;
+			x -= delta_x;
+			y -= delta_y;
+		}
+	}
+	
+	private function resizeStandard(iw:Int, ih:Int):Void
+	{
 		//for caching purposes:
 		var key:String = _asset_id + "_" + _slice9.join(",") + "_" + iw + "x" + ih + "_"+_tile+"_"+_smooth;
 		
@@ -162,11 +214,11 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 		else
 		{
 			//make a fresh one
-			var bmpCanvas = new BitmapData(Std.int(w), Std.int(h));
+			var bmpCanvas = new BitmapData(iw, ih);
 			_staticFlxRect.x = 0;
 			_staticFlxRect.y = 0;
-			_staticFlxRect.width = w;
-			_staticFlxRect.height = h;
+			_staticFlxRect.width = iw;
+			_staticFlxRect.height = ih;
 			
 			var oldID:String = paintScale9_id;
 			
@@ -188,18 +240,337 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 			
 			loadGraphic(bmpCanvas, false, bmpCanvas.width, bmpCanvas.height, false, key);
 		}
+	}
+	
+	private function resizeWithSubSprites(iw:Int, ih:Int):Void
+	{
+		_staticFlxRect.x = 0;
+		_staticFlxRect.y = 0;
+		_staticFlxRect.width = iw;
+		_staticFlxRect.height = ih;
 		
-		var diff_w:Float = width - old_width;
-		var diff_h:Float = height - old_height;
-		
-		if (resize_point != null)
+		_subSprites.x = 0;
+		_subSprites.y = 0;
+		paintScale9(null, _asset_id, _slice9, _staticFlxRect, _tile, _smooth, _raw_pixels, _subSprites);
+		var pieces = _subSprites.members;
+		for (i in 0...9)
 		{
-			var delta_x:Float = diff_w * resize_point.x;
-			var delta_y:Float = diff_h * resize_point.y;
-			x -= delta_x;
-			y -= delta_y;
+			var piece = pieces[i];
+			switch(i)
+			{
+				case 0: piece.x = 0;                piece.y = 0;					//top left
+				case 1: piece.x = iw - piece.width; piece.y = 0;					//top right
+				case 2: piece.x = pieces[0].width;  piece.y = 0;					//top
+				case 3: piece.x = 0;                piece.y = ih - piece.height;	//bottom left
+				case 4: piece.x = iw - piece.width; piece.y = ih - piece.height;	//bottom right
+				case 5: piece.x = pieces[3].width;  piece.y = ih - piece.height;	//bottom
+				case 6: piece.x = 0;                piece.y = pieces[0].height;		//left
+				case 7: piece.x = iw - piece.width; piece.y = pieces[1].height;		//right
+				case 8: piece.x = pieces[6].width;  piece.y = pieces[2].height;		//middle
+			}
+		}
+		
+		if (_subSpriteTiles != null)
+		{
+			for (i in 0...5)
+			{
+				var tiles = _subSpriteTiles[i];
+				var spanw = 0.0;
+				var spanh = 0.0;
+				var pw = Std.int(pieces[i].width);
+				var ph = Std.int(pieces[i].height);
+				var tilesf = 0.0;
+				var tilesi = 0;
+				var remainder = 0.0;
+				var tileGfx:FlxTilemapGraphicAsset = null;
+				var piece = null;
+				var wit = 0;
+				var hit = 0;
+				
+				tiles.x = 0;
+				tiles.y = 0;
+				
+				FlxG.bitmapLog.add(pieces[i].graphic.bitmap, "tile:" + i);
+				
+				switch(i)
+				{
+					case 0: spanw = iw - pieces[0].width - pieces[1].width;		//top
+							tilesf = spanw / pw;
+							hit = 1;
+							
+							piece = pieces[2];
+							tiles.x = pieces[2].x;
+							tiles.y = pieces[2].y;
+							
+					case 1: spanw = iw - pieces[3].width - pieces[4].width;		//bottom
+							tilesf = spanw / pw;
+							hit = 1;
+							
+							piece = pieces[5];
+							tiles.x = pieces[5].x;
+							tiles.y = pieces[5].y;
+							
+					case 2: spanh = ih - pieces[0].height - pieces[3].height;	//left
+							tilesf = spanh / ph;
+							wit = 1;
+							
+							piece = pieces[6];
+							tiles.x = pieces[6].x;
+							tiles.y = pieces[6].y;
+							
+					case 3: spanh = ih - pieces[1].height - pieces[4].height;	//right
+							tilesf = spanh / ph;
+							wit = 1;
+							
+							piece = pieces[7];
+							tiles.x = pieces[7].x;
+							tiles.y = pieces[7].y;
+							
+					case 4: spanw = iw - pieces[0].width - pieces[1].width;		//center
+							tilesf = spanw / pw;
+							tilesi = Std.int(tilesf);
+							wit = tilesi;
+							
+							var remainderx = tilesf - tilesi;
+							
+							spanh = ih - pieces[0].height - pieces[3].height;
+							tilesf = spanh / ph;
+							tilesi = Std.int(tilesf);
+							hit = tilesi;
+							
+							piece = pieces[8];
+							tiles.x = pieces[8].x;
+							tiles.y = pieces[8].y;
+							
+							var remaindery = tilesf - tilesi;
+							
+							var rxi = remainderx > 0 ? 1 : 0;
+							var ryi = remaindery > 0 ? rxi + 1 : 0;
+							
+							var map2D:Array<Array<Int>> = [];
+							for (i in 0...hit)
+							{
+								var row:Array<Int> = [];
+								for (j in 0...wit)
+								{
+									row.push(0);
+								}
+								if (rxi > 0) row.push(rxi);
+								map2D.push(row);
+							}
+							if (ryi > 0)
+							{
+								var row:Array<Int> = [];
+								for (j in 0...wit)
+								{
+									row.push(ryi);
+								}
+								map2D.push(row);
+								if (rxi > 0) row.push(rxi);
+								//if (rxi > 0) row.push(rxi + ryi);
+							}
+							
+							tileGfx = getTilePixels2(piece.graphic.bitmap, remainderx, remaindery);
+							
+							//tileGfx = piece.graphic;
+							
+							/*var map2D:Array<Array<Int>> = [];
+							for (i in 0...hit)
+							{
+								var row:Array<Int> = [];
+								for (j in 0...wit)
+								{
+									row.push(0);
+								}
+								map2D.push(row);
+							}*/
+							
+							tiles.loadMapFrom2DArray(map2D, tileGfx, pw, ph, FlxTilemapAutoTiling.OFF, 0, 0);
+				}
+				
+				if (i != 4)
+				{
+					tilesi = Std.int(tilesf);
+					
+					remainder = tilesf - tilesi;
+					
+					var map = [];
+					for (i in 0...tilesi)
+					{
+						map.push(0);
+					}
+					
+					if (remainder > 0)
+					{
+						tilesi++;
+						map.push(1);
+					}
+					
+					if (wit == 1) hit = tilesi;
+					if (hit == 1) wit = tilesi;
+					
+					tileGfx = piece.graphic;
+					tileGfx = getTilePixels(piece.graphic.bitmap, remainder, hit == 1);
+					
+					tiles.loadMapFromArray(map, wit, hit, tileGfx, pw, ph, FlxTilemapAutoTiling.OFF, 0, 0);
+				}
+				
+				switch(i)
+				{
+					case 0: tiles.x = pieces[2].x;	//top
+							tiles.y = pieces[2].y;
+							
+					case 1: tiles.x = pieces[5].x;	//bottom
+							tiles.y = ih - tiles.height;
+							
+					case 2: tiles.x = pieces[6].x;	//left
+							tiles.y = pieces[6].y;
+							
+					case 3: tiles.x = iw - tiles.width;	//right
+							tiles.y = pieces[7].y;
+							
+					case 4: tiles.x = pieces[8].x;	//center
+							tiles.y = pieces[8].y;
+				}
+			}
+		}
+		
+		_subSprites.x = x;
+		_subSprites.y = y;
+	}
+	
+	private static function getTilePixels2(bmp:BitmapData, remainder:Float, remainder2:Float):BitmapData
+	{
+		if (remainder == 0.0 && remainder2 == 0.0) return bmp;
+		return U.combineTiles(
+			[
+				bmp, 
+				getRemainderPixels(bmp, remainder, true),
+				getRemainderPixels(bmp, remainder2, false)
+			]
+		);
+	}
+	
+	private static function getTilePixels(bmp:BitmapData, remainder:Float, horizontal:Bool):BitmapData
+	{
+		return U.combineTiles([bmp, getRemainderPixels(bmp, remainder, horizontal)]);
+	}
+	
+	private static function getRemainderPixels(bmp:BitmapData, f:Float, horizontal:Bool):BitmapData
+	{
+		if (f == 0) return null;
+		var bmp2:BitmapData = new BitmapData(bmp.width, bmp.height, true, FlxColor.TRANSPARENT);
+		var r:Rectangle = new Rectangle(0, 0, Std.int(bmp.width * (horizontal ? f : 1.0)), Std.int(bmp.height * (horizontal ? 1.0 : f)));
+		bmp2.copyPixels(bmp, r, new Point(0, 0));
+		return bmp2;
+	}
+	
+	override function get_width():Float 
+	{
+		if (_useSubSprites)
+			return _subSprites.width;
+		return super.get_width();
+	}
+	
+	override function get_height():Float 
+	{
+		if (_useSubSprites)
+			return _subSprites.height;
+		return super.get_height();
+	}
+	
+	override function set_x(NewX:Float):Float 
+	{
+		if (_useSubSprites)
+		{
+			var dx = NewX - _subSprites.x;
+			_subSprites.x = NewX;
+			if (_subSpriteTiles != null)
+			{
+				for (t in _subSpriteTiles){
+					t.x += dx;
+				}
+			}
+		}
+		return super.set_x(NewX);
+	}
+	
+	override function set_y(NewY:Float):Float 
+	{
+		if (_useSubSprites)
+		{
+			var dy = NewY - _subSprites.y;
+			_subSprites.y = NewY;
+			if (_subSpriteTiles != null)
+			{
+				for (t in _subSpriteTiles){
+					t.y += dy;
+				}
+			}
+		}
+		return super.set_y(NewY);
+	}
+	
+	override function set_alpha(Alpha:Float):Float 
+	{
+		if (_useSubSprites)
+		{
+			_subSprites.alpha = Alpha;
+			if (_subSpriteTiles != null)
+			{
+				for (t in _subSpriteTiles){
+					t.alpha = Alpha;
+				}
+			}
+		}
+		return super.set_alpha(Alpha);
+	}
+	
+	override function set_visible(Value:Bool):Bool 
+	{
+		if (_useSubSprites)
+		{
+			_subSprites.visible = Value;
+			if (_subSpriteTiles != null)
+			{
+				for (t in _subSpriteTiles){
+					t.visible = Value;
+				}
+			}
+		}
+		return super.set_visible(Value);
+	}
+	
+	override public function draw():Void 
+	{
+		if (!_useSubSprites)
+		{
+			super.draw();
+		}
+		else
+		{
+			for (i in 0..._subSprites.members.length)
+			{
+				var piece = _subSprites.members[i];
+				if (piece.visible)
+				{
+					piece.draw();
+				}
+			}
+			if (_subSpriteTiles != null)
+			{
+				for (i in 0..._subSpriteTiles.length)
+				{
+					var tile = _subSpriteTiles[i];
+					if (tile.visible)
+					{
+						tile.draw();
+					}
+				}
+			}
 		}
 	}
+	
 	
 	private function noLongerUsingCachedID(id:String):Void
 	{
@@ -273,12 +644,13 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	 * @param	scale9 int array defining 2 points that define the grid as [x1,y1,x2,y2] (upper-interior-left, lower-interior-right)
 	 * @param	rc rectangle object defining how big you want to scale it to
 	 * @param	tile if a bit is false, scale those pieces, if true, tile them (default both false)
-	 * @param 	smooth whether to smooth when scaling or not (default false)
-	 * @param 	raw raw pixels supplied, if any
+	 * @param	smooth whether to smooth when scaling or not (default false)
+	 * @param	raw raw pixels supplied, if any
+	 * @param	group group to add subsprites too (optional)
 	 * @return	the new unique id
 	 */
 	
-	public static function paintScale9(g:BitmapData, assetID:String, scale9:Array<Int>, rc:FlxRect, tile:Int = TILE_NONE, smooth:Bool = false, ?raw:BitmapData):String
+	public static function paintScale9(g:BitmapData, assetID:String, scale9:Array<Int>, rc:FlxRect, tile:Int = TILE_NONE, smooth:Bool = false, ?raw:BitmapData, ?group:FlxSpriteGroup):String
 	{
 		if (scale9 != null) { // create parts
 			
@@ -306,7 +678,7 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 			var y1:Int = scale9[1];
 			var x2:Int = scale9[2];
 			var y2:Int = scale9[3];
-
+			
 			if (_staticRects == null)
 			{
 				_staticRects = new Map<String,FlxRect>();
@@ -371,7 +743,7 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 				cacheCounter.set(uniqueID, sectionCounter);
 			}
 			
-			paintCompoundBitmap(g, assetID, _staticRects, rc, tile, smooth, raw);
+			paintCompoundBitmap(g, assetID, _staticRects, rc, tile, smooth, raw, group);
 			
 			return uniqueID;
 		}
@@ -383,7 +755,7 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 		return assetId + "_" + slice9.join(",") + "_" + rect.toString();
 	}
 
-	public static function paintCompoundBitmap(g:BitmapData, assetID:String, sourceRects:Map<String,FlxRect>, targetRect:FlxRect, tile:Int=TILE_NONE, smooth:Bool = false, raw:BitmapData=null):Void {
+	public static function paintCompoundBitmap(g:BitmapData, assetID:String, sourceRects:Map<String,FlxRect>, targetRect:FlxRect, tile:Int=TILE_NONE, smooth:Bool = false, raw:BitmapData=null, group:FlxSpriteGroup=null):Void {
 		var fillcolor = #if (neko) { rgb:0x00FFFFFF, a:0 }; #else 0x00FFFFFF; #end
 		
 		targetRect.x = Std.int(targetRect.x);
@@ -395,61 +767,66 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 		var tl:FlxRect = sourceRects.get("top.left");
 		if (tl != null) {
 			_staticFlxRect2.set(0, 0, tl.width, tl.height);
-			paintBitmapSection(g, assetID, tl, _staticFlxRect2,null,TILE_NONE,smooth,raw);
+			_paintBitmapSection(g, assetID, tl, _staticFlxRect2,null,TILE_NONE,smooth,raw,group,0);
 		}
 
 		var tr:FlxRect = sourceRects.get("top.right");
 		if (tr != null) {
 			_staticFlxRect2.set(targetRect.width - tr.width, 0, tr.width, tr.height);
-			paintBitmapSection(g, assetID, tr, _staticFlxRect2,null,TILE_NONE,smooth,raw);
+			_paintBitmapSection(g, assetID, tr, _staticFlxRect2,null,TILE_NONE,smooth,raw,group,1);
 		}
 
 		var t:FlxRect = sourceRects.get("top");
 		if (t != null) {
 			_staticFlxRect2.set(tl.width, 0, (targetRect.width - tl.width - tr.width), t.height);
-			paintBitmapSection(g, assetID, t, _staticFlxRect2,null,(tile & 0x10),smooth,raw);
+			_paintBitmapSection(g, assetID, t, _staticFlxRect2,null,(tile & 0x10),smooth,raw,group,2);
 		}
 
 		// bottom row
 		var bl:FlxRect = sourceRects.get("bottom.left");
 		if (bl != null) {
 			_staticFlxRect2.set(0, targetRect.height - bl.height, bl.width, bl.height);
-			paintBitmapSection(g, assetID, bl, _staticFlxRect2,null,TILE_NONE,smooth,raw);
+			_paintBitmapSection(g, assetID, bl, _staticFlxRect2,null,TILE_NONE,smooth,raw,group,3);
 		}
 
 		var br:FlxRect = sourceRects.get("bottom.right");
 		if (br != null) {
 			_staticFlxRect2.set(targetRect.width - br.width, targetRect.height - br.height, br.width, br.height);
-			paintBitmapSection(g, assetID, br, _staticFlxRect2,null,TILE_NONE,smooth,raw);
+			_paintBitmapSection(g, assetID, br, _staticFlxRect2,null,TILE_NONE,smooth,raw,group,4);
 		}
 
 		var b:FlxRect = sourceRects.get("bottom");
 		if (b != null) {
 			_staticFlxRect2.set(bl.width, targetRect.height - b.height, (targetRect.width - bl.width - br.width), b.height);
-			paintBitmapSection(g, assetID, b, _staticFlxRect2,null,(tile & 0x10),smooth,raw);
+			_paintBitmapSection(g, assetID, b, _staticFlxRect2,null,(tile & 0x10),smooth,raw,group,5);
 		}
 
 		// middle row
 		var l:FlxRect = sourceRects.get("left");
 		if (l != null) {
 			_staticFlxRect2.set(0, tl.height, l.width, (targetRect.height - tl.height - bl.height));
-			paintBitmapSection(g, assetID, l, _staticFlxRect2,null,(tile & 0x01),smooth,raw);
+			_paintBitmapSection(g, assetID, l, _staticFlxRect2,null,(tile & 0x01),smooth,raw,group,6);
 		}
 
 		var r:FlxRect = sourceRects.get("right");
 		if (r != null) {
 			_staticFlxRect2.set(targetRect.width - r.width, tr.height, r.width, (targetRect.height - tl.height - bl.height));
-			paintBitmapSection(g, assetID, r, _staticFlxRect2,null,(tile & 0x01),smooth,raw);
+			_paintBitmapSection(g, assetID, r, _staticFlxRect2,null,(tile & 0x01),smooth,raw,group,7);
 		}
 
 		var m:FlxRect = sourceRects.get("middle");
 		if (m != null) {
 			_staticFlxRect2.set(l.width, t.height, (targetRect.width - l.width - r.width), (targetRect.height - t.height - b.height));
-			paintBitmapSection(g, assetID, m, _staticFlxRect2,null,tile,smooth,raw);
+			_paintBitmapSection(g, assetID, m, _staticFlxRect2,null,tile,smooth,raw,group,8);
 		}
 	}
 
 	public static function paintBitmapSection(g:BitmapData, assetId:String, src:FlxRect, dst:FlxRect, srcData:BitmapData = null, tile:Int = TILE_NONE, smooth:Bool = false, raw:BitmapData = null):Void
+	{
+		_paintBitmapSection(g, assetId, src, dst, srcData, tile, smooth, raw);
+	}
+	
+	private static function _paintBitmapSection(g:BitmapData, assetId:String, src:FlxRect, dst:FlxRect, srcData:BitmapData = null, tile:Int = TILE_NONE, smooth:Bool = false, raw:BitmapData = null, group:FlxSpriteGroup = null, groupIndex:Int =-1):Void
 	{
 		if (srcData == null)
 		{
@@ -462,7 +839,7 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 				srcData = U.getBmp(assetId);
 			}
 		}
-
+		
 		src.x = Std.int(src.x);
 		src.y = Std.int(src.y);
 		src.width = Std.int(src.width);
@@ -510,18 +887,31 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 			_staticRect2.width = dst.width;
 			_staticRect2.height = dst.height;
 			
-			bitmapFillRect(g, _staticRect2, section, tile, smooth);
+			bitmapFillRect(group == null ? g : null, _staticRect2, section, tile, smooth, g == null ? group : null, groupIndex);
 		}
 	}
 	
-	private static function bitmapFillRect(g:BitmapData, dst:Rectangle, section:BitmapData, tile:Int=TILE_NONE, smooth_:Bool=false):Void {
+	private static function bitmapFillRect(g:BitmapData, dst:Rectangle, section:BitmapData, tile:Int=TILE_NONE, smooth_:Bool=false, group:FlxSpriteGroup=null, groupIndex:Int=-1):Void {
 		
-		//Optimization TODO:
-		//You can remove the extra bitmap being created by smartly figuring out
-		//the necessary math for drawing directly to g rather than a temp bmp
+		if (group != null && groupIndex >= 0)
+		{
+			var sprite:FlxSprite = group.members[groupIndex];
+			sprite.loadGraphic(section);
+			if (tile & 0x10 == 0)
+			{
+				sprite.scale.set(dst.width / section.width, sprite.scale.y);
+			}
+			if (tile & 0x01 == 0)
+			{
+				sprite.scale.set(sprite.scale.x, dst.height / section.height);
+			}
+			sprite.antialiasing = smooth_;
+			sprite.updateHitbox();
+			return;
+		}
 		
 		//temporary bitmap data, representing the area we want to fill
-		var final_pixels:BitmapData = new BitmapData(Std.int(dst.width), Std.int(dst.height),true,0x00000000);
+		var final_pixels:BitmapData = new BitmapData(Std.int(dst.width), Std.int(dst.height), true, 0x00000000);
 		
 		_staticMatrix.identity();
 		
@@ -531,20 +921,20 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 		_staticRect.width = section.width;
 		_staticRect.height = section.height;
 		
-		if (tile & 0x10 == 0) {							//TILE H is false
+		if (tile & 0x10 == 0) {					//TILE H is false
 			_staticMatrix.scale(dst.width / section.width, 1.0);	//scale H
-			_staticRect.width = dst.width;				//_staticRect reflects scaling
+			_staticRect.width = dst.width;							//_staticRect reflects scaling
 		}
-		if (tile & 0x01 == 0) {							//TILE V is false
-			_staticMatrix.scale(1.0, dst.height / section.height);//scale V
-			_staticRect.height = dst.height;			//_staticRect reflects scaling
+		if (tile & 0x01 == 0) {					//TILE V is false
+			_staticMatrix.scale(1.0, dst.height / section.height);	//scale V
+			_staticRect.height = dst.height;						//_staticRect reflects scaling
 		}
 		
 		//draw the first section
 		//if tiling is false, this is all that needs to be done as
 		//the section's h&v will exactly equal the destination size
 		//final_pixels.draw(section, _staticMatrix, null, null, null, smooth);
-				
+		
 		if (section.width == dst.width && section.height == dst.height) {
 			_staticPoint.x = 0;
 			_staticPoint.y = 0;
@@ -621,4 +1011,3 @@ typedef SectionCounter =
 	var useCount:Int;
 	var subKeys:Array<String>;
 }
-

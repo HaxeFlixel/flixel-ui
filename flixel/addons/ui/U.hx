@@ -955,6 +955,28 @@ class U
 		return Assets.getBitmapData(str, false);
 	}
 	
+	public static function combineTiles(arr:Array<BitmapData>):BitmapData
+	{
+		var w:Int = 0;
+		var h:Int = 0;
+		for (bmp in arr)
+		{
+			if (bmp == null) continue;
+			w += bmp.width;
+			h = Std.int(Math.max(bmp.height, h));
+		}
+		
+		var b:BitmapData = new BitmapData(w, h, true);
+		var pt = new Point();
+		for (bmp in arr)
+		{
+			if (bmp == null) continue;
+			b.copyPixels(bmp, bmp.rect, pt);
+			pt.x += bmp.width;
+		}
+		return b;
+	}
+	
 	public static function checkHaxedef(str:String):Bool {
 		str = str.toLowerCase();
 		switch(str) {
