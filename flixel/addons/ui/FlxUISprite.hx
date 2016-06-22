@@ -34,6 +34,8 @@ class FlxUISprite extends FlxSprite implements IFlxUIWidget implements IResizabl
 	//whether the resize_ratio means X in terms of Y, or Y in terms of X
 	public var resize_ratio_axis:Int = RESIZE_RATIO_Y;
 	
+	public var scale_on_resize:Bool = false;
+	
 	private function set_resize_ratio(r:Float):Float { resize_ratio = r; return r;}
 
 	//resize about this point, so that after resizing this point in the object remains in the same place on screen
@@ -82,13 +84,24 @@ class FlxUISprite extends FlxSprite implements IFlxUIWidget implements IResizabl
 			}
 		}
 		
-		if (_originalKey != "" && _originalKey != null)
+		if (!scale_on_resize)
 		{
-			var newKey:String = U.loadScaledImage(_originalKey, w, h);
-			if (newKey != "" && newKey != null)
+			if (_originalKey != "" && _originalKey != null)
 			{
-				loadFromScaledGraphic(newKey);
+				var newKey:String = U.loadScaledImage(_originalKey, w, h);
+				if (newKey != "" && newKey != null)
+				{
+					loadFromScaledGraphic(newKey);
+				}
 			}
+		}
+		
+		if (scale_on_resize)
+		{
+			scale.set(w / graphic.bitmap.width, h / graphic.bitmap.height);
+			updateHitbox();
+			width = w;
+			height = h;
 		}
 		
 		var diff_w:Float = width - old_width;

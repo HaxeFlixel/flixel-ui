@@ -157,7 +157,7 @@ class FlxUITooltip extends FlxUIGroup
 		if (_arrow.x < 0)
 		{
 			var xx:Int = Std.int(Math.abs(_arrow.x));
-			_bkg.x += xx;
+			_bkgBorder.x += xx;
 			_titleText.x += xx;
 			_bodyText.x += xx;
 			_arrow.x = 0;
@@ -165,7 +165,7 @@ class FlxUITooltip extends FlxUIGroup
 		if (_arrow.y < 0)
 		{
 			var yy:Int = Std.int(Math.abs(_arrow.y));
-			_bkg.y += yy;
+			_bkgBorder.y += yy;
 			_titleText.y += yy;
 			_bodyText.y += yy;
 			_arrow.y = 0;
@@ -192,16 +192,16 @@ class FlxUITooltip extends FlxUIGroup
 		
 		if (_titleText.text == "") 
 		{
-			_titleText.x = _bkg.x;
-			_titleText.y = _bkg.y;
-			_titleText.width = _bkg.width;
+			_titleText.x = _bkgBorder.x;
+			_titleText.y = _bkgBorder.y;
+			_titleText.width = _bkgBorder.width;
 		}
 		
 		if (_bodyText.text == "")
 		{
-			_bodyText.x = _bkg.x;
-			_bodyText.y = _bkg.y;
-			_bodyText.width = _bkg.width;
+			_bodyText.x = _bkgBorder.x;
+			_bodyText.y = _bkgBorder.y;
+			_bodyText.width = _bkgBorder.width;
 		}
 		
 		anchor.anchorThing(this, obj);			//anchor entire group to object
@@ -214,6 +214,8 @@ class FlxUITooltip extends FlxUIGroup
 		
 		_titleText.x = Std.int(_titleText.x);
 		_bodyText.x = Std.int(_bodyText.x);
+		_bkgBorder.x = Std.int(_bkgBorder.x);
+		_bkgBorder.y = Std.int(_bkgBorder.y);
 		_bkg.x = Std.int(_bkgBorder.x + style.borderSize);
 		_bkg.y = Std.int(_bkgBorder.y + style.borderSize);
 		_arrowBkg.x = Std.int(_arrowBkg.x);
@@ -405,8 +407,11 @@ class FlxUITooltip extends FlxUIGroup
 	
 	private function makePix():Void
 	{
-		var white:BitmapData = new BitmapData(1, 1, false, 0xFFFFFF);
-		FlxG.bitmap.add(white, true, "white_pix_tt");
+		if (FlxG.bitmap.checkCache("white_pix_tt") == false)
+		{
+			var white:BitmapData = new BitmapData(1, 1, false, 0xFFFFFF);
+			FlxG.bitmap.add(white, true, "white_pix_tt");
+		}
 	}
 	
 	private function refreshBkg(Width:Int,Height:Int,Style:FlxUITooltipStyle):Void

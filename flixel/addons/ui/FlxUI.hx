@@ -4260,6 +4260,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var src:String = ""; 
 		var fs:FlxUISprite = null;
 		
+		var scalable = U.xml_bool(data.x, "scalable", false);
+		
 		src = loadScaledSrc(data);
 		
 		var bounds: { min_width:Float, min_height:Float, 
@@ -4312,7 +4314,18 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 				
 				var smooth = loadSmooth(data, true);
-				fs = new FlxUISprite(0, 0, U.loadScaledImage(src, W, H, smooth));
+				
+				if (!scalable)
+				{
+					fs = new FlxUISprite(0, 0, U.loadScaledImage(src, W, H, smooth));
+				}
+				else
+				{
+					fs = new FlxUISprite(0, 0, src);
+					fs.scale_on_resize = true;
+					fs.antialiasing = smooth;
+					fs.resize(W, H);
+				}
 			}
 		}
 		else
@@ -4327,6 +4340,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			fs.makeGraphic(W, H, C);
 		}
 		
+		fs.scale_on_resize = scalable;
 		fs.resize_point = resize_point;
 		fs.resize_ratio = resize_ratio;
 		fs.resize_ratio_axis = resize_ratio_axis;
