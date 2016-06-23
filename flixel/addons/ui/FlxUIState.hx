@@ -311,6 +311,22 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			tooltips = null;
 		}
 		
+		#if !FLX_NO_MOUSE
+		cursor = null;
+		#end
+		
+		if (_ui_vars != null)
+		{
+			for (key in _ui_vars.keys())
+			{
+				_ui_vars.remove(key); 
+			}
+			_ui_vars = null;
+		}
+		_ui = null;
+		_tongue = null;
+		getTextFallback = null;
+		
 		super.destroy();
 	}
 		
