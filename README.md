@@ -48,9 +48,9 @@ FlxUI is basically a giant glorified FlxGroup, so using this method will set you
 
 You can also create FlxUI widgets directly with Haxe code rather than using the XML setup. 
 
-To see this in action, look at the [demo project](https://github.com/HaxeFlixel/flixel-demos/tree/master/User%20Interface/RPG%20Interface), specifically [State_CodeTest](https://github.com/HaxeFlixel/flixel-demos/blob/master/User%20Interface/RPG%20Interface/source/State_CodeTest.hx)  (in the compiled demo, just click "Code Test" to see it in action.)
+To see this in action, look at the [demo project](https://github.com/HaxeFlixel/flixel-demos/tree/master/UserInterface/RPGInterface), specifically [State_CodeTest](https://github.com/HaxeFlixel/flixel-demos/blob/master/UserInterface/RPGInterface/source/State_CodeTest.hx)  (in the compiled demo, just click "Code Test" to see it in action.)
 
-You can compare this to [State_DefaultTest](https://github.com/HaxeFlixel/flixel-demos/blob/master/User%20Interface/RPG%20Interface/source/State_DefaultTest.hx), which creates virtually the same UI output, but uses [this xml layout](https://github.com/HaxeFlixel/flixel-demos/blob/master/User%20Interface/RPG%20Interface/assets/xml/state_default.xml) to achieve those results.
+You can compare this to [State_DefaultTest](https://github.com/HaxeFlixel/flixel-demos/blob/master/UserInterface/RPGInterface/source/State_DefaultTest.hx), which creates virtually the same UI output, but uses [this xml layout](https://github.com/HaxeFlixel/flixel-demos/blob/master/UserInterface/RPGInterface/assets/xml/state_default.xml) to achieve those results.
 
 ##Graphic assets for Widgets
 
@@ -60,7 +60,7 @@ Flixel-UI has a default set of assets (see [FlxUIAssets](https://github.com/Haxe
 
 ###Custom Assets
 
-If you want to provide your own assets, you should put them in your project's "assets" folder, using the same structure you see in the [demo project](https://github.com/HaxeFlixel/flixel-demos/tree/master/User%20Interface/RPG%20Interface).
+If you want to provide your own assets, you should put them in your project's "assets" folder, using the same structure you see in the [demo project](https://github.com/HaxeFlixel/flixel-demos/tree/master/UserInterface/RPGInterface).
 
 ----
 
