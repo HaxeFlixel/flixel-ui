@@ -1,3 +1,29 @@
+2.1.0
+------------------------------
+* Compatibility with flixel 4.1.0
+* `FlxUI`:
+  * added `tolerance_plus` / `tolerance_minus` attributes for `<load_if>`
+  * added `fontStr()`, `fontSize()` and `font()`
+  * added support for overriding the internal `"screen"` asset
+  * fixed a spacing issue in alignments
+* `FlxUIState`: added `onShowTooltip()` 
+* `FlxUISubState`:
+  * added `createUI()` (#169)
+  * added `onShowTooltip()`
+* `FlxUITooltip`:
+  * added a `ShowArrow` argument to `show()`
+  * fixed rendering artifacts by using integer rounding
+* `FlxUITooltipManager`: added `fixedPosition`, `showTooltipArrow`, `isVisible()`, `stickyTooltipFor()` and `showTooltipFor()`
+* `FlxUILine`: [Cpp] fixed `thickness`
+* `FlxUIButton`: added support for `labelOffsets` in `addIcon()` (#175)
+* `FlxMultiGamepadAnalogStick`: added null safety checks
+* `FlxUICursor`:
+  * added `getCurrentWidget()` and `clearWidgets()`
+  * fixed several bugs
+* `FlxUIList`: fixed a minor positioning issue
+* `U`: added `setButtonLabel()`
+* Added support for Firteongue font replacement rule integration
+
 2.0.0
 ------------------------------
 * Compatibility with flixel 4.0.0
