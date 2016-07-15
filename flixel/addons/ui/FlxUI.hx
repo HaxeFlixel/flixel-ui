@@ -2572,8 +2572,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var backgroundColor:Int = U.parseHex(U.xml_str(data.x, "background", true, "0x00000000"), true, true, 0x00000000);
 		
+		var leadingExists = U.xml_str(data.x, "leading", true, "");
+		var leadingInt = Std.int(_loadHeight(data, 0, "leading", "floor"));
+		
 		var ft:IFlxUIWidget;
 		var ftu:FlxUIText = new FlxUIText(0, 0, W, text, size);
+		var dtf = ftu.textField.defaultTextFormat;
+		dtf.leading = leadingExists != "" ? leadingInt : null;
+		ftu.textField.defaultTextFormat = dtf;
+		
 		ftu.setFormat(the_font, size, color, align);
 		border.apply(ftu);
 		ftu.drawFrame();
@@ -5219,6 +5226,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 			var align:String = U.xml_str(info.x, "align", true); if (align == "") { align = null;}
 			
+			var leadingExists = U.xml_str(info.x, "leading", true, "");
+			var leadingInt:Null<Int> = Std.int(_loadHeight(info, 0, "leading", "floor"));
+			
+			leadingInt = leadingExists != "" ? leadingInt : null;
+			
 			var the_label:FlxText=null;
 			var fb:FlxUIButton = null;
 			var fsb:FlxUISpriteButton = null;
@@ -5287,6 +5299,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				{
 					the_label.setFormat(the_font, size, color, align);
 				}
+				
+				var dtf = the_label.textField.defaultTextFormat;
+				dtf.leading = leadingInt;
+				
+				the_label.textField.defaultTextFormat = dtf;
 				
 				the_label.borderStyle = border.style;
 				the_label.borderColor = border.color;
