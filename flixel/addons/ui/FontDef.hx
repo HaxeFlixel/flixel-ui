@@ -280,6 +280,13 @@ class FontDef
 		return "";
 	}
 	
+	public function getFontStyleLetter():String {
+		if (format.bold && format.italic) return "z";
+		if (format.bold) return "b";
+		if (format.italic) return "i";
+		return "";
+	}
+	
 	public function setFontStyle(str:String):Void {
 		str = str.toLowerCase();
 		switch(str) {

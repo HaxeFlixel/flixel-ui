@@ -2587,7 +2587,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var input:Bool = U.xml_bool(data.x, "input");
 		if(input)
 		{
-					throw new Error("FlxUI._loadText(): <text> with input has been deprecated. Use <input_text> instead.");
+			throw new Error("FlxUI._loadText(): <text> with input has been deprecated. Use <input_text> instead.");
 		}
 		
 		var align:String = U.xml_str(data.x, "align"); if (align == "") { align = null;}
