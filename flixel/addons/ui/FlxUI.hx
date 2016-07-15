@@ -967,6 +967,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (thing != null) {
 			_loadGlobals(obj, thing);
 			
+			var info = _loadThingGetInfo(obj);
+			if (info != null)
+			{
+				obj = info;
+			}
+			
 			if (thing_name != null && thing_name != "") {
 				_asset_index.set(thing_name, thing);
 				
@@ -1642,10 +1648,25 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			if (cname == nodeValue) {
 				if (cNode.hasNode.change) {
 					for (change in cNode.nodes.change) {
-						var xml:Xml;
 						for (att in change.x.attributes()) {
 							var value:String = change.x.get(att);
 							data.x.set(att, value);
+						}
+					}
+				}
+				if (cNode.hasNode.change_node)
+				{
+					for (changeNode in cNode.nodes.change_node)
+					{
+						var nodeToChange = U.xml_name(changeNode.x);
+						if (data.hasNode.resolve(nodeToChange))
+						{
+							var dataNode = data.node.resolve(nodeToChange);
+							for (att in changeNode.x.attributes())
+							{
+								var value:String = changeNode.x.get(att);
+								dataNode.x.set(att, value);
+							}
 						}
 					}
 				}
@@ -2398,6 +2419,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (_loadTest(data) == false)
 		{
 			return;
+		}
+		
+		var info = _loadThingGetInfo(data);
+		if (info != null)
+		{
+			data = info;
 		}
 		
 		var name:String = U.xml_name(data.x);
