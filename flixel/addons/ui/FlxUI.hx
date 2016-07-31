@@ -3931,7 +3931,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var thename = U.xml_name(data.x);
 		
 		var resize:FlxPoint = getResizeRatio(data);
-		
+		var color:Int = _loadColor(data);
 		var resize_ratio:Float = resize.x;
 		var resize_point:FlxPoint = _loadCompass(data, "resize_point");
 		var resize_ratio_axis:Int = Std.int(resize.y);
@@ -4002,7 +4002,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var tile:Int = _loadTileRule(data);
 		
-		f9s = new FlxUI9SliceSprite(0, 0, srcGraphic, rc, slice9, tile, smooth, srcId, resize_ratio, resize_point, resize_ratio_axis);
+		f9s = new FlxUI9SliceSprite(0, 0, srcGraphic, rc, slice9, tile, smooth, srcId, resize_ratio, resize_point, resize_ratio_axis, false, color);
 		
 		return f9s;
 	}

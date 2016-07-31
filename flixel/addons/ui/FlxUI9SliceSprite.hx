@@ -10,6 +10,7 @@ import flixel.addons.ui.interfaces.IResizable;
 import flixel.graphics.FlxGraphic;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
+import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import openfl.Assets;
 
@@ -73,13 +74,13 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	 * @param   ratio	Resize ratio to force, if desired (W/H)
 	 * @param	Resize_point	Point for anchoring resizes
 	 * @param	Resize_axis	Whether resizing is based around the X or Y axis
-	 * @param
+	 * @param	Color	Color to tint this graphic to.  (White has no effect.)
 	 */
 	
-	public function new(X:Float, Y:Float, Graphic:Dynamic, Rect:Rectangle, Slice9:Array<Int>=null, Tile:Int=TILE_NONE, Smooth:Bool=false, Id:String="",Ratio:Float=-1,Resize_point=null,Resize_axis:Int=FlxUISprite.RESIZE_RATIO_Y,DeferResize:Bool=false) 
+	public function new(X:Float, Y:Float, Graphic:Dynamic, Rect:Rectangle, Slice9:Array<Int>=null, Tile:Int=TILE_NONE, Smooth:Bool=false, Id:String="",Ratio:Float=-1,Resize_point=null,Resize_axis:Int=FlxUISprite.RESIZE_RATIO_Y,DeferResize:Bool=false,Color:FlxColor=FlxColor.WHITE) 
 	{
 		super(X, Y, null);
-		
+		color = Color;
 		_slice9 = Slice9;
 		_tile = Tile;
 		_smooth = Smooth;

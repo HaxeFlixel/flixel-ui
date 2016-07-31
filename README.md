@@ -397,7 +397,7 @@ Just a regular sprite. Can be scaled or fixed size.
 Attributes:
 * ```x``` and ```y```
 * ```src``` (path to source, no extension, appended to "assets/gfx/". If not present will look for "color" instead)
-* ```color``` (color of the rectangle. "color" attribute should be hexadecimal format ```0xAARRGGBB```, or ```0xRRGGBB```, or a standard color string name like "white" from ```flixl.util.FlxColor```)
+* ```color``` (color of the rectangle. "color" attribute should be hexadecimal format ```0xAARRGGBB```, or ```0xRRGGBB```, or a standard color string name like "white" from ```flixel.util.FlxColor```)
 * ```use_def``` (definition name)
 * ```group``` (group name)
 * ```width``` and ```height``` (optional, use exact pixel values or formulas -- will scale the image if they differ from the source image's native width/height)
@@ -424,6 +424,7 @@ Attributes:
 * ```slice9``` - string, two points that define the slice9 grid, format "x1,y1,x2,y2". For example, "6,6,12,12" works well for the 12x12 chrome images in the demo project.
 * ```tile``` - bool, optional (assumes false if not exist). If true, uses tiling rather than scaling for stretching 9-slice cells. Boolean true == "true", not "True" or "TRUE", or "T".
 * ```smooth``` - bool, optional (assumes false if not exist). If ture, ensures the scaling uses smooth interpolation rather than nearest-neighbor (stretched blocky pixels).
+* ```color``` - color, optional, to tint the chrome to (e.g. white does nothing.)  "color" attribute should be hexadecimal format ```0xAARRGGBB```, or ```0xRRGGBB```, or a standard color string name like "green" from ```flixel.util.FlxColor```)
 
 ##3. Region (FlxUIRegion) ```<region>```
 
