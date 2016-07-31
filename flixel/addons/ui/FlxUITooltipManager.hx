@@ -583,7 +583,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 			{
 				anchor = tooltip.anchor;
 			}
-			anchor = anchor.getFlipped(flipX, flipY);
+			anchor.getFlipped(flipX, flipY, anchor);
 			return true;
 		}
 		
