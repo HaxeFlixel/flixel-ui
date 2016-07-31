@@ -353,6 +353,8 @@ class FlxUITooltipManager implements IFlxDestroyable
 			{
 				btn.x = obj.x;
 				btn.y = obj.y;
+				btn.width = obj.width;
+				btn.height = obj.height;
 				btn.visible = obj.visible;
 			}
 			
