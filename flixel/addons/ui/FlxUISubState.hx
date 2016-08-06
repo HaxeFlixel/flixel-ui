@@ -135,6 +135,10 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 		super.create();
 		
 		cleanup();
+		
+		if (Std.is(_parentState, FlxUIState)) {
+			reload_ui_on_resize = cast (_parentState, FlxUIState).reload_ui_on_resize;
+		}
 	}
 	
 	public function onCursorEvent(code:String, target:IFlxUIWidget):Void 
@@ -147,26 +151,25 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 		//override per subclass
 	}
 	
-	public override function onResize(Width:Int,Height:Int):Void {
-		FlxG.resizeGame(Width, Height);
-		_reload_countdown = 5;
-		_reload = true;
-	}	
+	public override function onResize(Width:Int, Height:Int):Void {
+		if (reload_ui_on_resize) {
+			FlxG.resizeGame(Width, Height);	
+			_reload_countdown = 5;
+			_reload = true;
+		}
+	}
 	
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);
 		tooltips.update(elapsed);
-		#if debug
-			if (_reload) {
-				if (_reload_countdown > 0) {
-					_reload_countdown--;
-					if (_reload_countdown == 0) {
-						_reload = false;
-						reloadUI();
-					}
+		if (_reload) {
+			if (_reload_countdown > 0) {
+				_reload_countdown--;
+				if (_reload_countdown == 0) {
+					reloadUI();
 				}
 			}
-		#end
+		}
 	}
 	
 	public override function destroy():Void {

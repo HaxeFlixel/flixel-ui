@@ -217,6 +217,14 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		{
 			tooltips.update(elapsed);
 		}
+		if (_reload) {
+			if (_reload_countdown > 0) {
+				_reload_countdown--;
+				if (_reload_countdown == 0) {
+					reloadUI();
+				}
+			}
+		}
 	}
 	
 	@:access(flixel.addons.ui.FlxUI)
@@ -286,9 +294,11 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	}
 	
 	public override function onResize(Width:Int, Height:Int):Void {
-		FlxG.resizeGame(Width, Height);	
-		_reload_countdown = 1;
-		_reload = true;
+		if (reload_ui_on_resize) {
+			FlxG.resizeGame(Width, Height);	
+			_reload_countdown = 1;
+			_reload = true;
+		}
 	}
 	
 	public function onShowTooltip(t:FlxUITooltip):Void
