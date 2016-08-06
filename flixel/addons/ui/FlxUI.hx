@@ -3540,7 +3540,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	{
 		var src:String = ""; 
 		var fb:IFlxUIButton = null;
-		
+		var color:Int = _loadColor(data);
 		var resize_ratio:Float = U.xml_f(data.x, "resize_ratio", -1);
 		var resize_point:FlxPoint = _loadCompass(data, "resize_point");
 		var resize_label:Bool = U.xml_bool(data.x, "resize_label", false);
@@ -3578,7 +3578,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (sprite == null)
 		{
 			var useDefaultGraphic = (data.hasNode.graphic == false);
-			fb = new FlxUIButton(0, 0, label, null, useDefaultGraphic);
+			fb = new FlxUIButton(0, 0, label, null, useDefaultGraphic, false, color);
 			var fuib:FlxUIButton = cast fb;
 			fuib._autoCleanup = false;
 		}

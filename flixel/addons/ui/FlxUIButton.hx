@@ -52,9 +52,10 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	 * @param	LoadDefaultGraphics	By default it will load up with placeholder graphics. Pass false if you want to skip this (i.e. if you will provide your own graphics subsequently, can save time)
 	 * @param	LoadBlank	Load this button without ANY visible graphics, but still functions (in case you need an invisible click area)
 	 */
-	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Void->Void, ?LoadDefaultGraphics:Bool=true, ?LoadBlank:Bool=false)
+	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Void->Void, ?LoadDefaultGraphics:Bool=true, ?LoadBlank:Bool=false, ?Color:FlxColor=FlxColor.WHITE)
 	{
 		super(X, Y, OnClick);
+		color = Color;
 		if (Label != null)
 		{
 			//create a FlxUIText label
