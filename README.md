@@ -453,6 +453,7 @@ Attributes:
     * "fu_" - first letter in each word uppercase
 * ```resize_ratio```, ```resize_point``` (see Image)
 * ```resize_label``` - (optional, boolean) whether or not to let the label scale when the button is resized
+* ```color``` - color, optional, to tint the chrome to (e.g. white does nothing.)  "color" attribute should be hexadecimal format ```0xAARRGGBB```, or ```0xRRGGBB```, or a standard color string name like "green" from ```flixel.util.FlxColor```)
 
 Child tags:
 * ```<text>``` - just like a regular \<text> node
