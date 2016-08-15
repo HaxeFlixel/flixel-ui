@@ -49,6 +49,7 @@ class FlxUICursor extends FlxUISprite
 		if (location == -1) return;
 		
 		var wrapped = false;
+		
 		while (_widgets[location] == null || _widgets[location].visible == false)
 		{
 			if (forwardIfInvisible)
@@ -109,6 +110,8 @@ class FlxUICursor extends FlxUISprite
 			}
 		}
 	}
+	
+	
 	
 	/**
 	 * Returns the current widget the cursor is pointing to, if any
@@ -263,6 +266,11 @@ class FlxUICursor extends FlxUISprite
 			_newMouse = cast FlxG.mouse;
 		}
 		#end
+	}
+	
+	override function set_y(NewY:Float):Float 
+	{
+		return super.set_y(NewY);
 	}
 	
 	public override function destroy():Void {
@@ -508,7 +516,7 @@ class FlxUICursor extends FlxUISprite
 			_widgets.push(widget);
 		}
 		else if (Std.is(widget, FlxUIGroup))			//it's a group? 
-		{			
+		{
 			var g:FlxUIGroup = cast widget;
 			for (member in g.members)
 			{
@@ -537,6 +545,38 @@ class FlxUICursor extends FlxUISprite
 	public function clearWidgets():Void
 	{
 		FlxArrayUtil.clearArray(_widgets);
+	}
+	
+	public function replaceWidget(name:String, widget:IFlxUIWidget, destroy:Bool=false, ?list:Array<IFlxUIWidget>):Bool {
+		if (list == null)
+		{
+			list = _widgets;
+		}
+		var value:Bool = false;
+		if (list != null)
+		{
+			var i = 0;
+			for (thing in list)
+			{
+				if (thing.name == name)
+				{
+					value = true;
+					list[i] = widget;
+					if (destroy)
+					{
+						thing.destroy();
+					}
+					break;
+				}
+				i++;
+			}
+			
+			if (value)
+			{
+				list.sort(_sortXYVisible);
+			}
+		}
+		return value;
 	}
 	
 	public function removeWidget(widget:IFlxUIWidget, ?list:Array<IFlxUIWidget>):Bool {

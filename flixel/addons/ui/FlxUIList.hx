@@ -1,4 +1,5 @@
 package flixel.addons.ui;
+import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxObject;
@@ -6,7 +7,7 @@ import flixel.FlxSprite;
 import flixel.ui.FlxButton;
 import flixel.math.FlxPoint;
 
-class FlxUIList extends FlxUIGroup
+class FlxUIList extends FlxUIGroup implements ICursorPointable
 {
 	public static inline var STACK_HORIZONTAL:Int = 0;
 	public static inline var STACK_VERTICAL:Int = 1;
@@ -48,6 +49,27 @@ class FlxUIList extends FlxUIGroup
 		return moreString;
 	}
 	
+	public var amountVisible(get, null):Int;
+	private function get_amountVisible():Int {
+		var total = 0;
+		for (i in 0...group.members.length)
+		{
+			var thing = group.members[i];
+			if (Std.is(thing, IFlxUIButton))
+			{
+				var ifuib = cast(thing, IFlxUIButton);
+				if (ifuib == prevButton || ifuib == nextButton)
+				{
+					continue;
+				}
+			}
+			if (thing.visible)
+			{
+				total++;
+			}
+		}
+		return total;
+	}
 	public var amountPrevious(default, null):Int;
 	public var amountNext(default, null):Int;
 	

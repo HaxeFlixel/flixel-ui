@@ -1132,7 +1132,7 @@ class U
 	public static function FU_(str:String):String {
 		var arr:Array<String> = str.split(" ");
 		var str:String="";
-		for (i in 0...arr.length){//= 0; i < arr.length; i++) {
+		for (i in 0...arr.length){
 			str += FU(arr[i]);
 			if (i != arr.length - 1) {
 				str += " ";

@@ -1,4 +1,5 @@
 package flixel.addons.ui;
+import flixel.input.FlxInput.FlxInputState;
 import flixel.input.gamepad.FlxGamepad;
 import flixel.input.gamepad.FlxGamepadInputID;
 
@@ -8,7 +9,14 @@ import flixel.input.gamepad.FlxGamepadInputID;
  */
 class FlxMultiGamepad extends FlxBaseMultiInput
 {
+	public var useFirstActive(default,set):Bool = false;
 	public var gamepad:FlxGamepad;
+	
+	public function set_useFirstActive(b:Bool):Bool
+	{
+		useFirstActive = b;
+		return useFirstActive;
+	}
 	
 	public function new(Gamepad:FlxGamepad, Input:FlxGamepadInputID, ?Combos:Array<FlxGamepadInputID>, ?Forbiddens:Array<FlxGamepadInputID>) 
 	{
@@ -25,33 +33,49 @@ class FlxMultiGamepad extends FlxBaseMultiInput
 		gamepad = null;
 	}
 	
+	private inline function checkGamepad():FlxGamepad
+	{
+		var gp = useFirstActive ? FlxG.gamepads.firstActive : gamepad;
+		if (gp == null) return gamepad;
+		return gp;
+	}
+	
+	private inline function checkStatus(Status:FlxInputState):Bool
+	{
+		var gp = checkGamepad();
+		if (gp == null) return false;
+		return gp.checkStatus(input, Status);
+	}
+	
+	private inline function anyPressed(arr:Array<Int>):Bool
+	{
+		var gp = checkGamepad();
+		if (gp == null) return false;
+		return gp.anyPressed(arr);
+	}
+	
 	private override function checkJustPressed():Bool
 	{
-		if (gamepad == null) return false;
-		return gamepad.checkStatus(input, JUST_PRESSED);
+		return checkStatus(JUST_PRESSED);
 	}
 	
 	private override function checkJustReleased():Bool
 	{
-		if (gamepad == null) return false;
-		return gamepad.checkStatus(input, JUST_RELEASED);
+		return checkStatus(JUST_RELEASED);
 	}
 	
 	private override function checkPressed():Bool
 	{
-		if (gamepad == null) return false;
-		return gamepad.checkStatus(input, PRESSED);
+		return checkStatus(PRESSED);
 	}
 	
 	private override function checkCombos(value:Bool):Bool
 	{
-		if (gamepad == null) return false;
-		return gamepad.anyPressed(combos) == value;
+		return anyPressed(combos) == value;
 	}
 	
 	private override function checkForbiddens(value:Bool):Bool
 	{
-		if (gamepad == null) return false;
-		return gamepad.anyPressed(forbiddens) == value;
+		return anyPressed(forbiddens) == value;
 	}
 }
