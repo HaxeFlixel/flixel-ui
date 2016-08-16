@@ -208,6 +208,8 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		super.create();
 		
 		cleanup();
+		
+		FlxUI.event("finish_create", _ui, null);
 	}
 	
 	override public function update(elapsed:Float):Void 

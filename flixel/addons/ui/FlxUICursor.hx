@@ -359,6 +359,16 @@ class FlxUICursor extends FlxUISprite
 	}
 	
 	/**
+	 * Directly simulate cursor input
+	 * @param	X	-1 for left, 1 for right
+	 * @param	Y	-1 for up, 1 for down
+	 */
+	public function moveCursor(X:Int, Y:Int):Void
+	{
+		_doInput(X, Y);
+	}
+	
+	/**
 	 * Forces the cursor to change its location to point to this widget, if the widget is in its list
 	 * @param	widget
 	 * @return	whether the widget was found or not
