@@ -655,12 +655,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				while(data.hasNode.inject)
 				{
 					var inj_data = data.node.inject;
-					var inj_name:String = U.xml_name(inj_data.x);
-					var payload:Xml = U.xml(inj_name, "xml", false);
-					if (payload != null)
+					
+					var i = 0;
+					var payload:Xml = null;
+					var parent:Xml = inj_data.x.parent;
+					
+					if (_loadTest(inj_data))
 					{
-						var parent = inj_data.x.parent;
-						var i:Int = 0;
+						var inj_name:String = U.xml_name(inj_data.x);
+						payload = U.xml(inj_name, "xml", false);
+						
 						for (child in parent.children)
 						{
 							if (child == inj_data.x)
@@ -669,8 +673,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 							}
 							i++;
 						}
-						
-						if (parent.removeChild(inj_data.x))
+					}
+					
+					if (parent.removeChild(inj_data.x))
+					{
+						if (payload != null)
 						{
 							var j:Int = 0;
 							for (e in payload.elements())
