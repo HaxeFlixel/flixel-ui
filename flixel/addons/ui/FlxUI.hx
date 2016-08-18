@@ -915,15 +915,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		for (node in data.nodes.point_size)
 		{
-			if (_loadTest(node.point_size))
+			if (_loadTest(node))
 			{
-				ptx = _loadX(node.point_size, ptx);
-				pty = _loadY(node.point_size, pty);
+				ptx = _loadX(node, ptx);
+				pty = _loadY(node, pty);
 				
 				//if neither x or y is defined look for a "value" parameter to set both
 				if (pty < 1 && ptx < 1)
 				{
-					pty = _loadHeight(node.point_size, -1, "value");
+					pty = _loadHeight(node, -1, "value");
 					ptx = pty;
 				}
 			}

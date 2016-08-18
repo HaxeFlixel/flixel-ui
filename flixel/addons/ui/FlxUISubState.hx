@@ -23,6 +23,7 @@ import haxe.xml.Fast;
  * 
  * @author Lars Doucet
  */
+@:access(flixel.addons.ui.FlxUIState)
 class FlxUISubState extends FlxSubState implements IFlxUIState
 {
 	public var destroyed:Bool;
@@ -39,6 +40,7 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 	
 	private var _xml_id:String = "";	//the xml to load
 	private var _ui:FlxUI;
+	private var _ui_vars:Map<String,String>;
 	private var _tongue:IFireTongue;
 		
 	//set this to true to make it automatically reload the UI when the window size changes
@@ -169,6 +171,13 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 		#end
 	}
 	
+	@:access(flixel.addons.ui.FlxUIState)
+	public function setUIVariable(key:String, value:String):Void
+	{
+		trace("setUIVariable(" + key + "," + value+")");
+		FlxUIState._setUIVariable(this, key, value);
+	}
+	
 	public override function destroy():Void {
 		destroyed = true;
 		
@@ -183,6 +192,8 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 			remove(_ui, true);
 			_ui = null;
 		}
+		
+		_ui_vars = FlxUIState._cleanupUIVars(_ui_vars);
 		
 		super.destroy();
 	}
@@ -226,7 +237,8 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 	//in case you want to instantiate a custom class that extends FlxUI instead
 	private function createUI(data:Fast = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null, liveFilePath_:String=""):FlxUI
 	{
-		return new FlxUI(data, ptr, superIndex_, tongue_, liveFilePath_);
+		return new FlxUI(data, ptr, superIndex_, tongue_, liveFilePath_, _ui_vars);
+		_ui_vars = FlxUIState._cleanupUIVars(_ui_vars);	//clear out temporary _ui_vars variable if it was set
 	}
 	
 	private function reloadUI():Void {

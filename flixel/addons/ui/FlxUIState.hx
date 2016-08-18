@@ -228,30 +228,37 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		_ui.cleanup();
 	}
 	
-	private function _cleanupUIVars():Void
+	private static function _cleanupUIVars(vars:Map<String,String>):Map<String,String>
 	{
-		if (_ui_vars != null)
+		if (vars != null)
 		{
-			for (key in _ui_vars.keys())
+			for (key in vars.keys())
 			{ 
-				_ui_vars.remove(key);
+				vars.remove(key);
 			}
-			_ui_vars = null;
+			vars = null;
 		}
+		return null;
 	}
 	
 	public function setUIVariable(key:String, value:String):Void
 	{
-		if (_ui != null)
+		_setUIVariable(this, key, value);
+	}
+	
+	@:access(flixel.addons.ui.IFlxUIState)
+	private static function _setUIVariable(state:IFlxUIState, key:String, value:String):Void
+	{
+		if (state._ui != null)
 		{
 			//if the UI is constructed, set the variable directly
-			_ui.setVariable(key, value);
+			state._ui.setVariable(key, value);
 		}
 		else
 		{
 			//if not, store it locally until the UI is constructed, then pass it in as it's being created
-			if (_ui_vars == null) _ui_vars = new Map <String, String>();
-			_ui_vars.set(key, value);
+			if (state._ui_vars == null) state._ui_vars = new Map <String, String>();
+			state._ui_vars.set(key, value);
 		}
 	}
 	
@@ -317,14 +324,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		cursor = null;
 		#end
 		
-		if (_ui_vars != null)
-		{
-			for (key in _ui_vars.keys())
-			{
-				_ui_vars.remove(key); 
-			}
-			_ui_vars = null;
-		}
+		_ui_vars = _cleanupUIVars(_ui_vars);
 		_ui = null;
 		_tongue = null;
 		getTextFallback = null;
@@ -384,7 +384,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	private function createUI(data:Fast = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null, liveFilePath_:String=""):FlxUI
 	{
 		var flxui = new FlxUI(data, ptr, superIndex_, tongue_, liveFilePath_, _ui_vars);
-		_cleanupUIVars();	//clear out temporary _ui_vars variable if it was set
+		_ui_vars = _cleanupUIVars(_ui_vars);	//clear out temporary _ui_vars variable if it was set
 		return flxui;
 	}
 	
