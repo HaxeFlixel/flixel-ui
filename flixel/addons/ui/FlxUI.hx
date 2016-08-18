@@ -910,14 +910,23 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadPointSize(data:Fast):Void
 	{
-		var ptx = _loadX(data.node.point_size, -1.0);
-		var pty = _loadY(data.node.point_size, -1.0);
+		var ptx = -1.0;
+		var pty = -1.0;
 		
-		//if neither x or y is defined look for a "value" parameter to set both
-		if (pty < 1 && ptx < 1)
+		for (node in data.nodes.point_size)
 		{
-			pty = _loadHeight(data.node.point_size, -1, "value");
-			ptx = pty;
+			if (_loadTest(node.point_size))
+			{
+				ptx = _loadX(node.point_size, ptx);
+				pty = _loadY(node.point_size, pty);
+				
+				//if neither x or y is defined look for a "value" parameter to set both
+				if (pty < 1 && ptx < 1)
+				{
+					pty = _loadHeight(node.point_size, -1, "value");
+					ptx = pty;
+				}
+			}
 		}
 		
 		//if x or y is not defined default to 1
