@@ -649,46 +649,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 			_data = data;
 			
-			
-			if (data.hasNode.inject)
-			{
-				while(data.hasNode.inject)
-				{
-					var inj_data = data.node.inject;
-					
-					var i = 0;
-					var payload:Xml = null;
-					var parent:Xml = inj_data.x.parent;
-					
-					if (_loadTest(inj_data))
-					{
-						var inj_name:String = U.xml_name(inj_data.x);
-						payload = U.xml(inj_name, "xml", false);
-						
-						for (child in parent.children)
-						{
-							if (child == inj_data.x)
-							{
-								break;
-							}
-							i++;
-						}
-					}
-					
-					if (parent.removeChild(inj_data.x))
-					{
-						if (payload != null)
-						{
-							var j:Int = 0;
-							for (e in payload.elements())
-							{
-								parent.insertChild(e, i + j);
-								j++;
-							}
-						}
-					}
-				}
-			}
+			data = resolveInjections(data);
 			
 			//See if there's anything to include
 			if (data.hasNode.include)
@@ -726,6 +687,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					
 					if (inc_xml != null)
 					{
+						inc_xml = resolveInjections(inc_xml);
+						
 						for (def_data in inc_xml.nodes.definition)
 						{
 							//add a prefix to avoid collisions:
@@ -901,6 +864,51 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		else {
 			_onFinishLoad();
 		}
+	}
+	
+	@:access(Xml)
+	private function resolveInjections(data:Fast):Fast
+	{
+		if (data.hasNode.inject)
+		{
+			while(data.hasNode.inject)
+			{
+				var inj_data = data.node.inject;
+				
+				var i = 0;
+				var payload:Xml = null;
+				var parent:Xml = inj_data.x.parent;
+				
+				if (_loadTest(inj_data))
+				{
+					var inj_name:String = U.xml_name(inj_data.x);
+					payload = U.xml(inj_name, "xml", false);
+					
+					for (child in parent.children)
+					{
+						if (child == inj_data.x)
+						{
+							break;
+						}
+						i++;
+					}
+				}
+				
+				if (parent.removeChild(inj_data.x))
+				{
+					if (payload != null)
+					{
+						var j:Int = 0;
+						for (e in payload.elements())
+						{
+							parent.insertChild(e, i + j);
+							j++;
+						}
+					}
+				}
+			}
+		}
+		return data;
 	}
 	
 	private function unparentXML(f:Fast):Fast

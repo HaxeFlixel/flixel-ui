@@ -174,7 +174,6 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 	@:access(flixel.addons.ui.FlxUIState)
 	public function setUIVariable(key:String, value:String):Void
 	{
-		trace("setUIVariable(" + key + "," + value+")");
 		FlxUIState._setUIVariable(this, key, value);
 	}
 	
