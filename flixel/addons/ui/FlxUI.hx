@@ -980,10 +980,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 			}
 			
-			if (Std.is(thing, IFlxUIButton) || Std.is(thing, IFlxUIClickable))
-			{
-				_loadTooltip(thing, obj);
-			}
+			_loadTooltip(thing, obj);
 			
 			if (tempGroup != null) {
 				tempGroup.add(cast thing);
@@ -1710,14 +1707,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			var tt    = _loadTooltipData(data.node.tooltip);
 			var state = getLeafUIState();
 			
-			if (Std.is(thing, IFlxUIButton))
-			{
-				state.tooltips.add(cast thing, tt);
-			}
-			else if (Std.is(thing, FlxUICheckBox))
+			if (Std.is(thing, FlxUICheckBox))
 			{
 				var check:FlxUICheckBox = cast thing;
 				state.tooltips.add(check.button, tt);
+			} else {
+				state.tooltips.add(cast thing, tt);
 			}
 		}
 	}
