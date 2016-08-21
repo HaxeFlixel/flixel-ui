@@ -1,4 +1,5 @@
 package flixel.addons.ui;
+import flixel.FlxCamera;
 import flixel.addons.ui.FlxUITooltip;
 import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIState;
@@ -38,6 +39,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 	public var showOnClick:Bool = false;
 	public var delay:Float = 0.1;
 	public var showTooltipArrow(default, set):Bool;
+	public var cameras(default, set):Array<FlxCamera>;
 	
 	public function new(?State:FlxUIState,?SubState:FlxUISubState) 
 	{
@@ -590,6 +592,12 @@ class FlxUITooltipManager implements IFlxDestroyable
 		}
 		
 		return false;
+	}
+	
+	function set_cameras(value:Array<FlxCamera>):Array<FlxCamera> 
+	{
+		tooltip.cameras = value;
+		return cameras = value;
 	}
 }
 
