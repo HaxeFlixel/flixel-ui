@@ -3540,7 +3540,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	{
 		var src:String = ""; 
 		var fb:IFlxUIButton = null;
-		
+		var color:Int = _loadColor(data);
 		var resize_ratio:Float = U.xml_f(data.x, "resize_ratio", -1);
 		var resize_point:FlxPoint = _loadCompass(data, "resize_point");
 		var resize_label:Bool = U.xml_bool(data.x, "resize_label", false);
@@ -3578,7 +3578,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (sprite == null)
 		{
 			var useDefaultGraphic = (data.hasNode.graphic == false);
-			fb = new FlxUIButton(0, 0, label, null, useDefaultGraphic);
+			fb = new FlxUIButton(0, 0, label, null, useDefaultGraphic, false, color);
 			var fuib:FlxUIButton = cast fb;
 			fuib._autoCleanup = false;
 		}
@@ -3931,7 +3931,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var thename = U.xml_name(data.x);
 		
 		var resize:FlxPoint = getResizeRatio(data);
-		
+		var color:Int = _loadColor(data);
 		var resize_ratio:Float = resize.x;
 		var resize_point:FlxPoint = _loadCompass(data, "resize_point");
 		var resize_ratio_axis:Int = Std.int(resize.y);
@@ -4002,7 +4002,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var tile:Int = _loadTileRule(data);
 		
-		f9s = new FlxUI9SliceSprite(0, 0, srcGraphic, rc, slice9, tile, smooth, srcId, resize_ratio, resize_point, resize_ratio_axis);
+		f9s = new FlxUI9SliceSprite(0, 0, srcGraphic, rc, slice9, tile, smooth, srcId, resize_ratio, resize_point, resize_ratio_axis, false, color);
 		
 		return f9s;
 	}
