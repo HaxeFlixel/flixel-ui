@@ -104,12 +104,12 @@ class FlxInputText extends FlxText
 	/**
 	 * callback that is triggered when this text field gets focus
 	 */
-	public var focusGained:Void->Void = null;
+	public var focusGained:Void->Void;
 	
 	/**
 	 * callback that is triggered when this text field loses focus
 	 */
-	public var focusLost:Void->Void = null;
+	public var focusLost:Void->Void;
 	
 	/**
 	 * The Case that's being enforced. Either ALL_CASES, UPPER_CASE or LOWER_CASE.
@@ -299,11 +299,10 @@ class FlxInputText extends FlxText
 			var hadFocus:Bool = hasFocus;
 			if (FlxG.mouse.overlaps(this)) 
 			{
-				caretIndex = getCaretIndex();				
+				caretIndex = getCaretIndex();
 				hasFocus = true;
 				if (!hadFocus && focusGained != null)
 					focusGained();
-				
 			}
 			else 
 			{
