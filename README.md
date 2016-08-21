@@ -89,6 +89,8 @@ getMode(Key:String,recursive:Bool=true):Fast
 getDefinition(key:String,recursive:Bool=true):Fast
 ```
 
+Note that `recursive` refers to an upward recursion, not drilling down into layouts.  If you use a layout tag, you must `cast getAsset("mylayoutname")` and then call `getAsset()` on that to achieve downward recursion.
+
 less commonly used public functions:
 ```haxe
 //These implement the IEventGetter interface for lightweight events
