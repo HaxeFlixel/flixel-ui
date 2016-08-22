@@ -1033,13 +1033,13 @@ class FlxUICursor extends FlxUISprite
 		var currY:Int = 0;
 		var length:Int = 0;
 		
-		if (listWidget != null)
+		if (listWidget != null && listWidget[indexValue] != null)
 		{
 			currX = Std.int(listWidget[indexValue].x);
 			currY = Std.int(listWidget[indexValue].y);
 			length = listWidget.length;
 		}
-		else if (listLists != null)
+		else if (listLists != null && listLists[indexValue] != null)
 		{
 			currX = listLists[indexValue].x;
 			currY = listLists[indexValue].y;
@@ -1065,12 +1065,12 @@ class FlxUICursor extends FlxUISprite
 		{
 			if (i != indexValue)
 			{
-				if (listWidget != null)
+				if (listWidget != null && listWidget[i] != null)
 				{
 					nextX = Std.int(listWidget[i].x);
 					nextY = Std.int(listWidget[i].y);
 				}
-				else if (listLists != null)
+				else if (listLists != null && listLists[i] != null)
 				{
 					nextX = listLists[i].x;
 					nextY = listLists[i].y;
