@@ -555,7 +555,7 @@ class FlxInputText extends FlxText
 		}
 		
 		// place caret at leftmost position
-		return -1;
+		return 0;
 	}
 	
 	private function prepareCharBoundaries(numChars:Int):Void 
