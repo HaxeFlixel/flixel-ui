@@ -430,9 +430,9 @@ class FlxInputText extends FlxText
 	}
 	
 	/**
-	 * Gets the index of a character in this box
-	 * @return The index of the character hit by the point. 
-	 *         Returns -1 if the point is not found.
+	 * Gets the index of the character in this box under the mouse cursor
+	 * @return The index of the character. 
+	 *         between 0 and the length of the text
 	 */
 	private function getCaretIndex():Int
 	{
@@ -555,7 +555,7 @@ class FlxInputText extends FlxText
 		}
 		
 		// place caret at leftmost position
-		return -1;
+		return 0;
 	}
 	
 	private function prepareCharBoundaries(numChars:Int):Void 
