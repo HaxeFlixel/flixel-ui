@@ -389,10 +389,8 @@ class FlxUICursor extends FlxUISprite
 	public function jumpToXY(X:Float, Y:Float):Bool
 	{
 		var listi:Int = 0;
-		var i:Int = 0;
 		
 		var bestd2 = Math.POSITIVE_INFINITY;
-		var d2 = 0.0;
 		var bestli = -1;
 		var besti = -1;
 		
@@ -697,7 +695,6 @@ class FlxUICursor extends FlxUISprite
 	}
 	
 	private function _addToKeys(keys:Array<FlxBaseMultiInput>, m:FlxBaseMultiInput) {
-		var mk:FlxBaseMultiInput;
 		var exists:Bool = false;
 		for (mk in keys) {
 			if (m.equals(mk)) {
@@ -727,10 +724,6 @@ class FlxUICursor extends FlxUISprite
 	}
 	
 	private function _checkKeys():Void {
-		var key:FlxBaseMultiInput;
-		
-		var upPressed:Bool = false;
-		
 		var wasInvisible = (visible == false);
 		var lastLocation = location;
 		
@@ -1002,8 +995,7 @@ class FlxUICursor extends FlxUISprite
 		
 		var bestdx:Float = dx;
 		var bestdy:Float = dy;
-		
-		var bestWidget:IFlxUIWidget = null;
+
 		var besti:Int = -1;
 		
 		//DESIRED BEHAVIOR: Jump to the CLOSEST OBJECT that ALSO:
@@ -1070,13 +1062,11 @@ class FlxUICursor extends FlxUISprite
 		var bestdx:Float = dx;
 		var bestdy:Float = dy;
 		
-		var bestWidget:IFlxUIWidget = null;
 		var besti:Int = -1;
 		
 		bestdx = Math.POSITIVE_INFINITY;
 		bestdy = 0;							//Now we want the FURTHEST object from us
 		
-		var length = (listWidget != null ? listWidget.length : (listLists != null ? listLists.length : 0));
 		var length:Int = 0;
 		var currX:Int = 0;
 		var currY:Int = 0;

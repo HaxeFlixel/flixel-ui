@@ -93,7 +93,6 @@ class FlxUITooltip extends FlxUIGroup
 		_bodyText.update(0);
 		
 		var titleHeight = Std.int(_titleText.textField.textHeight + 4);
-		var bodyHeight = Std.int(_bodyText.textField.textHeight + 4);
 		
 		if (style.titleOffset != null)
 		{

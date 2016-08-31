@@ -1064,7 +1064,6 @@ class U
 	public static function copy_shallow_arr(src:Array<Dynamic>):Array<Dynamic> {
 		if (src == null) { return null;}
 		var arr:Array<Dynamic> = new Array<Dynamic>();
-		var thing:Dynamic;
 		if (src == null){ 
 			return arr;
 		}
@@ -1090,7 +1089,6 @@ class U
 	public static function copy_shallow_arr_i(src:Array<Int>):Array<Int> {
 		if (src == null) { return null;}
 		var arr:Array<Int> = new Array<Int>();
-		var thing:Int;
 		for (thing in src) {
 			arr.push(thing);
 		}
@@ -1100,7 +1098,6 @@ class U
 	public static function copy_shallow_arr_str(src:Array<String>):Array<String> {
 		if (src == null) { return null;}
 		var arr:Array<String> = new Array<String>();
-		var thing:String;
 		for (thing in src) {
 			arr.push(thing);
 		}
@@ -1382,7 +1379,7 @@ class U
 						temp.dispose();
 					}
 					
-					var finalKey = FlxG.bitmap.add(scaledBmp, true, scaleKey);			//store it by the unique key
+					FlxG.bitmap.add(scaledBmp, true, scaleKey);			//store it by the unique key
 				}
 				
 				return scaleKey;										//return the final scaled key
@@ -1454,7 +1451,6 @@ class U
 	public static function bmpToArrayIntLayer(color_index:Int, bd:BitmapData):Array<Int>{
 		//Walk image and export pixel values
 		var p:Int;
-		var last_p:Int = -1;
 		var arr:Array<Int> = [];
 		var w:Int = bd.width;
 		var h:Int = bd.height;
@@ -1490,7 +1486,6 @@ class U
 		
 		//Walk image and export pixel values
 		var p:Int;
-		var last_p:Int=-1;
 		var csv:String = "";
 		var w:Int = bd.width;
 		var h:Int = bd.height;
@@ -1657,12 +1652,6 @@ class U
 	}
 	
 	public static inline function obj_direction(a:FlxObject, b:FlxObject):FlxPoint {
-		var ax:Float = a.x + (a.width / 2);
-		var ay:Float = a.y + (a.height / 2);
-		
-		var bx:Float = b.x + (b.width / 2);
-		var by:Float = b.y + (b.height / 2);
-		
 		var dx:Float = a.x - b.x;
 		var dy:Float = a.y - b.y;
 		

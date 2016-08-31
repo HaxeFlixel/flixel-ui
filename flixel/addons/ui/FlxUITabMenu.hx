@@ -54,9 +54,7 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 			var tabtyped:FlxUITypedButton<FlxSprite> = cast tab;
 			tabtyped.skipButtonUpdate = b;
 		}
-		var group:FlxUIGroup;
 		for (group in _tab_groups) {
-			var sprite:FlxSprite;
 			for (sprite in group.members) {
 				if (Std.is(sprite, IFlxUIClickable)) {
 					var widget:IFlxUIClickable = cast sprite;
@@ -210,7 +208,6 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 	}
 	
 	public function getTabGroup(?name:String, ?index:Null<Int>):FlxUIGroup {
-		var tabGroup:FlxUIGroup;
 		if (name != null) {
 			for (tabGroup in _tab_groups) {
 				if (tabGroup.name == name) {

@@ -161,7 +161,6 @@ class FontDef
 		setFontStyle(style);
 		
 		var extension:String = "";
-		var exists:Bool = false;
 		
 		for (ext in EXTENSIONS) {
 			if (str.indexOf(ext) != -1) {	//if it has a particular extension

@@ -226,7 +226,6 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 			text = Std.string(min);
 		}
 		
-		var justAddedDecimal:Bool = false;
 		var numDecimals:Int = 0;
 		for (i in 0...text.length)
 		{

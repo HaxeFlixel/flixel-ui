@@ -361,7 +361,6 @@ class FlxInputText extends FlxText
 			{
 				if (caretIndex > 0) 
 				{
-					var s:String;
 					caretIndex--;
 					text = text.substring(0, caretIndex) + text.substring(caretIndex + 1 );
 					onChange(BACKSPACE_ACTION);
@@ -515,8 +514,7 @@ class FlxInputText extends FlxText
 		#if !js
 			X += textField.scrollH + 2;
 		#end
-		var offx :Int;
-		
+
 		// offset X according to text alignment when there is no scroll.
 		if (_charBoundaries != null && _charBoundaries.length > 0) 
 		{

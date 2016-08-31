@@ -56,7 +56,6 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 	
 	public function forceScrollFactor(X:Float,Y:Float):Void {
 		if (_ui != null) {
-			var w:IFlxUIWidget; 
 			for (w in _ui.group.members) {
 				w.scrollFactor.set(X, Y);
 			}

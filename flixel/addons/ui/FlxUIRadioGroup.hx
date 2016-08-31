@@ -43,7 +43,6 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 	public var skipButtonUpdate(default, set):Bool;
 	private function set_skipButtonUpdate(b:Bool):Bool {
 		skipButtonUpdate = b;
-		var fcb:FlxUICheckBox;
 		for (fcb in _list_radios) {
 			fcb.skipButtonUpdate = b;
 		}

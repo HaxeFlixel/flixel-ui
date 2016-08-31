@@ -324,9 +324,6 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 			label_diffy = height - _spriteLabel.height;
 		}
 		
-		var old_offx:Float = 0;
-		var old_offy:Float = 0;
-		
 		if (W <= 0) { W = 80; }
 		if (H <= 0) { H = 20; }
 		

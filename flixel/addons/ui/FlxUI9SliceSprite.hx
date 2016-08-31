@@ -385,8 +385,6 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	}
 
 	public static function paintCompoundBitmap(g:BitmapData, assetID:String, sourceRects:Map<String,FlxRect>, targetRect:FlxRect, tile:Int=TILE_NONE, smooth:Bool = false, raw:BitmapData=null):Void {
-		var fillcolor = #if (neko) { rgb:0x00FFFFFF, a:0 }; #else 0x00FFFFFF; #end
-		
 		targetRect.x = Std.int(targetRect.x);
 		targetRect.y = Std.int(targetRect.y);
 		targetRect.width = Std.int(targetRect.width);
@@ -562,8 +560,6 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 		if (tile != TILE_NONE) {
 			
 			//_staticRect currently represents rect of what we've drawn so far
-			
-			var th:Int = tile & 0x10;
 			
 			if (tile & 0x10 == 0x10) {	//TILE H is true
 				

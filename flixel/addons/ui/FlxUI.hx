@@ -880,7 +880,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			if (data.x.firstElement() != null)
 			{
 				//Load the actual things
-				var node:Xml;
 				for (node in data.x.elements()) 
 				{
 					_loadSub(node);
@@ -926,8 +925,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadSub(node:Xml,iteration:Int=0):Void
 	{
-		var loadsubi:Int = 0;
-		var error:String = " ";
 		var type:String = node.nodeName;
 		type.toLowerCase();
 		var obj:Fast = new Fast(node);
@@ -1034,7 +1031,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		_postLoaded = true;
 		if (data.x.firstElement() != null) {
 			//Load the actual things
-			var node:Xml;
 			for (node in data.x.elements()) 
 			{
 				_postLoadThing(node.nodeName.toLowerCase(), new Fast(node));
@@ -1638,7 +1634,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			if (cname == nodeValue) {
 				if (cNode.hasNode.change) {
 					for (change in cNode.nodes.change) {
-						var xml:Xml;
 						for (att in change.x.attributes()) {
 							var value:String = change.x.get(att);
 							data.x.set(att, value);
@@ -2001,10 +1996,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			return;
 		}
 		
-		var i:Int = 0;
-		if (Std.is(thing, IHasParams)) {
-			
-		}
 		var ihp:IHasParams = cast thing;
 		ihp.params = getParams(data);
 	}
@@ -2023,8 +2014,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var context:String = "";
 		var code:String = "";
-		
-		var labelStyleChanged:Bool = false;
 		
 		for (attribute in data.x.attributes())
 		{
@@ -2076,7 +2065,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _alignThing(data:Fast,suppressError:Bool=false):Void
 	{
-		var datastr:String = data.x.toString();
 		if (data.hasNode.objects)
 		{
 			for (objectNode in data.nodes.objects)
@@ -2111,8 +2099,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				
 				if (data.hasNode.bounds)
 				{
-					var bound_range:Float = -1;
-					
 					if (axis == "horizontal") {
 						bounds.x = _getDataSize("w", U.xml_str(data.node.bounds.x, "left"), -1);
 						bounds.y = _getDataSize("w", U.xml_str(data.node.bounds.x, "right"), -1);
@@ -2564,8 +2550,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var border:BorderDef = _loadBorder(data);
 		
-		var backgroundColor:Int = U.parseHex(U.xml_str(data.x, "background", true, "0x00000000"), true, true, 0x00000000);
-		
 		var ft:IFlxUIWidget;
 		var ftu:FlxUIText = new FlxUIText(0, 0, W, text, size);
 		ftu.setFormat(the_font, size, color, align);
@@ -2919,7 +2903,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadCheckBox(data:Fast):FlxUICheckBox
 	{
-		var src:String = "";
 		var fc:FlxUICheckBox = null;
 		
 		var label:String = U.xml_str(data.x, "label");
@@ -2934,8 +2917,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var check_src:String = U.xml_str(data.x, "check_src", true);
 		var box_src:String = U.xml_str(data.x, "box_src", true);
-		
-		var slice9:String = U.xml_str(data.x, "slice9", true);
 		
 		var params:Array<Dynamic> = getParams(data);
 		
@@ -3480,7 +3461,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var theText:FlxText = null;
 		var buttPlus:FlxUITypedButton<FlxSprite> = null;
 		var buttMinus:FlxUITypedButton<FlxSprite> = null;
-		var bkg:FlxUISprite = null;
 		
 		if (data.hasNode.text) {
 			theText = cast _loadThing("text", data.node.text);
@@ -3533,7 +3513,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	@:access(flixel.addons.ui.FlxUITypedButton)
 	private function _loadButton(data:Fast, setCallback:Bool = true, isToggle:Bool = false, load_code:String = ""):IFlxUIWidget
 	{
-		var src:String = ""; 
 		var fb:IFlxUIButton = null;
 		var color:Int = _loadColor(data);
 		var resize_ratio:Float = U.xml_f(data.x, "resize_ratio", -1);
@@ -3651,13 +3630,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					for (numstr in arr) {
 						frames.push(Std.parseInt(numstr));
 					}
-				}
-				
-				if (data.hasNode.scale_src)
-				{
-					var scale_:Float = _loadScale(data.node.scale_src, -1);
-					var scale_x:Float = scale_ != -1 ? scale_ : _loadScaleX(data.node.scale_src,-1);
-					var scale_y:Float = scale_ != -1 ? scale_ : _loadScaleY(data.node.scale_src, -1);
 				}
 				
 				for (graphicNode in data.nodes.graphic) {
@@ -3923,8 +3895,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var src:String = "";
 		var f9s:FlxUI9SliceSprite = null;
 		
-		var thename = U.xml_name(data.x);
-		
 		var resize:FlxPoint = getResizeRatio(data);
 		var color:Int = _loadColor(data);
 		var resize_ratio:Float = resize.x;
@@ -3960,8 +3930,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				src = FlxUIAssets.IMG_CHROME_FLAT;
 			}
 		}
-		
-		var rc:Rectangle;
+
 		var rect_w:Int = Std.int(_loadWidth(data));
 		var rect_h:Int = Std.int(_loadHeight(data));
 		
@@ -4053,7 +4022,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadBox(data:Fast):FlxUISprite
 	{
-		var src:String = ""; 
 		var fs:FlxUISprite = null;
 		
 		var thickness:Int = Std.int(_loadWidth(data, 1, "thickness"));
@@ -4101,8 +4069,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadLine(data:Fast):FlxUILine
 	{
-		var src:String = ""; 
-		
 		var axis:String = U.xml_str(data.x, "axis", true, "horizontal");
 		var thickness:Int = Std.int(_loadWidth(data, -1, "thickness"));
 		
@@ -4160,9 +4126,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			filledImgSrc:"",
 			emptyImgSrc:""
 		}
-		
-		var bounds: { min_width:Float, min_height:Float, 
-					  max_width:Float, max_height:Float } = calcMaxMinSize(data);
 		
 		var W:Int = Std.int(_loadWidth(data,-1));
 		var H:Int = Std.int(_loadHeight(data,-1));
@@ -4481,7 +4444,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 				}else {
 					var r:EReg = ~/[\w]+\.[\w]+/;
-					var property:String = "";
 					
 					if (r.match(str)) {
 						var wh:String = "";
@@ -4692,7 +4654,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	private function _getOperation(str:String):Array<Dynamic>
 	{
 		var list:Array<String> = ["+", "-", "*", "/", "^"];
-		var temp:Array<String> = null;
 		
 		var operator:String = "";
 		var besti:Float = Math.POSITIVE_INFINITY;
@@ -4942,8 +4903,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var X:Float = _loadX(data);			//position offset from 0,0
 		var Y:Float = _loadY(data);
 		
-		var name = U.xml_name(data.x);
-		
 		//if you don't define x or y in an anchor, they default to 0
 		//but if you set x="same" / y="same", you default to whatever it was before
 		
@@ -5186,7 +5145,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 			var info:Fast = consolidateData(textNode, text_def);
 			
-			var case_name:String = U.xml_name(info.x);
 			var the_font:String = _loadFontFace(info);
 			var size:Int = Std.int(_loadHeight(info, 8, "size", "floor"));
 			var color:Int = _loadColor(info);
@@ -5200,7 +5158,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			var the_label:FlxText=null;
 			var fb:FlxUIButton = null;
 			var fsb:FlxUISpriteButton = null;
-			var cb:FlxUICheckBox = null;
 			var ifb:IFlxUIButton = null;
 			
 			if (Std.is(button, FlxUICheckBox) == false)

@@ -130,11 +130,6 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 			}
 		}
 		
-		var xx:Float = X;
-		var yy:Float = Y;
-		
-		var i:Int = 0;
-		
 		spacingH = SpacingH;
 		spacingV = SpacingV;
 		maxColumns = MaxColumns;
@@ -215,8 +210,6 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 	
 	public function changeColors(list:Array<SwatchData>):Void {
 		remove(_previewSwatch);
-		var swatches:Int = members.length - 1;
-		
 		var swatchForSelect:SwatchData = null;
 		
 		if (_selectedSwatch != null) {

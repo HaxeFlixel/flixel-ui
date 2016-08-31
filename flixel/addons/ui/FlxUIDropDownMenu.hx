@@ -244,7 +244,6 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 						var btn:FlxUIButton = list[i];
 						if(btn != null){
 							btn.label.text = data.label;					//Set the label
-							var old_id:String = list[i].name;
 							list[i].name = data.name;							//Replace the name
 							recycled = true;								//we successfully recycled it
 						}

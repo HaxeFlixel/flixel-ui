@@ -141,7 +141,6 @@ class SwatchData implements IFlxDestroyable {
 		}
 		
 		var totalDiff:Int = 0;
-		var i:Int = 0;
 		for (i in 0...smallList.length)
 		{
 			var ignore:Bool = false;
