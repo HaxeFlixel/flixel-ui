@@ -260,6 +260,11 @@ class FlxUITooltip extends FlxUIGroup
 		active = false;
 	}
 	
+	public function showArrow(b:Bool):Void
+	{
+		_arrow.visible = _arrowBkg.visible = b;
+	}
+	
 	/***SETTERS***/
 	
 	public function set_anchor(a:Anchor):Anchor

@@ -33,6 +33,11 @@ class FlxUICursor extends FlxUISprite
 	public var listIndex(default, set):Int = 0;			//which group is my location pointing to?
 	
 	/**
+	 * Jump to whatever widget has just been moused over
+	 */
+	public var jumpOnMouseOver:Bool = true;
+	
+	/**
 	 * Exactly what it sounds like. The next input that would trigger a jump doesn't happen, then this flag is reset.
 	 */
 	public var ignoreNextInput:Bool;
@@ -111,7 +116,10 @@ class FlxUICursor extends FlxUISprite
 		}
 	}
 	
-	
+	override function set_x(NewX:Float):Float 
+	{
+		return super.set_x(NewX);
+	}
 	
 	/**
 	 * Returns the current widget the cursor is pointing to, if any
@@ -316,16 +324,19 @@ class FlxUICursor extends FlxUISprite
 		#end
 		
 		#if !FLX_NO_MOUSE
-		if (lastMouseX != FlxG.mouse.x || lastMouseY != FlxG.mouse.y)
+		if (jumpOnMouseOver)
 		{
-			var oldVis = visible;
-			jumpToXY(FlxG.mouse.x, FlxG.mouse.y);
-			visible = oldVis;
-			
-			#if !FLX_NO_MOUSE
-			lastMouseX = FlxG.mouse.x;
-			lastMouseY = FlxG.mouse.y;
-			#end
+			if (lastMouseX != FlxG.mouse.x || lastMouseY != FlxG.mouse.y)
+			{
+				var oldVis = visible;
+				jumpToXY(FlxG.mouse.x, FlxG.mouse.y);
+				visible = oldVis;
+				
+				#if !FLX_NO_MOUSE
+				lastMouseX = FlxG.mouse.x;
+				lastMouseY = FlxG.mouse.y;
+				#end
+			}
 		}
 		#end
 		
@@ -1133,13 +1144,13 @@ class FlxUICursor extends FlxUISprite
 		var currX:Int = 0;
 		var currY:Int = 0;
 		
-		if (listWidget != null)
+		if (listWidget != null && listWidget[indexValue] != null)
 		{
 			length = listWidget.length;
 			currX = Std.int(listWidget[indexValue].x);
 			currY = Std.int(listWidget[indexValue].y);
 		}
-		if (listLists != null)
+		if (listLists != null && listLists[indexValue] != null)
 		{
 			length = listLists.length;
 			currX = listLists[indexValue].x;
@@ -1152,12 +1163,12 @@ class FlxUICursor extends FlxUISprite
 			{
 				var xx = 0;
 				var yy = 0;
-				if (listWidget != null)
+				if (listWidget != null && listWidget[i] != null)
 				{
 					xx = Std.int(listWidget[i].x);
 					yy = Std.int(listWidget[i].y);
 				}
-				else if (listLists != null)
+				else if (listLists != null && listLists[i] != null)
 				{
 					xx = Std.int(listLists[i].x);
 					yy = Std.int(listLists[i].y);
