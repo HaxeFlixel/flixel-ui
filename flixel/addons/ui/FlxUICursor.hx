@@ -1361,6 +1361,8 @@ class FlxUICursor extends FlxUISprite
 			}
 			this.flipX = flippedX;
 			this.flipY = flippedY;
+			x = Std.int(x);
+			y = Std.int(y);
 		}
 	}
 	

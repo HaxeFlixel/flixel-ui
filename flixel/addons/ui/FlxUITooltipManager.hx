@@ -114,7 +114,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 	
 	public function hideCurrent()
 	{
-		if (current > 0)
+		if (current >= 0)
 		{
 			hide(current);
 		}
@@ -122,7 +122,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 	
 	public function isVisible():Bool
 	{
-		return current > 0;
+		return current >= 0;
 	}
 	
 	/**

@@ -221,11 +221,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @return
 	 */
 	
+	@:access(flixel.FlxState)
 	public static function getLeafUIState():IFlxUIState{
 		var state:FlxState = FlxG.state;
 		if (state != null) 
 		{
-			while (state.subState != null && Std.is(state.subState, IFlxUIState)) 
+			while (state.subState != null && state._requestSubStateReset == false && Std.is(state.subState, IFlxUIState)) 
 			{
 				state = state.subState;
 			}
@@ -5019,6 +5020,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadPosition(data:Fast, thing:IFlxUIWidget):Void
 	{
+		if (thing == null) return;
+		
 		var X:Float = _loadX(data);			//position offset from 0,0
 		var Y:Float = _loadY(data);
 		
