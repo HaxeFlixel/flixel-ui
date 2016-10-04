@@ -5,7 +5,7 @@
 * `FlxInputText`: added `focusGained` and `focusLost` (#176)
 * `FlxUITooltipManager`:
  * fixed tooltips being off-screen sometimes (#181)
- * added support for tooltipts on non-clickable elements (#182)
+ * added support for tooltips on non-clickable elements (#182)
  * added `cameras` (#187)
 * `FlxUIState` / `FlxUISubState`: finished `reload_ui_on_resize` (#188)
 * `FlxUIButton` / `FlxUI9SliceSprite`: added `color` arguments to `new()` (#180)
