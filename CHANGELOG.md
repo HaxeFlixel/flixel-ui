@@ -1,3 +1,17 @@
+2.2.0
+------------------------------
+* Compatibility with flixel 4.2.0
+* `FlxUICheckBox`: fixed alignment on HTML5 (#192)
+* `FlxInputText`: added `focusGained` and `focusLost` (#176)
+* `FlxUITooltipManager`:
+ * fixed tooltips being off-screen sometimes (#181)
+ * added support for tooltipts on non-clickable elements (#182)
+ * added `cameras` (#187)
+* `FlxUIState` / `FlxUISubState`: finished `reload_ui_on_resize` (#188)
+* `FlxUIButton` / `FlxUI9SliceSprite`: added `color` arguments to `new()` (#180)
+* `FlxInputText`: fixed an issue with caret positions in empty textfields (#193)
+* Assets are now included with `"embed=true"` (#198)
+
 2.1.0
 ------------------------------
 * Compatibility with flixel 4.1.0
