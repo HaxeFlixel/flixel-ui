@@ -103,11 +103,13 @@ class FlxInputText extends FlxText
 	
 	/**
 	 * callback that is triggered when this text field gets focus
+	 * @since 2.2.0
 	 */
 	public var focusGained:Void->Void;
 	
 	/**
 	 * callback that is triggered when this text field loses focus
+	 * @since 2.2.0
 	 */
 	public var focusLost:Void->Void;
 	

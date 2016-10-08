@@ -29,6 +29,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 	
 	/**
 	 * Optional fixed position to use for ALL tooltips
+	 * @since 2.1.0
 	 */
 	public var fixedPosition(default, set):{object:FlxObject, anchor:Anchor} = null;
 	
@@ -38,7 +39,9 @@ class FlxUITooltipManager implements IFlxDestroyable
 	public var defaultStyle:FlxUITooltipStyle = null;
 	public var showOnClick:Bool = false;
 	public var delay:Float = 0.1;
+	/** @since 2.1.0 */
 	public var showTooltipArrow(default, set):Bool;
+	/** @since 2.2.0 */
 	public var cameras(default, set):Array<FlxCamera>;
 	
 	public function new(?State:FlxUIState,?SubState:FlxUISubState) 
@@ -117,6 +120,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 		}
 	}
 	
+	/** @since 2.1.0 */
 	public function isVisible():Bool
 	{
 		return current > 0;
@@ -166,6 +170,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 	 * Set an object's tooltip's stickiness (whether it disappears when the mouse moves off of it or not)
 	 * @param	thing	the thing you want to modify the tooltip for
 	 * @param	sticky	if true, this tooltip will not disappear until explicitly hidden or until another tooltip is triggered
+	 * @since	2.1.0
 	 */
 	public function stickyTooltipFor(thing:FlxObject, sticky:Bool = true):Void
 	{
@@ -180,6 +185,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 	 * Show the tooltip for the given object, if one exists
 	 * @param	thing	the thing you want to display a tooltip for
 	 * @param	value	whether to show or hide the tooltip
+	 * @since	2.1.0
 	 */
 	public function showTooltipFor(thing:FlxObject, value:Bool=true):Void
 	{

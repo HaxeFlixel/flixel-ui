@@ -1,4 +1,5 @@
 package flixel.addons.ui;
+
 import flash.display.BitmapData;
 import flash.errors.Error;
 import flash.geom.Matrix;
@@ -152,7 +153,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * Also: checks Firetongue (if available) for font replacement rules
 	 * @param	str
 	 * @param	style
-	 * @return
+	 * @since	2.1.0
 	 */
 	public static inline function fontStr(str:String, style:String = ""):String
 	{
@@ -166,7 +167,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * (Only really useful if you're using Firetongue with font replacement rules)
 	 * @param	str
 	 * @param	size
-	 * @return
+	 * @since	2.1.0
 	 */
 	public static function fontSize(str:String, size:Int):Int
 	{
@@ -181,7 +182,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @param	str
 	 * @param	style
 	 * @param	extension
-	 * @return
+	 * @since	2.1.0
 	 */
  	public static function font(str:String, style:String = "", extension:String=".ttf"):String
 	{

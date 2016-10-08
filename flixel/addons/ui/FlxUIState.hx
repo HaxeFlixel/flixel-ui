@@ -301,6 +301,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		}
 	}
 	
+	/** @since 2.1.0 */
 	public function onShowTooltip(t:FlxUITooltip):Void
 	{
 		//override per subclass

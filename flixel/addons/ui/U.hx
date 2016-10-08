@@ -1948,6 +1948,7 @@ class U
 		return f;
 	}
 	
+	/** @since 2.1.0 */
 	public static function setButtonLabel(btn:IFlxUIButton, str:String):Void
 	{
 		if (btn == null) return;

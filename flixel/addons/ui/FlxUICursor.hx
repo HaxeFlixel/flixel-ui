@@ -1,4 +1,5 @@
 package flixel.addons.ui;
+
 import flash.events.MouseEvent;
 import flixel.addons.ui.Anchor;
 import flixel.addons.ui.FlxUIAssets;
@@ -112,7 +113,7 @@ class FlxUICursor extends FlxUISprite
 	
 	/**
 	 * Returns the current widget the cursor is pointing to, if any
-	 * @return
+	 * @since 2.1.0
 	 */
 	public function getCurrentWidget():IFlxUIWidget
 	{
@@ -530,6 +531,7 @@ class FlxUICursor extends FlxUISprite
 		}
 	}
 	
+	/** @since 2.1.0 */
 	public function clearWidgets():Void
 	{
 		FlxArrayUtil.clearArray(_widgets);
