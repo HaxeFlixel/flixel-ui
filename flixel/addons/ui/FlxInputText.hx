@@ -294,7 +294,7 @@ class FlxInputText extends FlxText
 	{
 		super.update(elapsed);
 		
-		#if !FLX_NO_MOUSE
+		#if FLX_MOUSE
 		// Set focus and caretIndex as a response to mouse press
 		if (FlxG.mouse.justPressed) 
 		{
@@ -437,7 +437,7 @@ class FlxInputText extends FlxText
 	 */
 	private function getCaretIndex():Int
 	{
-	#if !FLX_NO_MOUSE
+	#if FLX_MOUSE
 		var hit = FlxPoint.get(FlxG.mouse.x - x, FlxG.mouse.y - y);
 		return getCharIndexAtPoint(hit.x, hit.y);
 	#else

@@ -16,7 +16,7 @@ class FlxMultiKey extends FlxBaseMultiInput
 		forbiddens = Forbiddens;
 	}
 	
-	#if !FLX_NO_KEYBOARD
+	#if FLX_KEYBOARD
 	private override function checkJustPressed():Bool
 	{
 		return FlxG.keys.checkStatus(input, JUST_PRESSED);

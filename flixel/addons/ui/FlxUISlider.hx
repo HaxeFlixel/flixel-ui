@@ -1,6 +1,6 @@
 package flixel.addons.ui;
 
-#if !FLX_NO_MOUSE
+#if FLX_MOUSE
 import flixel.addons.ui.FlxSlider;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 

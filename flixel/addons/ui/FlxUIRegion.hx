@@ -27,12 +27,12 @@ class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizabl
 		width = w;
 		height = h;
 		
-		#if !FLX_NO_DEBUG
+		#if FLX_DEBUG
 			debugBoundingBoxColor = FlxG.random.color().to24Bit();
 		#end
 	}
 
-#if !FLX_NO_DEBUG
+#if FLX_DEBUG
 	override public function drawDebugOnCamera(camera:FlxCamera) {
 		var rect = getBoundingBox(camera);
 		var gfx = beginDrawDebug(camera);

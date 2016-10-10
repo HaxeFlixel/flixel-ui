@@ -36,7 +36,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 {
 	public var destroyed:Bool;
 	
-	#if !FLX_NO_MOUSE
+	#if FLX_MOUSE
 	public var cursor:FlxUICursor = null;
 	public var hideCursorOnSubstate:Bool = false;
 	private var _cursorHidden:Bool = false;
@@ -109,7 +109,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			}
 		#end
 		
-		#if !FLX_NO_MOUSE
+		#if FLX_MOUSE
 		if (_makeCursor == true)
 		{
 			cursor = createCursor();
@@ -195,7 +195,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			loadUIFromData(null);
 		}
 		
-		#if !FLX_NO_MOUSE
+		#if FLX_MOUSE
 		if (cursor != null && _ui != null) {			//Cursor goes on top, of course
 			add(cursor);
 			cursor.addWidgetsFromUI(_ui);
@@ -271,7 +271,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	
 	public override function openSubState(SubState:FlxSubState):Void
 	{
-		#if !FLX_NO_MOUSE
+		#if FLX_MOUSE
 		if (cursor != null && hideCursorOnSubstate && cursor.visible == true)
 		{
 			_cursorHidden = true;
@@ -283,7 +283,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	
 	public override function closeSubState():Void
 	{
-		#if !FLX_NO_MOUSE
+		#if FLX_MOUSE
 		if (cursor != null && hideCursorOnSubstate && _cursorHidden)
 		{
 			_cursorHidden = false;
