@@ -2094,10 +2094,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 							  context = U.xml_str(data.x, "context", true, "ui");
 							  code = U.xml_str(data.x, "code", true, "");
 							  label = getText(label, context, true, code);
+							  
 							  if (Std.is(thing, ILabeled))
 							  {
 								  var b:ILabeled = cast thing;
 								  b.getLabel().text = label;
+							  }
+							  else if (Std.is(thing, FlxUISpriteButton))
+							  {
+								  U.setButtonLabel(cast thing, label);
 							  }
 				case "width": new_width = _loadWidth(data);
 				case "height": new_height = _loadHeight(data);

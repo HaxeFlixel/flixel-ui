@@ -27,7 +27,7 @@ class FlxUICursor extends FlxUISprite
 {
 	public var callback:String->IFlxUIWidget->Void;		//callback to notify whoever's listening that I did something(presumably a FlxUI object)
 	
-	public var wrap:Bool=true;	//when cycling through values, loop from back to front or stop at "edges?"
+	public var wrap:Bool=true;							//when cycling through values, loop from back to front or stop at "edges?"
 	
 	public var location(default, set):Int = -1;			//which object the cursor is pointing to (-1 means nothing)
 	public var listIndex(default, set):Int = 0;			//which group is my location pointing to?

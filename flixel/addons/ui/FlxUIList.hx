@@ -11,12 +11,14 @@ class FlxUIList extends FlxUIGroup implements ICursorPointable
 {
 	public static inline var STACK_HORIZONTAL:Int = 0;
 	public static inline var STACK_VERTICAL:Int = 1;
+	public static inline var SCROLL_LIST:String = "scroll_list";
 	
 	//The array index value of the first visible item in the list
 	public var scrollIndex(default, set):Int = 0;
 	public function set_scrollIndex(i:Int):Int {
 		scrollIndex = i;
 		refreshList();
+		FlxUI.event(SCROLL_LIST, this, scrollIndex);
 		return i;
 	}
 	
