@@ -1056,22 +1056,39 @@ class FlxUICursor extends FlxUISprite
 		#end
 	}
 	
+	private function inLine(aloc:Float, asize:Float, bloc:Float, bsize:Float):Bool
+	{
+		if (bloc >= aloc && bloc <= aloc + asize) return true;
+		if (aloc >= bloc && aloc <= bloc + bsize) return true;
+		if (bloc + bsize >= aloc && bloc + bsize <= aloc + asize) return true;
+		if (aloc + asize >= bloc && aloc + asize <= bloc + bsize) return true;
+		//if (FlxMath.inBounds(aloc + asize/2, bloc - bsize/2, bloc + bsize/2)) return true;
+		//if (FlxMath.inBounds(bloc + bsize/2, aloc - asize/2, aloc + asize/2)) return true;
+		return false;
+	}
+	
 	private function _find(X:Int, Y:Int, indexValue:Int, listWidget:Array<IFlxUIWidget>, listLists:Array<WidgetList>):Int
 	{
 		var currX:Int = 0;
 		var currY:Int = 0;
+		var currW:Int = 0;
+		var currH:Int = 0;
 		var length:Int = 0;
 		
 		if (listWidget != null && listWidget[indexValue] != null)
 		{
 			currX = Std.int(listWidget[indexValue].x);
 			currY = Std.int(listWidget[indexValue].y);
+			currW = Std.int(listWidget[indexValue].width);
+			currH = Std.int(listWidget[indexValue].height);
 			length = listWidget.length;
 		}
 		else if (listLists != null && listLists[indexValue] != null)
 		{
-			currX = listLists[indexValue].x;
-			currY = listLists[indexValue].y;
+			currX = Std.int(listLists[indexValue].x);
+			currY = Std.int(listLists[indexValue].y);
+			currW = Std.int(listLists[indexValue].width);
+			currH = Std.int(listLists[indexValue].height);
 			length = listLists.length;
 		}
 		
@@ -1080,6 +1097,7 @@ class FlxUICursor extends FlxUISprite
 		
 		var dx:Float = Math.POSITIVE_INFINITY;
 		var dy:Float = Math.POSITIVE_INFINITY;
+		var d2:Float = Math.POSITIVE_INFINITY;
 		
 		var bestdx:Float = dx;
 		var bestdy:Float = dy;
@@ -1088,8 +1106,13 @@ class FlxUICursor extends FlxUISprite
 		var besti:Int = -1;
 		
 		//DESIRED BEHAVIOR: Jump to the CLOSEST OBJECT that ALSO:
-			//Y != 0 --> is located ABOVE/BELOW me (depending on Y's sign)
+			//Y != 0 --> is located ABOVE/BELOW   me (depending on Y's sign)
 			//X != 0 --> is located LEFT/RIGHT of me (depending on X's sign)
+		
+		var iterations = 0;
+		
+		var nextW = 0;
+		var nextH = 0;
 		
 		for (i in 0...length)
 		{
@@ -1099,28 +1122,37 @@ class FlxUICursor extends FlxUISprite
 				{
 					nextX = Std.int(listWidget[i].x);
 					nextY = Std.int(listWidget[i].y);
+					nextW = Std.int(listWidget[i].width);
+					nextH = Std.int(listWidget[i].height);
 				}
 				else if (listLists != null && listLists[i] != null)
 				{
-					nextX = listLists[i].x;
-					nextY = listLists[i].y;
+					nextX = Std.int(listLists[i].x);
+					nextY = Std.int(listLists[i].y);
+					nextW = Std.int(listLists[i].width);
+					nextH = Std.int(listLists[i].height);
 				}
+				
+				dx = nextX - currX;									//Get x distance
+				dy = nextY - currY;									//Get y distance
 				
 				if (Y != 0)
 				{
-					dy = nextY - currY;									//Get y distance
 					if (FlxMath.sameSign(dy, Y) && dy != 0)				//If it's in the right direction, and not at same Y, consider it
 					{
 						dy = Math.abs(dy);
 						if (dy < bestdy)								//If abs. y distance is closest so far
 						{
-							bestdy = dy;
-							bestdx = Math.abs(currX-nextX);		//reset this every time a better dy is found
-							besti = i;
+							if (inLine(nextX, nextW, currX, currW))
+							{
+								bestdy = dy;
+								bestdx = Math.abs(currX-nextX);		//reset this every time a better dy is found
+								besti = i;
+							}
 						}
 						else if (dy == bestdy)
 						{
-							dx = Math.abs(currX - nextX);		//If abs. x distance is closest so far
+							dx = Math.abs(currX - nextX);			//If abs. x distance is closest so far
 							if (dx < bestdx)
 							{
 								bestdx = dx;
@@ -1131,15 +1163,17 @@ class FlxUICursor extends FlxUISprite
 				}
 				else if (X != 0)
 				{
-					dx = nextX - currX;									//Get x distance
 					if (FlxMath.sameSign(dx, X) && dx != 0)				//If it's in the right direction, and not at same X, consider it
 					{
 						dx = Math.abs(dx);
 						if (dx < bestdx)								//If abs. x distance is closest so far
 						{
-							bestdx = dx;
-							bestdy = Math.abs(currY-nextY);		//reset this every time a better dx is found
-							besti = i;
+							if (inLine(nextY, nextH, currY, currH))
+							{
+								bestdx = dx;
+								bestdy = Math.abs(currY-nextY);		//reset this every time a better dx is found
+								besti = i;
+							}
 						}
 						else if (dx == bestdx)
 						{
@@ -1154,6 +1188,7 @@ class FlxUICursor extends FlxUISprite
 				}
 			}
 		}
+		
 		return besti;
 	}
 	
@@ -1207,18 +1242,29 @@ class FlxUICursor extends FlxUISprite
 		var length:Int = 0;
 		var currX:Int = 0;
 		var currY:Int = 0;
+		var currW:Int = 0;
+		var currH:Int = 0;
+		
+		var nextX = 0;
+		var nextY = 0;
+		var nextW = 0;
+		var nextH = 0;
 		
 		if (listWidget != null && listWidget[indexValue] != null)
 		{
 			length = listWidget.length;
 			currX = Std.int(listWidget[indexValue].x);
 			currY = Std.int(listWidget[indexValue].y);
+			currW = Std.int(listWidget[indexValue].width);
+			currH = Std.int(listWidget[indexValue].height);
 		}
 		if (listLists != null && listLists[indexValue] != null)
 		{
 			length = listLists.length;
-			currX = listLists[indexValue].x;
-			currY = listLists[indexValue].y;
+			currX = Std.int(listLists[indexValue].x);
+			currY = Std.int(listLists[indexValue].y);
+			currW = Std.int(listLists[indexValue].width);
+			currH = Std.int(listLists[indexValue].height);
 		}
 		
 		for (i in 0...length)
@@ -1231,24 +1277,36 @@ class FlxUICursor extends FlxUISprite
 				{
 					xx = Std.int(listWidget[i].x);
 					yy = Std.int(listWidget[i].y);
+					nextW = Std.int(listWidget[i].width);
+					nextH = Std.int(listWidget[i].height);
 				}
 				else if (listLists != null && listLists[i] != null)
 				{
 					xx = Std.int(listLists[i].x);
 					yy = Std.int(listLists[i].y);
+					nextW = Std.int(listLists[i].width);
+					nextH = Std.int(listLists[i].height);
 				}
+				
+				nextX = xx;
+				nextY = yy;
+				
+				dy = yy - currY;
+				dx = xx - currX;
 				
 				if (Y != 0)
 				{
-					dy = yy - currY;
-					
 					if (FlxMath.sameSign(dy, Y) == false && dy != 0) {	//I want the WRONG direction this time
 						dy = Math.abs(dy);
+						
 						if (dy > bestdy)
 						{
-							bestdy = dy;
-							bestdx = Math.abs(currX - xx);
-							besti = i;
+							if (inLine(currX, currW, nextX, nextW))
+							{
+								bestdy = dy;
+								bestdx = Math.abs(currX - xx);
+								besti = i;
+							}
 						}
 						else if (dy == bestdy)
 						{
@@ -1263,15 +1321,16 @@ class FlxUICursor extends FlxUISprite
 				}
 				else if (X != 0)
 				{
-					dx = xx - currX;
-					
 					if (FlxMath.sameSign(dx, X) == false && dx != 0) {	//I want the WRONG direction this time
 						dx = Math.abs(dx);
 						if (dx > bestdx)
 						{
-							bestdx = dx;
-							bestdy = Math.abs(currY - yy);
-							besti = i;
+							if (inLine(currY, currH, nextY, nextH))
+							{
+								bestdx = dx;
+								bestdy = Math.abs(currY - yy);
+								besti = i;
+							}
 						}
 						else if (dx == bestdx)
 						{
@@ -1286,6 +1345,7 @@ class FlxUICursor extends FlxUISprite
 				}
 			}
 		}
+		
 		if (besti != -1)
 		{
 			indexValue = besti;
