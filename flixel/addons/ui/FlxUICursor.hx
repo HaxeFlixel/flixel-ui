@@ -1118,7 +1118,7 @@ class FlxUICursor extends FlxUISprite
 		{
 			if (i != indexValue)
 			{
-				if (listWidget != null && listWidget[i] != null)
+				if (listWidget != null && listWidget[i] != null && listWidget[i].visible)
 				{
 					nextX = Std.int(listWidget[i].x);
 					nextY = Std.int(listWidget[i].y);
@@ -1131,6 +1131,10 @@ class FlxUICursor extends FlxUISprite
 					nextY = Std.int(listLists[i].y);
 					nextW = Std.int(listLists[i].width);
 					nextH = Std.int(listLists[i].height);
+				}
+				else
+				{
+					continue;
 				}
 				
 				dx = nextX - currX;									//Get x distance

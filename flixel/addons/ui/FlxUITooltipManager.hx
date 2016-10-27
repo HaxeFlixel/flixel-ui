@@ -425,8 +425,10 @@ class FlxUITooltipManager implements IFlxDestroyable
 	private function findThing(thing:FlxObject):Int
 	{
 		if (thing == null) return -1;
+		if (list == null) return -1;
 		for (entry in list)
 		{
+			if (entry == null) continue;
 			if (entry.obj == thing || (Std.is(thing,IFlxUIButton) && cast(thing,IFlxUIButton) == entry.btn))
 			{
 				return list.indexOf(entry);

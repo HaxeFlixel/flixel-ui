@@ -4485,6 +4485,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						if (sw == -1 || sh == -1)
 						{
 							testAsset = Assets.getBitmapData(U.gfx(src));
+							if (testAsset == null){
+								break;
+							}
 							sw = testAsset.width;
 							sh = testAsset.height;
 						}
