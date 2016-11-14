@@ -100,6 +100,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	public var getTextFallback:String->String->Bool->String = null;
 	
 	/**
+	 * Set this if you want to override setting case behavior (useful for dealing with locale edge cases)
+	 */
+	public static var formatFromCodeCallback:String->String->String = null;
+	
+	/**
 	 * A useful hierarchical grouping of widgets for the FlxUICursor, null by default, populated during loading via xml:
 		 * <cursor>
 		 *   <list id="a,b,c"/>
@@ -187,7 +192,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	{
 		var t = __getTongue();
 		if (t != null) { str = t.getFont(str); }
-		return U.font(str, style, extension);
+		var result = U.font(str, style, extension);
+		return result;
 	}
 	
 	@:access(flixel.addons.ui.interfaces.IFlxUIState)
@@ -3324,6 +3330,28 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				return false;
 			}
 		}
+		
+		var locale = U.xml_str(node.x, "locale", false, "");
+		if (locale != "")
+		{
+			var locales = [locale];
+			var found = false;
+			if (locale.indexOf(",") != -1){
+				locales = locale.split(",");
+			}
+			for (l in locales)
+			{
+				if (_ptr_tongue.locale == l)
+				{
+					found = true;
+				}
+			}
+			if (!found)
+			{
+				return false;
+			}
+		}
+		
 		return true;
 	}
 	
@@ -3726,8 +3754,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				if (data.hasNode.scale_src)
 				{
 					var scale_:Float = _loadScale(data.node.scale_src, -1);
+					var min:Float = U.xml_f(data.node.scale_src.x, "min", 0);
 					var scale_x:Float = scale_ != -1 ? scale_ : _loadScaleX(data.node.scale_src,-1);
 					var scale_y:Float = scale_ != -1 ? scale_ : _loadScaleY(data.node.scale_src, -1);
+					if (scale_ < min) scale_ = min;
+					if (scale_x < min) scale_x = min;
+					if (scale_y < min) scale_y = min;
 				}
 				
 				for (graphicNode in data.nodes.graphic) {
@@ -4436,6 +4468,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		{
 			for (scaleNode in data.nodes.resolve(scaleName))
 			{
+				var min:Float = U.xml_f(scaleNode.x, "min");
 				var ratio:Float = U.xml_f(scaleNode.x, "screen_ratio", -1);
 				var tolerance:Float = U.xml_f(scaleNode.x, "tolerance", 0.1);
 				var actualRatio:Float = FlxG.width / FlxG.height;
@@ -4470,6 +4503,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					
 					var scale_x:Float = scale_ != -1 ? scale_ : _loadScaleX(scaleNode, -1);
 					var scale_y:Float = scale_ != -1 ? scale_ : _loadScaleY(scaleNode, -1);
+					
+					if (scale_ < min) scale_ = min;
+					if (scale_x < min) scale_x = min;
+					if (scale_y < min) scale_y = min;
 					
 					var sw:Float = 0;
 					var sh:Float = 0;
@@ -5197,6 +5234,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	private function formatFromCode(str:String, code:String):String {
+		
+		if (formatFromCodeCallback != null)
+		{
+			return formatFromCodeCallback(str, code);
+		}
+		
 		switch(code) {
 			case "u": return str.toUpperCase();		//uppercase
 			case "l": return str.toLowerCase();		//lowercase
