@@ -334,7 +334,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 		{
 			if (_slice9_assets != null)
 			{
-				loadGraphicSlice9(_slice9_assets, Std.int(W), Std.int(H), _slice9_arrays,tile,resize_ratio,has_toggle,_src_w,_src_h,_frame_indeces);
+				loadGraphicSlice9(_slice9_assets, Std.int(W), Std.int(H), _slice9_arrays, tile, resize_ratio, has_toggle, _src_w, _src_h, _frame_indeces);
 			}
 			else
 			{
@@ -721,6 +721,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 			//Check if we can exit early because this key is already cached
 			if (FlxG.bitmap.checkCache(key))
 			{
+				var graphic = FlxG.bitmap.get(key);
+				if (W > graphic.width) W = graphic.width; 	//force truncate to avoid ugly crashes
 				loadGraphic(key, true, W, H);
 				return;
 			}
