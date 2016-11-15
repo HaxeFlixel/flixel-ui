@@ -3865,8 +3865,25 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 				}
 				
-				//load 9-slice
-				fb.loadGraphicSlice9(graphic_names, W, H, slice9_names, tile, resize_ratio, isToggle, src_w, src_h, frames);
+				if (slice9_names == null || (slice9_names.length == 1 && slice9_names[0] == null))
+				{
+					//load conventionally, and disallow resizing since the asset is not resizable
+					if (graphic_names != null && graphic_names.length == 1)
+					{
+						fb.loadGraphicsUpOverDown(graphic_names[0], isToggle);
+						fb.allowResize = false;
+					}
+					else
+					{
+						fb.loadGraphicsMultiple(graphic_names);
+						fb.allowResize = false;
+					}
+				}
+				else
+				{
+					//load 9-slice
+					fb.loadGraphicSlice9(graphic_names, W, H, slice9_names, tile, resize_ratio, isToggle, src_w, src_h, frames);
+				}
 			}
 		}else {
 			if (load_code == "tab_menu"){
