@@ -1618,7 +1618,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	/************LOADING FUNCTIONS**************/
 	
 	private function applyNodeConditionals(info:Fast):Fast{
-		if (info.hasNode.locale || info.hasNode.haxedef) {
+		if (info.hasNode.locale || info.hasNode.haxedef || info.hasNode.window || info.hasNode.change_if) {
 			info = U.copyFast(info);
 			
 			if(info.hasNode.locale){
@@ -1631,6 +1631,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			
 			if (info.hasNode.window) {
 				info = applyNodeChanges(info, "window");
+			}
+			
+			if (info.hasNode.change_if)
+			{
+				if (_loadTest(info.node.change_if, "change_if"))
+				{
+					info = applyNodeChanges(info, "change_if");
+				}
 			}
 		}
 		return info;
@@ -1666,6 +1674,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			nodeValue = FlxG.width + "," + FlxG.height;
 		}
 		
+		var freePass = false;
+		if (nodeName == "change_if")
+		{
+			freePass = true;
+		}
+		
 		for (cNode in data.nodes.resolve(nodeName)) {
 			var cname:String = U.xml_name(cNode.x);
 			
@@ -1676,7 +1690,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 			}
 			
-			if (cname == nodeValue) {
+			if (freePass || cname == nodeValue) {
 				if (cNode.hasNode.change) {
 					for (change in cNode.nodes.change) {
 						for (att in change.x.attributes()) {
@@ -1738,13 +1752,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			info = data;
 		}
 		
-		var use_def:String = U.xml_str(info.x, "use_def", true);
-		var definition:Fast = null;
-		if (use_def != "")
-		{
-			definition = getDefinition(use_def);
-		}
-		
+		var definition:Fast = getUseDef(info);
 		info = consolidateData(info, definition);
 		info = applyNodeConditionals(info);
 		
@@ -1814,12 +1822,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		if (tNode.has.use_def)
 		{
-			var defStr = U.xml_str(tNode.x, "use_def", true);
-			var def = getDefinition(defStr);
-			if (def != null)
-			{
-				tNode = consolidateData(tNode, def, true);
-			}
+			var def = getUseDef(tNode);
+			tNode = consolidateData(tNode, def, true);
 		}
 		
 		if (tNode.has.text)
@@ -1877,12 +1881,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		if (node.has.use_def)
 		{
-			var use_def = U.xml_str(node.x, "use_def", true);
-			var the_def = getDefinition(use_def);
-			if (the_def != null)
-			{
-				node = consolidateData(node, the_def);
-			}
+			var the_def = getUseDef(node);
+			node = consolidateData(node, the_def);
 		}
 		
 		var border = _loadBorder(node);
@@ -3194,11 +3194,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return fud;
 	}
 	
-	private function _loadTest(data:Fast):Bool {
+	private function _loadTest(data:Fast, nodeName:String="load_if"):Bool {
 		var result:Bool = true;
 		
 		//If this is itself a "<load_if>" tag, return whether or not it passes the test
-		if (data.name == "load_if")
+		if (data.name == nodeName)
 		{
 			result = _loadTestSub(data);
 			if (result == false)
@@ -3208,7 +3208,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		
 		//If this is some other tag that CONTAINS a "load_if" tag, make sure all the conditions pass
-		if (data.hasNode.load_if)
+		if (data.hasNode.resolve(nodeName))
 		{
 			/*However, for this sort of operation we should ONLY consider "load_if" tags that don't themselves contain children
 			 * 
@@ -3227,7 +3227,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			 </something>
 			 *
 			 */
-			for (node in data.nodes.load_if)
+			for (node in data.nodes.resolve(nodeName))
 			{
 				if (node.x.firstChild() == null)	//as mentioned above, only run the test if this load_if does not have children
 				{
@@ -3418,11 +3418,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadTabMenu(data:Fast):FlxUITabMenu{
 		
-		var back_def_str:String = U.xml_str(data.x, "back_def");
-		var back_def:Fast = getDefinition(back_def_str);
-		if (back_def == null) {
-			back_def = data;
-		}
+		var back_def:Fast = getUseDef(data);
 		back_def = consolidateData(back_def, data);
 		
 		var back_type:String = U.xml_str(data.x, "back_type", true, "chrome");
@@ -5305,19 +5301,34 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return 0;
 	}
 	
+	private function getUseDef(node:Fast, attName:String="use_def")
+	{
+		var use_def:String = U.xml_str(node.x, attName, true);
+		
+		if (node.hasNode.resolve(attName))
+		{
+			if(_loadTest(node, attName))
+			{
+				use_def = U.xml_str(node.node.resolve(attName).x, "definition");
+			}
+		}
+		
+		var theDef:Fast = null;
+		if (use_def != "")
+		{
+			theDef = getDefinition(use_def);
+		}
+		
+		return theDef;
+	}
+	
 	private function formatButtonText(data:Fast, button:Dynamic):FlxText
 	{
 		if (data != null && data.hasNode.text)
 		{
 			var textNode = data.node.text;
-			var use_def:String = U.xml_str(textNode.x, "use_def", true);
-			var text_def:Fast = null;
 			
-			if (use_def != "")
-			{
-				text_def = getDefinition(use_def);
-			}
-			
+			var text_def:Fast = getUseDef(textNode);
 			var info:Fast = consolidateData(textNode, text_def);
 			
 			var case_name:String = U.xml_name(info.x);
