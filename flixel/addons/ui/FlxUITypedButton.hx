@@ -28,6 +28,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	public var name:String; 
 	public var resize_ratio:Float = -1;
 	
+	public var allowResize:Bool = true;
+	
 	//whether the resize_ratio means X in terms of Y, or Y in terms of X
 	public var resize_ratio_axis:Int = FlxUISprite.RESIZE_RATIO_Y;
 	
@@ -308,6 +310,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	
 	public function resize(W:Float, H:Float):Void
 	{
+		if (!allowResize) return;
 		doResize(W, H);
 	}
 	
