@@ -232,6 +232,8 @@ class FlxUITooltipManager implements IFlxDestroyable
 	
 	public function add(thing:FlxObject, data:FlxUITooltipData):Void
 	{
+		if (thing == null) return;
+		
 		if (_init) {
 			data.style = FlxUITooltip.styleFix(data.style, defaultStyle);		//replace null values with sensible defaults
 		}
