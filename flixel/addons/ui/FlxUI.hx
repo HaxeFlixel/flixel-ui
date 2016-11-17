@@ -4168,10 +4168,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return tile;
 	}
 	
-	private function _loadBox(data:Fast):FlxUISprite
+	private function _loadBox(data:Fast):FlxUIGroup
 	{
 		var src:String = ""; 
-		var fs:FlxUISprite = null;
+		var fs:FlxUIGroup = null;
 		
 		var thickness:Int = Std.int(_loadWidth(data, 1, "thickness"));
 		
@@ -4192,26 +4192,52 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			if (H < bounds.min_height) { H = Std.int(bounds.max_height); }
 			else if (H > bounds.max_height) { H = Std.int(bounds.max_height);}
 		}
-
+		
 		var cstr:String = U.xml_str(data.x, "color", true, "0xff000000");
 		var C:FlxColor = 0;
 		if (cstr != "")
 		{
 			C = U.parseHex(cstr, true);
 		}
-		fs = new FlxUISprite(0, 0);
+		
+		fs = new FlxUIGroup(0, 0);
+		
 		var key = W + "x" + H + ":" + C + ":" + thickness;
 		
-		if (FlxG.bitmap.checkCache(key))
-		{
-			fs.loadGraphic(key);
-		}
-		else
-		{
-			fs.makeGraphic(W, H, C, false, key);
-			var r:Rectangle = new Rectangle(thickness, thickness, W - thickness * 2, H - thickness * 2);
-			fs.graphic.bitmap.fillRect(r, FlxColor.TRANSPARENT);
-		}
+		var top = new FlxSprite().makeGraphic(1, 1, FlxColor.WHITE, false, key);
+		top.scale.set(W, thickness);
+		top.updateHitbox();
+		
+		var bottom = new FlxSprite().makeGraphic(1, 1, FlxColor.WHITE, false, key);
+		bottom.scale.set(W, thickness);
+		bottom.updateHitbox();
+		
+		var left = new FlxSprite().makeGraphic(1, 1, FlxColor.WHITE, false, key);
+		left.scale.set(thickness, H);
+		left.updateHitbox();
+		
+		var right = new FlxSprite().makeGraphic(1, 1, FlxColor.WHITE, false, key);
+		right.scale.set(thickness, H);
+		right.updateHitbox();
+		
+		top.color = C;
+		bottom.color = C;
+		left.color = C;
+		right.color = C;
+		
+		fs.add(top);
+		fs.add(bottom);
+		fs.add(left);
+		fs.add(right);
+		
+		top.x = 0;
+		top.y = 0;
+		bottom.x = 0;
+		bottom.y = H - bottom.height;
+		left.x = 0;
+		left.y = 0;
+		right.x = W - right.width;
+		right.y = 0;
 		
 		return fs;
 	}
