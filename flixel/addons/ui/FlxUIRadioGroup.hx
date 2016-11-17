@@ -84,6 +84,15 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 		return Value;
 	}
 	
+	@:access(flixel.addons.ui.FlxUIList)
+	override function set_visible(Value:Bool):Bool 
+	{
+		if(_list != null) _list._skipRefresh = true;
+		visible = super.set_visible(Value);
+		if(_list != null) _list._skipRefresh = false;
+		return visible;
+	}
+	
 	/**
 	 * Creates a set of radio buttons
 	 * @param	X				X location
