@@ -3418,7 +3418,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _loadTabMenu(data:Fast):FlxUITabMenu{
 		
-		var back_def:Fast = getUseDef(data);
+		var back_def:Fast = getUseDef(data, "back_def");
 		back_def = consolidateData(back_def, data);
 		
 		var back_type:String = U.xml_str(data.x, "back_type", true, "chrome");
