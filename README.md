@@ -415,7 +415,7 @@ Attributes:
     *  "se" / "lr" -- Lower-right
     *  "m" / "c" / "mid" / "center" -- Center
 
-##2. 9-slice sprite/chrome (FlxUI9SliceSprite) ```<9slicesprite>``` or ```<chrome>```
+##2. 9-slice sprite/chrome (FlxUI9SliceSprite) ```<nineslicesprite>``` or ```<chrome>```
 
 A 9-slice sprite can be scaled in a more pleasing way than just stretching it directly. It divides the object up into a user-defined grid of 9 cells, (4 corners, 4 edges, 1 interior), and then repositions and scales those individually to construct a resized image. Works best for stuff like chrome and buttons.
 
@@ -425,7 +425,7 @@ Attributes:
 * ```width```/```height``` **NOT OPTIONAL**: the size of your 9-slice scaled image (not the size of the source image)
 * ```slice9``` - string, two points that define the slice9 grid, format "x1,y1,x2,y2". For example, "6,6,12,12" works well for the 12x12 chrome images in the demo project.
 * ```tile``` - bool, optional (assumes false if not exist). If true, uses tiling rather than scaling for stretching 9-slice cells. Boolean true == "true", not "True" or "TRUE", or "T".
-* ```smooth``` - bool, optional (assumes false if not exist). If ture, ensures the scaling uses smooth interpolation rather than nearest-neighbor (stretched blocky pixels).
+* ```smooth``` - bool, optional (assumes false if not exist). If true, ensures the scaling uses smooth interpolation rather than nearest-neighbor (stretched blocky pixels).
 * ```color``` - color, optional, to tint the chrome to (e.g. white does nothing.)  "color" attribute should be hexadecimal format ```0xAARRGGBB```, or ```0xRRGGBB```, or a standard color string name like "green" from ```flixel.util.FlxColor```)
 
 ##3. Region (FlxUIRegion) ```<region>```
@@ -820,9 +820,9 @@ This tooltip sets just about everything:
 Here's an example of a health bar from an RPG:
 
 ```xml
-<9slicesprite name="health_bar" x="10" y="5" width="134" height="16" use_def="health">
+<nineslicesprite name="health_bar" x="10" y="5" width="134" height="16" use_def="health">
 	<anchor x="portrait.right" y="portrait.top" x-flush="left" y-flush="top"/>
-</9slicesprite>
+</nineslicesprite>
 ```
 
 There is presumably another sprite defined somewhere called "portrait" and we want our health bar to show up relative to wherever that is. 
@@ -867,10 +867,10 @@ You can use anchor tags, formulas, etc inside a position tag:
 
 Let's add a size tag to our health bar:
 ```xml
-<9slicesprite name="health_bar" x="10" y="5" width="134" height="16" use_def="health" group="mcguffin">
+<nineslicesprite name="health_bar" x="10" y="5" width="134" height="16" use_def="health" group="mcguffin">
 	<anchor x="portrait.right" y="portrait.top" x-flush="left" y-flush="top"/>
 	<exact_size width="stretch:portrait.right+10,right-10"/>
-</9slicesprite>
+</nineslicesprite>
 ```
 
 There are three size tags: ```<min_size>```, ```<max_size>```, and ```<exact_size>```
