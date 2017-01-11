@@ -28,9 +28,7 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 {
 	public var destroyed:Bool;
 	
-	#if !FLX_NO_MOUSE
 	public var cursor:FlxUICursor = null;
-	#end
 	private var _makeCursor:Bool;		//whether to auto-construct a cursor and load default widgets into it
 	
 	/**
@@ -84,12 +82,10 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 			_tongue = FlxUIState.static_tongue;
 		}
 		
-		#if !FLX_NO_MOUSE
 		if (_makeCursor == true)
 		{
 			cursor = createCursor();
 		}
-		#end
 		
 		tooltips = new FlxUITooltipManager(this);
 		
@@ -122,13 +118,13 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 			_ui.load(null);
 		}
 	
-		#if !FLX_NO_MOUSE
 		if (cursor != null && _ui != null) {			//Cursor goes on top, of course
 			add(cursor);
 			cursor.addWidgetsFromUI(_ui);
 			cursor.findVisibleLocation(0);
 		}
 		
+		#if !FLX_NO_MOUSE
 		FlxG.mouse.visible = true;
 		#end
 		

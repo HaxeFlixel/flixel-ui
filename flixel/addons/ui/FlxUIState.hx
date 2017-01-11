@@ -36,11 +36,9 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 {
 	public var destroyed:Bool;
 	
-	#if !FLX_NO_MOUSE
 	public var cursor:FlxUICursor = null;
 	public var hideCursorOnSubstate:Bool = false;
 	private var _cursorHidden:Bool = false;
-	#end
 	
 	/**
 	 * frontend for adding tooltips to things
@@ -109,12 +107,10 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			}
 		#end
 		
-		#if !FLX_NO_MOUSE
 		if (_makeCursor == true)
 		{
 			cursor = createCursor();
 		}
-		#end
 		
 		tooltips = new FlxUITooltipManager(this);
 		
@@ -195,13 +191,12 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 			loadUIFromData(null);
 		}
 		
-		#if !FLX_NO_MOUSE
-		if (cursor != null && _ui != null) {			//Cursor goes on top, of course
+		if (cursor != null && _ui != null)			//Cursor goes on top, of course
+		{
 			add(cursor);
 			cursor.addWidgetsFromUI(_ui);
 			cursor.findVisibleLocation(0);
 		}
-		#end
 		
 		tooltips.init();
 		
