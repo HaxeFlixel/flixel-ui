@@ -1940,53 +1940,56 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			return null;
 		}
 		
+		var returnThing:IFlxUIWidget = null;
+		
 		switch(type) {
-			case "region": return _loadRegion(info);
-			case "chrome", "nineslicesprite", "nine_slice_sprite", "nineslice", "nine_slice": return _load9SliceSprite(info);
-			case "tile_test": return _loadTileTest(info);
-			case "line": return _loadLine(info);
-			case "box": return _loadBox(info);
-			case "sprite": return _loadSprite(info);
-			case "bar": return _loadBar(info);
-			case "text": return _loadText(info);								//if input has events
-			case "input_text": return _loadInputText(info);								//if input has events
-			case "numstepper","num_stepper","numeric_stepper": return _loadNumericStepper(info);			//has events, params
-			case "button": return _loadButton(info);							//has events, params
-			case "button_toggle": return _loadButton(info,true,true);			//has events, params
+			case "region": returnThing =  _loadRegion(info);
+			case "chrome", "nineslicesprite", "nine_slice_sprite", "nineslice", "nine_slice": returnThing = _load9SliceSprite(info);
+			case "tile_test": returnThing =  _loadTileTest(info);
+			case "line": returnThing =  _loadLine(info);
+			case "box": returnThing =  _loadBox(info);
+			case "sprite": returnThing =  _loadSprite(info);
+			case "bar": returnThing =  _loadBar(info);
+			case "text": returnThing =  _loadText(info);								//if input has events
+			case "input_text": returnThing =  _loadInputText(info);								//if input has events
+			case "numstepper","num_stepper","numeric_stepper": returnThing =  _loadNumericStepper(info);			//has events, params
+			case "button": returnThing =  _loadButton(info);							//has events, params
+			case "button_toggle": returnThing =  _loadButton(info,true,true);			//has events, params
 			
-			case "tab_menu": return _loadTabMenu(info);							//has events, params?
+			case "tab_menu": returnThing =  _loadTabMenu(info);							//has events, params?
 			
 			case "dropdown_menu", "dropdown",
-			     "pulldown", "pulldown_menu": return _loadDropDownMenu(info);	//has events, params?
+			     "pulldown", "pulldown_menu": returnThing =  _loadDropDownMenu(info);	//has events, params?
 			
-			case "checkbox": return _loadCheckBox(info);						//has events, params
-			case "radio_group": return _loadRadioGroup(info);					//has events, params
-			case "layout", "ui": return _loadLayout(info);
+			case "checkbox": returnThing =  _loadCheckBox(info);						//has events, params
+			case "radio_group": returnThing =  _loadRadioGroup(info);					//has events, params
+			case "layout", "ui": returnThing =  _loadLayout(info);
 			case "failure": if (_failure_checks == null) { _failure_checks = new Array<Fast>(); }
 							unparentXML(info);
 							_failure_checks.push(info);
-							return null;
+							returnThing =  null;
 			case "align": 	_alignThing(info,true);				//we suppress errors first time through b/c they only matter if still present at postLoad()
-							return null;
+							returnThing =  null;
 			case "mode", "include", "inject", "default", "group", "load_if":	//ignore these, they are handled elsewhere
-							return null;
+							returnThing =  null;
 			case "change":
 							_changeThing(info);
-							return null;
+							returnThing =  null;
 			case "position":
 							name = U.xml_name(info.x);
 							var thing = getAsset(name);
 							if(thing != null){
 								_loadPosition(info, thing);
 							}
-							return null;
+							returnThing =  null;
 			
 			default: 
 				//If I don't know how to load this thing, I will request it from my pointer:
 				var result = _ptr.getRequest("ui_get:" + type, this, info, [data]);
-				return result;
+				returnThing =  result;
 		}
-		return null;
+		
+		return returnThing;
 	}
 	
 	//Handy helpers for making x/y/w/h loading dynamic:
