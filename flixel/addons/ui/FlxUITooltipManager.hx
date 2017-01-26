@@ -179,6 +179,13 @@ class FlxUITooltipManager implements IFlxDestroyable
 		}
 	}
 	
+	public function unstickyAll():Void
+	{
+		for (i in 0...list.length){
+			list[i].sticky = false;
+		}
+	}
+	
 	/**
 	 * Show the tooltip for the given object, if one exists
 	 * @param	thing	the thing you want to display a tooltip for
