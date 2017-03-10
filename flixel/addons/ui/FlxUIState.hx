@@ -36,8 +36,8 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 {
 	public var destroyed:Bool;
 	
-	#if !FLX_NO_MOUSE
 	public var cursor:FlxUICursor = null;
+	#if !FLX_NO_MOUSE
 	public var hideCursorOnSubstate:Bool = false;
 	private var _cursorHidden:Bool = false;
 	#end

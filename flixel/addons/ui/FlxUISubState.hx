@@ -28,9 +28,7 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 {
 	public var destroyed:Bool;
 	
-	#if !FLX_NO_MOUSE
 	public var cursor:FlxUICursor = null;
-	#end
 	private var _makeCursor:Bool;		//whether to auto-construct a cursor and load default widgets into it
 	
 	/**
