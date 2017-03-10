@@ -192,7 +192,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	{
 		var t = __getTongue();
 		if (t != null) { str = t.getFont(str); }
+		
 		var result = U.font(str, style, extension);
+		
 		return result;
 	}
 	
@@ -953,7 +955,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		{
 			_pointY = pty;
 		}
-		
 	}
 	
 	private function _loadSub(node:Xml,iteration:Int=0):Void
