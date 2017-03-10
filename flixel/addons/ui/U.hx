@@ -1378,7 +1378,7 @@ class U
 			//if final size != master asset size, we're going to scale it
 			if (Math.abs(Scale-1.00) > 0.001) 
 			{
-				var scaleKey:String = bmpSrc +"_ScaleX" + Scale;	//generate a unique scaled asset key
+				var scaleKey:String = bmpSrc +"_scalex" + Scale;	//generate a unique scaled asset key
 				
 				//if it doesn't exist yet, create it
 				if (FlxG.bitmap.get(scaleKey) == null)
@@ -1561,8 +1561,16 @@ class U
 		
 		if (str != null && str.length > 4 && str.indexOf(suffix) != -1)
 		{
-			str = str.substr(0, str.length - 4);	//strip off the suffix if it exists
+			var finalString = str.substr(str.length - suffix.length, suffix.length);
+			if(finalString == suffix){
+				str = str.substr(0, str.length - 4);	//strip off the suffix if it exists
+			}
+			else
+			{
+				suffix = "";
+			}
 		}
+		
 		if (str.indexOf("raw:") == 0 || str.indexOf("RAW:") == 0) {
 			str = str.substr(4, str.length - 4);
 			return_str = str + suffix;

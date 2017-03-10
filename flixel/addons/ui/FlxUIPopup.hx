@@ -126,6 +126,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 					
 					var buttonAmount:Int = Std.int(eventParams[0]);
 					var label:String = Std.string(eventParams[1]);
+					
 					if (str == "affirm" || str == "cancel" || str == "alt")
 					{
 						if (Std.is(_parentState, IFlxUIState)) {

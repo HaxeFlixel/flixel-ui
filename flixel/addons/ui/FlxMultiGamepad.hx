@@ -35,8 +35,11 @@ class FlxMultiGamepad extends FlxBaseMultiInput
 	
 	private inline function checkGamepad():FlxGamepad
 	{
+		var gp = null;
+		#if FLX_GAMEPAD
 		var gp = useFirstActive ? FlxG.gamepads.firstActive : gamepad;
 		if (gp == null) return gamepad;
+		#end
 		return gp;
 	}
 	

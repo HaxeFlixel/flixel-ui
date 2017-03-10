@@ -242,10 +242,23 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 		//if I just added a decimal don't treat that as having changed the value just yet
 		if (!justAddedDecimal)
 		{
-			value = Std.parseFloat(text);
+			value = parseText(text);
 			_doCallback(EDIT_EVENT);
 			_doCallback(CHANGE_EVENT);
 		}
+	}
+	
+	private function parseText(str:String):Float{
+		
+		if (isPercent && str.indexOf("%") != -1){
+			var baseStr = StringTools.replace(str, "%", "");
+			var baseVal = Std.parseFloat(baseStr);
+			return (baseVal / 100);
+			
+		}else{
+			return Std.parseFloat(str);
+		}
+		return 0;
 	}
 	
 	private function _onPlus():Void {

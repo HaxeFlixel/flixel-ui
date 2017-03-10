@@ -38,7 +38,6 @@ class FontFixer
 			return name2File.get(name);
 		}
 		
-		var dafont = Assets.getFont(file);
 		if (!Assets.exists(file, AssetType.FONT))
 		{
 			return file;
