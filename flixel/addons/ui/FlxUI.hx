@@ -700,15 +700,18 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						
 						for (def_data in inc_xml.nodes.definition)
 						{
-							//add a prefix to avoid collisions:
-							var def_name:String = "include:" + U.xml_name(def_data.x);
-							
-							unparentXML(def_data);
-							
-							_definition_index.set(def_name, def_data);
-							//DON'T recursively search for further includes. 
-							//Search 1 level deep only!
-							//Ignore everything else in the include file
+							if (_loadTest(def_data))
+							{
+								//add a prefix to avoid collisions:
+								var def_name:String = "include:" + U.xml_name(def_data.x);
+								
+								unparentXML(def_data);
+								
+								_definition_index.set(def_name, def_data);
+								//DON'T recursively search for further includes. 
+								//Search 1 level deep only!
+								//Ignore everything else in the include file
+							}
 						}
 						
 						if (inc_xml.hasNode.point_size)
@@ -3721,9 +3724,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				#else
 					fb.loadGraphicSlice9(["", "", ""], W, H, null, FlxUI9SliceSprite.TILE_NONE, resize_ratio);
 				#end
-	
-			}else{
-			
+			}
+			else
+			{
 				var graphic_names:Array<FlxGraphicAsset>=null;
 				var slice9_names:Array<Array<Int>>=null;
 				var frames:Array<Int>=null;
@@ -3889,7 +3892,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					fb.loadGraphicSlice9(graphic_names, W, H, slice9_names, tile, resize_ratio, isToggle, src_w, src_h, frames);
 				}
 			}
-		}else {
+		}
+		else
+		{
 			if (load_code == "tab_menu"){
 				//load default tab menu graphics
 				var graphic_names:Array<FlxGraphicAsset> = [FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB_BACK, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB, FlxUIAssets.IMG_TAB];
