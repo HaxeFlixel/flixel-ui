@@ -458,12 +458,14 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	 * @param   key string key for caching (optional)
 	 */
 	
-	public function loadGraphicsUpOverDown(asset:Dynamic, for_toggle:Bool=false, ?key:String):Void {
+	public function loadGraphicsUpOverDown(asset:Dynamic, for_toggle:Bool = false, ?key:String):Void
+	{
 		_slice9_assets = null;
 		_slice9_arrays = null;
 		resize_ratio = -1;
 		
-		if (for_toggle) {
+		if (for_toggle)
+		{
 			has_toggle = true;	//this makes it assume it's 6 images tall
 		}
 		
@@ -482,6 +484,12 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 			bd = getBmp(asset);
 		}
 		
+		if (tryQuickLoad(bd, has_toggle, key))
+		{
+			FlxG.bitmapLog.add(bd, key + "-->quickloaded");
+			return;
+		}
+		
 		upB = grabButtonFrame(bd, FlxButton.NORMAL, has_toggle, 0, 0, key);
 		overB = grabButtonFrame(bd, FlxButton.HIGHLIGHT, has_toggle, 0, 0, key);
 		downB = grabButtonFrame(bd, FlxButton.PRESSED, has_toggle, 0, 0, key);
@@ -492,7 +500,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 			normalGraphic = assembleButtonFrames(upB, overB, downB);
 		}
 		
-		if (has_toggle) {
+		if (has_toggle)
+		{
 			var normalPixels:BitmapData = assembleButtonFrames(upB, overB, downB);
 			
 			upB = grabButtonFrame(bd, FlxButton.NORMAL + 3, true, 0, 0, key);
@@ -506,9 +515,42 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 			togglePixels = FlxDestroyUtil.dispose(togglePixels);
 			
 			loadGraphic(combinedPixels, true, upB.width, upB.height, false, key);
-		}else {
+		}
+		else
+		{
 			loadGraphic(normalGraphic, true, upB.width, upB.height, false, key);
 		}
+	}
+	
+	private function tryQuickLoad(bd:BitmapData, has_toggle:Bool, key:String):Bool
+	{
+		var h:Int = 0;
+		var w:Int = Std.int(bd.width);
+		if (!has_toggle)
+		{
+			h = Std.int(bd.height / 3);
+			loadGraphic(bd, true, w, h, false, key);
+			return true;
+		}
+		else
+		{
+			h = Std.int(bd.height / 6);
+			loadGraphic(bd, true, w, h, false, key);
+			return true;
+		}
+		return false;
+	}
+	
+	private function checkCacheWith(str:String):String
+	{
+		for (key in @:privateAccess FlxG.bitmap._cache.keys())
+		{
+			if (key.indexOf(str) != -1)
+			{
+				str += "    " + key + "\n";
+			}
+		}
+		return str;
 	}
 	
 	/**Graphics chopping functions**/
@@ -1004,26 +1046,35 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	 * If overB or downB are missing, it will not include those frames.
 	 */
 	
-	public function assembleButtonFrames(upB:BitmapData, overB:BitmapData, downB:BitmapData):BitmapData {
+	public function assembleButtonFrames(upB:BitmapData, overB:BitmapData, downB:BitmapData):BitmapData
+	{
 		var pixels:BitmapData;
 		
-		if (overB != null) {
-			if (downB != null) {
+		if (overB != null)
+		{
+			if (downB != null)
+			{
 				pixels = new BitmapData(upB.width, upB.height * 3);
-			}else {
+			}
+			else
+			{
 				pixels = new BitmapData(upB.width, upB.height * 2);
 			}
-		}else {
+		}
+		else
+		{
 			pixels = new BitmapData(upB.width, upB.height);
 		}
 		
 		pixels.copyPixels(upB, upB.rect, _flashPointZero);
 		
-		if(overB != null){
+		if (overB != null)
+		{
 			_flashPoint.x = 0;
 			_flashPoint.y = upB.height;
 			pixels.copyPixels(overB, overB.rect, _flashPoint);
-			if (downB != null) {
+			if (downB != null)
+			{
 				_flashPoint.y = upB.height * 2;
 				pixels.copyPixels(downB, downB.rect, _flashPoint);
 			}
