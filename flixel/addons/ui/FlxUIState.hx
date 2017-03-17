@@ -40,6 +40,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	#if !FLX_NO_MOUSE
 	public var hideCursorOnSubstate:Bool = false;
 	private var _cursorHidden:Bool = false;
+	#end
 	
 	/**
 	 * frontend for adding tooltips to things

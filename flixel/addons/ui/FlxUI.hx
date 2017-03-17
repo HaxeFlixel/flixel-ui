@@ -337,6 +337,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if(data != null){
 			load(data);
 		}
+		
+		moves = false;
 	}
 	
 	public function onFocus(widget:IFlxUIWidget):Void {
@@ -1988,6 +1990,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				//If I don't know how to load this thing, I will request it from my pointer:
 				var result = _ptr.getRequest("ui_get:" + type, this, info, [data]);
 				returnThing =  result;
+		}
+		
+		if (!moves && returnThing != null)
+		{
+			returnThing.moves = false;
 		}
 		
 		return returnThing;
