@@ -2153,6 +2153,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			{
 				var objects:Array<String> = U.xml_str(objectNode.x, "value", true, "").split(",");
 				
+				var objStr = U.xml_str(objectNode.x, "value", true, "");
+				var objects = objStr.split(",");
 				var axis:String = U.xml_str(data.x, "axis", true);
 				if (axis != "horizontal" && axis != "vertical")
 				{
@@ -2259,10 +2261,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		for (nameStr in objects)
 		{
 			var widget:IFlxUIWidget = getAsset(nameStr);
-			if (widget != null) {
+			if (widget != null)
+			{
 				
 				var theval:Float = 0;
-				switch(size_prop) {
+				switch(size_prop)
+				{
 					case "width": theval = widget.width;
 					case "height": theval = widget.height;
 				}
@@ -2317,7 +2321,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 							{
 								allow = allowShrink;
 							}
-							if (allow)
+							if (allow && (widgetr.height != object_size))
 							{
 								widgetr.resize(widgetr.width, object_size);
 							}
@@ -2332,7 +2336,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 							{
 								allow = allowShrink;
 							}
-							if (allow)
+							if (allow && (widgetr.width != object_size))
 							{
 								widgetr.resize(object_size, widgetr.height);
 							}
