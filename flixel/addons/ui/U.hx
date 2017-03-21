@@ -209,32 +209,19 @@ class U
 		var zero = 48;
 		var nine = 57;
 		var period = 46;
-		var minus = 45;
-		var plus = 43;
 		
 		var hasLeadingNums = false;
 		var hasTrailingNums = false;
 		var hasPeriod = false;
-		var hasMinus = false;
-		var hasPlus = false;
 		
 		var len = str.length;
 		for (i in 0...len)
 		{
 			var code = str.charCodeAt(i);
-			if (code == minus)
+			if (code == period)
 			{
-				if (i != 0) break;
-				hasMinus = true;
-			}
-			else if (code == plus)
-			{
-				if (i != 0) break;
-				hasPlus = true;
-			}
-			else if (code == period)
-			{
-				if (hasPeriod) break;
+				if (hasPeriod) return false;
+                if (!hasLeadingNums) return false;
 				hasPeriod = true;
 			}
 			else if (code >= zero && code <= nine)
