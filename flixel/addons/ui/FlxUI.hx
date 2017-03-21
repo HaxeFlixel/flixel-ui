@@ -4665,10 +4665,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						return perc * screenHeight();
 					}
 				}else {
-					var r:EReg = ~/[\w]+\.[\w]+/;
-					var property:String = "";
-					
-					if (r.match(str)) {
+					if (U.isFormula(str)) {
 						var wh:String = "";
 						if (axis == "x") { wh = "w"; }
 						if (axis == "y") { wh = "h"; }
