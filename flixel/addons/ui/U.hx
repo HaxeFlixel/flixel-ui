@@ -182,30 +182,20 @@ class U
 	{
 		var zero = 48;
 		var nine = 57;
-		var minus = 45;
-		var plus = 43;
 		
-		var hasNums = 0;
+		var hasNums = false;
 		
 		var len = str.length;
 		for (i in 0...len)
 		{
 			var code = str.charCodeAt(i);
-			if (code == plus)
-			{
-				if (i != 0) break;
-			}
-			else if (code == minus)
-			{
-				if (i != 0) break;
-			}
-			else if (code >= zero && code <= nine)
+			if (code >= zero && code <= nine)
 			{
 				hasNums = true;
 			}
 			else
 			{
-				break;
+				return false;
 			}
 		}
 		
