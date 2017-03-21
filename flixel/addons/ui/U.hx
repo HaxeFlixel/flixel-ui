@@ -162,17 +162,109 @@ class U
 	{
 		if (str.lastIndexOf("%") == str.length - 1)
 		{
-			var r:EReg = ~/([0-9]+)?(\.)?([0-9]*)?/;        //make sure it's just numbers & at most 1 decimal
-			if (r.match(str)) {
-				var match: { pos:Int, len:Int } = r.matchedPos();
-				if (match.pos == 0 && match.len == str.length) {
-					var perc_float:Float = Std.parseFloat(str);
-					perc_float /= 100;
-					return perc_float;
-				}
+			str = str.substr(0, str.length - 1);			//trim the % off
+			if (isStrPerc(str))
+			{
+				var perc_float:Float = Std.parseFloat(str);
+				perc_float /= 100;
+				return perc_float;
 			}
 		}
 		return Math.NaN;
+	}
+	
+	private static function isStrPerc(str:String):Bool
+	{
+		var zero = 48;
+		var nine = 57;
+		var period = 46;
+		
+		var hasMinus = false;
+		var hasLeadingNums = false;
+		var hasTrailingNums = false;
+		var hasPeriod = false;
+		
+		var len = str.length;
+		for (i in 0...len)
+		{
+			var code = str.charCodeAt(i);
+			if (code == period)
+			{
+				if (hasPeriod) return false;
+				hasPeriod = true;
+			}
+			else if (code >= zero && code <= nine)
+			{
+				if (!hasPeriod) hasLeadingNums = true;
+				else hasTrailingNums = true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		
+		if(!hasLeadingNums && !hasTrailingNums) return false;
+		
+		return true; 
+	}
+	
+	public static function isFormula(str:String):Bool
+	{
+		var zero = 48;
+		var nine = 57;
+		var A = 65;
+		var Z = 90;
+		var underscore = 95;
+		var a = 97;
+		var z = 122;
+		var period = 46;
+		
+		var hasLeadingChars = false;
+		var hasTrailingChars = false;
+		var hasPeriod = false;
+		
+		var len = str.length;
+		for (i in 0...len)
+		{
+			var code = str.charCodeAt(i);
+			
+			if (code == period)
+			{
+				if (!hasLeadingChars) return false;
+				if (hasPeriod) return false;
+				hasPeriod = true;
+			}
+			else if (
+				     (code >= zero && code <= nine) ||
+				     (code >= A    && code <= Z   ) ||
+				     (code >= a    && code <= z   ) ||
+				     (code == underscore)
+					)
+			{
+				if (!hasPeriod)
+				{
+					hasLeadingChars = true;
+				}
+				else
+				{
+					hasTrailingChars = true;
+				}
+			}
+			else
+			{
+				if (hasLeadingChars && hasPeriod && hasTrailingChars) return true;
+				hasTrailingChars = false;
+				hasLeadingChars = false;
+				hasPeriod = false;
+			}
+			
+			if (hasLeadingChars && hasPeriod && hasTrailingChars) return true;
+		}
+		
+		if (hasLeadingChars && hasPeriod && hasTrailingChars) return true;
+		
+		return false;
 	}
 	
 	public static function isStrNum(str:String):Bool
@@ -200,7 +292,7 @@ class U
 			else if (code == period)
 			{
 				if (hasPeriod) return false;
-				hasPeriod = true;
+                hasPeriod = true;
 			}
 			else if (code >= zero && code <= nine)
 			{

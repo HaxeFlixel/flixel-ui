@@ -4837,8 +4837,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 			else
 			{												//Next: is it a formula?
-				var r:EReg = ~/[\w]+\.[\w]+/;
-				if (r.match(str))
+				if (U.isFormula(str))
 				{
 					var assetValue:Float = _getStretch(1, target, str);
 					return assetValue;
