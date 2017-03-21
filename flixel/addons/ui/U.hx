@@ -175,7 +175,45 @@ class U
 	
 	public static function isStrNum(str:String):Bool
 	{
-		return isStrFloat(str);
+		var zero = 48;
+		var nine = 57;
+		var period = 46;
+		var minus = 45;
+		
+		var hasMinus = false;
+		var hasLeadingNums = false;
+		var hasTrailingNums = false;
+		var hasPeriod = false;
+		
+		var len = str.length;
+		for (i in 0...len)
+		{
+			var code = str.charCodeAt(i);
+			if (code == minus)
+			{
+				if (i != 0) return false;
+				if (hasMinus) return false;
+				hasMinus = true;
+			}
+			else if (code == period)
+			{
+				if (hasPeriod) return false;
+				hasPeriod = true;
+			}
+			else if (code >= zero && code <= nine)
+			{
+				if (!hasPeriod) hasLeadingNums = true;
+				else hasTrailingNums = true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		
+		if(!hasLeadingNums && !hasTrailingNums) return false;
+		
+		return true;  
 	}
 	
 	public static function isStrInt(str:String):Bool
@@ -231,11 +269,13 @@ class U
 			}
 			else
 			{
-				break;
+				return false;
 			}
 		}
 		
-		if (!hasLeadingNums && !hasTrailingNums) return false;
+		if (!hasPeriod) return false;
+		if (!hasLeadingNums) return false;
+		if (!hasTrailingNums) return false;
 		
 		return true;
 	}
