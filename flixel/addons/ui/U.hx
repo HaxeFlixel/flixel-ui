@@ -158,54 +158,109 @@ class U
 	 * @return a normalized float, or NaN if not valid input
 	 */
 	
-	public static function perc_to_float(str:String):Float{			
-		if (str.lastIndexOf("%") == str.length - 1) {
+	public static function perc_to_float(str:String):Float
+	{
+		if (str.lastIndexOf("%") == str.length - 1)
+		{
 			str = str.substr(0, str.length - 1);			//trim the % off
-			var r:EReg = ~/([0-9]+)?(\.)?([0-9]*)?/;		//make sure it's just numbers & at most 1 decimal
-			if (r.match(str)) {
-				var match: { pos:Int, len:Int } = r.matchedPos();
-				if (match.pos == 0 && match.len == str.length) {
-					var perc_float:Float = Std.parseFloat(str);
-					perc_float /= 100;
-					return perc_float;
-				}
+			if (isStrFloat(str))
+			{
+				var perc_float:Float = Std.parseFloat(str);
+				perc_float /= 100;
+				return perc_float;
 			}
 		}
 		return Math.NaN;
 	}
 	
-	public static function isStrNum(str:String):Bool {
-		if (str == null || str == "") return false;
-		var r:EReg = ~/-?([0-9]+)?(\.)?([0-9]*)?/;
-			if (r.match(str)) {
-				var p: { pos:Int, len:Int } = r.matchedPos();
-				if (p.pos == 0 && p.len == str.length) {
-					return true;
-				}
-		}
-		return false;
+	public static function isStrNum(str:String):Bool
+	{
+		return isStrFloat(str);
 	}
 	
-	public static function isStrInt(str:String):Bool {
-		var r:EReg = ~/[0-9]+/;
-			if (r.match(str)) {
-			var p: { pos:Int, len:Int } = r.matchedPos();
-			if (p.pos == 0 && p.len == str.length) {
-				return true;
+	public static function isStrInt(str:String):Bool
+	{
+		var zero = 48;
+		var nine = 57;
+		var minus = 45;
+		var plus = 43;
+		
+		var hasNums = 0;
+		
+		var len = str.length;
+		for (i in 0...len)
+		{
+			var code = str.charCodeAt(i);
+			if (code == plus)
+			{
+				if (i != 0) break;
+			}
+			else if (code == minus)
+			{
+				if (i != 0) break;
+			}
+			else if (code >= zero && code <= nine)
+			{
+				hasNums = true;
+			}
+			else
+			{
+				break;
 			}
 		}
-		return false;
+		
+		if (!hasNums) return false;
+		
+		return true;
 	}
 	
-	public static function isStrFloat(str:String):Bool {
-		var r:EReg = ~/[0-9]+\.[0-9]+/;
-			if (r.match(str)) {
-			var p: { pos:Int, len:Int } = r.matchedPos();
-			if (p.pos == 0 && p.len == str.length) {
-				return true;
+	public static function isStrFloat(str:String):Bool
+	{
+		var zero = 48;
+		var nine = 57;
+		var period = 46;
+		var minus = 45;
+		var plus = 43;
+		
+		var hasLeadingNums = false;
+		var hasTrailingNums = false;
+		var hasPeriod = false;
+		var hasMinus = false;
+		var hasPlus = false;
+		
+		var len = str.length;
+		for (i in 0...len)
+		{
+			var code = str.charCodeAt(i);
+			if (code == minus)
+			{
+				if (i != 0) break;
+				hasMinus = true;
+			}
+			else if (code == plus)
+			{
+				if (i != 0) break;
+				hasPlus = true;
+			}
+			else if (code == period)
+			{
+				if (hasPeriod) break;
+				hasPeriod = true;
+			}
+			else if (code >= zero && code <= nine)
+			{
+				if (!hasPeriod) hasLeadingNums = true;
+				else hasTrailingNums = true;
+			}
+			else
+			{
+				break;
 			}
 		}
-		return false;
+		
+		if (!hasLeadingNums && !hasTrailingNums) return false;
+		
+		return true;
 	}
 	
 	/**
