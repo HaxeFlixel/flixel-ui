@@ -314,6 +314,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 		doResize(W, H);
 	}
 	
+	@:allow(flixel.addons.ui.FlxUITooltipManager)
 	private function doResize(W:Float, H:Float, Redraw:Bool = true):Void
 	{
 		var old_width:Float = width;
