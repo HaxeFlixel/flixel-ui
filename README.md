@@ -7,9 +7,9 @@
 
 ----
 
-#Getting Started
+# Getting Started
 
-##Install flixel-ui:
+## Install flixel-ui:
 
 get latest stable release from haxelib:
 
@@ -19,7 +19,7 @@ get latest bleeding-edge dev version from github:
 
     haxelib git flixel-ui https://github.com/HaxeFlixel/flixel-ui
     
-##Demo Project!
+## Demo Project!
  A [test project](https://github.com/HaxeFlixel/flixel-demos/tree/master/UserInterface/RPGInterface) is available in [flixel-demos](http://github.com/HaxeFlixel/flixel-demos). You should really, really, check it out. It has a lot of inline documentation in the xml files and showcases some complex and subtle features.
 
 Please note the test project in flixel-demos requires the localization library **[fireTongue](https://github.com/larsiusprime/firetongue)**, which can be installed thus:
@@ -30,7 +30,7 @@ Or this for the latest dev version from github:
 
     haxelib git firetongue https://github.com/larsiusprime/firetongue
 
-##Quick project setup
+## Quick project setup
 
 1. In your openfl assets folder, create an "xml" directory
 2. Create an xml layout file for each state you want a UI for
@@ -44,7 +44,7 @@ Provided you've set up your XML layout correctly, flixel-ui will fetch that xml 
 
 FlxUI is basically a giant glorified FlxGroup, so using this method will set you up with one UI container and all of your UI widgets inside it.
 
-##Manually creating widgets
+## Manually creating widgets
 
 You can also create FlxUI widgets directly with Haxe code rather than using the XML setup. 
 
@@ -52,19 +52,19 @@ To see this in action, look at the [demo project](https://github.com/HaxeFlixel/
 
 You can compare this to [State_DefaultTest](https://github.com/HaxeFlixel/flixel-demos/blob/master/UserInterface/RPGInterface/source/State_DefaultTest.hx), which creates virtually the same UI output, but uses [this xml layout](https://github.com/HaxeFlixel/flixel-demos/blob/master/UserInterface/RPGInterface/assets/xml/state_default.xml) to achieve those results.
 
-##Graphic assets for Widgets
+## Graphic assets for Widgets
 
-###Default Assets
+### Default Assets
 
 Flixel-UI has a default set of assets (see [FlxUIAssets](https://github.com/HaxeFlixel/flixel-ui/blob/master/flixel/addons/ui/FlxUIAssets.hx) and the [assets folder](https://github.com/HaxeFlixel/flixel-ui/tree/master/assets)) for basic skinning. If you provide incomplete data and/or definitions for your widgets, FlxUI will automatically attempt to fall back on the default assets. 
 
-###Custom Assets
+### Custom Assets
 
 If you want to provide your own assets, you should put them in your project's "assets" folder, using the same structure you see in the [demo project](https://github.com/HaxeFlixel/flixel-demos/tree/master/UserInterface/RPGInterface).
 
 ----
 
-#FlxUI public functions
+# FlxUI public functions
 
 Most commonly used public functions in class FlxUI:
 
@@ -111,7 +111,7 @@ setMode(mode_id:String,target_id:String=""):Void
 
 ----
 
-#XML layout basics
+# XML layout basics
 Everything in flixel-ui is done with xml layout files. Here's a very simple example:
 
 ```xml
@@ -133,7 +133,7 @@ As you can see, all image source entries assume two things:
   * If you want a different directory, prepend it with "RAW:" like this:
   * ````"RAW:path/to/my/assets/image"```` will resolve as ````"path/to/my/assets/image.png"```` instead of ```"assets/gfx/path/to/my/assets/image.png"```
 
-##Types of tags
+## Types of tags
 There are several basic types of xml tags in a Flixel-UI layout file.
 
 **Widget**, ```<definition>```, ```<include>```, ```<group>```, ```<align>```, ```<position>```, ```<layout>```, ```<failure>```, ```<mode>```, and ```<change>```.
@@ -142,7 +142,7 @@ Let's go over these one by one.
 
 --
 
-###1. Widget
+### 1. Widget
 This is any of the many Flixel-UI widgets, such as ```<sprite>```, ```<button>```, ```<checkbox>```, etc. We'll go into more detail on each one below, but all widget tags have a few things in common:
 
 *Attributes:*
@@ -186,7 +186,7 @@ Example:
 
 --
 
-###2. ```<definition>```
+### 2. ```<definition>```
 This lets you offload a lot of re-usable details into a separate tag with a unique name, and then call them in to another tag using the use_def="definition_id" attribute. A definition tag is exactly like a regular widget tag, except the tag name is "definition."
 
 If you provide details in the widget tag and also use a definition, it will override the information in the definition wherever they conflict. Look at the RPG Interface demo for more details.
@@ -222,7 +222,7 @@ This is the same as writing
 
 All of the values from the "sans10" definition are inherited, and then all the local settings of the "italic_text" tag are applied, overriding style="bold" with style="italic."
 
-###3. ```<default>```
+### 3. ```<default>```
 A default tag is just like a definition, with a few exceptions:
 
 1. You can only have one for each type of widget
@@ -241,7 +241,7 @@ You define a default like this:
 
 Which will make all of your ```<text>``` objects red, unless local settings or a use_def overrides that.
 
-###4. ```<include>```
+### 4. ```<include>```
 Include tags let you reference definitions stored in another xml file. This is a convenience feature to cut down on file bloat, and aid organization:
 
 This invocation will include all the definitions found in "some_other_file.xml":
@@ -254,7 +254,7 @@ This invocation will include all the definitions found in "some_other_file.xml":
 
 This recursion is only one level deep. If you put \<include> tags in your included file, they'll be ignored. 
 
-###5. ```<inject>```
+### 5. ```<inject>```
 Inject tags are a more direct solution than ```<include>``` tags. You just specify the name of the other xml file like you would with ```<include>```, but instead of including only the definitions, it literally replaces the ```<inject>``` tag with the contents of the other file, minus the ```<?xml>``` and ```<data>``` wrapper tags, of course. This step happens before any processing is done.
 
 This invocation will inject all the contents found in "some_other_file.xml":
@@ -263,28 +263,28 @@ This invocation will inject all the contents found in "some_other_file.xml":
 <inject name="some_other_file"/>
 ```
 
-###6. ```<group>```
+### 6. ```<group>```
 Creates a FlxGroup (specifically a FlxUIGroup) that you can assign widgets to. Note that you do NOT add things to a group by making widget tags as child xml nodes to the \<group\> tag, but by setting the "group" attribute in a widget tag to the group's name.
 
 Groups are stacked in the order you define them, with those at the top of the file created first, and thus stacked "underneath" those that come later. 
 
 A group tag takes one attribute - name. Just define your groups somewhere in the order you want them to stack, then add widgets to them by setting the group attribute to the ids you want.
 
-###7. ```<align>```
+### 7. ```<align>```
 Dynamically aligns, centers, and/or spaces objects relative to one another. 
 This is complex enough to deserve its own section below, see "Alignment Tags" under "Dynamic Position & Size" later in the document.
 
-###8. ```<position>```
+### 8. ```<position>```
 This allows you to re-position an existing asset later in the document. This is useful for complex relative positioning and other uses, and is complex enough to deserve its own section below, see "Position Tags" under "Dynamic Position & Size" later in the document.
 
-###9. ```<layout>```
+### 9. ```<layout>```
 Creates a child FlxUI object inside your master FlxUI, and childs all the widgets inside to it. This is especially useful if you want to create multiple layouts for, say, different devices and screen sizes. Combined with **failure** tags, this will let you automatically calculate the best layout depending on screen size.
 
 A layout has only one attribute, name, and then its child nodes. Think of a \<layout> as its own sub-section of your xml file. It can have its own versions of anything you can put in the regular file since it is a full-fledged FlxUI - ie, definitions, groups, widgets, modes, presumably even other layout tags (haven't tested this). 
 
 Note that in a layout, scope comes into play when referencing ids. Definitions and object references will first look in the scope of the layout (ie, that FlxUI object), and if none is found, will try to find them in the parent FlxUI. 
 
-###10. ```<failure>```
+### 10. ```<failure>```
 Specifies "failure" conditions for a certain layout, so FlxUI can determine which of multiple layouts to choose from in the event that one works better than another. Useful for simultaneously targeting, say, PC's with variable resolutions and mobile devices.
 
 Here's an example:
@@ -309,7 +309,7 @@ Sometimes multiple layouts have "failed" according to your rules, and you want t
 
 To *respond* to failure conditions, you need to write your own code. In the RPG Interface demo, there are two battle layouts, one that is more appropriate for 4:3 resolutions, and another that works better in 16:9. The custom FlxUIState for that state will check failure conditions on load, and set the mode depending on which layout works best. Speaking of modes...
 
-###11. ```<mode>```
+### 11. ```<mode>```
 Specifies UI "modes" that you can switch between. For instance, in Defender's Quest we had four states for our save slots - empty, play, new_game+ (New Game+ eligible), and play+ (New Game+ started). This would determine what buttons were visible ("New Game", "Play", "Play+", "Import", "Export").
 
 The "empty" and "play" modes might look like this:
@@ -357,7 +357,7 @@ Several tags are available in a **\<mode>** element. The most basic ones are ```
 * **change** -- lets you change the property of a widget, see "Change Tags" later in the document.
 * **position** -- lets you re-position a widget, see "Position Tags" later in the document.
 
-###12. ```<change>```
+### 12. ```<change>```
 
 The change tag lets you modify various properties of a widget after it has already been created. The widget matching the attribute "name" will be targeted. The following attributes may be used:
 
@@ -371,7 +371,7 @@ The change tag lets you modify various properties of a widget after it has alrea
 
 ----
 
-#List of Widgets
+# List of Widgets
 
 | Name | Class | Tag |
 |------|-------|-----|
@@ -392,7 +392,7 @@ The change tag lets you modify various properties of a widget after it has alrea
 
 Lets go over these one by one. Many of them share common attributes so I will only explain specific attributes in full detail the first time they appear.
 
-##1. Image (FlxUISprite) ```<sprite>```
+## 1. Image (FlxUISprite) ```<sprite>```
 
 Just a regular sprite. Can be scaled or fixed size.
 
@@ -415,7 +415,7 @@ Attributes:
     *  "se" / "lr" -- Lower-right
     *  "m" / "c" / "mid" / "center" -- Center
 
-##2. 9-slice sprite/chrome (FlxUI9SliceSprite) ```<nineslicesprite>``` or ```<chrome>```
+## 2. 9-slice sprite/chrome (FlxUI9SliceSprite) ```<nineslicesprite>``` or ```<chrome>```
 
 A 9-slice sprite can be scaled in a more pleasing way than just stretching it directly. It divides the object up into a user-defined grid of 9 cells, (4 corners, 4 edges, 1 interior), and then repositions and scales those individually to construct a resized image. Works best for stuff like chrome and buttons.
 
@@ -428,7 +428,7 @@ Attributes:
 * ```smooth``` - bool, optional (assumes false if not exist). If true, ensures the scaling uses smooth interpolation rather than nearest-neighbor (stretched blocky pixels).
 * ```color``` - color, optional, to tint the chrome to (e.g. white does nothing.)  "color" attribute should be hexadecimal format ```0xAARRGGBB```, or ```0xRRGGBB```, or a standard color string name like "green" from ```flixel.util.FlxColor```)
 
-##3. Region (FlxUIRegion) ```<region>```
+## 3. Region (FlxUIRegion) ```<region>```
 
 Regions are lightweight, invisible rectangles that can only be seen in Flixel's Debug "show outlines" mode. 
 
@@ -438,7 +438,7 @@ Attributes:
 * ```x```/```y```, ```use_def```, ```group```
 * ```width```/```height```
 
-##4. Button (FlxUIButton) ```<button>```
+## 4. Button (FlxUIButton) ```<button>```
 
 Just a regular clicky button, optionally with a label.
 
@@ -462,7 +462,7 @@ Child tags:
 * ```<param>``` - parameter to pass to the callback/event system (see "Button Parameters")
 * ```<graphic>``` - graphic source (details below)
 
-###4.1 Working With Parameters
+### 4.1 Working With Parameters
 
 Parameters can be attached to buttons and many other types of interactive objects to give context to UI events. You do this by adding ```<param>``` child tags to the appropriate widget.
 
@@ -497,7 +497,7 @@ The "sender" parameter will be the widget that originated the event -- in this c
 
 Some other interactive widgets can take parameters, and they work in basically the same way.
 
-###4.2 Button Graphics
+### 4.2 Button Graphics
 
 Graphics for buttons can be kinda complex. You can put in multiple graphic tags, one for each button state you want to specify, or just one with the name "all" that combines all the states into one vertically stacked image, and asks the FlxUIButton to sort the individual frames out itself.
 
@@ -533,7 +533,7 @@ Static, individual frames:
 
 I'm not 100% sure what will happen if you do individual frames and omit one, but I think I set it up to copy one of the other ones in some kind of "smart" way. Again, it's always best to be explicit about what you want rather than be ambiguous and have the system guess.
 
-###4.3 Button Text
+### 4.3 Button Text
 To specify what the text in a button looks like, you create a ```<text>``` child node.
 You can specify all the properties right here, or use a definition. There's a few special considerations for ```<text>``` nodes inside of a button.
 
@@ -550,7 +550,7 @@ If you want to specify colors for other states, you add ```<color>``` tags insid
 ````
 
 
-##5. Button, Toggle (FlxUIButton) ```<button_toggle>```
+## 5. Button, Toggle (FlxUIButton) ```<button_toggle>```
 
 Toggle buttons are made from the same class as regular buttons, ```FlxUIButton```.
 
@@ -590,7 +590,7 @@ Of course, if you create a single asset with 6 images stacked vertically, you ca
 
 Note that you can create a vertical stack of 9-slice assets, or regular statically-sized assets, the system can use either one. 
 
-##6. Check box (FlxUICheckBox) ```<checkbox>```
+## 6. Check box (FlxUICheckBox) ```<checkbox>```
 
 A Check Box is a FlxUIGroup which contains three objects: a "box" image, a "check" image, and a label.
 
@@ -617,7 +617,7 @@ Event:
 * name - "click_checkbox"
 * params - as defined by user, but with this one automatically added to the list at the end: "checked:true" or "checked:false"
 
-##7. Text (FlxUIText) ```<text>```
+## 7. Text (FlxUIText) ```<text>```
 
 A regular text field. 
 
@@ -662,7 +662,7 @@ So far just .ttf fonts are supported, and you MUST name them according to this s
 
 FlxUI does not yet support FlxBitmapFonts, but we'll be adding it eventually.
 
-###8. Text, input (FlxUIInputText) ```<input_text>```
+### 8. Text, input (FlxUIInputText) ```<input_text>```
 
 This has not been thoroughly tested, but it exists.
 
@@ -682,7 +682,7 @@ Attributes:
 * ```context``` - FireTongue context (see Button)
 * ```code``` - Formatting code (see Button)
 
-##9. Radio button group (FlxUIRadioGroup) ```<radio_group>```
+## 9. Radio button group (FlxUIRadioGroup) ```<radio_group>```
 
 Radio groups are a set of buttons where only one can be clicked at a time. We implement these as a ```FlxUIGroup``` of ```FlxUICheckBox```'es, and then internal logic makes only one clickable at a time. 
 
@@ -705,7 +705,7 @@ Event:
 * ```name``` - "click_radio_group"
 * ```params``` - same as Button
 
-##10. Tabbed menu (FlxUITabMenu) ```<tab_menu>```
+## 10. Tabbed menu (FlxUITabMenu) ```<tab_menu>```
 
 Tab menus are the most complex ```FlxUI``` widget. ```FlxUITabMenu``` extends ```FlxUI``` and is thus a full-fledged ```FlxUI``` in and of itself, just like the ```<layout>``` tag.
 
@@ -722,30 +722,30 @@ Child Nodes:
 * ```<group>``` - attributes are only "name"
  * Put regular FlxUI content tags here, within the ```<group></group>``` node.
 
-##11. Line (FlxUISprite) ```<line>```
+## 11. Line (FlxUISprite) ```<line>```
 
 TODO
 
-##12. NumStepper (FlxUINumericStepper) ```<numeric_stepper>```
+## 12. NumStepper (FlxUINumericStepper) ```<numeric_stepper>```
 
 TODO
 
-##13. Dropdown/Pulldown (FlxUIDropDownMenu) ```<dropdown>```
+## 13. Dropdown/Pulldown (FlxUIDropDownMenu) ```<dropdown>```
 
 TODO
 
-##14. Bar (FlxUIBar) ```<bar>```
+## 14. Bar (FlxUIBar) ```<bar>```
 
 TODO
 
-##15. TileTest (FlxUITileTest) ```<tile_test>```
+## 15. TileTest (FlxUITileTest) ```<tile_test>```
 
 TODO
 
 
 ----
 
-#Tooltips
+# Tooltips
 
 Tooltips can be added to button and button-like widgets, including ```<button>```, ```<button_toggle>```, ```<checkbox>```, the ```<radio>``` child tags of a ```FlxUIRadioGroup```, and the ```<tab>``` child tags of a ```FlxUITabMenu```.
 
@@ -813,9 +813,9 @@ This tooltip sets just about everything:
 
 ----
 
-#Dynamic position & size
+# Dynamic position & size
 
-##1. Anchor Tags
+## 1. Anchor Tags
 
 Here's an example of a health bar from an RPG:
 
@@ -847,7 +847,7 @@ You can also specify a **round** attribute (up/down/round/true/false) in the anc
 **Note to non-native speakers of English:** "flush" is a carpentry term, so if one side of one object is parallel to and touching another object's side with no air between them, the objects are "flush." This has nothing to do with toilets :)
 
 --
-##2. Position Tags
+## 2. Position Tags
 
 Sometimes you want to be able to change the position of a widget later in the xml markup. Position tags work much like the original creation tag for the object, except you ONLY include the attribute name of the object you want to move, and any relevant position information.
 
@@ -863,7 +863,7 @@ You can use anchor tags, formulas, etc inside a position tag:
 ```
 
 --
-##3. Size Tags
+## 3. Size Tags
 
 Let's add a size tag to our health bar:
 ```xml
@@ -904,7 +904,7 @@ Acceptable property values for reference formula, used alone or in a stretch:
  * Don't try to get too crazy here. If you need to do some super duper math, just add some code in your FlxUIState, call getAsset("some_id") to grab your assets, and do the craziness yourself.
 
 --
-##4. Alignment Tags
+## 4. Alignment Tags
 
 An ```<align>``` tag lets you automatically align and space various objects together.
 
@@ -938,7 +938,7 @@ Whereas putting all 10 objects in one ```<objects>``` tag would instead get you 
 
 ----
 
-#Localization (FireTongue)
+# Localization (FireTongue)
 First, Firetongue has some [documentation](https://github.com/larsiusprime/firetongue) on its Github page. Read that. 
 
 In your local project, follow these steps:
@@ -1027,15 +1027,15 @@ class FireTongueEx extends FireTongue implements IFireTongue
 
 ----------
 
-#Advanced Tip & Tricks
+# Advanced Tip & Tricks
 
 There's a lot of clever things you can do with flixel-ui once you know what you're doing.
 
-##1. "screen" widget always represents the flixel canvas
+## 1. "screen" widget always represents the flixel canvas
 
 There is always a FlxUIRegion defined by the system in any root-level FlxUI objects with the reserved named "screen". So you can always use "screen.width", "screen.top", "screen.right", etc, in any of your formulas.
 
-##2. Resolution independent text
+## 2. Resolution independent text
 
 It's common for beginners to define their fonts in absolute terms like this:
 ```xml
@@ -1059,7 +1059,7 @@ Size 10 font might look just fine if your game is 800x600, but what if you let t
 
 By defining the font size in terms of the screen height, we can achieve the same results at 800x600, but make the text grow dynamically with the size of the screen. "sans_tiny" will be 10 points high in 800x600, but 18 points high in 1920x1080, representing the same proportion of the screen.
 
-#3. Conditional scaling
+# 3. Conditional scaling
 
 Let's say you want to load a different asset in a 16x9 screen mode than a 4x3 mode, and fit it to the screen.
 
@@ -1087,7 +1087,7 @@ But sometimes you don't want to scale both ```width```/```height``` separately, 
 
 Note that these `<scale>` tags accept the "smooth" attribute to turn antialiasing off/on when scaling, just like a sprite can.
 
-#4. Scaling 9-slice-sprite source BEFORE 9-slice-scaling
+# 4. Scaling 9-slice-sprite source BEFORE 9-slice-scaling
 
 Let's say you've got a 9-slice-sprite, but for whatever reason you want to scale the *source* image first, *before* you then subject it to the 9-slice matrix. You can do that like this:
 
@@ -1100,7 +1100,7 @@ Let's say you've got a 9-slice-sprite, but for whatever reason you want to scale
 
 Here's what's happening. Let's say "ui/asset.png" is 400x50 pixels. In this case I scale it down first using the ```<scale_src>``` tag, which is unique to 9-slice-sprites. The "to_height" property scales the asset to a target height (10% of the screen height in this case), and also scales the width proportionately. (You can also use "width" and "height" parameters instead). Whenever you scale an asset like this in a 9-slice sprite, the slice9 coordinates will be automatically be scaled to match the new scaled source material. Then, your final asset will be 9-slice scaled.
 
-#5. Defining "points"
+# 5. Defining "points"
 
 So previously we had this:
 
