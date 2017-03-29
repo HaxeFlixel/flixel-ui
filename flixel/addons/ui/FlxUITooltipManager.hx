@@ -276,6 +276,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 				//create a blank button to process the tooltip
 				var b = new FlxUIButton(0, 0, "", null, false, true);
 				b.doResize(thing.width, thing.height, false);
+				b.moves = false;
 				
 				btn = b;
 				

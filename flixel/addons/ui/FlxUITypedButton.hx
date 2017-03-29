@@ -1116,10 +1116,10 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 					toggle_label.visible = false;
 				}
 				_spriteLabel.visible = true;
-				return label;
+				return _spriteLabel;
 			}
 		}
-		return label;
+		return _spriteLabel;
 	}
 	
 	override private function onUpHandler():Void
