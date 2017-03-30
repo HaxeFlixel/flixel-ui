@@ -9,6 +9,7 @@ import flixel.math.FlxPoint;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
+import flixel.addons.ui.FlxUITypedButton.FlxUIButtonType;
 
 /**
  * ...
@@ -246,6 +247,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 		}
 		
 		var btn:IFlxUIButton = null;
+		
 		var i = -1;
 		if (Std.is(thing, IFlxUIButton))
 		{
@@ -350,8 +352,41 @@ class FlxUITooltipManager implements IFlxDestroyable
 		//iterate over all our buttons and watch their states
 		for (i in 0...list.length)
 		{
-			var btn = list[i].btn;
-			var obj = list[i].obj;
+			var btn:IFlxUIButton = list[i].btn;
+			
+			var btnObj:FlxObject = null;
+			
+			var uibtn:FlxUIButton;
+			var sprbtn:FlxUISpriteButton;
+			
+			var btnVisible = false;
+			var btnJustMousedOut = false;
+			var btnJustMousedOver = false;
+			var btnMouseIsOut = false;
+			var btnMouseIsOver = false;
+			
+			if (list[i].btnTxt != null)
+			{
+				uibtn = list[i].btnTxt;
+				btnObj = uibtn;
+				btnVisible = uibtn.visible;
+				btnJustMousedOut = uibtn.justMousedOut;
+				btnJustMousedOver = uibtn.justMousedOver;
+				btnMouseIsOut = uibtn.mouseIsOut;
+				btnMouseIsOver = uibtn.mouseIsOver;
+			}
+			else if (list[i].btnSpr != null)
+			{
+				sprbtn = list[i].btnSpr;
+				btnObj = sprbtn;
+				btnVisible = sprbtn.visible;
+				btnJustMousedOut = sprbtn.justMousedOut;
+				btnJustMousedOver = sprbtn.justMousedOver;
+				btnMouseIsOut = sprbtn.mouseIsOut;
+				btnMouseIsOver = sprbtn.mouseIsOver;
+			}
+			
+			var obj:FlxObject = list[i].obj;
 			
 			if (list[i].enabled == false)
 			{
@@ -365,19 +400,19 @@ class FlxUITooltipManager implements IFlxDestroyable
 			
 			if (obj != null)
 			{
-				btn.x = obj.x;
-				btn.y = obj.y;
-				btn.visible = obj.visible;
+				btnObj.x = obj.x;
+				btnObj.y = obj.y;
+				btnObj.visible = obj.visible;
 			}
 			
-			if (list[i].sticky == false && (false == btn.visible || btn.justMousedOut || btn.mouseIsOut))
+			if (list[i].sticky == false && (false == btnVisible || btnJustMousedOut || btnMouseIsOut))
 			{
 				list[i].count = 0;
 				hide(i);
 			}
-			else if (btn.justMousedOver || btn.mouseIsOver)
+			else if (btnJustMousedOver || btnMouseIsOver)
 			{
-				if (btn.mouseIsOver)
+				if (btnMouseIsOver)
 				{
 					list[i].count += elapsed;
 				}
@@ -611,6 +646,8 @@ private class FlxUITooltipEntry implements IFlxDestroyable
 {
 	public var obj:FlxObject;
 	public var btn:IFlxUIButton;
+	public var btnSpr:FlxUISpriteButton;
+	public var btnTxt:FlxUIButton;
 	public var count:Float;
 	public var data:FlxUITooltipData;
 	public var enabled:Bool;
@@ -623,6 +660,16 @@ private class FlxUITooltipEntry implements IFlxDestroyable
 	public function new(Btn:IFlxUIButton, Data:FlxUITooltipData, ?Obj:FlxObject)
 	{
 		btn = Btn;
+		if (Btn.uiButtonType == FlxUIButtonType.SPRITE_BUTTON)
+		{
+			btnSpr = cast btn;
+			btnTxt = null;
+		}
+		else if (Btn.uiButtonType == FlxUIButtonType.TEXT_BUTTON)
+		{
+			btnTxt = cast btn;
+			btnSpr = null;
+		}
 		data = Data;
 		obj = Obj;
 		count = 0;

@@ -4,6 +4,7 @@ import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxColor;
+import flixel.addons.ui.FlxUITypedButton.FlxUIButtonType;
 
 /**
  * This class extends FlxUISpriteButton and has a Sprite "label"
@@ -34,6 +35,8 @@ class FlxUISpriteButton extends FlxUITypedButton<FlxSprite> implements IFlxUIBut
 		if (Asset != null) {
 			label = Asset;
 		}
+		
+		uiButtonType = FlxUIButtonType.SPRITE_BUTTON;
 	}
 	
 	/**For IResizable:**/

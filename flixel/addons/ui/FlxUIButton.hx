@@ -18,6 +18,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import openfl.Assets;
 import openfl.text.TextFormatAlign;
+import flixel.addons.ui.FlxUITypedButton.FlxUIButtonType;
 
 /**
  * This class extends FlxUITypedButton and has a Text label, and is thus
@@ -85,6 +86,8 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 				doResize(width, height, true);
 			}
 		}
+		
+		uiButtonType = FlxUIButtonType.TEXT_BUTTON;
 	}
 	
 	/**

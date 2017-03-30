@@ -4,6 +4,7 @@ import flash.display.BitmapData;
 import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.addons.ui.FlxUIText;
 import flixel.FlxSprite;
+import flixel.addons.ui.FlxUITypedButton.FlxUIButtonType;
 import flixel.system.FlxAssets;
 import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
@@ -59,4 +60,5 @@ interface IFlxUIButton extends IFlxUIWidget extends IHasParams extends IFlxDestr
 	public function forceStateHandler(event:String):Void;
 	
 	public var status(default, set):Int;
+	public var uiButtonType(default, null):FlxUIButtonType;
 }

@@ -54,6 +54,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	public var mouseIsOut(get, never):Bool;
 	public var justMousedOut(get, never):Bool;
 	
+	public var uiButtonType(default, null):FlxUIButtonType;
+	
 	private inline function get_justMousedOver():Bool
 	{
 		return inputOver.justPressed;
@@ -159,6 +161,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 		labelAlphas = [for (i in 0...3) 1];
 		
 		inputOver = new FlxInput(0);
+		
+		uiButtonType = GENERIC_BUTTON;
 	}
 	
 	override public function graphicLoaded():Void {
@@ -289,11 +293,20 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	 * Offset the statusAnimations-index by 3 when toggled.
 	 */
 	override public function updateStatusAnimation():Void {
-		if (has_toggle && toggled) {
+		if (has_toggle && toggled) { 
 			animation.play(statusAnimations[status + 3]);
 		} else {
 			super.updateStatusAnimation();
 		}
+	}
+	
+	override function updateAnimation(elapsed:Float):Void 
+	{
+		#if vita
+		//do nothing
+		#else
+		super.updateAnimation(elapsed);
+		#end
 	}
 	
 	/**
@@ -1252,4 +1265,12 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	private var _slice9_assets:Array<FlxGraphicAsset>;		//the asset id's of the original 9-slice scale assets
 	
 	private var _centerLabelOffset:FlxPoint = null;	//this is the offset necessary to center ALL the labels
+}
+
+@:enum abstract FlxUIButtonType(Int) from Int{
+
+	public var TEXT_BUTTON = 0;
+	public var SPRITE_BUTTON = 1;
+	public var GENERIC_BUTTON = 2;
+	
 }
