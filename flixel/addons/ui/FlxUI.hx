@@ -2102,6 +2102,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		{
 			switch(attribute)
 			{
+				case "src": if (Std.is(thing, FlxUISprite))
+							{
+								var src = loadScaledSrc(data);
+								var spr:FlxUISprite = cast thing;
+								spr.loadGraphic(src);
+							}
 				case "text": if (Std.is(thing, FlxUIText))
 							 {
 								var text = U.xml_str(data.x, "text");
