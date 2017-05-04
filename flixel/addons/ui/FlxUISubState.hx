@@ -156,7 +156,9 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 	
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);
-		tooltips.update(elapsed);
+		if (tooltips != null) {
+			tooltips.update(elapsed);
+		}
 		#if debug
 			if (_reload) {
 				if (_reload_countdown > 0) {
