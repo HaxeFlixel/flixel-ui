@@ -78,6 +78,11 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 	
 	public override function create():Void
 	{
+		createFlxUISubState();
+	}
+	
+	private function createFlxUISubState()
+	{
 		if (FlxUIState.static_tongue != null) {
 			_tongue = FlxUIState.static_tongue;
 		}
@@ -129,8 +134,6 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 		#end
 		
 		tooltips.init();
-		
-		super.create();
 		
 		cleanup();
 	}

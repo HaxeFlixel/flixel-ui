@@ -65,7 +65,13 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	
 	/**************************************/
 	
-	public override function create():Void {
+	public override function create():Void
+	{
+		createFlxUIPopup();
+	}
+	
+	private function createFlxUIPopup():Void
+	{
 		if(_xml_id == ""){
 			_xml_id = FlxUIAssets.XML_DEFAULT_POPUP_ID;
 		}
@@ -73,7 +79,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 		scrollFactor = FlxPoint.get(0, 0);
 		getTextFallback = myGetTextFallback;
 		
-		super.create();
+		createFlxUISubState();
 		
 		if (_quickSetupParams != null) {
 			_doQuickSetup();
