@@ -1,3 +1,7 @@
+?.?.?
+------------------------------
+* `FlxUIDropDownMenu`: fixed incorrect `dropDirection` with `Automatic` sometimes (flixel-demos#256)
+
 2.2.0
 ------------------------------
 * Compatibility with flixel 4.2.0

@@ -220,7 +220,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	
 	private function exceedsHeight():Bool
 	{
-		return y + getPanelHeight() > FlxG.height;
+		return y + getPanelHeight() + header.background.height > FlxG.height;
 	}
 	
 	private function getPanelHeight():Float
