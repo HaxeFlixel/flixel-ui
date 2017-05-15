@@ -1,8 +1,8 @@
-?.?.?
+?.?.? (to be released)
 ------------------------------
 * `FlxUIDropDownMenu`: fixed incorrect `dropDirection` with `Automatic` sometimes (flixel-demos#256)
 
-2.2.0
+2.2.0 (October 11, 2016)
 ------------------------------
 * Compatibility with flixel 4.2.0
 * `FlxUICheckBox`: fixed alignment on HTML5 (#192)
@@ -16,7 +16,7 @@
 * `FlxInputText`: fixed an issue with caret positions in empty textfields (#193)
 * Assets are now included with `"embed=true"` (#198)
 
-2.1.0
+2.1.0 (July 10, 2016)
 ------------------------------
 * Compatibility with flixel 4.1.0
 * `FlxUI`:
@@ -42,7 +42,7 @@
 * `U`: added `setButtonLabel()`
 * Added support for Firteongue font replacement rule integration
 
-2.0.0
+2.0.0 (February 16, 2016)
 ------------------------------
 * Compatibility with flixel 4.0.0
 * `FlxUI`:
@@ -123,7 +123,7 @@
 * Added `FlxUITooltip` and `FlxUITooltipManager`
 * Added `FlxUILine`
 
-1.0.2
+1.0.2 (April 24, 2014)
 ------------------------------
 * Compatibility with flixel 3.3.0
 * Added FlxUIList
@@ -162,7 +162,7 @@
 * Added pretty-printed XML output to U.hx
 * Updated documentation a little. Still need to catch up.
 
-1.0.1
+1.0.1 (February 21, 2014)
 ------------------------------
 * Compatibility with flixel 3.2.0
 * Refactored the event system
@@ -176,6 +176,6 @@
   * fixed list destruction logic
 * Added FlxUIColorSwatch / FlxUIColorSwatchSelector
 
-1.0.0
+1.0.0 (February 6, 2014)
 ------------------------------
 * Initial haxelib release
