@@ -19,6 +19,7 @@ import haxe.Json;
 import haxe.xml.Fast;
 import haxe.xml.Printer;
 import openfl.Assets;
+import openfl.utils.AssetType;
 import openfl.display.BitmapDataChannel;
 import openfl.geom.Matrix;
 import flixel.system.FlxAssets.FlxGraphicAsset;

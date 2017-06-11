@@ -1,5 +1,7 @@
 package flixel.addons.ui;
+
 import openfl.Assets;
+import openfl.utils.AssetType;
 
 /**
  * A really simple little class that solves an annoying problem with Flash font file names
