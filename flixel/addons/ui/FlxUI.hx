@@ -3370,8 +3370,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					found = true;
 				}
 			}
-			if (!found)
-			{
+			
+			if (found != matchValue) {
 				return false;
 			}
 		}
@@ -3555,8 +3555,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				fg.addGroup(_ui);
 			}
 		}
-		
-		//fg.selected_tab = 0;
 		
 		return fg;
 	}
