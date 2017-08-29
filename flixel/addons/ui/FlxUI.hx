@@ -3659,6 +3659,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var label:String = U.xml_str(data.x, "label");
 		
 		var sprite:FlxUISprite = null;
+		var spriteIsAnimated:Bool = false;
 		var toggleSprite:FlxUISprite = null;
 		if (data.hasNode.sprite)
 		{
@@ -3672,6 +3673,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				else
 				{
 					sprite = cast _loadThing("sprite", spriteNode);
+				}
+				if (spriteNode.hasNode.anim)
+				{
+					if (sprite.animation.curAnim != null)
+					{
+						spriteIsAnimated = true;
+					}
 				}
 			}
 		}
@@ -3696,18 +3704,20 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		else
 		{
 			var tempGroup:FlxSpriteGroup = null;
-			if (label != "")
+			
+			if (spriteIsAnimated || label != "")
 			{
-				//We have a Sprite AND a Label, so we package it up in a group
-				
-				var labelTxt = new FlxUIText(0, 0, 80, label, 8);
-				
-				labelTxt.setFormat(null, 8, 0x333333, "center");
+				//If the sprite is animated, or we have a Sprite AND a Label, we package it up in a groupw
 				
 				tempGroup = new FlxSpriteGroup();
-				
 				tempGroup.add(sprite);
-				tempGroup.add(labelTxt);
+				
+				if (label != "")
+				{
+					var labelTxt = new FlxUIText(0, 0, 80, label, 8);
+					labelTxt.setFormat(null, 8, 0x333333, "center");
+					tempGroup.add(labelTxt);
+				}
 				
 				fb = new FlxUISpriteButton(0, 0, tempGroup);
 			}
@@ -4421,7 +4431,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var scalable = U.xml_bool(data.x, "scalable", false);
 		
-		src = loadScaledSrc(data);
+		var isAnimated = data.hasNode.anim;
+		var frameCount:Int = 1;
+		if (isAnimated)
+		{
+			frameCount = Std.int(U.xml_i(data.node.anim.x, "frame_count", 1));
+		}
+		
+		src = loadScaledSrc(data, "src", "scale", frameCount, 1);
 		
 		var bounds: { min_width:Float, min_height:Float, 
 					  max_width:Float, max_height:Float } = calcMaxMinSize(data);
@@ -4443,11 +4460,20 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			else if (H > bounds.max_height) { H = Std.int(bounds.max_height);}
 		}
 		
+		var frameWidth:Int = 0;
+		var frameHeight:Int = 0;
+		if (isAnimated)
+		{
+			frameWidth = Std.int(_loadWidth(data.node.anim, 0, "frame_width"));
+			frameHeight = Std.int(_loadHeight(data.node.anim, 0, "frame_height"));
+		}
+		
 		if (src != "")
 		{
 			if (W == -1 && H == -1)	//If neither Width nor Height is supplied, return the sprite as-is
 			{
-				fs = new FlxUISprite(0, 0, src);
+				fs = new FlxUISprite(0, 0);
+				fs.loadGraphic(src, isAnimated, frameWidth, frameHeight);
 			}
 			else					//If Width or Height or both is/are supplied, do some scaling
 			{
@@ -4476,11 +4502,30 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				
 				if (!scalable)
 				{
-					fs = new FlxUISprite(0, 0, U.loadScaledImage(src, W, H, smooth));
+					fs = new FlxUISprite(0, 0);
+					var imgSrc = "";
+					var imgFrameWidth = frameWidth;
+					var imgFrameHeight = frameHeight;
+					if (isAnimated)
+					{
+						var testAsset = Assets.getBitmapData(src);
+						var testScale = H / testAsset.height;
+						var tileW = Std.int(frameWidth * testScale);
+						var tileH = Std.int(frameHeight * testScale);
+						imgSrc = U.scaleAndStoreTileset(src, testScale, frameWidth, frameHeight, tileW, tileH, true);
+						imgFrameHeight = tileH;
+						imgFrameWidth = tileW;
+					}
+					else
+					{
+						imgSrc = U.loadScaledImage(src, W, H, smooth);
+					}
+					fs.loadGraphic(imgSrc, isAnimated, imgFrameWidth, imgFrameHeight);
 				}
 				else
 				{
-					fs = new FlxUISprite(0, 0, src);
+					fs = new FlxUISprite(0, 0);
+					fs.loadGraphic(src, isAnimated, frameWidth, frameHeight);
 					fs.scale_on_resize = true;
 					fs.antialiasing = smooth;
 					fs.resize(W, H);
@@ -4503,6 +4548,18 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		fs.resize_point = resize_point;
 		fs.resize_ratio = resize_ratio;
 		fs.resize_ratio_axis = resize_ratio_axis;
+		
+		if (isAnimated)
+		{
+			var frames:Array<Int> = U.xml_iArray(data.node.anim.x, "frames");
+			if (frames != null && frames.length > 0)
+			{
+				var frameRate:Int = U.xml_i(data.node.anim.x, "frame_rate", 0);
+				var looped:Bool = U.xml_bool(data.node.anim.x, "looped", true);
+				fs.animation.add("default", frames, frameRate, looped);
+				fs.animation.play("default", true);
+			}
+		}
 		
 		return fs;
 	}
