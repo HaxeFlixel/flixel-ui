@@ -4607,7 +4607,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						if (tilesTall > 1 || tilesWide > 1)
 						{
 							testAsset = Assets.getBitmapData(U.gfx(src));
-							var str = U.scaleAndStoreTileset(U.gfx(srcSuffix), scale_y, Std.int(testAsset.width / tilesWide), Std.int(testAsset.height / tilesTall), Std.int(sw), Std.int(sh / tilesTall), smooth);
+							var str = U.scaleAndStoreTileset(U.gfx(srcSuffix), scale_y, Std.int(testAsset.width / tilesWide), Std.int(testAsset.height / tilesTall), Std.int(sw / tilesWide), Std.int(sh / tilesTall), smooth);
 							addToScaledAssets(str);
 							return str;
 						}
