@@ -4,6 +4,7 @@ import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIState;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.math.FlxPoint;
+import flixel.util.FlxColor;
 
 /**
  * ...
@@ -64,6 +65,11 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	public static inline var CLICK_EVENT:String = "click_popup";
 	
 	/**************************************/
+	
+	public function new(BGColor:FlxColor=0)
+	{
+		super(BGColor);
+	}
 	
 	public override function create():Void
 	{
