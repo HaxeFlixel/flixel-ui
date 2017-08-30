@@ -4,6 +4,7 @@ import flixel.addons.ui.FlxUI.UIEventCallback;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
 import flixel.FlxSprite;
+import flixel.animation.FlxAnimation;
 import flixel.math.FlxPoint;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 
@@ -88,10 +89,25 @@ class FlxUISprite extends FlxSprite implements IFlxUIWidget implements IResizabl
 		{
 			if (_originalKey != "" && _originalKey != null)
 			{
-				var newKey:String = U.loadScaledImage(_originalKey, w, h);
-				if (newKey != "" && newKey != null)
+				if (animation.frames > 1)
 				{
-					loadFromScaledGraphic(newKey);
+					//it's animated
+					var newScale = h / old_height;
+					var tileW = Std.int(frameWidth * newScale);
+					var tileH = Std.int(frameHeight * newScale);
+					var imgSrc = U.scaleAndStoreTileset(_originalKey, newScale, frameWidth, frameHeight, tileW, tileH, true);
+					if (imgSrc != "" && imgSrc != null)
+					{
+						loadFromScaledGraphic(imgSrc, true, tileW, tileH);
+					}
+				}
+				else
+				{
+					var newKey:String = U.loadScaledImage(_originalKey, w, h);
+					if (newKey != "" && newKey != null)
+					{
+						loadFromScaledGraphic(newKey);
+					}
 				}
 			}
 		}

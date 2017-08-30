@@ -15,6 +15,8 @@ import flixel.addons.ui.FlxUITypedButton.FlxUIButtonType;
  */
 class FlxUISpriteButton extends FlxUITypedButton<FlxSprite> implements IFlxUIButton
 {	
+	private var labelIsGroup:Bool = false;
+	
 	/**
 	 * Creates a new FlxUISpriteButton.
 	 * 
@@ -32,7 +34,8 @@ class FlxUISpriteButton extends FlxUITypedButton<FlxSprite> implements IFlxUIBut
 		
 		up_color = over_color = down_color = up_toggle_color = over_toggle_color = down_toggle_color = FlxColor.WHITE;	
 		
-		if (Asset != null) {
+		if (Asset != null)
+		{
 			label = Asset;
 		}
 		
@@ -46,6 +49,22 @@ class FlxUISpriteButton extends FlxUITypedButton<FlxSprite> implements IFlxUIBut
 		super.resize(W, H);
 		autoCenterLabel();
 	}
+	
+	override function set_label(Value:FlxSprite):FlxSprite 
+	{
+		labelIsGroup = (Std.is(Value, FlxSpriteGroup));
+		return super.set_label(Value);
+	}
+	
+	override public function update(elapsed:Float):Void 
+	{
+		if (labelIsGroup)
+		{
+			label.update(elapsed);
+		}
+		super.update(elapsed);
+	}
+	
 	
 	public override function autoCenterLabel():Void {
 		if (label != null) {
