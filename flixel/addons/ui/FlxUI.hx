@@ -1032,10 +1032,28 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			if (tempGroup != null) {
 				tempGroup.add(cast thing);
 			}else {
-				add(cast thing);
+				//add(cast thing);
+				addThing(cast thing);
 			}
 		
 			_loadPosition(obj, thing);	//Position the thing if possible
+		}
+	}
+	
+	@:access(flixel.text.FlxText)
+	private function addThing(thing:FlxSprite)
+	{
+		if (Std.is(thing, FlxUIText))
+		{
+			var ftu:FlxUIText = cast thing;
+			var oldRegen = ftu._regen;
+			ftu._regen = false;
+			add(thing);
+			ftu._regen = oldRegen;
+		}
+		else
+		{
+			add(thing);
 		}
 	}
 	
@@ -2433,6 +2451,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	
 	private function _resizeThing(fo_r:IResizable, bounds:{ min_width:Float, min_height:Float,
 														 max_width:Float, max_height:Float}):Void {
+															 
 		var do_resize:Bool = false;
 		var ww:Float = fo_r.width;
 		var hh:Float = fo_r.height;
@@ -2632,6 +2651,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return string;
 	}
 	
+	@:access(flixel.text.FlxText)
 	private function _loadText(data:Fast):IFlxUIWidget
 	{
 		var text:String = U.xml_str(data.x, "text");
@@ -2663,13 +2683,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var leadingInt = Std.int(_loadHeight(data, 0, "leading", "floor"));
 		
 		var ft:IFlxUIWidget;
-		var ftu:FlxUIText = new FlxUIText(0, 0, W, text, size);
+		var ftu:FlxUIText = new FlxUIText(0, 0, W, "", size, true);
 		var dtf = ftu.textField.defaultTextFormat;
 		dtf.leading = leadingExists != "" ? leadingInt : null;
 		ftu.textField.defaultTextFormat = dtf;
 		
 		ftu.setFormat(the_font, size, color, align);
 		border.apply(ftu);
+		ftu.text = text;
 		ftu.drawFrame();
 		ft = ftu;
 		
@@ -2954,12 +2975,14 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}
 		
-		frg = new FlxUIRadioGroup(0, 0, names, labels, null, y_space, W, H, labelW, prevOffset, nextOffset);
+		var noScrollButtons = U.xml_bool(data.x, "scroll_buttons", true) == false;
+		
+		frg = new FlxUIRadioGroup(0, 0, names, labels, null, y_space, W, H, labelW, "<X> more...", prevOffset, nextOffset, null, null, noScrollButtons);
 		frg.params = params;
 		
 		if (radio_asset != "" && radio_asset != null)
 		{
-			frg.loadGraphics(radio_asset,dot_asset);
+			frg.loadGraphics(radio_asset, dot_asset);
 		}
 		
 		var text_x:Int = Std.int(_loadWidth(data, 0, "text_x"));
@@ -3694,7 +3717,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (sprite == null)
 		{
 			var useDefaultGraphic = (data.hasNode.graphic == false);
-			fb = new FlxUIButton(0, 0, label, null, useDefaultGraphic);
+			fb = new FlxUIButton(0, 0, label, null, useDefaultGraphic, false, true);
 			var fuib:FlxUIButton = cast fb;
 			fuib._autoCleanup = false;
 		}
