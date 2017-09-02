@@ -15,17 +15,22 @@ class ButtonLabelStyle
 		align = Align;
 	}
 	
-	public function apply(f:FlxText):Void {
-		if (font != null) {
+	public function apply(f:FlxText):Void
+	{
+		if (font != null)
+		{
 			font.apply(f);
 		}
-		if (border != null) {
+		if (border != null)
+		{
 			border.apply(f);
 		}
-		if (color != null) {
+		if (color != null)
+		{
 			f.color = color;
 		}
-		if (align != null) {
+		if (align != null)
+		{
 			f.alignment = align;
 		}
 	}

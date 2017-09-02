@@ -1,5 +1,6 @@
 package flixel.addons.ui;
 
+import com.leveluplabs.tdrpg.Prof;
 import flash.display.BitmapData;
 import flash.errors.Error;
 import flixel.addons.ui.FlxUI.UIEventCallback;
@@ -14,6 +15,7 @@ import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.input.FlxInput;
 import flixel.input.IFlxInput;
+import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxColor;
@@ -327,6 +329,36 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 		doResize(W, H);
 	}
 	
+	@:access(flixel.text.FlxText)
+	private function labelSizeSafe(isWidth:Bool):Float
+	{
+		if (Std.is(_spriteLabel, FlxText))
+		{
+			var t:FlxText = cast _spriteLabel;
+			var oldRegen = t._regen;
+			t._regen = false;
+			var returnVal:Float = 0;
+			if (isWidth)
+			{
+				returnVal = t.width;
+			}
+			else
+			{
+				returnVal = t.height;
+			}
+			t._regen = oldRegen;
+			return returnVal;
+		}
+		if (isWidth)
+		{
+			return _spriteLabel.width;
+		}
+		else
+		{
+			return _spriteLabel.height;
+		}
+	}
+	
 	@:allow(flixel.addons.ui.FlxUITooltipManager)
 	private function doResize(W:Float, H:Float, Redraw:Bool = true):Void
 	{
@@ -337,8 +369,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 		var label_diffy:Float = 0;
 		if (label != null)
 		{
-			label_diffx = width - _spriteLabel.width;
-			label_diffy = height - _spriteLabel.height;
+			label_diffx = width - labelSizeSafe(true);  //_spriteLabel.width;
+			label_diffy = height - labelSizeSafe(false);//_spriteLabel.height;
 		}
 		
 		var old_offx:Float = 0;
@@ -357,16 +389,54 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 			{
 				if (_no_graphic)
 				{
+					/*
 					var upB:BitmapData;
+					var key:String = "";
 					if (!has_toggle)
 					{
-						upB = new BitmapData(Std.int(W), Std.int(H * 3), true, 0x00000000);
+						key = "button_blank_" + Std.int(W) + "x" + Std.int(H * 3);
+						if (!FlxG.bitmap.checkCache(key))
+						{
+							upB = new BitmapData(Std.int(W), Std.int(H * 3), true, 0x00000000);
+							FlxG.bitmap.add(upB, true, key);
+						}
 					}
 					else
 					{
-						upB = new BitmapData(Std.int(W), Std.int(H * 6), true, 0x00000000);
+						key = "button_blank_" + Std.int(W) + "x" + Std.int(H * 6);
+						if (!FlxG.bitmap.checkCache(key))
+						{
+							upB = new BitmapData(Std.int(W), Std.int(H * 6), true, 0x00000000);
+							FlxG.bitmap.add(upB, true, key);
+						}
 					}
-					loadGraphicsUpOverDown(upB);
+					*/
+					
+					var blank:BitmapData;
+					var key:String = "";
+					
+					if (!has_toggle)
+					{
+						key = "button_blank_1x3";
+						if (!FlxG.bitmap.checkCache(key))
+						{
+							blank = new BitmapData(1, 3, true, 0x00000000);
+							FlxG.bitmap.add(blank, true, key);
+						}
+					}
+					else
+					{
+						key = "button_blank_1x6";
+						if (!FlxG.bitmap.checkCache(key))
+						{
+							blank = new BitmapData(1, 6, true, 0x00000000);
+							FlxG.bitmap.add(blank, true, key);
+						}
+					}
+					
+					loadGraphic(key, true, 1, 1);
+					width = Std.int(W);
+					height = Std.int(H);
 				}
 				else
 				{

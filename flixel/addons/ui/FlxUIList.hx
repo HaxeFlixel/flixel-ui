@@ -44,6 +44,8 @@ class FlxUIList extends FlxUIGroup implements ICursorPointable
 	public var prevButton:IFlxUIButton;
 	public var nextButton:IFlxUIButton;
 	
+	public var noButtons(default, null):Bool;
+	
 	public var moreString(default, set):String;
 	public function set_moreString(str:String):String {
 		moreString = str;
@@ -60,7 +62,7 @@ class FlxUIList extends FlxUIGroup implements ICursorPointable
 			if (Std.is(thing, IFlxUIButton))
 			{
 				var ifuib = cast(thing, IFlxUIButton);
-				if (ifuib == prevButton || ifuib == nextButton)
+				if (!noButtons && (ifuib == prevButton || ifuib == nextButton))
 				{
 					continue;
 				}
@@ -89,9 +91,10 @@ class FlxUIList extends FlxUIGroup implements ICursorPointable
 	 * @param	NextButtonOffset	Offset for Scroll + Button
 	 * @param	PrevButton	Button to Scroll -
 	 * @param	NextButton	Button to Scroll +
+	 * @param	NoButtons	Suppress the automatic creation of prev/next buttons (not recommended except for special use cases)
 	 */
 	
-	public function new(X:Float=0,Y:Float=0,?Widgets:Array<IFlxUIWidget>=null,W:Float=0,H:Float=0,?MoreString:String="<X> more...",?Stacking:Int=STACK_VERTICAL,?Spacing:Float=0,PrevButtonOffset:FlxPoint=null,NextButtonOffset:FlxPoint=null,PrevButton:IFlxUIButton=null,NextButton:IFlxUIButton=null) 
+	public function new(X:Float=0,Y:Float=0,?Widgets:Array<IFlxUIWidget>=null,W:Float=0,H:Float=0,?MoreString:String="<X> more...",?Stacking:Int=STACK_VERTICAL,?Spacing:Float=0,PrevButtonOffset:FlxPoint=null,NextButtonOffset:FlxPoint=null,PrevButton:IFlxUIButton=null,NextButton:IFlxUIButton=null,NoButtons:Bool=false) 
 	{
 		_skipRefresh = true;
 		super(X, Y);
@@ -103,6 +106,8 @@ class FlxUIList extends FlxUIGroup implements ICursorPointable
 			}
 		}
 		
+		noButtons = NoButtons;
+		
 		prevButton = PrevButton;
 		nextButton = NextButton;
 		prevButtonOffset = PrevButtonOffset;
@@ -110,24 +115,27 @@ class FlxUIList extends FlxUIGroup implements ICursorPointable
 		moreString = MoreString;
 		
 		if (prevButton == null) {
-			var pButton = new FlxUIButton(0, 0, " ", onClick.bind( -1));
-			if(stacking == STACK_HORIZONTAL){
-				pButton.loadGraphicsUpOverDown(FlxUIAssets.IMG_BUTTON_ARROW_LEFT);
-				pButton.label.width = pButton.label.fieldWidth = 100;
-				pButton.label.text = getMoreString(0);
-				
-				pButton.setAllLabelOffsets(pButton.width - pButton.label.width,
-										   pButton.height + 2);
-				pButton.label.alignment = "right";
-			}else {
-				pButton.loadGraphicsUpOverDown(FlxUIAssets.IMG_BUTTON_ARROW_UP);
-				pButton.label.width = pButton.label.fieldWidth = 100;
-				pButton.label.text = getMoreString(0);
-				pButton.setAllLabelOffsets(0, 0);
-				pButton.setCenterLabelOffset(pButton.width+2, pButton.height - pButton.label.height);
-				pButton.label.alignment = "left";
+			if (!noButtons)
+			{
+				var pButton = new FlxUIButton(0, 0, " ", onClick.bind( -1), true, true);
+				if(stacking == STACK_HORIZONTAL){
+					pButton.loadGraphicsUpOverDown(FlxUIAssets.IMG_BUTTON_ARROW_LEFT);
+					pButton.label.width = pButton.label.fieldWidth = 100;
+					pButton.label.text = getMoreString(0);
+					
+					pButton.setAllLabelOffsets(pButton.width - pButton.label.width,
+											   pButton.height + 2);
+					pButton.label.alignment = "right";
+				}else {
+					pButton.loadGraphicsUpOverDown(FlxUIAssets.IMG_BUTTON_ARROW_UP);
+					pButton.label.width = pButton.label.fieldWidth = 100;
+					pButton.label.text = getMoreString(0);
+					pButton.setAllLabelOffsets(0, 0);
+					pButton.setCenterLabelOffset(pButton.width+2, pButton.height - pButton.label.height);
+					pButton.label.alignment = "left";
+				}
+				prevButton = pButton;
 			}
-			prevButton = pButton;
 		}
 		else
 		{
@@ -144,22 +152,25 @@ class FlxUIList extends FlxUIGroup implements ICursorPointable
 		}
 		
 		if (nextButton == null) {
-			var nButton = new FlxUIButton(0, 0, " ", onClick.bind( 1));
-			if(stacking == STACK_HORIZONTAL){
-				nButton.loadGraphicsUpOverDown(FlxUIAssets.IMG_BUTTON_ARROW_RIGHT);
-				nButton.label.width = nButton.label.fieldWidth = 100;
-				nButton.label.text = getMoreString(0);
-				nButton.setAllLabelOffsets(0, nButton.height + 2);
-				nButton.label.alignment = "left";
-			}else {
-				nButton.loadGraphicsUpOverDown(FlxUIAssets.IMG_BUTTON_ARROW_DOWN);
-				nButton.label.width = nButton.label.fieldWidth = 100;
-				nButton.label.text = getMoreString(0);
-				nButton.setAllLabelOffsets(0, 0);
-				nButton.setCenterLabelOffset(nButton.width+2, 0);
-				nButton.label.alignment = "left";
+			if (!noButtons)
+			{
+				var nButton = new FlxUIButton(0, 0, " ", onClick.bind( 1));
+				if(stacking == STACK_HORIZONTAL){
+					nButton.loadGraphicsUpOverDown(FlxUIAssets.IMG_BUTTON_ARROW_RIGHT);
+					nButton.label.width = nButton.label.fieldWidth = 100;
+					nButton.label.text = getMoreString(0);
+					nButton.setAllLabelOffsets(0, nButton.height + 2);
+					nButton.label.alignment = "left";
+				}else {
+					nButton.loadGraphicsUpOverDown(FlxUIAssets.IMG_BUTTON_ARROW_DOWN);
+					nButton.label.width = nButton.label.fieldWidth = 100;
+					nButton.label.text = getMoreString(0);
+					nButton.setAllLabelOffsets(0, 0);
+					nButton.setCenterLabelOffset(nButton.width+2, 0);
+					nButton.label.alignment = "left";
+				}
+				nextButton = nButton;
 			}
-			nextButton = nButton;
 		}
 		else
 		{
@@ -252,11 +263,14 @@ class FlxUIList extends FlxUIGroup implements ICursorPointable
 		
 		autoBounds = false;
 		
-		if (group.members.indexOf(cast prevButton) != -1) {
-			remove(cast prevButton, true);
-		}
-		if (group.members.indexOf(cast nextButton) != -1) {
-			remove(cast nextButton, true);
+		if (!noButtons)
+		{
+			if (group.members.indexOf(cast prevButton) != -1) {
+				remove(cast prevButton, true);
+			}
+			if (group.members.indexOf(cast nextButton) != -1) {
+				remove(cast nextButton, true);
+			}
 		}
 		
 		var XX:Float = 0;
@@ -265,22 +279,25 @@ class FlxUIList extends FlxUIGroup implements ICursorPointable
 		var i:Int = 0;
 		var inBounds:Bool = true;
 		
-		if (stacking == STACK_HORIZONTAL) {
-			prevButton.x = prevButtonOffset.x - prevButton.width - 2;
-			prevButton.y = prevButtonOffset.y;
-			nextButton.x = nextButtonOffset.x + width + 2;
-			nextButton.y = nextButtonOffset.y;
-		}else {
-			prevButton.x = prevButtonOffset.x;
-			prevButton.y = prevButtonOffset.y - prevButton.height - 2;
-			nextButton.x = nextButtonOffset.x;
-			nextButton.y = nextButtonOffset.y + height + 2;
+		if (!noButtons)
+		{
+			if (stacking == STACK_HORIZONTAL) {
+				prevButton.x = prevButtonOffset.x - prevButton.width - 2;
+				prevButton.y = prevButtonOffset.y;
+				nextButton.x = nextButtonOffset.x + width + 2;
+				nextButton.y = nextButtonOffset.y;
+			}else {
+				prevButton.x = prevButtonOffset.x;
+				prevButton.y = prevButtonOffset.y - prevButton.height - 2;
+				nextButton.x = nextButtonOffset.x;
+				nextButton.y = nextButtonOffset.y + height + 2;
+			}
+			
+			prevButton.x = Std.int(prevButton.x);
+			prevButton.y = Std.int(prevButton.y);
+			nextButton.x = Std.int(nextButton.x);
+			nextButton.y = Std.int(nextButton.y);
 		}
-		
-		prevButton.x = Std.int(prevButton.x);
-		prevButton.y = Std.int(prevButton.y);
-		nextButton.x = Std.int(nextButton.x);
-		nextButton.y = Std.int(nextButton.y);
 		
 		var highestIndex:Int = 0;
 		
@@ -322,18 +339,21 @@ class FlxUIList extends FlxUIGroup implements ICursorPointable
 		
 		var fuibutton:FlxUIButton;
 		
-		if (amountPrevious > 0) {
-			safeAdd(cast prevButton);
-			if (Std.is(prevButton, FlxUIButton)) {
-				fuibutton = cast prevButton;
-				fuibutton.label.text = getMoreString(amountPrevious);
+		if (!noButtons)
+		{
+			if (amountPrevious > 0) {
+				safeAdd(cast prevButton);
+				if (Std.is(prevButton, FlxUIButton)) {
+					fuibutton = cast prevButton;
+					fuibutton.label.text = getMoreString(amountPrevious);
+				}
 			}
-		}
-		if (amountNext > 0) {
-			safeAdd(cast nextButton);
-			if(Std.is(nextButton, FlxUIButton)) {
-				fuibutton = cast nextButton;
-				fuibutton.label.text = getMoreString(amountNext);
+			if (amountNext > 0) {
+				safeAdd(cast nextButton);
+				if(Std.is(nextButton, FlxUIButton)) {
+					fuibutton = cast nextButton;
+					fuibutton.label.text = getMoreString(amountNext);
+				}
 			}
 		}
 	}

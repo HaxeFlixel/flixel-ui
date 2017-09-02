@@ -41,12 +41,12 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget im
 		textField.width = width;
 		
 		var old_size:Int = size;
-		var diff:Float = (height - graphic.bitmap.height);
+		var diff:Float = (h - graphic.bitmap.height);
 		
 		var oldText:String = text;
 		#if flash
 			if (oldText == "") { text = "T";}
-			diff = height - (Std.int(textField.textHeight) + 4);
+			diff = h - (Std.int(textField.textHeight) + 4);
 		#end
 		
 		var failsafe:Int = 0;
@@ -66,7 +66,7 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget im
 			calcFrame(true);
 			
 			#if flash
-				diff = height - (Std.int(textField.textHeight) + 4);
+				diff = h - (Std.int(textField.textHeight) + 4);
 			#else
 				diff = (h - graphic.bitmap.height);
 			#end

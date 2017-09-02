@@ -10,6 +10,7 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxTimer;
+import openfl.display.BitmapData;
 
 /**
  * @author Lars Doucet
@@ -93,7 +94,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIClic
 			box.loadGraphic(Box, true);
 		}
 		
-		button = new FlxUIButton(0, 0, Label, _clickCheck);
+		button = new FlxUIButton(0, 0, Label, _clickCheck, false, true, true);
 		
 		//set default checkbox label format
 		button.label.setFormat(null, 8, 0xffffff, "left", OUTLINE);
@@ -104,7 +105,16 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIClic
 		button.down_toggle_color = 0xffffff;
 		button.over_toggle_color = 0xffffff;
 		
-		button.loadGraphicSlice9(["", "", ""], Std.int(box.width + box_space + LabelW), Std.int(box.height));
+		//var blank = FlxG.bitmap.checkCache("blank") ? FlxG.bitmap.get("blank").bitmap : FlxG.bitmap.add(new BitmapData(1, 3, true, 0x00000000), true, "check_blank_button").bitmap;
+		//button.loadGraphic(blank, true, 1, 3);
+		button.width = Std.int(box.width + box_space+LabelW);
+		button.height = Std.int(box.height);
+		
+		button.label.width = button.width;
+		button.label.height = button.height;
+		button.label.fieldWidth = button.width;
+		
+		//button.loadGraphicSlice9(["", "", ""], Std.int(box.width + box_space + LabelW), Std.int(box.height));
 		
 		max_width = Std.int(box.width + box_space + LabelW);
 		

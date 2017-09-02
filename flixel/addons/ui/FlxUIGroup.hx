@@ -84,15 +84,27 @@ class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 			var right:Float = Math.NEGATIVE_INFINITY;
 			var top:Float = Math.POSITIVE_INFINITY;
 			var bottom:Float = Math.NEGATIVE_INFINITY;
-			for (fb in members) {
-				if (fb != null){
-					if (Std.is(fb, IFlxUIWidget)) {
-						var flui:FlxSprite = cast fb;
-						if (flui.x < left) { left = flui.x; }
-						if (flui.x + flui.width > right) { right = flui.x + flui.width; }
-						if (flui.y < top) { top = flui.y; }
-						if (flui.y + flui.height > bottom) { bottom = flui.y + flui.height;}
-					}else if (Std.is(fb, FlxSprite)) {
+			for (fb in members)
+			{
+				if (fb != null)
+				{
+					if (Std.is(fb, IFlxUIWidget))
+					{
+						var fbWidth = 0.0;
+						var fbHeight = 0.0;
+						if (Std.is(fb, FlxUIText))
+						{
+							var flui:FlxSprite = cast fb;
+							fbWidth = flui.width;
+							fbHeight = flui.height;
+						}
+						if (fb.x < left) { left = fb.x; }
+						if (fb.x + fbWidth > right) { right = fb.x + fbWidth; }
+						if (fb.y < top) { top = fb.y; }
+						if (fb.y + fbHeight > bottom) { bottom = fb.y + fbHeight;}
+					}
+					else if (Std.is(fb, FlxSprite))
+					{
 						var flxi:FlxSprite = cast fb;
 						if (flxi.x < left)   { left = flxi.x; }
 						if (flxi.x > right)  { right = flxi.x; }
@@ -113,6 +125,24 @@ class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 		}else {
 			width = height = 0;
 		}
+	}
+	
+	@:access(flixel.text.FlxText)
+	private function safeTextSize(text:FlxUIText, isWidth:Bool):Float
+	{
+		var oldRegen = text._regen;
+		text._regen = false;
+		var returnVal = 0.0;
+		if (isWidth)
+		{
+			returnVal = text.width;
+		}
+		else
+		{
+			returnVal = text.height;
+		}
+		text._regen = oldRegen;
+		return returnVal;
 	}
 	
 	/**

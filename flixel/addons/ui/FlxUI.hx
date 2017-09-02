@@ -2673,19 +2673,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		ftu.drawFrame();
 		ft = ftu;
 		
-		if (data.hasNode.param) {
+		if (data.hasNode.param)
+		{
 			var params = getParams(data);
 			var ihp:IHasParams = cast ft;
 			ihp.params = params;
 		}
 		
-		if (H > 0 && ft.height != H)
+		if (H > 0 && ftu.height != H)
 		{
-			if (Std.is(ft, IResizable))
-			{
-				var r:IResizable = cast ft;
-				r.resize(r.width, H);
-			}
+			ftu.resize(ftu.width, H);
 		}
 		
 		//force text redraw

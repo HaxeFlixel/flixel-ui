@@ -52,20 +52,27 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	 * @param	OnClick		The function to call whenever the button is clicked.
 	 * @param	LoadDefaultGraphics	By default it will load up with placeholder graphics. Pass false if you want to skip this (i.e. if you will provide your own graphics subsequently, can save time)
 	 * @param	LoadBlank	Load this button without ANY visible graphics, but still functions (in case you need an invisible click area)
+	 * @param	SkipResize	Skip the initial resize on construction (low-level optimization not recommended unless you know what you're doing)
 	 */
-	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Void->Void, ?LoadDefaultGraphics:Bool=true, ?LoadBlank:Bool=false)
+	public function new(X:Float = 0, Y:Float = 0, ?Label:String, ?OnClick:Void->Void, ?LoadDefaultGraphics:Bool=true, ?LoadBlank:Bool=false, ?SkipResize:Bool=false)
 	{
 		super(X, Y, OnClick);
+		
 		if (Label != null)
 		{
 			//create a FlxUIText label
-			label = new FlxUIText(0, 0, 80, Label, 8);
+			label = new FlxUIText(0, 0, 80, "", 8);						//don't draw any text just yet b/c we're just going to resize & redraw it momentarily
 			label.setFormat(null, 8, 0x333333, FlxTextAlign.CENTER);
 		}
 		
 		if (LoadBlank)
 		{
 			_no_graphic = true;
+		}
+		
+		if (label != null)
+		{
+			label.text = Label; //apply the text now before the resize call
 		}
 		
 		if (LoadDefaultGraphics)
@@ -135,9 +142,11 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		return newButton;
 	}
 	
-	public override function copyStyle(other:FlxUITypedButton<FlxSprite>):Void {
+	public override function copyStyle(other:FlxUITypedButton<FlxSprite>):Void
+	{
 		super.copyStyle(other);
-		if (Std.is(other, FlxUIButton)) {
+		if (Std.is(other, FlxUIButton))
+		{
 			var fuib:FlxUIButton = cast other;
 			
 			up_style = fuib.up_style;

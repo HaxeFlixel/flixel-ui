@@ -109,11 +109,12 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 	 * @param	NextButtonOffset	Offset for the "next" scroll button
 	 * @param	PrevButton		Your own custom button for the "previous" scroll button
 	 * @param	NextButton		Your own custom button for the "next" scroll button
+	 * @param	NoScrollButtons	Suppress automatic creation of scroll buttons (optimization for when you know your radio group will only have X elements and never scroll)
 	 */
 	
 	public function new(X:Float, Y:Float, ?ids_:Array<String>, ?labels_:Array<String>, ?callback_:String->Void = null,
 		y_space_:Float = 25, width_:Int = 100, height_:Int = 20, label_width_:Int = 100, MoreString:String = "<X> more...",
-		PrevButtonOffset:FlxPoint=null,NextButtonOffset:FlxPoint=null, PrevButton:IFlxUIButton=null, NextButton:IFlxUIButton=null):Void {
+		PrevButtonOffset:FlxPoint=null,NextButtonOffset:FlxPoint=null, PrevButton:IFlxUIButton=null, NextButton:IFlxUIButton=null, NoScrollButtons:Bool=false):Void {
 		
 		super();
 		_y_space = y_space_;
@@ -125,9 +126,9 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 		if (labels_ == null)
 			labels_ = [];
 		callback = callback_;
-		_list_radios = new Array<FlxUICheckBox>();
+		_list_radios = [];
 		_list_active = [];
-		_list = new FlxUIList(0, 0, null, 0, 0, MoreString, FlxUIList.STACK_VERTICAL,0,PrevButtonOffset,NextButtonOffset,PrevButton,NextButton);
+		_list = new FlxUIList(0, 0, null, 0, 0, MoreString, FlxUIList.STACK_VERTICAL, 0, PrevButtonOffset, NextButtonOffset, PrevButton, NextButton, NoScrollButtons);
 		add(_list);
 		updateRadios(ids_, labels_);
 		loadGraphics(null, null);
@@ -202,7 +203,8 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 	}
 	
 	public function show(b:Bool):Void {
-		for(fo in _list.members) {
+		for (fo in _list.members)
+		{
 			fo.visible = b;
 		}
 	}
@@ -210,7 +212,8 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 	public function updateRadios(ids_:Array<String>, labels_:Array<String>):Void {
 		_ids = ids_;
 		_labels = labels_;
-		for(c in _list_radios) {
+		for(c in _list_radios)
+		{
 			c.visible = false;
 		}
 		_refreshRadios();
@@ -359,7 +362,8 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 	 * Create the radio elements if necessary, and/or just refresh them
 	 */
 	
-	private function _refreshRadios():Void {
+	private function _refreshRadios():Void
+	{
 		var xx:Float = x;
 		var yy:Float = y;
 		var i:Int = 0;
@@ -369,15 +373,20 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 		
 		_list._skipRefresh = true;
 		
-		for (id in _ids) {
+		for (id in _ids)
+		{
 			var label:String = "";
-			if (_labels != null && _labels.length > i) {
+			if (_labels != null && _labels.length > i)
+			{
 				label = _labels[i];
-			}else {
+			}
+			else
+			{
 				label = "<" + id + ">";	//"soft" error, indicates undefined label
 			}
 			var c:FlxUICheckBox;
-			if (_list_radios.length > i) {
+			if (_list_radios.length > i)
+			{
 				c = _list_radios[i];
 				c.visible = true;
 				c.text = label;
@@ -404,9 +413,11 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 				c.y = Std.int(yy);
 				
 				c.text = label;
-				if (_list_radios.length > 0) {
+				if (_list_radios.length > 0)
+				{
 					c.button.copyStyle(cast _list_radios[0].button);
-					if (activeStyle == null) {
+					if (activeStyle == null)
+					{
 						activeStyle = makeActiveStyle();
 					}
 					c.button.width = _list_radios[0].button.width;
@@ -419,23 +430,28 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 				_list_active.push(true);
 			}
 			
-			if (xx + c.width > maxX) {
+			if (xx + c.width > maxX)
+			{
 				maxX = xx + c.width;
 			}
-			if (yy + c.height > maxY) {
+			if (yy + c.height > maxY)
+			{
 				maxY = yy + c.height;
 			}
 			
 			yy += _y_space;
 			i++;
 		}
-		if (fixedSize == false) {
+		if (fixedSize == false)
+		{
 			maxX += 5;		//add some buffer
 			maxY += 5;
-			if (maxX > _list.width) {
+			if (maxX > _list.width)
+			{
 				_list.width = maxX;
 			}
-			if (maxY > _list.height) {
+			if (maxY > _list.height)
+			{
 				_list.height = maxY;
 			}
 			width = maxX;
@@ -443,7 +459,8 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 		}
 		_list._skipRefresh = false;
 		
-		if (fixedSize == true) {
+		if (fixedSize == true)
+		{
 			_list.refreshList();
 		}
 		
@@ -519,8 +536,10 @@ class CheckStyle extends ButtonLabelStyle {
 		super(Font, Align, Color, Border);
 	}
 	
-	public function applyToCheck(c:FlxUICheckBox):Void {
-		if (checkColor != null) {
+	public function applyToCheck(c:FlxUICheckBox):Void
+	{
+		if (checkColor != null)
+		{
 			c.color = checkColor;
 		}
 		apply(c.button.label);
