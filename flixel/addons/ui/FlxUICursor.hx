@@ -626,8 +626,18 @@ class FlxUICursor extends FlxUISprite
 		var value:Bool = false;
 		if (list != null)
 		{
-			if (list.indexOf(widget) != -1) {
+			if (list.indexOf(widget) != -1)
+			{
 				value = list.remove(widget);
+				var len = list.length;
+				for (i in 0...len)
+				{
+					var j = len - i - 1;
+					if (list[j] == null)
+					{
+						list.splice(j, 1);
+					}
+				}
 				list.sort(_sortXYVisible);
 			}
 		}
