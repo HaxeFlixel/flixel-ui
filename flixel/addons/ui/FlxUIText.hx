@@ -1,6 +1,7 @@
 package flixel.addons.ui;
 
 import flixel.addons.ui.FlxUI.UIEventCallback;
+import flixel.addons.ui.interfaces.IFlxUIText;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.IResizable;
@@ -12,7 +13,7 @@ import openfl.text.TextField;
  * Simple extension to the basic text field class.
  * @author Lars Doucet
  */
-class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget implements IHasParams
+class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget implements IHasParams implements IFlxUIText
 {
 	public var broadcastToFlxUI:Bool = true;
 	public var name:String; 
