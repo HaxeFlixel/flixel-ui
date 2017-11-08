@@ -8,7 +8,7 @@ import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 /**
  * @author 
  */
-interface IFlxUIText extends IFlxUIWidget extends IFlxDestroyable
+interface IFlxUIText extends IFlxUIWidget extends IFlxDestroyable extends IResizable
 {
 	public var text(default, set):String;
 	

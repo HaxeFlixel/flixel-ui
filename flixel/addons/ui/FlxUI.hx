@@ -1974,7 +1974,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			case "box": returnThing =  _loadBox(info);
 			case "sprite": returnThing =  _loadSprite(info);
 			case "bar": returnThing =  _loadBar(info);
-			case "text": returnThing =  _loadText(info);								//if input has events
+			case "text": returnThing =  _loadText(info, false);								//if input has events
+			case "text_region": returnThing = _loadText(info, true);
 			case "input_text": returnThing =  _loadInputText(info);								//if input has events
 			case "numstepper","num_stepper","numeric_stepper": returnThing =  _loadNumericStepper(info);			//has events, params
 			case "button": returnThing =  _loadButton(info);							//has events, params
@@ -2652,7 +2653,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}
 	
 	@:access(flixel.text.FlxText)
-	private function _loadText(data:Fast):IFlxUIWidget
+	private function _loadText(data:Fast, asRegion:Bool=false):IFlxUIWidget
 	{
 		var text:String = U.xml_str(data.x, "text");
 		var context:String = U.xml_str(data.x, "context", true, "ui");
@@ -2683,16 +2684,33 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var leadingInt = Std.int(_loadHeight(data, 0, "leading", "floor"));
 		
 		var ft:IFlxUIWidget;
-		var ftu:FlxUIText = new FlxUIText(0, 0, W, "", size, true);
-		var dtf = ftu.textField.defaultTextFormat;
-		dtf.leading = leadingExists != "" ? leadingInt : null;
-		ftu.textField.defaultTextFormat = dtf;
 		
-		ftu.setFormat(the_font, size, color, align);
-		border.apply(ftu);
-		ftu.text = text;
-		ftu.drawFrame();
-		ft = ftu;
+		var ftur:FlxUITextRegion = null;
+		var ftu:FlxUIText = null;
+		var itext:IFlxUIText = null;
+		
+		if (asRegion)
+		{
+			ftur = new FlxUITextRegion(0, 0, W, "", size, true);
+			ftur.fontDef = FontDef.fromXML(data.x);
+			ftur.fontDef.format.leading = leadingExists != "" ? leadingInt : null;
+			ftur.text = text;
+			ft = ftur;
+			itext = cast ftur;
+		}
+		else
+		{
+			ftu = new FlxUIText(0, 0, W, "", size, true);
+			var dtf = ftu.textField.defaultTextFormat;
+			dtf.leading = leadingExists != "" ? leadingInt : null;
+			ftu.textField.defaultTextFormat = dtf;
+			ftu.setFormat(the_font, size, color, align);
+			border.apply(ftu);
+			ftu.text = text;
+			ftu.drawFrame();
+			ft = ftu;
+			itext = cast ftu;
+		}
 		
 		if (data.hasNode.param)
 		{
@@ -2701,14 +2719,17 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			ihp.params = params;
 		}
 		
-		if (H > 0 && ftu.height != H)
+		if (itext != null)
 		{
-			ftu.resize(ftu.width, H);
+			if (H > 0 && ft.height != H)
+			{
+				itext.resize(itext.width, H);
+			}
+			
+			//force text redraw
+			itext.text = " ";
+			itext.text = text;
 		}
-		
-		//force text redraw
-		ftu.text = " ";
-		ftu.text = text;
 		
 		return ft;
 	}
@@ -3821,7 +3842,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					
 					var igfx:String = U.gfx(image);
 					
-					switch(graphic_name) {
+					switch(graphic_name)
+					{
 						case "inactive", "", "normal", "up": 
 							if (image != "") { 
 								if (!toggleState) {
@@ -4184,7 +4206,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		if (srcAsset == null) srcAsset = Assets.getBitmapData(origSrc);
 		
-		var origAsset = Assets.getBitmapData(origSrc, false);
+		var origAsset = Assets.getBitmapData(origSrc);
 		var srcScaleFactorX = srcAsset.width / origAsset.width;
 		var srcScaleFactorY = srcAsset.height / origAsset.height;
 		
