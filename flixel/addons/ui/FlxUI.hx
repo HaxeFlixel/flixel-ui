@@ -1706,6 +1706,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		for (cNode in data.nodes.resolve(nodeName)) {
 			var cname:String = U.xml_name(cNode.x);
+			var cnames:Array<String> = cname.indexOf(",") != -1 ? cname.split(",") : [];
 			
 			if(haxedef){
 				nodeValue = "";
@@ -1714,7 +1715,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 			}
 			
-			if (freePass || cname == nodeValue) {
+			if (freePass || cname == nodeValue || cnames.indexOf(nodeValue) != -1) {
 				if (cNode.hasNode.change) {
 					for (change in cNode.nodes.change) {
 						for (att in change.x.attributes()) {
