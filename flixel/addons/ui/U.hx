@@ -1118,7 +1118,7 @@ class U
 				return cg.bitmap;
 			}
 		}
-		return Assets.getBitmapData(str, false);
+		return Assets.getBitmapData(str, true);
 	}
 	
 	public static function combineTiles(arr:Array<BitmapData>):BitmapData
