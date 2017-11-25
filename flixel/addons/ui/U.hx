@@ -1738,19 +1738,19 @@ class U
 	 */
 	
 	public static inline function splitBitString(str:String):Array<Int> {
-		var final:Array<Int> = new Array<Int>();
+		var result:Array<Int> = new Array<Int>();
 		var arr:Array<String> = str.split("\n");
 		var i:Int = 0; while (i < arr.length) {
 			var len:Int = arr[i].length;
 			var j:Int = 0; while (j < len) {
 				var char:String = arr[i].charAt(j);
 				var num:Int = Std.parseInt(char);
-				final.push(num);
+				result.push(num);
 				j++;
 			}
 			i++;
 		}
-		return final;
+		return result;
 	}
 	
 	public static function getShortTextFromFlxKeyText(str:String):String {
