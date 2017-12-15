@@ -71,6 +71,11 @@ class FontDef
 		return newThis;
 	}
 	
+	public static function copyFromFlxTextRegion(t:FlxUITextRegion):FontDef
+	{
+		return t.fontDef.clone();
+	}
+	
 	public static function copyFromTextField(t:TextField):FontDef {
 		var dtf:TextFormat = t.defaultTextFormat;
 		var fd = new FontDef("");
