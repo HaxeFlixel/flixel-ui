@@ -104,6 +104,22 @@ class FlxUITooltipManager implements IFlxDestroyable
 			var entry = list.pop();
 			if (entry != null)
 			{
+				if (entry.deleteButtonOnClear)
+				{
+					if (state != null)
+					{
+						state.remove(cast entry.btn, true);
+					}
+					else if (subState != null)
+					{
+						subState.remove(cast entry.btn, true);
+					}
+					var btn:FlxObject = cast entry.btn;
+					btn.destroy();
+					entry.btn = null;
+					entry.btnSpr = null;
+					entry.btnTxt = null;
+				}
 				entry.destroy();
 			}
 		}
@@ -300,7 +316,11 @@ class FlxUITooltipManager implements IFlxDestroyable
 				}
 				
 				//add it to the list
-				list.push(new FlxUITooltipEntry(btn, data, thing));
+				var entry = new FlxUITooltipEntry(btn, data, thing);
+				
+				//this button is created ONLY for this tooltip, so delete it when we kill the tooltip
+				entry.deleteButtonOnClear = true;
+				list.push(entry);
 			}
 			else
 			{
@@ -651,6 +671,7 @@ private class FlxUITooltipEntry implements IFlxDestroyable
 	public var count:Float;
 	public var data:FlxUITooltipData;
 	public var enabled:Bool;
+	public var deleteButtonOnClear:Bool;
 	
 	/**
 	 * Intentionally shown by the programmer, when shown will only unshow when explicitly hidden or another tooltip is shown
