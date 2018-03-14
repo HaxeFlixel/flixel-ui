@@ -47,7 +47,7 @@ class FlxUISpriteButton extends FlxUITypedButton<FlxSprite> implements IFlxUIBut
 	public override function resize(W:Float, H:Float):Void 
 	{
 		super.resize(W, H);
-		autoCenterLabel();
+		centerLabel();
 	}
 	
 	override function set_label(Value:FlxSprite):FlxSprite 
@@ -66,7 +66,7 @@ class FlxUISpriteButton extends FlxUITypedButton<FlxSprite> implements IFlxUIBut
 	}
 	
 	
-	public override function autoCenterLabel():Void {
+	public override function centerLabel():Void {
 		if (label != null) {
 			if (Std.is(label, FlxSpriteGroup)) {
 				var g:FlxSpriteGroup = cast label;
@@ -85,7 +85,7 @@ class FlxUISpriteButton extends FlxUITypedButton<FlxSprite> implements IFlxUIBut
 					sprite.y = (H - sprite.height)/2;
 				}
 			}
-			super.autoCenterLabel();					//center the label object itself
+			super.centerLabel();					//center the label object itself
 		}
 	}
 }

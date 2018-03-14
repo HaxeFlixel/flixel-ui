@@ -144,6 +144,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	//TODO: add ability to set this property via xml, add documentation
 	public var autoResizeLabel:Bool = false;	//if this is true, when resize() is called on the button, it calls resize() on the label
 	
+	public var autoCenterLabel:Bool = true;
+	
 	/**
 	 * Creates a new FlxUITypedButton object with a gray background.
 	 * 
@@ -389,29 +391,6 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 			{
 				if (_no_graphic)
 				{
-					/*
-					var upB:BitmapData;
-					var key:String = "";
-					if (!has_toggle)
-					{
-						key = "button_blank_" + Std.int(W) + "x" + Std.int(H * 3);
-						if (!FlxG.bitmap.checkCache(key))
-						{
-							upB = new BitmapData(Std.int(W), Std.int(H * 3), true, 0x00000000);
-							FlxG.bitmap.add(upB, true, key);
-						}
-					}
-					else
-					{
-						key = "button_blank_" + Std.int(W) + "x" + Std.int(H * 6);
-						if (!FlxG.bitmap.checkCache(key))
-						{
-							upB = new BitmapData(Std.int(W), Std.int(H * 6), true, 0x00000000);
-							FlxG.bitmap.add(upB, true, key);
-						}
-					}
-					*/
-					
 					var blank:BitmapData;
 					var key:String = "";
 					
@@ -457,7 +436,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 			}
 		}
 		
-		autoCenterLabel();			//center based on new dimensions
+		centerLabel();			//center based on new dimensions
 		
 		var diff_w:Float = width - old_width;
 		var diff_h:Float = height - old_height;
@@ -985,7 +964,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	 * Sets labelOffset to center the label horizontally and vertically
 	 */
 	
-	public function autoCenterLabel():Void {
+	public function centerLabel():Void {
+		if (!autoCenterLabel) return;
+		
 		if (label != null) {
 			var offX:Float = 0;
 			var offY:Float = 0;

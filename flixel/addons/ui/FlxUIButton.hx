@@ -81,20 +81,48 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		}
 		else
 		{
-			if (_no_graphic == false)
+			if (_no_graphic)
 			{
-				doResize(width, height, false);
+				if (!SkipResize)
+				{
+					doResize(width, height, false);
+				}
+				else
+				{
+					_setInitialLabelSize();
+				}
 				//initialize dimensions but don't initialize any graphics yet.
 				//this is ugly, but if you're about to set the graphics 
 				//yourself in a subsequent call it's much faster to skip!
 			}
 			else
 			{
-				doResize(width, height, true);
+				if (!SkipResize)
+				{
+					doResize(width, height, true);
+				}
+				else
+				{
+					_setInitialLabelSize();
+				}
 			}
 		}
 		
 		uiButtonType = FlxUIButtonType.TEXT_BUTTON;
+	}
+	
+	@:access(flixel.addons.ui.FlxUIText)
+	private function _setInitialLabelSize()
+	{
+		if (label != null)
+		{
+			var regenValue = label._regen;
+			label._regen = false;
+			label.width = width;
+			label.height = height;
+			label.fieldWidth = width;
+			label._regen = regenValue;
+		}
 	}
 	
 	/**
@@ -126,11 +154,6 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 			return label;
 		}
 		return null;
-	}
-	
-	public override function autoCenterLabel():Void
-	{
-		super.autoCenterLabel();
 	}
 	
 	public override function clone():FlxUIButton

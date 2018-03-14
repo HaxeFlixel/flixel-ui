@@ -3740,7 +3740,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (sprite == null)
 		{
 			var useDefaultGraphic = (data.hasNode.graphic == false);
-			fb = new FlxUIButton(0, 0, label, null, useDefaultGraphic, false, true);
+			fb = new FlxUIButton(0, 0, label, null, useDefaultGraphic, false);
 			var fuib:FlxUIButton = cast fb;
 			fuib._autoCleanup = false;
 		}
@@ -4006,11 +4006,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				else
 				{
 					// Center sprite icon 
-					fb.autoCenterLabel();
+					fb.centerLabel();
 				}
 			}
 		}else {
-			fb.autoCenterLabel();
+			fb.centerLabel();
 		}
 		
 		if (sprite != null && label != "") {
@@ -5598,11 +5598,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				
 				if (fb != null)
 				{
-					fb.autoCenterLabel();
+					fb.centerLabel();
 				}
 				if (fsb != null)
 				{
-					fsb.autoCenterLabel();
+					fsb.centerLabel();
 				}
 			}
 			

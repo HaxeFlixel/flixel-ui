@@ -5,11 +5,14 @@ import flixel.addons.ui.interfaces.IFlxUIState;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.graphics.FlxGraphic;
 import flixel.math.FlxPoint;
 import flixel.util.FlxArrayUtil;
+import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import flixel.addons.ui.FlxUITypedButton.FlxUIButtonType;
+import openfl.display.BitmapData;
 
 /**
  * ...
@@ -292,7 +295,16 @@ class FlxUITooltipManager implements IFlxDestroyable
 				//doesn't exist, make a new one
 				
 				//create a blank button to process the tooltip
-				var b = new FlxUIButton(0, 0, "", null, false, true);
+				var b = new FlxUIButton(0, 0, null, null, false, true, true);
+				b.autoResizeLabel = false;
+				b.autoCenterLabel = false;
+				if (FlxG.bitmap.checkCache("tooltip_blank") == false)
+				{
+					var bmpBlank = new BitmapData(1, 1, true, FlxColor.TRANSPARENT);
+					FlxG.bitmap.add(bmpBlank, "tooltip_blank");
+				}
+				b.loadGraphic("tooltip_blank", false, 1, 1);
+				b.labelAlphas = [0, 0, 0, 0];
 				b.doResize(thing.width, thing.height, false);
 				b.moves = false;
 				
