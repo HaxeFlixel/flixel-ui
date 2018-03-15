@@ -7,6 +7,7 @@ import flash.geom.Rectangle;
 import flash.Lib;
 import flixel.addons.ui.FlxUI.MaxMinSize;
 import flixel.addons.ui.ButtonLabelStyle;
+import flixel.addons.ui.FlxUI.Operation;
 import flixel.addons.ui.FlxUI.Rounding;
 import flixel.addons.ui.FlxUI.VarValue;
 import flixel.addons.ui.FlxUIBar.FlxBarStyle;
@@ -3769,6 +3770,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				fb = new FlxUISpriteButton(0, 0, sprite);
 			}
 		}
+		
+		if (fb != null && data != null)
+		{
+			fb.name = U.xml_name(data.x);
+		}
+		
 		fb.resize_ratio = resize_ratio;
 		fb.resize_point = resize_point;
 		fb.autoResizeLabel = resize_label;
@@ -4707,7 +4714,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					{
 						if (tilesTall > 1 || tilesWide > 1)
 						{
-							testAsset = Assets.getBitmapData(U.gfx(src));
+							var gfxSrc = U.gfx(src);
+							if (FlxG.bitmap.checkCache(gfxSrc))
+							{
+								testAsset = FlxG.bitmap.get(gfxSrc).bitmap;
+							}
+							else
+							{
+								testAsset = Assets.getBitmapData(gfxSrc);
+							}
 							var str = U.scaleAndStoreTileset(U.gfx(srcSuffix), scale_y, Std.int(testAsset.width / tilesWide), Std.int(testAsset.height / tilesTall), Std.int(sw / tilesWide), Std.int(sh / tilesTall), smooth);
 							addToScaledAssets(str);
 							return str;
@@ -4916,10 +4931,13 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		}
 		else
 		{
-			if (str.indexOf("stretch:") == 0)			//Next likely: is it a stretch command?
+			var chop = U.cheapStringChop(str, "stretch:");
+			
+			if (chop != str)			//Next likely: is it a stretch command?
 			{
- 				str = StringTools.replace(str, "stretch:", "");
-				var arr:Array<String> = str.split(",");
+				str = chop;
+				
+				var arr:Array<String> = U.cheap2Split(str,",");
 				var stretch_0:Float = _getStretch(0, target, arr[0]);
 				var stretch_1:Float = _getStretch(1, target, arr[1]);
 				if (stretch_0 != -1 && stretch_1 != -1)
@@ -4931,18 +4949,23 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					return default_;
 				}
 			}
-			else if (str.indexOf("asset:") == 0)			//Next likely: is it an asset property?
-			{
-				str = StringTools.replace(str, "asset:", "");
-				var assetValue:Float = _getStretch(1, target, str);
-				return assetValue;
-			}
 			else
-			{												//Next: is it a formula?
-				if (U.isFormula(str))
+			{
+				chop = U.cheapStringChop(str, "asset:");
+				
+				if (chop != str)			//Next likely: is it an asset property?
 				{
+					str = chop;
 					var assetValue:Float = _getStretch(1, target, str);
 					return assetValue;
+				}
+				else
+				{
+					if (U.isFormula(str))	//Next: is it a formula?
+					{
+						var assetValue:Float = _getStretch(1, target, str);
+						return assetValue;
+					}
 				}
 			}
 			
@@ -4975,7 +4998,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @return [<value>:String,<operator>:String,<operand>:Float]
 	 */
 	
-	private function _getOperation(str:String):Array<Dynamic>
+	private function _getOperation(str:String):Operation
 	{
 		var list:Array<String> = ["+", "-", "*", "/", "^"];
 		var temp:Array<String> = null;
@@ -5015,7 +5038,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					var ptIndex = secondBit.indexOf("pt");
 					if (ptIndex != -1 && ptIndex == secondBit.length - 2)
 					{
-						var sansPt = StringTools.replace(secondBit, "pt", "");
+						var sansPt = U.cheapStringChop(secondBit, "pt");
 						f = Std.parseFloat(sansPt);
 						hasPoint = true;
 					}
@@ -5034,7 +5057,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 					else
 					{
-						return [firstBit, operator, f, hasPoint];	//proper operand and operator
+						return new Operation(firstBit, Operation.getOperatorTypeFromString(operator), f, hasPoint); //proper operand and operator
 					}
 				}
 			}
@@ -5043,35 +5066,34 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return null;
 	}
 	
-	private function _doOperation(value:Float, operator:String, operand:Float):Float
+	private function _doOperation(value:Float, operator:OperatorType, operand:Float):Float
 	{
 		switch(operator)
 		{
-			case "+": return value + operand;
-			case "-": return value - operand;
-			case "/": return value / operand;
-			case "*": return value * operand;
-			case "^": return Math.pow(value, operand);
+			case OperatorType.Plus: return value + operand;
+			case OperatorType.Minus: return value - operand;
+			case OperatorType.Divide: return value / operand;
+			case OperatorType.Multiply: return value * operand;
+			case OperatorType.Exponent: return Math.pow(value, operand);
+			default: //donothing
 		}
 		return value;
 	}
 	
 	private function _getStretch(index:Int, target:String, str:String):Float
 	{
-		var arr:Array<Dynamic> = null;
-		
-		var operator:String = "";
+		var operator:OperatorType = OperatorType.Plus;
 		var operand:Float = 0;
 		var hasPoint = false;
 		
-		arr = _getOperation(str);
+		var operation:Operation = _getOperation(str);
 		
-		if (arr != null)
+		if (operation != null)
 		{
-			str = cast arr[0];
-			operator = cast arr[1];
-			operand = cast arr[2];
-			hasPoint = cast arr[3];
+			str = operation.object;
+			operator = operation.operator;
+			operand = operation.operand;
+			hasPoint = operation.hasPoint;
 			
 			if (hasPoint) {
 				switch(target) {
@@ -5087,7 +5109,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var return_val:Float = getAssetProperty(index, target, str);
 		
-		if (return_val != -1 && operator != "")
+		if (return_val != -1 && operator != OperatorType.Unknown)
 		{
 			return_val = _doOperation(return_val, operator, operand);
 		}
@@ -5099,12 +5121,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	{
 		var prop:String = "";
 		
-		if (str.indexOf(".") != -1)
+		var dotI = str.indexOf(".");
+		if (dotI != -1)
 		{
-			var arr:Array<String> = null;
-			arr = str.split(".");
-			str = arr[0];
-			prop = arr[1];
+			var l = str.length;
+			prop = str.substr(dotI+1,l-(dotI+1));
+			str = str.substr(0,dotI);
 		}
 		
 		var other:IFlxUIWidget = getAsset(str);
@@ -5730,3 +5752,46 @@ typedef VarValue = {
 	operator:String
 }
 
+@:noCompletion
+class Operation 
+{
+	public var object:String;
+	public var operator:OperatorType;
+	public var operand:Float;
+	public var hasPoint:Bool;
+	
+	public function new(Object:String, Operator:OperatorType, Operand:Float, HasPoint:Bool)
+	{
+		object = Object;
+		operator = Operator;
+		operand = Operand;
+		hasPoint = HasPoint;
+	}
+	
+	public static function getOperatorTypeFromString(str:String):OperatorType
+	{
+		switch(str)
+		{
+			case "+": return OperatorType.Plus;
+			case "-": return OperatorType.Minus;
+			case "*": return OperatorType.Multiply;
+			case "/": return OperatorType.Divide;
+			case "^": return OperatorType.Exponent;
+			default: return OperatorType.Unknown;
+		}
+		return OperatorType.Unknown;
+	}
+}
+
+@:noCompletion
+@:enum
+abstract OperatorType(Int) {
+  var Plus = 0;
+  var Minus = 1;
+  var Multiply = 2;
+  var Divide = 3;
+  var Exponent = 4;
+  var Unknown = 5;
+}
+
+//"+", "-", "*", "/", "^"
