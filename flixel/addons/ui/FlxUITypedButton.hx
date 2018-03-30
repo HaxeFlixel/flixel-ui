@@ -547,6 +547,11 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 			bd = getBmp(asset);
 		}
 		
+		if (tryQuickLoad(bd, has_toggle, key))
+		{
+			return;
+		}
+		
 		upB = grabButtonFrame(bd, FlxButton.NORMAL, has_toggle, 0, 0, key);
 		overB = grabButtonFrame(bd, FlxButton.HIGHLIGHT, has_toggle, 0, 0, key);
 		downB = grabButtonFrame(bd, FlxButton.PRESSED, has_toggle, 0, 0, key);

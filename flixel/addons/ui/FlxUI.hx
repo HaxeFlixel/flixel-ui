@@ -3738,10 +3738,38 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var params:Array<Dynamic> = getParams(data);
 		
+		var hasImg = false;
+		var isGfxBlank = false;
+		if (data.hasNode.graphic)
+		{
+			var graphic = data.node.graphic;
+			var img = U.xml_str(graphic.x, "image");
+			isGfxBlank = U.xml_bool(graphic.x, "blank");
+			hasImg = (img != "");
+		}
+		
 		if (sprite == null)
 		{
+			var name = U.xml_name(data.x);
+			var graphic = data.hasNode.graphic ? data.node.graphic : null;
+			
+			var loadBlank = false;
+			
 			var useDefaultGraphic = (data.hasNode.graphic == false);
-			fb = new FlxUIButton(0, 0, label, null, useDefaultGraphic, false);
+			if (useDefaultGraphic)
+			{
+				loadBlank = false;
+			}
+			else
+			{
+				if (isGfxBlank || hasImg)
+				{
+					//optimization: if the thing is blank, or I'm about to provide my own graphic, then skip wasteful 9-slice churn
+					loadBlank = true;
+				}
+			}
+			
+			fb = new FlxUIButton(0, 0, label, null, useDefaultGraphic, loadBlank);
 			var fuib:FlxUIButton = cast fb;
 			fuib._autoCleanup = false;
 		}
@@ -4559,7 +4587,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					var imgFrameHeight = frameHeight;
 					if (isAnimated)
 					{
-						var testAsset = Assets.getBitmapData(src);
+						var testAsset:BitmapData = null;
+						if (FlxG.bitmap.checkCache(src))
+						{
+							var gfx = FlxG.bitmap.get(src);
+							if (gfx != null)
+							{
+								testAsset = gfx.bitmap;
+							}
+						}
+						if(testAsset == null) testAsset = Assets.getBitmapData(src);
 						var testScale = H / testAsset.height;
 						var tileW = Std.int(frameWidth * testScale);
 						var tileH = Std.int(frameHeight * testScale);

@@ -83,6 +83,9 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		{
 			if (_no_graphic)
 			{
+				var blank = FlxG.bitmap.create(1, 1, FlxColor.TRANSPARENT, false, "blank_flxui_button");
+				loadGraphic(blank);
+				
 				if (!SkipResize)
 				{
 					doResize(width, height, false);
@@ -158,7 +161,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	
 	public override function clone():FlxUIButton
 	{
-		var newButton = new FlxUIButton(0, 0, (label == null) ? null : label.text, onUp.callback, false);
+		var newButton = new FlxUIButton(0, 0, (label == null) ? null : label.text, onUp.callback, false, true);
 		newButton.copyGraphic(cast this);
 		newButton.copyStyle(cast this);
 		newButton.has_toggle = has_toggle;

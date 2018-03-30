@@ -502,12 +502,29 @@ class FlxUITooltipManager implements IFlxDestroyable
 	{
 		if (thing == null) return -1;
 		if (list == null) return -1;
+		
+		//Fast path: look for the thing itself
 		for (entry in list)
 		{
 			if (entry == null) continue;
-			if (entry.obj == thing || (Std.is(thing,IFlxUIButton) && cast(thing,IFlxUIButton) == entry.btn))
+			if (entry.obj == thing)
 			{
 				return list.indexOf(entry);
+			}
+		}
+		
+		//Slow path: check if the thing is a button and if any entry has the button
+		//We do this after the first check for speed purposes -- Std.is & casting is way more expensive than just iterating the list twice
+		if (Std.is(thing, IFlxUIButton))
+		{
+			var ifb:IFlxUIButton = cast thing;
+			for (entry in list)
+			{
+				if (entry == null) continue;
+				if (ifb == entry.btn)
+				{
+					return list.indexOf(entry);
+				}
 			}
 		}
 		

@@ -1017,7 +1017,8 @@ class U
 		
 		var exists = Assets.exists(thePath, AssetType.TEXT);
 		
-		if (!exists) {
+		if (!exists)
+		{
 			return null;
 		}
 		
