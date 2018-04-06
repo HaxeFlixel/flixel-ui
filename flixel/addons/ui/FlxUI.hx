@@ -407,7 +407,6 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				return;
 			}
 		}
-		super.update(elapsed);
 	}
 	
 	public function toggleShow(key:String):Bool
@@ -691,7 +690,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					var inc_xml:Fast = null;
 					if (liveFile == null)
 					{
-						inc_xml = U.xml(inc_name);
+						inc_xml = getXML(inc_name);
 					}
 					else
 					{
@@ -898,7 +897,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				if (_loadTest(inj_data))
 				{
 					var inj_name:String = U.xml_name(inj_data.x);
-					payload = U.xml(inj_name, "xml", false);
+					payload = getXML(inj_name, "xml", false);
 					
 					for (child in parent.children)
 					{
@@ -3479,9 +3478,19 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		_scaledAssets = null;
 	}
 	
+	private function getXML(id:String, extension:String = "xml", getFast:Bool = true, dir = "assets/xml/", getFirstElement:Bool = true):Dynamic
+	{
+		return U.xml(id, extension, getFast, dir, getFirstElement);
+	}
+	
+	private function newUI(data:Fast = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null, liveFilePath_:String="", uiVars_:Map<String,String>=null):FlxUI
+	{
+		return new FlxUI(data, ptr, superIndex_, tongue_, liveFilePath_, uiVars_);
+	}
+	
 	private function createUI(data:Fast):FlxUI
 	{
-		return new FlxUI(data, this, this, _ptr_tongue, liveFilePath);
+		return newUI(data, this, this, _ptr_tongue, liveFilePath);
 	}
 	
 	private function _loadTabMenu(data:Fast):FlxUITabMenu{
@@ -3591,7 +3600,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (data.hasNode.group) {
 			for (group_node in data.nodes.group) {
 				name = U.xml_name(group_node.x);
-				var _ui:FlxUI = new FlxUI(group_node, fg, this, _ptr_tongue);
+				var _ui:FlxUI = newUI(group_node, fg, this, _ptr_tongue);
 				if(list_tabs != null && list_tabs.length > 0){
 					_ui.y += list_tabs[0].height;
 				}
