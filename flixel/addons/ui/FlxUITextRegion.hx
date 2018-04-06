@@ -32,6 +32,27 @@ class FlxUITextRegion extends FlxUIRegion implements IHasParams implements IFlxU
 		super(X, Y, W, H);
 	}
 	
+	public function copy()
+	{
+		var tr = new FlxUITextRegion(x, y, fieldWidth, text, size, embedFonts);
+		if (fontDef != null){
+			tr.fontDef = fontDef.clone();
+		}
+		else {
+			tr.fontDef = null;
+		}
+		if (params != null) { 
+			tr.params = params.copy();
+		}else {
+			tr.params = null;
+		}
+		tr.bold = bold;
+		tr.italic = italic;
+		tr.alignment = alignment;
+		return tr;
+		
+	}
+	
 	override public function resize(w:Float, h:Float):Void 
 	{
 		if (w < 8) w = 8;

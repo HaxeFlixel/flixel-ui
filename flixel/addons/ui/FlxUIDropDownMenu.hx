@@ -304,7 +304,7 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 		t.resize(header.background.width - 2, header.background.height - 1);
 		
 		t.label.alignment = "left";
-		t.autoCenterLabel();
+		t.centerLabel();
 		t.x = 1;
 		
 		for (offset in t.labelOffsets)

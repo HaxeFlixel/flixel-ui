@@ -5,11 +5,14 @@ import flixel.addons.ui.interfaces.IFlxUIState;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.graphics.FlxGraphic;
 import flixel.math.FlxPoint;
 import flixel.util.FlxArrayUtil;
+import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import flixel.addons.ui.FlxUITypedButton.FlxUIButtonType;
+import openfl.display.BitmapData;
 
 /**
  * ...
@@ -292,7 +295,16 @@ class FlxUITooltipManager implements IFlxDestroyable
 				//doesn't exist, make a new one
 				
 				//create a blank button to process the tooltip
-				var b = new FlxUIButton(0, 0, "", null, false, true);
+				var b = new FlxUIButton(0, 0, null, null, false, true, true);
+				b.autoResizeLabel = false;
+				b.autoCenterLabel = false;
+				if (FlxG.bitmap.checkCache("tooltip_blank") == false)
+				{
+					var bmpBlank = new BitmapData(1, 1, true, FlxColor.TRANSPARENT);
+					FlxG.bitmap.add(bmpBlank, "tooltip_blank");
+				}
+				b.loadGraphic("tooltip_blank", false, 1, 1);
+				b.labelAlphas = [0, 0, 0, 0];
 				b.doResize(thing.width, thing.height, false);
 				b.moves = false;
 				
@@ -490,12 +502,29 @@ class FlxUITooltipManager implements IFlxDestroyable
 	{
 		if (thing == null) return -1;
 		if (list == null) return -1;
+		
+		//Fast path: look for the thing itself
 		for (entry in list)
 		{
 			if (entry == null) continue;
-			if (entry.obj == thing || (Std.is(thing,IFlxUIButton) && cast(thing,IFlxUIButton) == entry.btn))
+			if (entry.obj == thing)
 			{
 				return list.indexOf(entry);
+			}
+		}
+		
+		//Slow path: check if the thing is a button and if any entry has the button
+		//We do this after the first check for speed purposes -- Std.is & casting is way more expensive than just iterating the list twice
+		if (Std.is(thing, IFlxUIButton))
+		{
+			var ifb:IFlxUIButton = cast thing;
+			for (entry in list)
+			{
+				if (entry == null) continue;
+				if (ifb == entry.btn)
+				{
+					return list.indexOf(entry);
+				}
 			}
 		}
 		

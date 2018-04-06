@@ -101,11 +101,7 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 		
 		if (_xml_id != "" && _xml_id != null)
 		{
-			var data:Fast = U.xml(_xml_id);
-			if (data == null)
-			{
-				data = U.xml(_xml_id, "xml", true, "");	//try without default directory prepend
-			}
+			var data = loadXml(_xml_id);
 			
 			if (data == null)
 			{
@@ -136,6 +132,16 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 		tooltips.init();
 		
 		cleanup();
+	}
+	
+	private function loadXml(id:String):Fast
+	{
+		var data:Fast = U.xml(id);
+		if (data == null)
+		{
+			data = U.xml(id, "xml", true, "");	//try without default directory prepend
+		}
+		return data;
 	}
 	
 	public function onCursorEvent(code:String, target:IFlxUIWidget):Void 

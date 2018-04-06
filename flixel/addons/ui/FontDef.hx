@@ -217,11 +217,12 @@ class FontDef
 	 * @return	font - extension, ie "verdanab"
 	 */
 	
-	private function stripFontExtensions(str:String):String {
+	private static function stripFontExtensions(str:String):String {
 		if (str == null) return str;
 		for (ext in EXTENSIONS) {
-			if(str != null && str.indexOf(ext) != -1){
-				str = StringTools.replace(str, ext, "");
+            var i = str.indexOf(ext);
+			if(i != -1){
+            	str = str.substr(0,i);
 			}
 		}
 		return str;

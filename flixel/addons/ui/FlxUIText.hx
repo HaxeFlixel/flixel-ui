@@ -20,8 +20,12 @@ class FlxUIText extends FlxText implements IResizable implements IFlxUIWidget im
 	public var params(default, set):Array<Dynamic>;
 	public var minimumHeight(default, set):Float = 1;
 	
-	public function new(X:Float = 0, Y:Float = 0, FieldWidth:Float = 0, ?Text:String, Size:Int = 8, EmbeddedFont:Bool = true)
+	public function new(X:Float = 0, Y:Float = 0, FieldWidth:Float = 0, ?Text:String, Size:Int = 8, EmbeddedFont:Bool = true, ?SkipFirstRegen:Bool = false)
 	{
+		if (SkipFirstRegen)
+		{
+			_regen = false;
+		}
 		super(X, Y, FieldWidth, Text, Size, EmbeddedFont);
 	}
 	

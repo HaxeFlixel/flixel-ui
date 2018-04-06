@@ -81,20 +81,51 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		}
 		else
 		{
-			if (_no_graphic == false)
+			if (_no_graphic)
 			{
-				doResize(width, height, false);
+				var blank = FlxG.bitmap.create(1, 1, FlxColor.TRANSPARENT, false, "blank_flxui_button");
+				loadGraphic(blank);
+				
+				if (!SkipResize)
+				{
+					doResize(width, height, false);
+				}
+				else
+				{
+					_setInitialLabelSize();
+				}
 				//initialize dimensions but don't initialize any graphics yet.
 				//this is ugly, but if you're about to set the graphics 
 				//yourself in a subsequent call it's much faster to skip!
 			}
 			else
 			{
-				doResize(width, height, true);
+				if (!SkipResize)
+				{
+					doResize(width, height, true);
+				}
+				else
+				{
+					_setInitialLabelSize();
+				}
 			}
 		}
 		
 		uiButtonType = FlxUIButtonType.TEXT_BUTTON;
+	}
+	
+	@:access(flixel.addons.ui.FlxUIText)
+	private function _setInitialLabelSize()
+	{
+		if (label != null)
+		{
+			var regenValue = label._regen;
+			label._regen = false;
+			label.width = width;
+			label.height = height;
+			label.fieldWidth = width;
+			label._regen = regenValue;
+		}
 	}
 	
 	/**
@@ -128,14 +159,9 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 		return null;
 	}
 	
-	public override function autoCenterLabel():Void
-	{
-		super.autoCenterLabel();
-	}
-	
 	public override function clone():FlxUIButton
 	{
-		var newButton = new FlxUIButton(0, 0, (label == null) ? null : label.text, onUp.callback, false);
+		var newButton = new FlxUIButton(0, 0, (label == null) ? null : label.text, onUp.callback, false, true);
 		newButton.copyGraphic(cast this);
 		newButton.copyStyle(cast this);
 		newButton.has_toggle = has_toggle;

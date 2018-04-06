@@ -103,13 +103,12 @@ class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 						if (fb.y < top) { top = fb.y; }
 						if (fb.y + fbHeight > bottom) { bottom = fb.y + fbHeight;}
 					}
-					else if (Std.is(fb, FlxSprite))
+					else
 					{
-						var flxi:FlxSprite = cast fb;
-						if (flxi.x < left)   { left = flxi.x; }
-						if (flxi.x > right)  { right = flxi.x; }
-						if (flxi.y < top)    { top = flxi.y; }
-						if (flxi.y > bottom) { bottom = flxi.y;} 
+						if (fb.x < left)   { left = fb.x; }
+						if (fb.x > right)  { right = fb.x; }
+						if (fb.y < top)    { top = fb.y; }
+						if (fb.y > bottom) { bottom = fb.y;} 
 					}
 				}
 			}

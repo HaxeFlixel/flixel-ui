@@ -817,10 +817,89 @@ class U
 		return new Fast(copyXml(fast.x));
 	}
 	
-	public static inline function copyXml(data:Xml):Xml {
-		return Xml.parse(data.toString()).firstElement();
+	@:access(haxe.xml.Xml)
+	public static inline function copyXml(data:Xml, parent:Xml = null):Xml
+	{
+		var c:Xml = null;
+        if (data.nodeType == Xml.Element)
+		{
+			c = Xml.createElement(data.nodeName);
+            for (att in data.attributes())
+			{
+				c.set(att, data.get(att));
+			}
+			for (el in data.elements())
+			{
+				c.addChild(copyXml(el,c));
+			}
+		}
+		else if(data.nodeType == Xml.PCData)
+        {
+        	c = Xml.createPCData(data.nodeValue);        
+        }
+        else if(data.nodeType == Xml.CData)
+        {
+            c = Xml.createCData(data.nodeValue);
+        }
+        else if(data.nodeType == Xml.Comment)
+        {
+            c = Xml.createComment(data.nodeValue);
+        }
+        else if(data.nodeType == Xml.DocType)
+        {
+            c = Xml.createDocType(data.nodeValue);
+        }
+        else if(data.nodeType == Xml.ProcessingInstruction)
+        {
+            c = Xml.createProcessingInstruction(data.nodeValue);
+        }
+		else if(data.nodeType == Xml.Document)
+        {
+            c = Xml.createDocument();
+			for (el in data.elements())
+			{
+				c.addChild(copyXml(el,c));
+			}
+        }
+        @:privateAccess c.parent = parent;
+		return c;
+	}
+	
+	public static function cheapStringChop(str:String, pattern:String):String
+	{
+		var patternI = str.indexOf(pattern);
+        var l = str.length;
+        var pl = pattern.length;
+		if (patternI != -1)
+		{
+			if (patternI == 0)
+			{
+                return str.substr(pl,l-pl);
+			}
+            else if(patternI == l-pl)
+            {
+                return str.substr(0,l-pl);
+            }
+            else
+            {
+                return str.substr(0,patternI) + str.substr(patternI+pl,l-(patternI+pl));
+            }
+		}
+        return str;
 	}
 
+	public static inline function cheap2Split(str:String,delimeter:String):Array<String>
+	{
+		var i = str.indexOf(delimeter);
+		if (i != -1)
+		{
+			var prop = str.substr(i+1,str.length-(i+1));
+			str = str.substr(0, i);
+			return [str, prop];
+		}
+		return [str];
+	}
+	
 	#if sys
 		public static function readXml(path:String):Xml {
 			if (FileSystem.exists(path)) {
@@ -927,7 +1006,7 @@ class U
 		return _default;
 	}
 	
-	public static function xml(id:String, extension:String = "xml",getFast:Bool=true,dir="assets/xml/"):Dynamic{
+	public static function xml(id:String, extension:String = "xml",getFast:Bool=true,dir="assets/xml/",getFirstElement:Bool=true):Dynamic{
 		if (id.indexOf("raw:") == 0 || id.indexOf("RAW:") == 0)
 		{
 			id = id.substr(4, id.length - 4);
@@ -938,7 +1017,8 @@ class U
 		
 		var exists = Assets.exists(thePath, AssetType.TEXT);
 		
-		if (!exists) {
+		if (!exists)
+		{
 			return null;
 		}
 		
@@ -947,11 +1027,15 @@ class U
 			return null;
 		}
 		var the_xml:Xml = Xml.parse(str);
-		if(getFast){
-			var fast:Fast = new Fast(the_xml.firstElement());
+		if (getFirstElement)
+		{
+			the_xml = the_xml.firstElement();
+		}
+		if (getFast){
+			var fast:Fast = new Fast(the_xml);
 			return fast;
 		}else{
-			return the_xml.firstElement();
+			return the_xml;
 		}
 	}
 	
@@ -1353,13 +1437,18 @@ class U
 	
 	public static function scaleTileBmp(orig_id:String, scale:Float, origW:Int, origH:Int, W:Int = -1, H:Int = -1, smooth:Bool = true):BitmapData
 	{
-		var orig:BitmapData = Assets.getBitmapData(orig_id, false);
-		if (orig == null) {
-			if (FlxG.bitmap.checkCache(orig_id)) {
-				orig = FlxG.bitmap.get(orig_id).bitmap;
-			}else{
-				return null;		//indicates failure
-			}
+		var orig:BitmapData = null;
+		if (FlxG.bitmap.checkCache(orig_id))
+		{
+			orig = FlxG.bitmap.get(orig_id).bitmap;
+		}
+		else
+		{
+			orig = Assets.getBitmapData(orig_id, false);
+		}
+		if (orig == null)
+		{
+			return null;		//indicates failure
 		}
 		
 		var widthInTiles:Int = Std.int(orig.width / origW);
@@ -1443,7 +1532,17 @@ class U
 	public static function loadScaledImage(src:String,W:Float,H:Float,smooth:Bool=true):String
 	{
 		var bmpSrc:String = gfx(src);
-		var	testBmp:BitmapData = Assets.getBitmapData(bmpSrc, false);
+		
+		var	testBmp:BitmapData = null;
+		
+		if (FlxG.bitmap.checkCache(bmpSrc))
+		{
+			testBmp = FlxG.bitmap.get(bmpSrc).bitmap;
+		}
+		else
+		{
+			testBmp = Assets.getBitmapData(bmpSrc, false);
+		}
 		
 		if (testBmp != null)	//if the master asset exists
 		{

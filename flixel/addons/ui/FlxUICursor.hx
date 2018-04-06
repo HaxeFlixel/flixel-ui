@@ -152,6 +152,18 @@ class FlxUICursor extends FlxUISprite
 		return null;
 	}
 	
+	private inline function checkSort()
+	{
+		if (_sortDirty)
+		{
+			if (_widgets != null)
+			{
+				_widgets.sort(_sortXYVisible);
+			}
+			_sortDirty = false;
+		}
+	}
+	
 	private function set_listIndex(i:Int):Int
 	{
 		if (i >= _lists.length)
@@ -330,6 +342,9 @@ class FlxUICursor extends FlxUISprite
 	}
 	
 	public override function update(elapsed:Float):Void {
+		
+		checkSort();
+		
 		#if !FLX_NO_GAMEPAD
 		if (gamepad == null)
 		{
@@ -394,6 +409,7 @@ class FlxUICursor extends FlxUISprite
 	 */
 	public function moveCursor(X:Int, Y:Int):Void
 	{
+		checkSort();
 		_doInput(X, Y);
 	}
 	
@@ -404,6 +420,7 @@ class FlxUICursor extends FlxUISprite
 	 */
 	public function jumpTo(widget:IFlxUIWidget):Bool
 	{
+		checkSort();
 		var listi:Int = 0;
 		var i:Int = 0;
 		if (_lists != null)
@@ -437,6 +454,7 @@ class FlxUICursor extends FlxUISprite
 	 */
 	public function jumpToXY(X:Float, Y:Float):Bool
 	{
+		checkSort();
 		var listi:Int = 0;
 		var i:Int = 0;
 		
@@ -565,7 +583,7 @@ class FlxUICursor extends FlxUISprite
 				}
 			}
 		}
-		_widgets.sort(_sortXYVisible);
+		_sortDirty = true;
 	}
 	
 	public function sortWidgets(method:SortMethod, ?list:Array<IFlxUIWidget>):Void
@@ -718,6 +736,7 @@ class FlxUICursor extends FlxUISprite
 	
 	/****PRIVATE****/
 	
+	private var _sortDirty:Bool = false;
 	private var _lists:Array<WidgetList>;				//list of lists of widgets with boundary metadata
 	private var _widgets:Array<IFlxUIWidget>;			//list of widgets under cursor's control
 	#if !FLX_NO_MOUSE
@@ -1432,6 +1451,7 @@ class FlxUICursor extends FlxUISprite
 	
 	private function _doInput(X:Int, Y:Int, recursion:Int = 0):Void
 	{
+		checkSort();
 		if (ignoreNextInput)
 		{
 			ignoreNextInput = false;
@@ -1471,6 +1491,7 @@ class FlxUICursor extends FlxUISprite
 	
 	private function _updateCursor():Void
 	{
+		checkSort();
 		_widgets = _lists[listIndex].widgets;
 		
 		if (location < 0 || _lists == null || _widgets == null)
