@@ -407,6 +407,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				return;
 			}
 		}
+		super.update(elapsed);
 	}
 	
 	public function toggleShow(key:String):Bool
