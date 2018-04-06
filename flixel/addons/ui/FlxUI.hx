@@ -144,7 +144,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (currState != null) {
 			currState.getEvent(name, sender, data, params);
 		}else {
-			FlxG.log.notice("could not call getEvent() for FlxUI event \""+name+"\" because current state is not a FlxUIState.\nSolution: state should extend FlxUIState, implement IEventGetter. Otherwise, set broadcastToFlxUI=false for your IFlxUIWidget to supress the events.");
+			//FlxG.log.notice("could not call getEvent() for FlxUI event \""+name+"\" because current state is not a FlxUIState.\nSolution: state should extend FlxUIState, implement IEventGetter. Otherwise, set broadcastToFlxUI=false for your IFlxUIWidget to supress the events.");
 		}
 	}
 	
