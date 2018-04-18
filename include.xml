@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-	<assets path="assets/images" rename="flixel/flixel-ui/img" embed="true"/>
-	<assets path="assets/xml" rename="flixel/flixel-ui/xml" embed="true"/>
+	<section if="html5">
+		<assets path="assets/images" rename="flixel/flixel-ui/img" />
+		<assets path="assets/xml" rename="flixel/flixel-ui/xml" />
+	</section>
+	<section unless="html5">
+		<assets path="assets/images" rename="flixel/flixel-ui/img" embed="true" />
+		<assets path="assets/xml" rename="flixel/flixel-ui/xml" embed="true" />
+	</section>
 </project>
