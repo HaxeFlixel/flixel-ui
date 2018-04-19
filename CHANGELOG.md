@@ -1,6 +1,8 @@
-?.?.? (to be released)
+2.3.0 (to be released)
 ------------------------------
-* `FlxUIDropDownMenu`: fixed incorrect `dropDirection` with `Automatic` sometimes (flixel-demos#256)
+* Compatibility with flixel 4.4.0
+* `FlxUIDropDownMenu`: fixed menus dropping in the wrong direction sometimes (flixel-demos#256)
+* `FlxUI`: disabled warnings for using flixel-ui elements outside of a `FlxUIState`
 
 2.2.0 (October 11, 2016)
 ------------------------------
@@ -8,9 +10,9 @@
 * `FlxUICheckBox`: fixed alignment on HTML5 (#192)
 * `FlxInputText`: added `focusGained` and `focusLost` (#176)
 * `FlxUITooltipManager`:
- * fixed tooltips being off-screen sometimes (#181)
- * added support for tooltips on non-clickable elements (#182)
- * added `cameras` (#187)
+  * fixed tooltips being off-screen sometimes (#181)
+  * added support for tooltips on non-clickable elements (#182)
+  * added `cameras` (#187)
 * `FlxUIState` / `FlxUISubState`: finished `reload_ui_on_resize` (#188)
 * `FlxUIButton` / `FlxUI9SliceSprite`: added `color` arguments to `new()` (#180)
 * `FlxInputText`: fixed an issue with caret positions in empty textfields (#193)
