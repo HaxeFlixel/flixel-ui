@@ -73,7 +73,9 @@ class FontDef
 	
 	public static function copyFromFlxTextRegion(t:FlxUITextRegion):FontDef
 	{
-		return t.fontDef.clone();
+		var def = t.fontDef.clone();
+		def.size = t.size;
+		return def;
 	}
 	
 	public static function copyFromTextField(t:TextField):FontDef {
