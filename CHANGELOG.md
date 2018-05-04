@@ -1,4 +1,4 @@
-2.3.0 (to be released)
+2.3.0 (May 4, 2018)
 ------------------------------
 * Compatibility with flixel 4.4.0
 * `FlxUIDropDownMenu`: fixed menus dropping in the wrong direction sometimes (flixel-demos#256)
