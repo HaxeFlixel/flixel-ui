@@ -83,7 +83,7 @@ class SwatchData implements IFlxDestroyable {
 		colors = Colors;
 	}
 
-	public function copy():SwatchData 
+	public inline function copy():SwatchData 
 	{
 		var colorsCopy:Array<FlxColor> = colors != null ? colors.copy() : null;
 		return new SwatchData(name, colorsCopy);

@@ -1,6 +1,5 @@
 package flixel.addons.ui;
 
-import com.leveluplabs.tdrpg.Prof;
 import flash.display.BitmapData;
 import flash.errors.Error;
 import flixel.addons.ui.FlxUI.UIEventCallback;
