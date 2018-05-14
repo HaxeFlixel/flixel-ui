@@ -124,7 +124,11 @@ class FlxUIColorSwatch extends FlxUIButton
 	public function new(X:Float, Y:Float, ?Color:Int = 0xFFFFFF, ?Colors:SwatchData, ?Asset:Dynamic, ?Callback:Void->Void, Width:Int=-1, Height:Int=-1) 
 	{
 		super(X, Y, onClick);
-		
+		setup(X, Y, Color, Colors, Asset, Callback, Width, Height);
+	}
+	
+	private function setup(X:Float, Y:Float, ?Color:Int = 0xFFFFFF, ?Colors:SwatchData, ?Asset:Dynamic, ?Callback:Void->Void, Width:Int =-1, Height:Int =-1)
+	{
 		callback = Callback;
 		
 		_skipRefresh = true;

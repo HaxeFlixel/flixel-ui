@@ -100,7 +100,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 		{
 			for (data in list_data)
 			{
-				swatch = new FlxUIColorSwatch(0, 0, null, data, _swatchGraphic.asset, null, _swatchGraphic.width, _swatchGraphic.height);
+				swatch = makeSwatch(0, 0, null, data, _swatchGraphic.asset, null, _swatchGraphic.width, _swatchGraphic.height);
 				swatch.callback = selectCallback.bind(i);
 				swatch.broadcastToFlxUI = false;
 				swatch.name = data.name;
@@ -111,7 +111,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 		{
 			for (color in list_colors) 
 			{
-				swatch = new FlxUIColorSwatch(0, 0, color, null, _swatchGraphic.asset, null, _swatchGraphic.width, _swatchGraphic.height);
+				swatch = makeSwatch(0, 0, color, null, _swatchGraphic.asset, null, _swatchGraphic.width, _swatchGraphic.height);
 				swatch.callback = selectCallback.bind(i);
 				swatch.broadcastToFlxUI = false;
 				swatch.name = "0x"+StringTools.hex(color, 6);
@@ -160,13 +160,18 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 			}
 		}
 		
-		_previewSwatch = new FlxUIColorSwatch(0, 0, null, new SwatchData("dummy", [0xffffffff, 0xff888888, 0xff444444, 0xff000000]), _previewGraphic.asset, null, _previewGraphic.width, _previewGraphic.height);
+		_previewSwatch = makeSwatch(0, 0, null, new SwatchData("dummy", [0xffffffff, 0xff888888, 0xff444444, 0xff000000]), _previewGraphic.asset, null, _previewGraphic.width, _previewGraphic.height);
 		_previewSwatch.broadcastToFlxUI = false;
 		add(_previewSwatch);
 		
 		updateLayout();
 		
 		selectByIndex(0);
+	}
+	
+	private function makeSwatch(X:Float, Y:Float, ?Color:Int = 0xFFFFFF, ?Colors:SwatchData, ?Asset:Dynamic, ?Callback:Void->Void, Width:Int=-1, Height:Int=-1) 
+	{
+		return new FlxUIColorSwatch(X, Y, Color, Colors, Asset, Callback, Width, Height);
 	}
 	
 	public override function update(elapsed:Float):Void {
@@ -248,7 +253,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 			}
 			
 			if (fuics == null) {
-				fuics = new FlxUIColorSwatch(0, 0, null, list[i], _swatchGraphic.asset, null, _swatchGraphic.width, _swatchGraphic.height);
+				fuics = makeSwatch(0, 0, null, list[i], _swatchGraphic.asset, null, _swatchGraphic.width, _swatchGraphic.height);
 				fuics.name = list[i].name;
 				fuics.broadcastToFlxUI = false;
 				fuics.callback = selectCallback.bind(i);
