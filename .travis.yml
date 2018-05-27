@@ -28,12 +28,10 @@ before_install:
   - /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x32 -extension GLX
 
 install:
-  - haxelib git flixel https://github.com/HaxeFlixel/flixel > /dev/null
-  - haxelib dev flixel-ui $TRAVIS_BUILD_DIR
-  - haxelib list
+  - haxelib git flixel https://github.com/HaxeFlixel/flixel
+  - haxelib dev flixel-ui .
 
 script:
-  - export HXCPP_COMPILE_CACHE=~/hxcache
-  - cd ~/haxe/lib/flixel/git/tests
-  - haxe RunTravis.hxml
-  - neko RunTravis.n $TARGET $OPENFL
+  - while sleep 540; do echo "=====[ $SECONDS seconds still running ]====="; done &
+  - haxe --cwd ~/haxe/lib/flixel/git/tests --run RunTravis $TARGET $OPENFL
+  - kill %1
