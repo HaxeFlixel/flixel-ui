@@ -30,7 +30,7 @@ import sys.io.File;
 import sys.io.FileOutput;
 #end
 
-#if (openfl >= "4.0.0")
+#if (openfl >= "8.0.0")
 import openfl.utils.AssetType;
 #end
 

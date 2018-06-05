@@ -18,11 +18,12 @@ import openfl.text.TextFormat;
  */
 class FlxUITooltip extends FlxUIGroup
 {
-
 	public var style(default, set):FlxUITooltipStyle;
 	public var anchor(default, set):Anchor;
 	public var title(default, set):String;
 	public var body(default, set):String;
+	
+	public static var persistGraphics:Bool = true;
 	
 	public function new(Width:Int, Height:Int, ?Anchor_:Anchor, ?Style:FlxUITooltipStyle)
 	{
@@ -355,12 +356,26 @@ class FlxUITooltip extends FlxUIGroup
 		
 		//load the arrow
 		_arrow.color = Style.background;
-		var test = FlxG.bitmap.add(Style.arrow);
 		if (Style.arrow == null)
 		{
 			Style.arrow = FlxUIAssets.IMG_TOOLTIP_ARROW;
-			FlxG.bitmap.add(Style.arrow);
+			if (FlxG.bitmap.checkCache(FlxUIAssets.IMG_TOOLTIP_ARROW) == false)
+			{
+				var gfx = FlxG.bitmap.add(FlxUIAssets.IMG_TOOLTIP_ARROW, false, FlxUIAssets.IMG_TOOLTIP_ARROW);
+				gfx.persist = true;
+				gfx.destroyOnNoUse = false;
+			}
+			else
+			{
+				var gfx = FlxG.bitmap.get(FlxUIAssets.IMG_TOOLTIP_ARROW);
+				if (gfx != null)
+				{
+					Style.arrow = gfx;
+				}
+			}
 		}
+		
+		var test = FlxG.bitmap.get(Style.arrow);
 		if (_arrow != null)
 		{
 			if (Style != null && Style.arrow != null && test != null)

@@ -8,7 +8,7 @@ import flixel.util.FlxColor;
 import openfl.Assets;
 import openfl.text.TextFormatAlign;
 
-#if (openfl >= "4.0.0")
+#if (openfl >= "8.0.0")
 import openfl.utils.AssetType;
 #end
 
