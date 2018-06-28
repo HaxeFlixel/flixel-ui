@@ -2010,6 +2010,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 								_loadPosition(info, thing);
 							}
 							returnThing =  null;
+			case "show","hide":
+						var activeStatus:Null<Bool> = U.xml_str(info.x, "active") == "" ? null : true;
+						if (activeStatus != null) activeStatus = U.xml_bool(info.x, "active");
+						var showHide = (type == "show" ? true : false);
+						showThing(U.xml_name(info.x), showHide, activeStatus);
 			
 			default: 
 				//If I don't know how to load this thing, I will request it from my pointer:
