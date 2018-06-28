@@ -23,6 +23,13 @@ class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizabl
 		resize(W, H);
 	}
 	
+	override public function clone():FlxSprite 
+	{
+		var fuir = new FlxUIRegion(x, y, width, height);
+		fuir.broadcastToFlxUI = fuir.broadcastToFlxUI;
+		return fuir;
+	}
+	
 	public function resize(w:Float, h:Float):Void {
 		width = w;
 		height = h;

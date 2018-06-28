@@ -46,7 +46,10 @@ class FlxUISprite extends FlxSprite implements IFlxUIWidget implements IResizabl
 	{
 		if (r != null)
 		{
-			resize_point = FlxPoint.get(); 
+			if (resize_point == null)
+			{
+				resize_point = new FlxPoint();
+			}
 			resize_point.x = r.x;
 			resize_point.y = r.y;
 		}
@@ -56,6 +59,20 @@ class FlxUISprite extends FlxSprite implements IFlxUIWidget implements IResizabl
 	public function new(X:Float=0,Y:Float=0,SimpleGraphic:Dynamic=null) 
 	{
 		super(X, Y, SimpleGraphic);
+	}
+	
+	
+	override public function clone():FlxSprite 
+	{
+		var fuis:FlxUISprite = new FlxUISprite();
+		fuis.loadGraphicFromSprite(this);
+		fuis.broadcastToFlxUI = broadcastToFlxUI;
+		fuis.ptr_owner = ptr_owner;
+		fuis.resize_ratio = resize_ratio;
+		fuis.resize_ratio_axis = resize_ratio_axis;
+		fuis.scale_on_resize = scale_on_resize;
+		fuis.resize_point = resize_point;
+		return fuis;
 	}
 	
 	public function recycle(data:Dynamic):Void {
