@@ -3,6 +3,7 @@ package flixel.addons.ui;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
+import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 
 /**
@@ -55,10 +56,15 @@ class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 	
 	public function setScrollFactor(X:Float, Y:Float):Void
 	{
+		if (members == null) return;
 		for (obj in members)
 		{
 			if (obj != null)
 			{
+				if (obj.scrollFactor == null)
+				{
+					obj.scrollFactor = new FlxPoint();
+				}
 				obj.scrollFactor.set(X, Y);
 			}
 		}
