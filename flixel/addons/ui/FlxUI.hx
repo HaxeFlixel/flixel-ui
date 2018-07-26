@@ -3505,9 +3505,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return U.xml(id, extension, getFast, dir, getFirstElement);
 	}
 	
-	private function newUI(data:Fast = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null, liveFilePath_:String="", uiVars_:Map<String,String>=null):FlxUI
+	private function newUI(data:Fast = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null, liveFilePath_:String="", uiVars_:Map<String,String>=null,loadThingCallback_:IFlxUIWidget->String->Void=null, postLoadThingCallback_:IFlxUIWidget->String->Void=null):FlxUI
 	{
-		return new FlxUI(data, ptr, superIndex_, tongue_, liveFilePath_, uiVars_);
+		return new FlxUI(data, ptr, superIndex_, tongue_, liveFilePath_, uiVars_, loadThingCallback_, postLoadThingCallback_);
 	}
 	
 	private function createUI(data:Fast):FlxUI

@@ -95,6 +95,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	public var over_toggle_visible:Bool = true;
 	public var down_toggle_visible:Bool = true;
 	
+	/**Will cause this button to not show an "over" visual state, even if it has one. Useful for applying globally to buttons in e.g. touch-specific builds**/
+	public var disable_highlight_visual(default, set):Bool = false;
+	
 	public var toggle_label(default, set):FlxSprite;
 	public function set_toggle_label(f:FlxSprite):FlxSprite
 	{
@@ -297,7 +300,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	 */
 	override public function updateStatusAnimation():Void {
 		if (has_toggle && toggled) { 
-			animation.play(statusAnimations[status + 3]);
+			animation.play(statusAnimations[_statusForAnimation + 3]);
 		} else {
 			super.updateStatusAnimation();
 		}
@@ -1264,6 +1267,33 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 		}
 	}
 	
+	private function set_disable_highlight_visual(b:Bool):Bool
+	{
+		disable_highlight_visual = b;
+		if (!disable_highlight_visual)
+		{
+			_statusForAnimation = status;
+		}
+		else
+		{
+			if (_statusForAnimation == FlxButton.HIGHLIGHT)
+			{
+				_statusForAnimation = FlxButton.NORMAL;
+			}
+		}
+		return disable_highlight_visual;
+	}
+	
+	override function set_status(Value:Int):Int 
+	{
+		if (disable_highlight_visual && Value == FlxButton.HIGHLIGHT)
+		{
+			Value = FlxButton.NORMAL;
+		}
+		_statusForAnimation = Value;
+		return super.set_status(Value);
+	}
+	
 	private override function set_x(NewX:Float):Float 
 	{
 		super.set_x(NewX);
@@ -1320,6 +1350,8 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	private var _slice9_assets:Array<FlxGraphicAsset>;		//the asset id's of the original 9-slice scale assets
 	
 	private var _centerLabelOffset:FlxPoint = null;	//this is the offset necessary to center ALL the labels
+	
+	private var _statusForAnimation:Int;
 }
 
 @:enum abstract FlxUIButtonType(Int) from Int{

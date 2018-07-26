@@ -52,6 +52,9 @@ interface IFlxUIButton extends IFlxUIWidget extends IHasParams extends IFlxDestr
 	public var mouseIsOut(get, never):Bool;
 	public var justMousedOut(get, never):Bool;
 	
+	public var disable_highlight_visual(default, set):Bool;
+	private function set_disable_highlight_visual(b:Bool):Bool;
+	
 	public var allowResize:Bool;
 	
 	public function centerLabel():Void;
