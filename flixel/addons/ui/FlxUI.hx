@@ -77,6 +77,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	//if full path="path/to/assets/xml/ui/foo.xml" and _xml_name="ui/foo.xml", then liveFilePath="path/to/assets/xml/"
 	public var liveFilePath:String;
 	
+	public var loadThingCallback:IFlxUIWidget->String->Void = null;
+	public var postLoadThingCallback:IFlxUIWidget->String->Void = null;
+	
 	public var tongue(get, set):IFireTongue;
 	private function get_tongue():IFireTongue { return _ptr_tongue; }
 	private function set_tongue(t:IFireTongue):IFireTongue 
@@ -310,7 +313,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 * @param	uiVars_			(optional) Any variables you want to pre-load the UI with
 	 */
 	
-	public function new(data:Fast = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null, liveFilePath_:String="", uiVars_:Map<String,String>=null) 
+	public function new(data:Fast = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null, liveFilePath_:String="", uiVars_:Map<String,String>=null, loadThingCallback_:IFlxUIWidget->String->Void=null, postLoadThingCallback_:IFlxUIWidget->String->Void=null) 
 	{
 		super();
 		_ptr_tongue = tongue_;	//set the localization data structure, if any.
@@ -335,6 +338,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				_variable_index.set(key, uiVars_.get(key));
 			}
 		}
+		
+		loadThingCallback = loadThingCallback_;
+		postLoadThingCallback = postLoadThingCallback_;
 		
 		if(data != null){
 			load(data);
@@ -2027,6 +2033,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			returnThing.moves = false;
 		}
 		
+		if (loadThingCallback != null)
+		{
+			loadThingCallback(returnThing, type);
+		}
+		
 		return returnThing;
 	}
 	
@@ -2597,6 +2608,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				case "back", "bottom": _sendTo(thing, -1);
 				case "front",   "top": _sendTo(thing, 1);
 			}
+		}
+		
+		if (postLoadThingCallback != null)
+		{
+			postLoadThingCallback(thing, type);
 		}
 		
 		if (!isGroup && Std.is(thing, FlxUI))
