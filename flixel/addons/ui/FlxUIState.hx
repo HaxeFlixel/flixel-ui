@@ -155,7 +155,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 				{
 					data = U.xml(_xml_id);
 				}
-				catch (msg:String)
+				catch (msg:Dynamic)
 				{
 					errorMsg = msg;
 				}
@@ -165,7 +165,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 					{
 						data = U.xml(_xml_id, "xml", true, "");	//try again without default directory prepend
 					}
-					catch (msg2:String)
+					catch (msg2:Dynamic)
 					{
 						errorMsg += ", " + msg2;
 					}
