@@ -884,7 +884,7 @@ class FlxUICursor extends FlxUISprite
 	private function _doPress(?pt:FlxPoint):Void {
 		var currWidget:IFlxUIWidget = _widgets[location];
 		if (currWidget == null) {
-			return null;
+			return;
 		}
 		
 		var dispose:Bool = false;
@@ -921,7 +921,7 @@ class FlxUICursor extends FlxUISprite
 	private function _doRelease(?pt:FlxPoint):Void {
 		var currWidget:IFlxUIWidget = _widgets[location];
 		if (currWidget == null) {
-			return null;
+			return;
 		}
 		
 		var dispose:Bool = false;
