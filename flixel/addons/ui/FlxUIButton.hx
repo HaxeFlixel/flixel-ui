@@ -161,7 +161,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	
 	public override function clone():FlxUIButton
 	{
-		var newButton = new FlxUIButton(0, 0, (label == null) ? null : label.text, onUp.callback, false, true);
+		var newButton = new FlxUIButton(x, y, (label == null) ? null : label.text, onUp.callback, false, true);
 		newButton.copyGraphic(cast this);
 		newButton.copyStyle(cast this);
 		newButton.has_toggle = has_toggle;

@@ -72,6 +72,8 @@ class FlxUISprite extends FlxSprite implements IFlxUIWidget implements IResizabl
 		fuis.resize_ratio_axis = resize_ratio_axis;
 		fuis.scale_on_resize = scale_on_resize;
 		fuis.resize_point = resize_point;
+		fuis.x = x;
+		fuis.y = y;
 		return fuis;
 	}
 	
