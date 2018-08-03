@@ -24,7 +24,7 @@ import openfl.geom.Matrix;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import openfl.geom.Rectangle;
 
-#if (cpp || neko)
+#if sys
 import sys.FileSystem;
 import sys.io.File;
 import sys.io.FileOutput;
