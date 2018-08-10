@@ -1,3 +1,8 @@
+2.3.1 (August 10, 2018)
+------------------------------
+* Compatibility with latest Haxe dev
+* Compatibility with Lime 7's HL target
+
 2.3.0 (May 4, 2018)
 ------------------------------
 * Compatibility with flixel 4.4.0
