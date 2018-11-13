@@ -4268,7 +4268,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				}
 				
 				var smooth = loadSmooth(data, true);
-				fs = new FlxUISprite(0, 0, U.loadScaledImage(src, W, H, smooth));
+				fs = new FlxUISprite(0, 0, U.loadScaledImage(U.xml_str(data.x, "src"), W, H, smooth));
 			}
 		}
 		else
