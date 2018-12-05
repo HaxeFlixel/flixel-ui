@@ -298,38 +298,38 @@ class U
 	 * @param	variable	some variable as a string, say "1.0", "2354", "false", or "happydays"
 	 * @param	otherValue	another variable
 	 * @param	type		"string","int","float", or "bool"
-	 * @param	operator	"==","!=","<",">","<=",">="
+	 * @param	op			"==","!=","<",">","<=",">="
 	 * @return	the value of the comparison
 	 */
 	
-	public static function compareStringVars(variable:String,otherValue:String,type:String,operator:String="=="):Bool{
+	public static function compareStringVars(variable:String,otherValue:String,type:String,op:String="=="):Bool{
 		switch(type) {
 			case "string": 
-				if (operator == "==" || operator == "=") { return variable == otherValue; }
-				if (operator == "!==" || operator == "!=") { return variable != otherValue; }
+				if (op == "==" || op == "=") { return variable == otherValue; }
+				if (op == "!==" || op == "!=") { return variable != otherValue; }
 			case "int":
 				var ia:Int = Std.parseInt(variable);
 				var ib:Int = Std.parseInt(otherValue);
-					 if (operator == "==" || operator == "=") { return ia == ib; }
-				else if (operator == "!==" || operator == "!=") { return ia != ib; }
-				else if (operator == "<") { return ia < ib; }
-				else if (operator == ">") { return ia > ib; }
-				else if (operator == "<=") { return ia <= ib; }
-				else if (operator == ">=") { return ia >= ib; }
+					 if (op == "==" || op == "=") { return ia == ib; }
+				else if (op == "!==" || op == "!=") { return ia != ib; }
+				else if (op == "<") { return ia < ib; }
+				else if (op == ">") { return ia > ib; }
+				else if (op == "<=") { return ia <= ib; }
+				else if (op == ">=") { return ia >= ib; }
 			case "float":
 				var fa:Float = Std.parseFloat(variable);
 				var fb:Float = Std.parseFloat(otherValue);
-					 if (operator == "==" || operator == "=") { return fa == fb; }
-				else if (operator == "!==" || operator == "!=") { return fa != fb; }
-				else if (operator == "<") { return fa < fb; }
-				else if (operator == ">") { return fa > fb; }
-				else if (operator == "<=") { return fa <= fb; }
-				else if (operator == ">=") { return fa >= fb; }
+					 if (op == "==" || op == "=") { return fa == fb; }
+				else if (op == "!==" || op == "!=") { return fa != fb; }
+				else if (op == "<") { return fa < fb; }
+				else if (op == ">") { return fa > fb; }
+				else if (op == "<=") { return fa <= fb; }
+				else if (op == ">=") { return fa >= fb; }
 			case "bool":
 				var ba:Bool = U.boolify(variable);
 				var bb:Bool = U.boolify(otherValue);
-					 if (operator == "==" || operator == "=") { return ba == bb; } 
-				else if (operator == "!==" || operator == "!=") { return ba != bb; }
+					 if (op == "==" || op == "=") { return ba == bb; } 
+				else if (op == "!==" || op == "!=") { return ba != bb; }
 		}
 		return false;
 	}

@@ -1397,16 +1397,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return new ButtonLabelStyle(fontDef, align, color, border);
 	}
 	
-	public function checkVariable(key:String, otherValue:String, type:String, operator:String = "==", recursive:Bool = true):Bool
+	public function checkVariable(key:String, otherValue:String, type:String, op:String = "==", recursive:Bool = true):Bool
 	{
 		var variable:String = getVariable(key, recursive);
 		if (variable != null)
 		{
-			return U.compareStringVars(variable, otherValue, type, operator);
+			return U.compareStringVars(variable, otherValue, type, op);
 		}
 		else 
 		{
-			return U.compareStringVars("", otherValue, type, operator);
+			return U.compareStringVars("", otherValue, type, op);
 		}
 	}
 	
@@ -3230,7 +3230,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			var varData = parseVarValue(variable);
 			if (varData != null)
 			{
-				match = checkVariable(varData.variable, varData.value, variableType, varData.operator);
+				match = checkVariable(varData.variable, varData.value, variableType, varData.op);
 			}
 			if (match != matchValue) {
 				return false;
@@ -3249,7 +3249,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				temp = varString.split(op);
 				if (temp != null && temp.length == 2)
 				{
-					return { variable:temp[0], value:temp[1], operator:op };
+					return { variable:temp[0], value:temp[1], op:op };
 				}
 			}
 		}
@@ -4656,29 +4656,29 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	{
 		var list:Array<String> = ["+", "-", "*", "/", "^"];
 		
-		var operator:String = "";
+		var op:String = "";
 		var besti:Float = Math.POSITIVE_INFINITY;
 		
-		for (op in list)
+		for (item in list)
 		{
-			var i = str.indexOf(op);
+			var i = str.indexOf(item);
 			if (i != -1)
 			{
 				if (i < besti)
 				{
 					besti = i;
-					operator = op;
+					op = item;
 				}
 			}
 		}
 		
 		var hasPoint:Bool = false;
 		
-		if (operator != "")
+		if (op != "")
 		{
-			if (str.indexOf(operator) != -1)		//return on the FIRST valid operator match found
+			if (str.indexOf(op) != -1)		//return on the FIRST valid operator match found
 			{
-				var opindex = str.indexOf(operator);
+				var opindex = str.indexOf(op);
 				
 				if (opindex != str.length - 1)
 				{
@@ -4710,7 +4710,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					}
 					else
 					{
-						return [firstBit, operator, f, hasPoint];	//proper operand and operator
+						return [firstBit, op, f, hasPoint];	//proper operand and operator
 					}
 				}
 			}
@@ -4719,9 +4719,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return null;
 	}
 	
-	private function _doOperation(value:Float, operator:String, operand:Float):Float
+	private function _doOperation(value:Float, op:String, operand:Float):Float
 	{
-		switch(operator)
+		switch(op)
 		{
 			case "+": return value + operand;
 			case "-": return value - operand;
@@ -4736,7 +4736,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	{
 		var arr:Array<Dynamic> = null;
 		
-		var operator:String = "";
+		var op:String = "";
 		var operand:Float = 0;
 		var hasPoint = false;
 		
@@ -4745,7 +4745,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		if (arr != null)
 		{
 			str = cast arr[0];
-			operator = cast arr[1];
+			op = cast arr[1];
 			operand = cast arr[2];
 			hasPoint = cast arr[3];
 			
@@ -4763,9 +4763,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		var return_val:Float = getAssetProperty(index, target, str);
 		
-		if (return_val != -1 && operator != "")
+		if (return_val != -1 && op != "")
 		{
-			return_val = _doOperation(return_val, operator, operand);
+			return_val = _doOperation(return_val, op, operand);
 		}
 		
 		return return_val;
@@ -5366,6 +5366,6 @@ typedef MaxMinSize = {
 typedef VarValue = {
 	variable:String,
 	value:String,
-	operator:String
+	op:String
 }
 
