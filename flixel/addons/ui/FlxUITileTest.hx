@@ -6,7 +6,6 @@ import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
 import flixel.math.FlxPoint;
 import flixel.util.FlxColor;
-import haxe.xml.Fast;
 
 /**
  * This is mostly just for testing purposes, it is NOT a replacement for FlxTileMap
