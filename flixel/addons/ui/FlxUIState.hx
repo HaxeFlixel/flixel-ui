@@ -11,9 +11,14 @@ import flixel.addons.ui.interfaces.IFlxUIState;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxG;
 import flixel.FlxState;
-import haxe.xml.Fast;
 import openfl.Assets;
 import openfl.events.Event;
+
+#if haxe4
+import haxe.xml.Access;
+#else
+import haxe.xml.Fast as Access;
+#end
 
 /**
  * This is a simple extension of FlxState that does two things:
@@ -118,14 +123,14 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		
 		tooltips = new FlxUITooltipManager(this);
 		
-		var liveFile:Fast = null;
+		var liveFile:Access = null;
 		
 		#if (debug && sys)
 			if (_liveFilePath != null && _liveFilePath != "")
 			{
 				try
 				{
-					liveFile = U.readFast(U.fixSlash(_liveFilePath + _xml_id));
+					liveFile = U.readAccess(U.fixSlash(_liveFilePath + _xml_id));
 					trace("liveFile = " + liveFile);
 				}
 				catch(msg:String)
@@ -148,7 +153,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		
 		if (_xml_id != null && _xml_id != "")
 		{
-			var data:Fast = null;
+			var data:Access = null;
 			var errorMsg:String = "";
 			
 			if (liveFile == null)
@@ -374,7 +379,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	
 	//this makes it easy to override this function in your own FlxUIState,
 	//in case you want to instantiate a custom class that extends FlxUI instead
-	private function createUI(data:Fast = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null, liveFilePath_:String=""):FlxUI
+	private function createUI(data:Access = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null, liveFilePath_:String=""):FlxUI
 	{
 		var flxui = new FlxUI(data, ptr, superIndex_, tongue_, liveFilePath_, _ui_vars);
 		_cleanupUIVars();	//clear out temporary _ui_vars variable if it was set
@@ -383,7 +388,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 	
 	//this makes it easy to override this function in your own FlxUIState,
 	//in case you want to operate on data before it is loaded
-	private function loadUIFromData(data:Fast):Void
+	private function loadUIFromData(data:Access):Void
 	{
 		_ui.load(data);
 	}
@@ -398,7 +403,7 @@ class FlxUIState extends FlxState implements IEventGetter implements IFlxUIState
 		_ui = createUI(null,this,null,_tongue);
 		add(_ui);
 				
-		var data:Fast = U.xml(_xml_id);
+		var data:Access = U.xml(_xml_id);
 		if (data != null)
 		{
 			loadUIFromData(data);

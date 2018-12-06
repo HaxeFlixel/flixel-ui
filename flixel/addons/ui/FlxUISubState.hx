@@ -9,7 +9,12 @@ import flixel.FlxG;
 import flixel.FlxSubState;
 import flixel.util.FlxColor;
 import flixel.math.FlxPoint;
-import haxe.xml.Fast;
+
+#if haxe4
+import haxe.xml.Access;
+#else
+import haxe.xml.Fast as Access;
+#end
 
 /**
  * This is a simple extension of FlxState that does two things:
@@ -97,7 +102,7 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 		
 		if (_xml_id != "" && _xml_id != null)
 		{
-			var data:Fast = U.xml(_xml_id);
+			var data:Access = U.xml(_xml_id);
 			if (data == null)
 			{
 				data = U.xml(_xml_id, "xml", true, "");	//try without default directory prepend
@@ -226,7 +231,7 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 
 	//this makes it easy to override this function in your own FlxUIState,
 	//in case you want to instantiate a custom class that extends FlxUI instead
-	private function createUI(data:Fast = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null, liveFilePath_:String=""):FlxUI
+	private function createUI(data:Access = null, ptr:IEventGetter = null, superIndex_:FlxUI = null, tongue_:IFireTongue = null, liveFilePath_:String=""):FlxUI
 	{
 		return new FlxUI(data, ptr, superIndex_, tongue_, liveFilePath_);
 	}
@@ -241,7 +246,7 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 		_ui = createUI(null,this,null,_tongue);
 		add(_ui);
 		
-		var data:Fast = U.xml(_xml_id);
+		var data:Access = U.xml(_xml_id);
 		_ui.load(data);
 		
 		_reload = false;

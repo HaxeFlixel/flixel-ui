@@ -16,7 +16,6 @@ import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import flixel.util.FlxColor;
 import flixel.math.FlxPoint;
 import haxe.Json;
-import haxe.xml.Fast;
 import haxe.xml.Printer;
 import openfl.Assets;
 import openfl.display.BitmapDataChannel;
@@ -32,6 +31,12 @@ import sys.io.FileOutput;
 
 #if (openfl >= "4.0.0")
 import openfl.utils.AssetType;
+#end
+
+#if haxe4
+import haxe.xml.Access;
+#else
+import haxe.xml.Fast as Access;
 #end
 
 /**
@@ -643,16 +648,16 @@ class U
 			var the_xml:Xml;
 			if (Std.is(thing, Xml)) {
 				the_xml = cast(thing, Xml);
-			}else if (Std.is(thing, Fast)) {
-				the_xml = cast(thing, Fast).x;
+			}else if (Std.is(thing, Access)) {
+				the_xml = cast(thing, Access).x;
 			}
 			thing = null;
 			flash.system.System.disposeXML(the_xml);
 		#end*/
 	}
 		
-	public static inline function copyFast(fast:Fast):Fast {
-		return new Fast(copyXml(fast.x));
+	public static inline function copyAccess(fast:Access):Access {
+		return new Access(copyXml(fast.x));
 	}
 	
 	public static inline function copyXml(data:Xml):Xml {
@@ -668,10 +673,10 @@ class U
 			return null;
 		}
 		
-		public static function readFast(path:String):Fast {
+		public static function readAccess(path:String):Access {
 			var xml:Xml = readXml(path);
 			if(xml != null){
-				return new Fast(xml);
+				return new Access(xml);
 			}
 			return null;
 		}
@@ -765,7 +770,7 @@ class U
 		return _default;
 	}
 	
-	public static function xml(id:String, extension:String = "xml",getFast:Bool=true,dir="assets/xml/"):Dynamic{
+	public static function xml(id:String, extension:String = "xml",getAccess:Bool=true,dir="assets/xml/"):Dynamic{
 		if (id.indexOf("raw:") == 0 || id.indexOf("RAW:") == 0)
 		{
 			id = id.substr(4, id.length - 4);
@@ -785,8 +790,8 @@ class U
 			return null;
 		}
 		var the_xml:Xml = Xml.parse(str);
-		if(getFast){
-			var fast:Fast = new Fast(the_xml.firstElement());
+		if(getAccess){
+			var fast:Access = new Access(the_xml.firstElement());
 			return fast;
 		}else{
 			return the_xml.firstElement();
@@ -1943,7 +1948,7 @@ class U
 		return str;
 	}
 	
-	public static function unparentXML(f:Fast):Fast
+	public static function unparentXML(f:Access):Access
 	{
 		if (f.x.parent != null)
 		{
