@@ -48,7 +48,7 @@ class FlxInputText extends FlxText
 	* Automatically sets filterMode = FlxInputText.CUSTOM_FILTER.
 	*/
 	public var customFilterPattern(default,set):EReg;
-	public function set_customFilterPattern(cfp:EReg)
+	function set_customFilterPattern(cfp:EReg)
 	{
 		customFilterPattern = cfp;
 		filterMode = CUSTOM_FILTER;
@@ -69,7 +69,7 @@ class FlxInputText extends FlxText
 	 * The caret's color. Has the same color as the text by default.
 	 */
 	public var caretColor(default, set):Int;
-	public function set_caretColor(i:Int):Int 
+	function set_caretColor(i:Int):Int 
 	{
 		caretColor = i;
 		dirty = true;
@@ -77,7 +77,7 @@ class FlxInputText extends FlxText
 	}
 	
 	public var caretWidth(default, set):Int = 1;
-	public function set_caretWidth(i:Int):Int
+	function set_caretWidth(i:Int):Int
 	{
 		caretWidth = i;
 		dirty = true;
