@@ -1,3 +1,8 @@
+2.3.2 (February 4, 2019)
+------------------------------
+* Compatibility with Haxe 4.0.0-rc.1
+* Fixed `<sprite>` path when `src` is `RAW:` (#212)
+
 2.3.1 (August 10, 2018)
 ------------------------------
 * Compatibility with latest Haxe dev
