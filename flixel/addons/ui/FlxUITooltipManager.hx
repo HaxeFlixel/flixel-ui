@@ -111,11 +111,13 @@ class FlxUITooltipManager implements IFlxDestroyable
 				{
 					if (state != null)
 					{
-						state.remove(cast entry.btn, true);
+						state.remove(cast entry.btn);
+						state.remove(cast dummy);
 					}
 					else if (subState != null)
 					{
-						subState.remove(cast entry.btn, true);
+						subState.remove(cast entry.btn);
+						subState.remove(cast dummy);
 					}
 					var btn:FlxObject = cast entry.btn;
 					btn.destroy();
@@ -474,6 +476,8 @@ class FlxUITooltipManager implements IFlxDestroyable
 	/**we actually only ever use one tooltip object :) **/
 	private var tooltip:FlxUITooltip;
 	
+	private var dummy:FlxUISprite;
+	
 	/**the current tooltip**/
 	private var current:Int = -1;
 	private var lastPosition:FlxPoint;
@@ -488,11 +492,13 @@ class FlxUITooltipManager implements IFlxDestroyable
 			tooltip.hide();
 			if (state != null)
 			{
-				state.remove(tooltip, true);
+				state.remove(tooltip);
+				state.remove(dummy);
 			}
 			if (subState != null)
 			{
-				subState.remove(tooltip, true);
+				subState.remove(tooltip);
+				subState.remove(dummy);
 			}
 			current = -1;
 		}
@@ -632,10 +638,12 @@ class FlxUITooltipManager implements IFlxDestroyable
 		if (state != null)
 		{
 			state.add(tooltip);
+			state.add(dummy);
 		}
 		if (subState != null)
 		{
 			subState.add(tooltip);
+			subState.add(dummy);
 		}
 		
 		tooltip.show(cast btn, data.title, data.body, autoSizeVertical, autoSizeHorizontal);
@@ -729,6 +737,8 @@ private class FlxUITooltipEntry implements IFlxDestroyable
 			if (data.delay == null) data.delay = -1;
 			if (data.moving == null) data.moving = false;
 		}
+		dummy = new FlxUISprite();
+		dummy.visible = false;
 	}
 	
 	public function destroy():Void
