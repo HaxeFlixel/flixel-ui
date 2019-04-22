@@ -58,6 +58,8 @@ class FlxUITooltipManager implements IFlxDestroyable
 		lastPosition = new FlxPoint(0, 0);
 		defaultAnchor = tooltip.anchor.clone();
 		defaultStyle = FlxUITooltip.cloneStyle(tooltip.style);
+		dummy = new FlxUISprite();
+		dummy.visible = false;
 	}
 	
 	@:access(flixel.addons.ui.FlxUI)
@@ -737,8 +739,6 @@ private class FlxUITooltipEntry implements IFlxDestroyable
 			if (data.delay == null) data.delay = -1;
 			if (data.moving == null) data.moving = false;
 		}
-		dummy = new FlxUISprite();
-		dummy.visible = false;
 	}
 	
 	public function destroy():Void
