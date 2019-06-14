@@ -7,8 +7,8 @@ import flixel.text.FlxText;
  * ...
  * @author Lars Doucet
  */
- interface ILabeled {
+interface ILabeled
+{
 	function getLabel():FlxUIText;
 	function setLabel(t:FlxUIText):FlxUIText;
 }
-

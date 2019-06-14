@@ -2,7 +2,7 @@ package flixel.addons.ui.interfaces;
 
 /**
  * ...
- * @author 
+ * @author
  */
 interface IFlxUIState extends IEventGetter
 {

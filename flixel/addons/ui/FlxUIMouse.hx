@@ -11,14 +11,14 @@ import flixel.input.mouse.FlxMouse;
  */
 class FlxUIMouse extends FlxMouse
 {
-	//Set this to STOP tracking the mouse position from actual mouse input
+	// Set this to STOP tracking the mouse position from actual mouse input
 	public var updateGlobalScreenPosition:Bool = true;
-	
-	public function new(CursorContainer:Sprite) 
+
+	public function new(CursorContainer:Sprite)
 	{
 		super(CursorContainer);
 	}
-	
+
 	/**
 	 * Called by the internal game loop to update the mouse pointer's position in the game world.
 	 * Also updates the just pressed/just released flags.
@@ -27,9 +27,9 @@ class FlxUIMouse extends FlxMouse
 	{
 		var oldScreenX:Int = _globalScreenX;
 		var oldScreenY:Int = _globalScreenY;
-		
+
 		super.update();
-		
+
 		if (!updateGlobalScreenPosition)
 		{
 			_globalScreenX = oldScreenX;
