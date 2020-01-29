@@ -1296,6 +1296,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	
 	private override function set_x(NewX:Float):Float 
 	{
+		if (x == NewX) return x;
 		super.set_x(NewX);
 		
 		if (_spriteLabel != null)
@@ -1315,6 +1316,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	
 	private override function set_y(NewY:Float):Float 
 	{
+		if (y == NewY) return y;
 		super.set_y(NewY);
 		
 		if (label != null)
