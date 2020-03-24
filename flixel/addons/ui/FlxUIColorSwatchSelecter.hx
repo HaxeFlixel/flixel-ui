@@ -58,7 +58,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 		return b;
 	}
 
-	public var numSwatches(get, null):Int;
+	public var numSwatches(get, never):Int;
 
 	private function get_numSwatches()
 	{
@@ -322,7 +322,7 @@ class FlxUIColorSwatchSelecter extends FlxUIGroup implements IFlxUIClickable
 		}
 	}
 
-	public var selectedSwatch(get, null):FlxUIColorSwatch;
+	public var selectedSwatch(get, never):FlxUIColorSwatch;
 
 	private function get_selectedSwatch():FlxUIColorSwatch
 	{

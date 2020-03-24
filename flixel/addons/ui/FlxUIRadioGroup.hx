@@ -37,7 +37,7 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 		return inactiveStyle;
 	}
 
-	public var numRadios(get, null):Int;
+	public var numRadios(get, never):Int;
 
 	private function get_numRadios():Int
 	{

@@ -68,7 +68,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	/**
 	 * Whether or not this UI is directly attached to the current top-most FlxState
 	 */
-	public var isRoot(get, null):Bool;
+	public var isRoot(get, never):Bool;
 
 	private function get_isRoot():Bool
 	{

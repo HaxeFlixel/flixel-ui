@@ -12,8 +12,8 @@ import flixel.util.FlxColor;
  */
 class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIWidget
 {
-	public var widthInTiles(get, null):Int;
-	public var heightInTiles(get, null):Int;
+	public var widthInTiles(get, never):Int;
+	public var heightInTiles(get, never):Int;
 	public var tileWidth(default, null):Int;
 	public var tileHeight(default, null):Int;
 
