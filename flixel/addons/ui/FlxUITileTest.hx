@@ -9,7 +9,6 @@ import flixel.util.FlxColor;
 
 /**
  * This is mostly just for testing purposes, it is NOT a replacement for FlxTileMap
- * @author
  */
 class FlxUITileTest extends FlxUISprite implements IResizable implements IFlxUIWidget
 {

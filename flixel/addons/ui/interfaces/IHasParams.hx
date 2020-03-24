@@ -1,9 +1,5 @@
 package flixel.addons.ui.interfaces;
 
-/**
- * ...
- * @author
- */
 interface IHasParams
 {
 	public var params(default, set):Array<Dynamic>;

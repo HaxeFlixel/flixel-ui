@@ -5,10 +5,6 @@ import flixel.addons.ui.interfaces.IFlxUIState;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.math.FlxPoint;
 
-/**
- * ...
- * @author
- */
 class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 {
 	public var name:String;

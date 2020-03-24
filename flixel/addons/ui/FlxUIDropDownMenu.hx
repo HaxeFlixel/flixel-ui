@@ -13,8 +13,7 @@ import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxStringUtil;
 
 /**
- * larsiusprime
- * @author
+ * @author larsiusprime
  */
 class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IFlxUIClickable implements IHasParams
 {

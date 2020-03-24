@@ -1013,8 +1013,6 @@ import flixel.addons.ui.interfaces.IFireTongue;
  * The wrapper extends FireTongue, and implements IFireTongue
  * 
  * The actual extended class does nothing, it just falls through to FireTongue.
- * 
- * @author 
  */
 class FireTongueEx extends FireTongue implements IFireTongue
 {

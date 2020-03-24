@@ -10,10 +10,6 @@ import flixel.util.FlxArrayUtil;
 import flixel.math.FlxPoint;
 import flixel.util.FlxStringUtil;
 
-/**
- * ...
- * @author
- */
 class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements IFlxUIClickable implements IHasParams
 {
 	private var button_plus:FlxUITypedButton<FlxSprite>;
