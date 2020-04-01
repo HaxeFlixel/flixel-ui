@@ -734,9 +734,37 @@ TODO
 
 TODO
 
-## 14. Bar (FlxUIBar) ```<bar>```
+## 14. Bar ([FlxUIBar](https://api.haxeflixel.com/flixel/addons/ui/FlxUIBar.html)) ```<bar>```
 
-TODO
+Provides a Bar that can be used for displaying health or progress.
+
+Attributes:
+* ```x```/```y``` - position of the bar
+* ```width```/```height``` - dimensions of the bar
+* ```fill_direction``` - the fill direction. `left_to_right` is the default. See below for a list of possible values.
+* ```parent_ref``` - A reference to an object in your game that you wish the bar to track (the value of)
+* ```variable``` - The variable of the object that is used to determine the bar position. For example if the parent was an FlxSprite this could be "health" to track the health value
+* ```min``` - The minimum value. I.e. for a progress bar this would be zero (nothing loaded yet)
+* ```max``` - The maximum value the bar can reach. I.e. for a progress bar this would typically be 100.
+* ```value``` - The value that the bar is at initially. Default is `max`
+* ```border_color``` - Color of the border. If omitted there is no border at all.
+* ```filled_color``` or ```color``` - The color of the bar when full in hexformat. Default is red.
+* ```empty_color``` - The color of the bar when empty in hexformat. Default is red.
+* ```filled_colors``` or ```colors``` and ```empty_colors``` - Creates a gradient filled health bar using the given colour ranges.
+* ```chunk_size``` - If you want a more old-skool looking chunky gradient, increase this value!
+* ```rotation``` - Angle of the gradient in degrees. 90 = top to bottom, 180 = left to right. Any angle is valid
+* ```src_filled```/```src_empty``` - Use an image for the filled/empty bar.
+
+Possible `fill_direction` values:
+* "left_to_right"
+* "right_to_left"
+* "top_to_bottom"
+* "bottom_to_top"
+* "horizontal_inside_out"
+* "horizontal_outside_in"
+* "vertical_inside_out"
+* "vertical_outside_in"
+
 
 ## 15. TileTest (FlxUITileTest) ```<tile_test>```
 
