@@ -207,6 +207,49 @@ class FlxUITooltip extends FlxUIGroup
 		
 		anchor.anchorThing(this, obj);			//anchor entire group to object
 		
+		var reAnchor = false;
+		var yoffset = 0.0;
+		var xoffset = 0.0;
+		if (_bkgBorder.y < 0)
+		{
+			yoffset = Math.abs(_bkgBorder.y);
+			reAnchor = true;
+		}
+		else if (_bkgBorder.y + _bkgBorder.height > FlxG.height)
+		{
+			yoffset = (_bkgBorder.y + _bkgBorder.height - FlxG.height);
+			reAnchor = true;
+		}
+		else if (_bkgBorder.x < 0)
+		{
+			xoffset = Math.abs(_bkgBorder.x);
+			reAnchor = true;
+		}
+		else if (_bkgBorder.x + _bkgBorder.width > FlxG.width)
+		{
+			xoffset = (_bkgBorder.x + _bkgBorder.width - FlxG.width);
+			reAnchor = true;
+		}
+		
+		if (reAnchor)
+		{
+			_arrowBkg.x += xoffset;
+			_arrowBkg.y += yoffset;
+			_titleText.x += xoffset;
+			_titleText.y += yoffset;
+			_bodyText.x += xoffset;
+			_bodyText.y += yoffset;
+			_bkgBorder.x += xoffset;
+			_bkgBorder.y += yoffset;
+			_bkg.x += xoffset;
+			_bkg.y += yoffset;
+			if (ShowArrow)
+			{
+				_arrow.visible = true;
+				_arrowBkg.visible = true;
+			}
+		}
+		
 		x = Std.int(x);
 		y = Std.int(y);
 		
