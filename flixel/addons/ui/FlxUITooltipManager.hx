@@ -138,7 +138,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 	 */
 	public function doesCurrentTooltipBelongTo(thing:FlxSprite, checkChildren:Bool = true):Bool
 	{
-		if (Std.is(thing, FlxUIGroup))
+		if ((thing is FlxUIGroup))
 		{
 			var i = findObj(cast thing);
 			if (i != -1)
@@ -156,14 +156,14 @@ class FlxUITooltipManager implements IFlxDestroyable
 				}
 			}
 		}
-		else if (Std.is(thing, FlxUIButton))
+		else if ((thing is FlxUIButton))
 		{
 			var i = findBtn(cast thing);
 			if (i == -1)
 				return false;
 			return i == current;
 		}
-		else if (Std.is(thing, FlxObject))
+		else if ((thing is FlxObject))
 		{
 			var i = findObj(cast thing);
 			if (i == -1)
@@ -248,7 +248,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 
 		var btn:IFlxUIButton = null;
 		var i = -1;
-		if (Std.is(thing, IFlxUIButton))
+		if ((thing is IFlxUIButton))
 		{
 			btn = cast thing;
 
@@ -325,7 +325,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 	{
 		var btn:IFlxUIButton = null;
 		var i = -1;
-		if (Std.is(thing, IFlxUIButton))
+		if ((thing is IFlxUIButton))
 		{
 			btn = cast thing;
 			i = findBtn(btn);
@@ -440,7 +440,7 @@ class FlxUITooltipManager implements IFlxDestroyable
 			return -1;
 		for (entry in list)
 		{
-			if (entry.obj == thing || (Std.is(thing, IFlxUIButton) && cast(thing, IFlxUIButton) == entry.btn))
+			if (entry.obj == thing || ((thing is IFlxUIButton) && cast(thing, IFlxUIButton) == entry.btn))
 			{
 				return list.indexOf(entry);
 			}

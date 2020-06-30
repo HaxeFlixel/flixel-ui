@@ -190,7 +190,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 				var str = "";
 				if (eventParams != null)
 				{
-					if (Std.is(eventParams[0], String))
+					if ((eventParams[0] is String))
 					{
 						str = Std.string(eventParams[0]);
 					}
@@ -198,7 +198,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 					var buttonAmount:Int = Std.int(eventParams[0]);
 					if (str == "affirm" || str == "cancel" || str == "alt")
 					{
-						if (Std.is(_parentState, IFlxUIState))
+						if ((_parentState is IFlxUIState))
 						{
 							// This fixes a bug where the event was being sent to this popup rather than the state that created it
 							castParent().getEvent(CLICK_EVENT, this, buttonAmount, eventParams);

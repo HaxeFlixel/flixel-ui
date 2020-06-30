@@ -122,12 +122,12 @@ class FlxUIList extends FlxUIGroup
 		}
 		else
 		{
-			if (Std.is(prevButton, FlxUIButton))
+			if ((prevButton is FlxUIButton))
 			{
 				var fuib:FlxUIButton = cast prevButton;
 				fuib.onUp.callback = onClick.bind(-1);
 			}
-			if (Std.is(prevButton, FlxUISpriteButton))
+			if ((prevButton is FlxUISpriteButton))
 			{
 				var fusb:FlxUISpriteButton = cast prevButton;
 				fusb.onUp.callback = onClick.bind(-1);
@@ -158,12 +158,12 @@ class FlxUIList extends FlxUIGroup
 		}
 		else
 		{
-			if (Std.is(nextButton, FlxUIButton))
+			if ((nextButton is FlxUIButton))
 			{
 				var fuib:FlxUIButton = cast nextButton;
 				fuib.onUp.callback = onClick.bind(1);
 			}
-			if (Std.is(nextButton, FlxUISpriteButton))
+			if ((nextButton is FlxUISpriteButton))
 			{
 				var fusb:FlxUISpriteButton = cast nextButton;
 				fusb.onUp.callback = onClick.bind(1);
@@ -339,7 +339,7 @@ class FlxUIList extends FlxUIGroup
 		if (amountPrevious > 0)
 		{
 			safeAdd(cast prevButton);
-			if (Std.is(prevButton, FlxUIButton))
+			if ((prevButton is FlxUIButton))
 			{
 				fuibutton = cast prevButton;
 				fuibutton.label.text = getMoreString(amountPrevious);
@@ -348,7 +348,7 @@ class FlxUIList extends FlxUIGroup
 		if (amountNext > 0)
 		{
 			safeAdd(cast nextButton);
-			if (Std.is(nextButton, FlxUIButton))
+			if ((nextButton is FlxUIButton))
 			{
 				fuibutton = cast nextButton;
 				fuibutton.label.text = getMoreString(amountNext);

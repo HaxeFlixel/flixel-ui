@@ -134,12 +134,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	{
 		for (fs in list)
 		{
-			if (Std.is(fs, FlxUIGroup))
+			if ((fs is FlxUIGroup))
 			{
 				var g:FlxUIGroup = cast(fs, FlxUIGroup);
 				_tongueSet(g.members, tongue);
 			}
-			else if (Std.is(fs, FlxUI))
+			else if ((fs is FlxUI))
 			{
 				var fu:FlxUI = cast(fs, FlxUI);
 				fu.tongue = tongue;
@@ -261,7 +261,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				state = state.subState;
 			}
 		}
-		if (Std.is(state, IFlxUIState))
+		if ((state is IFlxUIState))
 		{
 			return cast state;
 		}
@@ -306,7 +306,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					for (key in _asset_index.keys())
 					{
 						var thing = _asset_index.get(key);
-						if (Std.is(thing, FlxUI))
+						if ((thing is FlxUI))
 						{
 							var fui:FlxUI = cast thing;
 							fui.getEvent("post_load", sender, data);
@@ -370,7 +370,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 
 	public function onFocus(widget:IFlxUIWidget):Void
 	{
-		if (Std.is(widget, FlxUIDropDownMenu))
+		if ((widget is FlxUIDropDownMenu))
 		{
 			// when drop down menu has focus, every other button needs to skip updating
 			for (asset in members)
@@ -382,10 +382,10 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 
 	private function setWidgetSuppression(asset:FlxSprite, butNotThisOne:IFlxUIWidget, suppressed:Bool = true):Void
 	{
-		if (Std.is(asset, IFlxUIClickable))
+		if ((asset is IFlxUIClickable))
 		{
 			var skip:Bool = false;
-			if (Std.is(asset, FlxUIDropDownMenu))
+			if ((asset is FlxUIDropDownMenu))
 			{
 				var ddasset:FlxUIDropDownMenu = cast asset;
 				if (ddasset == butNotThisOne)
@@ -399,7 +399,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				ibtn.skipButtonUpdate = suppressed; // skip button updates until further notice
 			}
 		}
-		else if (Std.is(asset, FlxUIGroup))
+		else if ((asset is FlxUIGroup))
 		{
 			var g:FlxUIGroup = cast asset;
 			for (groupAsset in g.members)
@@ -415,7 +415,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 */
 	public function onFocusLost(widget:IFlxUIWidget):Void
 	{
-		if (Std.is(widget, FlxUIDropDownMenu))
+		if ((widget is FlxUIDropDownMenu))
 		{
 			// Right now, all this does is toggle button updating on and off for
 
@@ -944,7 +944,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						if (custom != "")
 						{
 							var result = _ptr.getRequest("ui_get_group:", this, custom);
-							if (result != null && Std.is(result, FlxUIGroup))
+							if (result != null && (result is FlxUIGroup))
 							{
 								tempGroup = cast result;
 							}
@@ -1098,7 +1098,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 
 	private function _loadGlobals(data:Access, thing:Dynamic)
 	{
-		if (Std.is(thing, FlxBasic))
+		if ((thing is FlxBasic))
 		{
 			var isVis:Bool = U.xml_bool(data.x, "visible", true);
 			var isActive:Bool = U.xml_bool(data.x, "active", true);
@@ -1107,7 +1107,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			thing.visible = isVis;
 			thing.active = isActive;
 			thing.ID = numID;
-			if (Std.is(thing, FlxSprite))
+			if ((thing is FlxSprite))
 			{
 				var alpha:Float = U.xml_f(data.x, "alpha", 1.0);
 				var s:FlxSprite = cast thing;
@@ -1287,7 +1287,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		else
 		{
 			var target = getAsset(target_name);
-			if (target != null && Std.is(target, FlxUI))
+			if (target != null && (target is FlxUI))
 			{
 				var targetUI:FlxUI = cast(target, FlxUI);
 				targetUI.setMode(mode_name, "");
@@ -1380,7 +1380,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		var asset = getAsset(key, recursive);
 		if (asset != null)
 		{
-			if (Std.is(asset, FlxText))
+			if ((asset is FlxText))
 			{
 				return cast(asset, FlxText);
 			}
@@ -1857,7 +1857,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			var tt = _loadTooltipData(data.node.tooltip);
 			var state = getLeafUIState();
 
-			if (Std.is(thing, FlxUICheckBox))
+			if ((thing is FlxUICheckBox))
 			{
 				var check:FlxUICheckBox = cast thing;
 				state.tooltips.add(check.button, tt);
@@ -2192,7 +2192,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			return;
 		}
 
-		if (!Std.is(thing, IHasParams))
+		if (!(thing is IHasParams))
 		{
 			return;
 		}
@@ -2221,7 +2221,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			switch (attribute)
 			{
 				case "text":
-					if (Std.is(thing, FlxUIText))
+					if ((thing is FlxUIText))
 					{
 						var text = U.xml_str(data.x, "text");
 						context = U.xml_str(data.x, "context", true, "ui");
@@ -2234,7 +2234,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					context = U.xml_str(data.x, "context", true, "ui");
 					code = U.xml_str(data.x, "code", true, "");
 					label = getText(label, context, true, code);
-					if (Std.is(thing, ILabeled))
+					if ((thing is ILabeled))
 					{
 						var b:ILabeled = cast thing;
 						b.getLabel().text = label;
@@ -2245,7 +2245,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					new_height = _loadHeight(data);
 			}
 		}
-		if (Std.is(thing, IResizable))
+		if ((thing is IResizable))
 		{
 			var ir:IResizable = cast thing;
 			if (new_width != -1 || new_height != -1)
@@ -2264,7 +2264,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 
 		if (data.hasNode.param)
 		{
-			if (Std.is(thing, IHasParams))
+			if ((thing is IHasParams))
 			{
 				var ihp:IHasParams = cast thing;
 				ihp.params = getParams(data);
@@ -2438,7 +2438,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				else
 				{
 					// if we are resizing, resize it to the target size now
-					if (Std.is(widget, IResizable))
+					if ((widget is IResizable))
 					{
 						var allow:Bool = true;
 						var widgetr:IResizable = cast widget;
@@ -2683,7 +2683,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				definition = getDefinition(use_def);
 			}
 
-			if (Std.is(thing, IResizable))
+			if ((thing is IResizable))
 			{
 				var ww:Null<Float> = _getDataSize("w", U.xml_str(data.x, "width"));
 				var hh:Null<Float> = _getDataSize("h", U.xml_str(data.x, "height"));
@@ -2745,7 +2745,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			}
 		}
 
-		if (!isGroup && Std.is(thing, FlxUI))
+		if (!isGroup && (thing is FlxUI))
 		{
 			var fui_thing:FlxUI = cast thing;
 			if (fui_thing._postLoaded == false)
@@ -2886,7 +2886,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 
 		if (H > 0 && ft.height != H)
 		{
-			if (Std.is(ft, IResizable))
+			if ((ft is IResizable))
 			{
 				var r:IResizable = cast ft;
 				r.resize(r.width, H);
@@ -2980,7 +2980,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 
 		if (H > 0 && ft.height != H)
 		{
-			if (Std.is(ft, IResizable))
+			if ((ft is IResizable))
 			{
 				var r:IResizable = cast ft;
 				r.resize(r.width, H);
@@ -3195,7 +3195,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			radioNode = radioList.hasNext() ? radioList.next() : null;
 			if (fo != null)
 			{
-				if (Std.is(fo, FlxUICheckBox))
+				if ((fo is FlxUICheckBox))
 				{
 					var fc:FlxUICheckBox = cast(fo, FlxUICheckBox);
 					var t:FlxText = formatButtonText(data, fc);
@@ -3765,11 +3765,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			{
 				for (t in list_tabs)
 				{
-					if (Std.is(t, FlxUITypedButton))
+					if ((t is FlxUITypedButton))
 					{
 						var tb:FlxUITypedButton<FlxSprite> = cast t;
 						tb.label.color = 0xFFFFFF;
-						if (Std.is(tb.label, FlxUIText))
+						if ((tb.label is FlxUIText))
 						{
 							var labelText:FlxUIText = cast tb.label;
 							labelText.setBorderStyle(OUTLINE);
@@ -4180,12 +4180,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				var slice9_names:Array<Array<Int>> = [slice9_tab, slice9_tab, slice9_tab, slice9_tab, slice9_tab, slice9_tab];
 
 				// These is/cast checks are here to avoid weeeeird bugs on neko target, which suggests they might also crop up elsewhere
-				if (Std.is(fb, FlxUIButton))
+				if ((fb is FlxUIButton))
 				{
 					var fbui:FlxUIButton = cast fb;
 					fbui.loadGraphicSlice9(graphic_names, W, H, slice9_names, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);
 				}
-				else if (Std.is(fb, FlxUISpriteButton))
+				else if ((fb is FlxUISpriteButton))
 				{
 					var fbuis:FlxUISpriteButton = cast fb;
 					fbuis.loadGraphicSlice9(graphic_names, W, H, slice9_names, FlxUI9SliceSprite.TILE_NONE, resize_ratio, isToggle);
@@ -4264,15 +4264,15 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			text_y = Std.int(_loadHeight(data, 0, "label_y"));
 		}
 
-		if (Std.is(fb, FlxUISpriteButton))
+		if ((fb is FlxUISpriteButton))
 		{
 			var fbs:FlxUISpriteButton = cast fb;
-			if (Std.is(fbs.label, FlxSpriteGroup))
+			if ((fbs.label is FlxSpriteGroup))
 			{
 				var g:FlxSpriteGroup = cast fbs.label;
 				for (sprite in g.group.members)
 				{
-					if (Std.is(sprite, FlxUIText))
+					if ((sprite is FlxUIText))
 					{
 						// label offset has already been 'centered,' this adjust from there:
 						sprite.offset.x -= text_x;
@@ -4305,7 +4305,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			fb.toggle_label = toggleSprite;
 		}
 
-		if (Std.is(fb, FlxUITypedButton))
+		if ((fb is FlxUITypedButton))
 		{
 			var fuitb:FlxUITypedButton<FlxSprite> = cast fb;
 			if (fuitb._assetsToCleanup != null)
@@ -4979,7 +4979,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	}*/
 	private function thisWidth():Int
 	{
-		// if (_ptr == null || Std.is(_ptr, FlxUI) == false) {
+		// if (_ptr == null || (_ptr is FlxUI) == false) {
 		return FlxG.width;
 		/*}
 			var ptrUI:FlxUI = cast _ptr;
@@ -4988,7 +4988,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 
 	private function thisHeight():Int
 	{
-		// if (_ptr == null || Std.is(_ptr, FlxUI) == false) {
+		// if (_ptr == null || (_ptr is FlxUI) == false) {
 		return FlxG.height;
 		/*}
 			var ptrUI:FlxUI = cast _ptr;
@@ -5852,7 +5852,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			var fsb:FlxUISpriteButton = null;
 			var ifb:IFlxUIButton = null;
 
-			if (Std.is(button, FlxUICheckBox) == false)
+			if ((button is FlxUICheckBox) == false)
 			{
 				ifb = cast button;
 				if (align == "" || align == null)
@@ -5869,24 +5869,24 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 
 			if (ifb != null)
 			{
-				if (Std.is(ifb, FlxUIButton))
+				if ((ifb is FlxUIButton))
 				{
 					fb = cast ifb;
 					the_label = fb.label;
 				}
-				else if (Std.is(ifb, FlxUISpriteButton))
+				else if ((ifb is FlxUISpriteButton))
 				{
 					fsb = cast ifb;
-					if (Std.is(fsb.label, FlxText)) // if label is text, just grab it
+					if ((fsb.label is FlxText)) // if label is text, just grab it
 					{
 						the_label = cast fsb.label;
 					}
-					else if (Std.is(fsb.label, FlxSpriteGroup)) // if label is group, look for first flxtext label
+					else if ((fsb.label is FlxSpriteGroup)) // if label is group, look for first flxtext label
 					{
 						var fsg:FlxSpriteGroup = cast fsb.label;
 						for (fs in fsg.group.members)
 						{
-							if (Std.is(fs, FlxText))
+							if ((fs is FlxText))
 							{
 								the_label = cast fs; // grab it!
 								break;
@@ -5922,7 +5922,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				the_label.borderSize = border.size;
 				the_label.borderQuality = border.quality;
 
-				if (Std.is(the_label, FlxUIText))
+				if ((the_label is FlxUIText))
 				{
 					var ftu:FlxUIText = cast the_label;
 					ftu.drawFrame();

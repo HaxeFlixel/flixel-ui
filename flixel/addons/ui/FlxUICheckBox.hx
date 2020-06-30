@@ -82,7 +82,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIClic
 			Box = FlxUIAssets.IMG_CHECK_BOX;
 		}
 
-		if (Std.is(Box, FlxSprite))
+		if ((Box is FlxSprite))
 		{
 			box = cast Box;
 		}
@@ -116,7 +116,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIClic
 			Check = FlxUIAssets.IMG_CHECK_MARK;
 		}
 
-		if (Std.is(Check, FlxSprite))
+		if ((Check is FlxSprite))
 		{
 			mark = cast Check;
 		}
@@ -257,7 +257,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIClic
 		{
 			if (button.label != null)
 			{
-				if (Std.is(button.label, FlxUIText))
+				if ((button.label is FlxUIText))
 				{
 					var ftu:FlxUIText = cast button.label;
 					ftu.drawFrame(); // force update

@@ -151,7 +151,7 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 
 		cleanup();
 
-		if (Std.is(_parentState, FlxUIState))
+		if ((_parentState is FlxUIState))
 		{
 			reload_ui_on_resize = cast(_parentState, FlxUIState).reload_ui_on_resize;
 		}

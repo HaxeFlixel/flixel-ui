@@ -239,7 +239,7 @@ class FlxUITooltip extends FlxUIGroup
 		{
 			if (member == null)
 				continue;
-			if (Std.is(member, FlxText))
+			if ((member is FlxText))
 				continue;
 			var minMemberY:Float = member.y;
 			var maxMemberY:Float = minMemberY + member.height;

@@ -92,7 +92,7 @@ class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 			{
 				if (fb != null)
 				{
-					if (Std.is(fb, IFlxUIWidget))
+					if ((fb is IFlxUIWidget))
 					{
 						var flui:FlxSprite = cast fb;
 						if (flui.x < left)
@@ -112,7 +112,7 @@ class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 							bottom = flui.y + flui.height;
 						}
 					}
-					else if (Std.is(fb, FlxSprite))
+					else if ((fb is FlxSprite))
 					{
 						var flxi:FlxSprite = cast fb;
 						if (flxi.x < left)

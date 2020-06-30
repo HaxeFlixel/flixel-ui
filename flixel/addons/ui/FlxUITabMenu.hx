@@ -63,7 +63,7 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 		{
 			for (sprite in group.members)
 			{
-				if (Std.is(sprite, IFlxUIClickable))
+				if ((sprite is IFlxUIClickable))
 				{
 					var widget:IFlxUIClickable = cast sprite;
 					widget.skipButtonUpdate = b;
@@ -92,7 +92,7 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 	public function resize(W:Float, H:Float):Void
 	{
 		var ir:IResizable;
-		if (Std.is(_back, IResizable))
+		if ((_back is IResizable))
 		{
 			distributeTabs(W);
 			ir = cast _back;
@@ -285,7 +285,7 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 		if (i != -1)
 		{
 			var oldBack = _back;
-			if (Std.is(newBack, IResizable))
+			if ((newBack is IResizable))
 			{
 				var ir:IResizable = cast newBack;
 				ir.resize(oldBack.width, oldBack.height);

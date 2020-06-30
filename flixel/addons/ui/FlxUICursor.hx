@@ -176,7 +176,7 @@ class FlxUICursor extends FlxUISprite
 			{
 				for (keys in list)
 				{
-					if (Std.is(keys, FlxMultiGamepad))
+					if ((keys is FlxMultiGamepad))
 					{
 						var fmg:FlxMultiGamepad = cast keys;
 						fmg.gamepad = _gamepad;
@@ -266,7 +266,7 @@ class FlxUICursor extends FlxUISprite
 		scrollFactor.set(0, 0);
 
 		#if FLX_MOUSE
-		if (FlxG.mouse != null && Std.is(FlxG.mouse, FlxUIMouse) == false)
+		if (FlxG.mouse != null && (FlxG.mouse is FlxUIMouse) == false)
 		{
 			_newMouse = new FlxUIMouse(FlxG.mouse.cursorContainer);
 			FlxG.mouse = _newMouse;
@@ -355,7 +355,7 @@ class FlxUICursor extends FlxUISprite
 		{
 			for (widget in ui.members)
 			{
-				if (Std.is(widget, ICursorPointable) || Std.is(widget, FlxUIGroup)) // if it's directly pointable or a group
+				if ((widget is ICursorPointable) || (widget is FlxUIGroup)) // if it's directly pointable or a group
 				{
 					addWidget(cast widget); // add it
 				}
@@ -530,16 +530,16 @@ class FlxUICursor extends FlxUISprite
 
 	public function addWidget(widget:IFlxUIWidget):Void
 	{
-		if (Std.is(widget, ICursorPointable)) // directly pointable? add it
+		if ((widget is ICursorPointable)) // directly pointable? add it
 		{
 			_widgets.push(widget);
 		}
-		else if (Std.is(widget, FlxUIGroup)) // it's a group?
+		else if ((widget is FlxUIGroup)) // it's a group?
 		{
 			var g:FlxUIGroup = cast widget;
 			for (member in g.members)
 			{
-				if (Std.is(member, IFlxUIWidget))
+				if ((member is IFlxUIWidget))
 				{
 					addWidget(cast member); // add each member individually
 				}
@@ -906,7 +906,7 @@ class FlxUICursor extends FlxUISprite
 		var widgetPoint:FlxPoint = null;
 
 		// Try to convert to FlxObject if possible
-		if (Std.is(currWidget, FlxObject))
+		if ((currWidget is FlxObject))
 		{
 			fo = cast currWidget;
 			// success! Get ScreenXY, to deal with any possible scrolling/camera craziness
@@ -1351,7 +1351,7 @@ class FlxUICursor extends FlxUISprite
 		{
 			var target:FlxObject = cast currWidget;
 
-			if (Std.is(target, FlxSprite))
+			if ((target is FlxSprite))
 			{
 				var fs:FlxSprite = cast target;
 				if (fs != null && fs.scrollFactor != null)
@@ -1360,7 +1360,7 @@ class FlxUICursor extends FlxUISprite
 				}
 			}
 
-			if (Std.is(currWidget, FlxUICheckBox))
+			if ((currWidget is FlxUICheckBox))
 			{
 				var check:FlxUICheckBox = cast target;
 				target = check.box;

@@ -136,7 +136,7 @@ class FlxUIButton extends FlxUITypedButton<FlxUIText> implements ILabeled implem
 	public override function copyStyle(other:FlxUITypedButton<FlxSprite>):Void
 	{
 		super.copyStyle(other);
-		if (Std.is(other, FlxUIButton))
+		if ((other is FlxUIButton))
 		{
 			var fuib:FlxUIButton = cast other;
 

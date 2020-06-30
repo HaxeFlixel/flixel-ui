@@ -160,13 +160,13 @@ class FlxUIRadioGroup extends FlxUIGroup implements IFlxUIClickable implements I
 			_dot_asset = FlxUIAssets.IMG_RADIO_DOT;
 		}
 
-		if (Std.is(_box_asset, FlxSprite))
+		if ((_box_asset is FlxSprite))
 		{
 			var fs:FlxSprite = cast _box_asset;
 			_box_asset = fs.graphic.key;
 		}
 
-		if (Std.is(_dot_asset, FlxSprite))
+		if ((_dot_asset is FlxSprite))
 		{
 			var fs:FlxSprite = cast _dot_asset;
 			_dot_asset = fs.graphic.key;

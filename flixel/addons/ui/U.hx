@@ -759,9 +759,9 @@ class U
 		// don't think this works
 		/*#if flash
 				var the_xml:Xml;
-				if (Std.is(thing, Xml)) {
+				if ((thing is Xml)) {
 					the_xml = cast(thing, Xml);
-				}else if (Std.is(thing, Access)) {
+				}else if ((thing is Access)) {
 					the_xml = cast(thing, Access).x;
 				}
 				thing = null;
@@ -984,17 +984,17 @@ class U
 		if (thing == null)
 			return;
 
-		if (Std.is(thing, Array))
+		if ((thing is Array))
 		{
 			clearArray(thing);
 		}
-		else if (Std.is(thing, IFlxDestroyable))
+		else if ((thing is IFlxDestroyable))
 		{
 			var idstr:IFlxDestroyable = cast(thing, IFlxDestroyable);
 			idstr.destroy();
 			idstr = null;
 		}
-		else if (Std.is(thing, FlxBasic))
+		else if ((thing is FlxBasic))
 		{
 			var fb:FlxBasic = cast(thing, FlxBasic);
 			fb.destroy();
@@ -1104,16 +1104,16 @@ class U
 	public static function getBmp(asset:FlxGraphicAsset):BitmapData
 	{
 		var str:String = null;
-		if (Std.is(asset, String))
+		if ((asset is String))
 		{
 			str = cast asset;
 		}
-		else if (Std.is(asset, FlxGraphic))
+		else if ((asset is FlxGraphic))
 		{
 			var fg:FlxGraphic = cast asset;
 			str = fg.key;
 		}
-		else if (Std.is(asset, BitmapData))
+		else if ((asset is BitmapData))
 		{
 			var bmp:BitmapData = cast asset;
 			return bmp;
@@ -2244,19 +2244,19 @@ class U
 		if (btn == null)
 			return;
 
-		if (Std.is(btn, FlxUIButton))
+		if ((btn is FlxUIButton))
 		{
 			// if it's a FlxUIButton, just apply the text and stop
 			cast(btn, FlxUIButton).label.text = str;
 		}
-		else if (Std.is(btn, FlxUISpriteButton))
+		else if ((btn is FlxUISpriteButton))
 		{
 			// if it's a FlxUISpriteButton, and the label is a group,
 			// search for the first text field, apply the text, and stop
 			var fuisb:FlxUISpriteButton = cast btn;
 			if (fuisb.label == null)
 				return;
-			if (Std.is(fuisb.label, FlxSpriteGroup))
+			if ((fuisb.label is FlxSpriteGroup))
 			{
 				var g:FlxSpriteGroup = cast fuisb.label;
 				if (g.members == null)
@@ -2265,7 +2265,7 @@ class U
 				{
 					if (sprite == null)
 						continue;
-					if (Std.is(sprite, FlxText))
+					if ((sprite is FlxText))
 					{
 						cast(sprite, FlxText).text = str;
 						return;

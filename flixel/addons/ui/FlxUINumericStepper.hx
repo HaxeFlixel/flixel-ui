@@ -55,7 +55,7 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 		color = Value;
 		button_plus.color = Value;
 		button_minus.color = Value;
-		if (Std.is(text_field, FlxInputText))
+		if ((text_field is FlxInputText))
 		{
 			var fit:FlxInputText = cast text_field;
 			fit.backgroundColor = Value;
@@ -138,7 +138,7 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 		var btnSize:Int = 10;
 		var offsetX:Int = 0;
 		var offsetY:Int = 0;
-		if (Std.is(text_field, FlxUIInputText))
+		if ((text_field is FlxUIInputText))
 		{
 			offsetX = 1;
 			offsetY = 1; // border for input text
@@ -214,7 +214,7 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 		text_field = TextField;
 		text_field.text = Std.string(DefaultValue);
 
-		if (Std.is(text_field, FlxUIInputText))
+		if ((text_field is FlxUIInputText))
 		{
 			var fuit:FlxUIInputText = cast text_field;
 			fuit.lines = 1;

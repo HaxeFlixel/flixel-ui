@@ -48,7 +48,7 @@ class FlxUISpriteButton extends FlxUITypedButton<FlxSprite> implements IFlxUIBut
 	{
 		if (label != null)
 		{
-			if (Std.is(label, FlxSpriteGroup))
+			if ((label is FlxSpriteGroup))
 			{
 				var g:FlxSpriteGroup = cast label;
 				for (sprite in g.group.members)

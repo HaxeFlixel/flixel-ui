@@ -94,17 +94,17 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 			Graphic = FlxUIAssets.IMG_CHROME;
 		}
 
-		if (Std.is(Graphic, String))
+		if ((Graphic is String))
 		{
 			_asset_id = Graphic;
 			_raw_pixels = null;
 		}
-		else if (Std.is(Graphic, BitmapData))
+		else if ((Graphic is BitmapData))
 		{
 			_asset_id = Id;
 			_raw_pixels = cast Graphic;
 		}
-		else if (Std.is(Graphic, FlxGraphic))
+		else if ((Graphic is FlxGraphic))
 		{
 			var fg:FlxGraphic = cast Graphic;
 			_asset_id = fg.key;

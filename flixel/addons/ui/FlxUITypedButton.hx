@@ -387,7 +387,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 
 		if (label != null && autoResizeLabel)
 		{
-			if (Std.is(label, IResizable))
+			if ((label is IResizable))
 			{
 				var targetW:Float = W - label_diffx;
 				var targetH:Float = H - label_diffy;
@@ -517,11 +517,11 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 
 		var bd:BitmapData = null;
 
-		if (Std.is(asset, BitmapData))
+		if ((asset is BitmapData))
 		{
 			bd = cast asset;
 		}
-		else if (Std.is(asset, String))
+		else if ((asset is String))
 		{
 			bd = getBmp(asset);
 		}
@@ -932,7 +932,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 
 			offX = (width - _spriteLabel.width);
 
-			if (Std.is(label, FlxUIText))
+			if ((label is FlxUIText))
 			{
 				var tlabel:FlxUIText = cast label;
 				offX = (width - tlabel.fieldWidth) / 2;
