@@ -1,3 +1,7 @@
+2.3.3 (July 2, 2020)
+------------------------------
+* Fixed `Std.is()` deprecation warnings with Haxe 4.2
+
 2.3.2 (February 4, 2019)
 ------------------------------
 * Compatibility with Haxe 4.0.0-rc.1
