@@ -17,16 +17,28 @@ import flixel.util.FlxTimer;
 
 /**
  * @author Lars Doucet
+ * Creates a box with multiple tabs and elements inside these tabs,
  */
 class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUIClickable implements IEventGetter
 {
 	public static inline var CLICK_EVENT:String = "tab_menu_click";
 
+	/**
+	*
+	 Button goes in front of backing
+	*/
 	public static inline var STACK_FRONT:String = "front"; // button goes in front of backing
+		/**
+	*
+	 Button goes behind backing
+	*/
 	public static inline var STACK_BACK:String = "back"; // buton goes behind backing
 
 	public var numTabs(get, never):Int;
 
+	/**
+	* Get the amount of tabs currently in the object
+	*/
 	public function get_numTabs():Int
 	{
 		if (_tabs != null)
