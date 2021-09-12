@@ -1,3 +1,7 @@
+2.4.0 (September 12, 2021)
+------------------------------ 
+* Compatibility with flixel 4.10.0
+
 2.3.3 (July 2, 2020)
 ------------------------------
 * Fixed `Std.is()` deprecation warnings with Haxe 4.2
