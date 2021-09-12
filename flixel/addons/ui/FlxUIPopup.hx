@@ -4,6 +4,7 @@ import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIState;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.math.FlxPoint;
+import flixel.util.FlxDirectionFlags;
 
 class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 {
@@ -20,7 +21,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 	}
 
 	public var angle(default, set):Float;
-	public var facing(default, set):Int;
+	public var facing(default, set):FlxDirectionFlags;
 	public var moves(default, set):Bool;
 	public var offset(default, set):FlxPoint;
 	public var origin(default, set):FlxPoint;
