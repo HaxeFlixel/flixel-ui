@@ -390,7 +390,9 @@ The change tag lets you modify various properties of a widget after it has alrea
 |**Line**|FlxUISprite|```<line>```|
 |**Numeric Stepper**|FlxUINumericStepper|```<numeric_stepper>```|
 |**Dropdown/Pulldown Menu**|FlxUIDropDownMenu|```<dropdown_menu>```|
+|**Bar**|FlxUIBar|```<bar>```|
 |**Tile Grid**|FlxUITileTest|```<tile_test>```|
+|**Custom Widget|Any (implements IFlxUIWidget)|```<whatever_you_want>```|
 
 Lets go over these one by one. Many of them share common attributes so I will only explain specific attributes in full detail the first time they appear.
 
@@ -772,6 +774,28 @@ Possible `fill_direction` values:
 
 TODO
 
+## 16. Custom Widget (Any Class which implements IFlxUIWidget) ```<whatever_you_want>```
+
+You can also add a handler to render a custom widget when you add certain tags to your UI. You can specify whichever tags you want, as long as you have a class which implements IFlxUIWidget that you can use to render it.
+	
+Any widget in the layout whose name does not match those provided by default will be referred to the FlxUI class; simply override `getRequest(name:String, sender:Dynamic, data:Dynamic):Dynamic`, look for a request of the name `ui_get:whatever_you_want`, and return your custom widget.
+	
+Here is an example. You can see that any instance of `<save_slot>` in the XML will be populated with a SaveSlot widget.
+	
+```
+public override function getRequest(id:String, target:Dynamic, data:Dynamic, ?params:Array<Dynamic>):Dynamic
+{
+    if (id.indexOf("ui_get:") == 0)
+    {
+        switch (id.remove("ui_get:"))
+        {
+            case "save_slot":
+                return new SaveSlot(data, _ui);
+        }
+    }
+    return null;
+}
+```	
 
 ----
 
