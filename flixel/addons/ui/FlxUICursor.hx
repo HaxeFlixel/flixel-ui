@@ -325,6 +325,7 @@ class FlxUICursor extends FlxUISprite
 		{
 			var oldVis = visible;
 
+			// Ad hoc fix to avoid world coordinates on UI elements
 			if (scrollFactor.x == 0 && scrollFactor.y == 0)
 				jumpToXY(FlxG.mouse.screenX, FlxG.mouse.screenY);
 			else
