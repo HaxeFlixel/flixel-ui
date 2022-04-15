@@ -324,13 +324,16 @@ class FlxUICursor extends FlxUISprite
 		if (lastMouseX != FlxG.mouse.x || lastMouseY != FlxG.mouse.y)
 		{
 			var oldVis = visible;
-			jumpToXY(FlxG.mouse.x, FlxG.mouse.y);
+
+			// Ad hoc fix to avoid world coordinates on UI elements
+			if (scrollFactor.x == 0 && scrollFactor.y == 0)
+				jumpToXY(FlxG.mouse.screenX, FlxG.mouse.screenY);
+			else
+				jumpToXY(FlxG.mouse.x, FlxG.mouse.y);
 			visible = oldVis;
 
-			#if FLX_MOUSE
 			lastMouseX = FlxG.mouse.x;
 			lastMouseY = FlxG.mouse.y;
-			#end
 		}
 		#end
 
