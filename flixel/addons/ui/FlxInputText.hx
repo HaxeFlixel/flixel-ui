@@ -325,7 +325,7 @@ class FlxInputText extends FlxText
 		#end
 
 		// Copy and paste
-		if (FlxG.keys.pressed.CONTROL)
+		if (FlxG.keys.pressed.CONTROL && hasFocus)
 		{
 			if (FlxG.keys.justPressed.V)
 			{
