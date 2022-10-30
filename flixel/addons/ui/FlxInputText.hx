@@ -12,6 +12,9 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxTimer;
+import openfl.desktop.Clipboard;
+import openfl.desktop.ClipboardFormats;
+import openfl.desktop.ClipboardTransferMode;
 
 /**
  * FlxInputText v1.11, ported to Haxe
@@ -320,6 +323,26 @@ class FlxInputText extends FlxText
 			}
 		}
 		#end
+
+		// Copy and paste
+		if (FlxG.keys.pressed.CONTROL)
+		{
+			if (FlxG.keys.justPressed.V)
+			{
+				var clipboard = Clipboard.generalClipboard.getData(ClipboardFormats.TEXT_FORMAT, ClipboardTransferMode.CLONE_PREFERRED);
+				if (clipboard != null)
+				{
+					text = text.substr(0, text.length - 1);
+					text += clipboard;
+
+					caretIndex = text.length;
+				}
+				else
+				{
+					text = text.substr(0, text.length - 1);
+				}
+			}
+		}
 	}
 
 	/**
@@ -533,11 +556,9 @@ class FlxInputText extends FlxText
 				switch (getAlignStr())
 				{
 					case RIGHT:
-						X = X - textField.width + textField.textWidth
-							;
+						X = X - textField.width + textField.textWidth;
 					case CENTER:
-						X = X - textField.width / 2 + textField.textWidth / 2
-							;
+						X = X - textField.width / 2 + textField.textWidth / 2;
 					default:
 				}
 			}
