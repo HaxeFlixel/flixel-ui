@@ -329,17 +329,12 @@ class FlxInputText extends FlxText
 		{
 			if (FlxG.keys.justPressed.V)
 			{
+				text = text.substr(0, text.length - 1);
 				var clipboard = Clipboard.generalClipboard.getData(ClipboardFormats.TEXT_FORMAT, ClipboardTransferMode.CLONE_PREFERRED);
 				if (clipboard != null)
 				{
-					text = text.substr(0, text.length - 1);
 					text += clipboard;
-
 					caretIndex = text.length;
-				}
-				else
-				{
-					text = text.substr(0, text.length - 1);
 				}
 			}
 		}
