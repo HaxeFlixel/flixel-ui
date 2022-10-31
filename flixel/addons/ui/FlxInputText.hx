@@ -329,12 +329,12 @@ class FlxInputText extends FlxText
 		{
 			if (FlxG.keys.justPressed.V)
 			{
-				text = text.substr(0, text.length - 1);
 				var clipboard = Clipboard.generalClipboard.getData(ClipboardFormats.TEXT_FORMAT, ClipboardTransferMode.CLONE_PREFERRED);
 				if (clipboard != null)
 				{
-					text += clipboard;
-					caretIndex = text.length;
+					text = text.substr(0, caretIndex - 1) + text.substring(caretIndex, text.length); // removes the "v"
+					text = text.substring(0, caretIndex - 1) + clipboard + text.substring(caretIndex - 1, text.length);
+					caretIndex += Std.int(clipboard.length - 1);
 				}
 			}
 		}
