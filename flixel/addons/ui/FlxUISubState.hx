@@ -141,8 +141,6 @@ class FlxUISubState extends FlxSubState implements IFlxUIState
 			cursor.addWidgetsFromUI(_ui);
 			cursor.findVisibleLocation(0);
 		}
-
-		FlxG.mouse.visible = true;
 		#end
 
 		tooltips.init();
