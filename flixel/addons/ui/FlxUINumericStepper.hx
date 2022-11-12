@@ -33,6 +33,10 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 
 	public var params(default, set):Array<Dynamic>;
 
+	//public var focusGained:Void->Void;
+	//public var focusLost:Void->Void;
+	public var hasFocus:Bool = false;
+
 	private function set_params(p:Array<Dynamic>):Array<Dynamic>
 	{
 		params = p;
@@ -213,6 +217,7 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 		TextField.y = 0;
 		text_field = TextField;
 		text_field.text = Std.string(DefaultValue);
+		text_field.focusLost = onFocusLost;
 
 		if ((text_field is FlxUIInputText))
 		{
@@ -264,6 +269,7 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 
 	private function _onInputTextEvent(text:String, action:String):Void
 	{
+		hasFocus = true;
 		if (text == "")
 		{
 			text = Std.string(min);
