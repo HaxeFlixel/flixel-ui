@@ -1,3 +1,8 @@
+2.5.0 (November 19, 2022)
+------------------------------ 
+* Deprecate haxe 3
+* Fix FlxUICursor camera scroll (#233) 
+
 2.4.0 (September 12, 2021)
 ------------------------------ 
 * Compatibility with flixel 4.10.0
