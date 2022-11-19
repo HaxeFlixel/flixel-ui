@@ -4,7 +4,7 @@
 	"license": "MIT",
 	"tags": ["game", "openfl", "flash", "neko", "cpp", "android", "ios", "cross"],
 	"description": "A UI library for Flixel",
-	"version": "2.4.0",
-	"releasenote": "Compatibility with flixel 4.10.0.",
+	"version": "2.5.0",
+	"releasenote": "Deprecate haxe 3, Compatibility with flixel 5.0.0.",
 	"contributors": ["haxeflixel", "larsiusprime", "Gama11"]
 }
