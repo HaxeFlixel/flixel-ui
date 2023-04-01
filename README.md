@@ -13,7 +13,7 @@
 
 # About
 
-A series of tools for creating and UI elements and managing UI events in HaxeFlixel.
+A series of tools for creating and UI elements and managing UI events in [HaxeFlixel](https://github.com/HaxeFlixel/flixel).
 
 # Getting Started
 
