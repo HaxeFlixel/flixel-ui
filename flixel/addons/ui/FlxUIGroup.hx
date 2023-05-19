@@ -1,41 +1,45 @@
 package flixel.addons.ui;
 
-import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxRect;
+import flixel.addons.ui.interfaces.IFlxUIWidget;
 
+typedef FlxUIGroup = FlxTypedUIGroup<FlxSprite>;
 /**
- * A cheap extension of FlxUIGroup that lets you move all the children around
+ * A cheap extension of FlxSpriteGroup that lets you move all the children around
  * without having to call reset()
  * @author Lars Doucet
  */
-class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
+class FlxTypedUIGroup<T:FlxSprite> extends FlxTypedSpriteGroup<T> implements IFlxUIWidget
 {
-	/***PUBLIC VARS***/
-	// a handy string handler name for this thing
+	/** a handy string handler name for this thing */
 	public var name:String;
 
+	/** If true, will issue FlxUI.event() and FlxUI.request() calls */
 	public var broadcastToFlxUI:Bool = true;
 
-	/***PUBLIC GETTER/SETTERS***/
-	// public var velocity:FlxPoint;
+	/** Will automatically adjust the width and height to the members, on add/remove calls */ 
 	public var autoBounds:Bool = true;
 
-	/***PUBLIC FUNCTIONS***/
-	public function new(X:Float = 0, Y:Float = 0)
+	public function new(x = 0.0, Y = 0.0)
 	{
-		super(X, Y);
+		super(x, y);
 	}
 
-	public override function destroy():Void
+	override function add(sprite:T):T
 	{
-		super.destroy();
+		final obj = super.add(sprite);
+		if (autoBounds)
+		{
+			calcBounds();
+		}
+		return sprite;
 	}
 
-	public override function add(Object:FlxSprite):FlxSprite
+	public override function remove(sprite:T, splice:Bool = false):T
 	{
-		var obj = super.add(Object);
+		final obj = super.remove(sprite, splice);
 		if (autoBounds)
 		{
 			calcBounds();
@@ -43,110 +47,84 @@ class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 		return obj;
 	}
 
-	public override function remove(Object:FlxSprite, Splice:Bool = false):FlxSprite
+	public function setScrollFactor(x:Float, y:Float):Void
 	{
-		var obj = super.remove(Object, Splice);
-		if (autoBounds)
+		for (sprite in members)
 		{
-			calcBounds();
-		}
-		return obj;
-	}
-
-	public function setScrollFactor(X:Float, Y:Float):Void
-	{
-		for (obj in members)
-		{
-			if (obj != null)
+			if (sprite != null)
 			{
-				obj.scrollFactor.set(X, Y);
+				sprite.scrollFactor.set(x, y);
 			}
 		}
 	}
 
-	public function hasThis(Object:FlxSprite):Bool
+	/**
+	 * Whether this group contains the sprite.
+	 */
+	@:deprecated("Use contains, instead")
+	inline public function hasThis(sprite:T):Bool
 	{
-		for (obj in members)
-		{
-			if (obj == Object)
-			{
-				return true;
-			}
-		}
-		return false;
+		return contains(sprite);
+	}
+
+	/**
+	 * Whether this group contains the sprite.
+	 */
+	public function contains(sprite:T):Bool
+	{
+		return members.contains(sprite);
 	}
 
 	/**
 	 * Calculates the bounds of the group and sets width/height
-	 * @param	rect (optional) -- if supplied, populates this with the boundaries of the group
+	 * @param   rect  If supplied, populates this with the boundaries of the group
 	 */
-	public function calcBounds(rect:FlxRect = null)
+	public function calcBounds(?rect:FlxRect)
 	{
-		if (members != null && members.length > 0)
+		if (members == null || members.length == 0)
 		{
-			var left:Float = Math.POSITIVE_INFINITY;
-			var right:Float = Math.NEGATIVE_INFINITY;
-			var top:Float = Math.POSITIVE_INFINITY;
-			var bottom:Float = Math.NEGATIVE_INFINITY;
-			for (fb in members)
+			if (rect != null) rect.set();
+			return width = height = 0;
+		}
+		
+		var left:Float = Math.POSITIVE_INFINITY;
+		var right:Float = Math.NEGATIVE_INFINITY;
+		var top:Float = Math.POSITIVE_INFINITY;
+		var bottom:Float = Math.NEGATIVE_INFINITY;
+		for (sprite in members)
+		{
+			if (sprite != null)
 			{
-				if (fb != null)
+				if (sprite.x < left)
 				{
-					if ((fb is IFlxUIWidget))
-					{
-						var flui:FlxSprite = cast fb;
-						if (flui.x < left)
-						{
-							left = flui.x;
-						}
-						if (flui.x + flui.width > right)
-						{
-							right = flui.x + flui.width;
-						}
-						if (flui.y < top)
-						{
-							top = flui.y;
-						}
-						if (flui.y + flui.height > bottom)
-						{
-							bottom = flui.y + flui.height;
-						}
-					}
-					else if ((fb is FlxSprite))
-					{
-						var flxi:FlxSprite = cast fb;
-						if (flxi.x < left)
-						{
-							left = flxi.x;
-						}
-						if (flxi.x > right)
-						{
-							right = flxi.x;
-						}
-						if (flxi.y < top)
-						{
-							top = flxi.y;
-						}
-						if (flxi.y > bottom)
-						{
-							bottom = flxi.y;
-						}
-					}
+					left = sprite.x;
+				}
+				
+				if (sprite.x + sprite.width > right)
+				{
+					right = sprite.x + sprite.width;
+				}
+				
+				if (sprite.y < top)
+				{
+					top = sprite.y;
+				}
+				
+				if (sprite.y + sprite.height > bottom)
+				{
+					bottom = sprite.y + sprite.height;
 				}
 			}
-			width = (right - left);
-			height = (bottom - top);
-			if (rect != null)
-			{
-				rect.x = left;
-				rect.y = top;
-				rect.width = width;
-				rect.height = height;
-			}
 		}
-		else
+		
+		width = (right - left);
+		height = (bottom - top);
+		if (rect != null)
 		{
-			width = height = 0;
+			rect.x = left;
+			rect.y = top;
+			rect.width = width;
+			rect.height = height;
 		}
 	}
 
@@ -155,12 +133,10 @@ class FlxUIGroup extends FlxSpriteGroup implements IFlxUIWidget
 	 */
 	public function floorAll():Void
 	{
-		var fs:FlxSprite = null;
-		for (fb in members)
+		for (sprite in members)
 		{
-			fs = cast fb;
-			fs.x = Math.floor(fs.x);
-			fs.y = Math.floor(fs.y);
+			sprite.x = Math.floor(sprite.x);
+			sprite.y = Math.floor(sprite.y);
 		}
 	}
 }
