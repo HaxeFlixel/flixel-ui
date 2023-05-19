@@ -83,8 +83,9 @@ class FlxTypedUIGroup<T:FlxSprite> extends FlxTypedSpriteGroup<T> implements IFl
 	{
 		if (members == null || members.length == 0)
 		{
+			width = height = 0;
 			if (rect != null) rect.set();
-			return width = height = 0;
+			return;
 		}
 		
 		var left:Float = Math.POSITIVE_INFINITY;
