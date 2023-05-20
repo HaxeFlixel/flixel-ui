@@ -10,7 +10,7 @@ import flixel.addons.ui.interfaces.IFlxUIWidget;
 	 * via https://github.com/HaxeFlixel/flixel/pull/2808
 	 * Note: this is only the case when FLX_NO_POINT_POOL is defined.
 	 */
-	#error "This version of flixel is not compatile with flixel-ui versions 2.6.0 or higher. Update to flixel 5.4.0 or later";
+	#error "This version of flixel-ui is not compatible with flixel versions less than 5.4.0";
 #end
 
 typedef FlxUIGroup = FlxTypedUIGroup<FlxSprite>;
