@@ -5,6 +5,14 @@ import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxRect;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 
+#if (flixel < "5.4.0" && FLX_NO_POINT_POOL)
+	/* This is a weird haxe bug I haven't figured out, fixed in 5.4.0
+	 * via https://github.com/HaxeFlixel/flixel/pull/2808
+	 * Note: this is only the case when FLX_NO_POINT_POOL is defined.
+	 */
+	#error "This version of flixel is not compatile with flixel-ui versions 2.6.0 or higher. Update to flixel 5.4.0 or later";
+#end
+
 typedef FlxUIGroup = FlxTypedUIGroup<FlxSprite>;
 /**
  * A cheap extension of FlxSpriteGroup that lets you move all the children around
