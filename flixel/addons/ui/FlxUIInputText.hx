@@ -1,5 +1,6 @@
 package flixel.addons.ui;
 
+import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.IResizable;
@@ -7,7 +8,7 @@ import flixel.addons.ui.interfaces.IResizable;
 /**
  * @author Lars Doucet
  */
-class FlxUIInputText extends FlxInputText implements IResizable implements IFlxUIWidget implements IHasParams
+class FlxUIInputText extends FlxInputText implements IResizable implements IFlxUIWidget implements IHasParams implements ICursorPointable
 {
 	public var name:String;
 
