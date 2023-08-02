@@ -319,7 +319,7 @@ class FlxInputText extends FlxText
 				hasFocus = false;
 				if (hadFocus && focusLost != null)
 					focusLost();
-			}copy
+			}
 		}
 		#end
 	}
