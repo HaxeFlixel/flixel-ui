@@ -1,6 +1,6 @@
 package flixel.addons.ui;
 
-import flash.geom.Rectangle;
+import openfl.geom.Rectangle;
 import flixel.addons.ui.interfaces.IEventGetter;
 import flixel.addons.ui.interfaces.IFlxUIButton;
 import flixel.addons.ui.interfaces.IFlxUIClickable;

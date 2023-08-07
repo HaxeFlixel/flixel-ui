@@ -1,6 +1,6 @@
 package flixel.addons.ui.interfaces;
 
-import flash.display.BitmapData;
+import openfl.display.BitmapData;
 import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.addons.ui.FlxUIText;
 import flixel.FlxSprite;
