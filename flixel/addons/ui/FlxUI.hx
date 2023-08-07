@@ -1,11 +1,11 @@
 package flixel.addons.ui;
 
-import flash.display.BitmapData;
-import flash.errors.Error;
-import flash.geom.Matrix;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-import flash.Lib;
+import openfl.display.BitmapData;
+import openfl.errors.Error;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
+import openfl.Lib;
 import flixel.addons.ui.FlxUI.MaxMinSize;
 import flixel.addons.ui.ButtonLabelStyle;
 import flixel.addons.ui.FlxUI.Rounding;

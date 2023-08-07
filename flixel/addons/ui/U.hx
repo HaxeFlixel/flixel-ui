@@ -1,8 +1,8 @@
 package flixel.addons.ui;
 
-import flash.display.BitmapData;
-import flash.display.BlendMode;
-import flash.geom.Point;
+import openfl.display.BitmapData;
+import openfl.display.BlendMode;
+import openfl.geom.Point;
 import flixel.addons.ui.FlxUI.MaxMinSize;
 import flixel.FlxBasic;
 import flixel.FlxG;
@@ -765,7 +765,7 @@ class U
 					the_xml = cast(thing, Access).x;
 				}
 				thing = null;
-				flash.system.System.disposeXML(the_xml);
+				openfl.system.System.disposeXML(the_xml);
 			#end */
 	}
 

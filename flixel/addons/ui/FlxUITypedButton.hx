@@ -1,7 +1,7 @@
 package flixel.addons.ui;
 
-import flash.display.BitmapData;
-import flash.errors.Error;
+import openfl.display.BitmapData;
+import openfl.errors.Error;
 import flixel.addons.ui.FlxUI.UIEventCallback;
 import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.addons.ui.interfaces.IFlxUIButton;

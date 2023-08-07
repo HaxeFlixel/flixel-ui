@@ -1,10 +1,10 @@
 package flixel.addons.ui;
 
-import flash.display.BitmapData;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-import flash.text.Font;
-import flash.text.TextFormat;
+import openfl.display.BitmapData;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
+import openfl.text.Font;
+import openfl.text.TextFormat;
 import flixel.addons.ui.BorderDef;
 import flixel.addons.ui.FontDef;
 import flixel.addons.ui.interfaces.IFlxUIButton;

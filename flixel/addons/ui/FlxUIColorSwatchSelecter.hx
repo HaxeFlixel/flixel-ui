@@ -1,6 +1,6 @@
 package flixel.addons.ui;
 
-import flash.geom.Rectangle;
+import openfl.geom.Rectangle;
 import flixel.addons.ui.FlxUIColorSwatchSelecter.SwatchGraphic;
 import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.FlxSprite;
