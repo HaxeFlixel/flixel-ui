@@ -765,7 +765,7 @@ class U
 					the_xml = cast(thing, Access).x;
 				}
 				thing = null;
-				openfl.system.System.disposeXML(the_xml);
+				flash.system.System.disposeXML(the_xml);
 			#end */
 	}
 
