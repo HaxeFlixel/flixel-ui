@@ -237,7 +237,7 @@ class FlxInputText extends FlxText
 		}
 
 		// Register paste events for the HTML5 parent window
-		#if (js && html5)
+		#if (html5 && js)
 		var window = Application.current.window;
 		@:privateAccess window.onTextInput.add(handleClipboardText);
 		#end
@@ -269,7 +269,7 @@ class FlxInputText extends FlxText
 		}
 		#end
 
-		#if (js && html5)
+		#if (html5 && js)
 		var window = Application.current.window;
 		@:privateAccess window.onTextInput.remove(handleClipboardText);
 		#end
@@ -387,7 +387,7 @@ class FlxInputText extends FlxText
 					onChange(ENTER_ACTION);
 				case V if (e.ctrlKey):
 					// Reapply focus  when tabbing back into the window and selecting the field
-					#if (js && html5)
+					#if (html5 && js)
 					var window = Application.current.window;
 					@:privateAccess window.textInputEnabled = true;
 					#else
@@ -850,7 +850,7 @@ class FlxInputText extends FlxText
 			calcFrame();
 
 			// Set focus on background parent text input
-			#if (js && html5)
+			#if (html5 && js)
 			var window = Application.current.window;
 			@:privateAccess window.__backend.setTextInputEnabled(newFocus);
 			#end
