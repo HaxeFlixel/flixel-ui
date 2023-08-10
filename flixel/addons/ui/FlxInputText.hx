@@ -229,7 +229,7 @@ class FlxInputText extends FlxText
 		}
 
 		lines = 1;
-		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false, 1);
 
 		if (Text == null)
 		{
