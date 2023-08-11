@@ -15,7 +15,6 @@ import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxTimer;
 import lime.system.Clipboard;
 #if (html5 && js)
-import lime.app.Application;
 import lime.app.Event;
 #end
 
