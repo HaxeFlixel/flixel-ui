@@ -32,6 +32,7 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.graphics.FlxGraphic;
 import flixel.group.FlxSpriteGroup;
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
@@ -4583,7 +4584,11 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 			if (W == -1 && H == -1)	//If neither Width nor Height is supplied, return the sprite as-is
 			{
 				fs = new FlxUISprite(0, 0);
-				fs.loadGraphic(src, isAnimated, frameWidth, frameHeight);
+				var srcAsset:FlxGraphicAsset = src;
+				if (FlxG.bitmap.checkCache(src)){
+					srcAsset = FlxG.bitmap.get(src);
+				}
+				fs.loadGraphic(srcAsset, isAnimated, frameWidth, frameHeight);
 			}
 			else					//If Width or Height or both is/are supplied, do some scaling
 			{
@@ -4760,7 +4765,16 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						
 						if (sw == -1 || sh == -1)
 						{
-							testAsset = Assets.getBitmapData(U.gfx(src));
+							if (FlxG.bitmap.checkCache(src)){
+								var testFlxGfx:FlxGraphic = FlxG.bitmap.get(src);
+								if (testFlxGfx != null){
+									testAsset = testFlxGfx.bitmap;
+									trace("YEEESSSS " + src);
+								}
+							}else{
+								testAsset = Assets.getBitmapData(U.gfx(src));
+							}
+							
 							if (testAsset == null){
 								break;
 							}
