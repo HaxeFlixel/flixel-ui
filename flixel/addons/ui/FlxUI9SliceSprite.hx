@@ -158,7 +158,7 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 		var iw = Std.int(pt.x);
 		var ih = Std.int(pt.y);
 
-		if (_slice9 == null || _slice9 == [])
+		if (_slice9 == null || _slice9.length != 4)
 		{
 			_slice9 = [4, 4, 7, 7];
 		}
