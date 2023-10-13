@@ -23,6 +23,7 @@ import openfl.display.BitmapDataChannel;
 import openfl.geom.Matrix;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import openfl.geom.Rectangle;
+import flixel.addons.ui.FlxUIBitmapSize;
 
 #if (cpp || neko)
 import sys.FileSystem;
@@ -1592,19 +1593,9 @@ class U
 	public static function loadImageScaleToHeight(src:String, Height:Float, Smooth:Bool = true,checkFlxBitmap:Bool=false):String
 	{
 		var bmpSrc:String = gfx(src);
-		var testBmp:BitmapData = null;
+		var testBmp:FlxUIBitmapSize = FlxUIBitmapSize.fromCache(bmpSrc);
 		
-		if (!checkFlxBitmap)
-		{
-			testBmp = Assets.getBitmapData(bmpSrc, false);
-		}
-		else
-		{
-			var flximg = FlxG.bitmap.get(bmpSrc);
-			testBmp = flximg != null ? flximg.bitmap : null;
-		}
-		
-		var ratio:Float = (testBmp != null) ? Height / testBmp.height : 1.0;
+		var ratio:Float = (!testBmp.isZero) ? Height / testBmp.height : 1.0;
 		return loadMonoScaledImage(bmpSrc, ratio, Smooth, checkFlxBitmap);
 	}
 	
