@@ -1623,7 +1623,13 @@ class U
 		
 		var	testBmp:BitmapData = null;
 		
-		if (!checkFlxBitmap)
+		if(checkFlxBitmap)
+		{
+			var flximg = FlxG.bitmap.get(bmpSrc);
+			testBmp = flximg != null ? flximg.bitmap : null;
+		}
+		
+		if(!checkFlxBitmap || testBmp == null)
 		{
 			testBmp = Assets.getBitmapData(bmpSrc, false);
 			if (testBmp == null)
@@ -1631,11 +1637,7 @@ class U
 				testBmp = Assets.getBitmapData(bmpSrc, true);
 			}
 		}
-		else
-		{
-			var flximg = FlxG.bitmap.get(bmpSrc);
-			testBmp = flximg != null ? flximg.bitmap : null;
-		}
+		
 		
 		if (testBmp != null)	//if the master asset exists
 		{
