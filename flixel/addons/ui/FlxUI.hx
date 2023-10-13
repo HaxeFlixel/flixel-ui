@@ -44,6 +44,7 @@ import flixel.util.FlxStringUtil;
 import haxe.xml.Fast;
 import openfl.Assets;
 import openfl.text.TextFormat;
+import flixel.addons.ui.FlxUIBitmapSize;
 
 /**
  * A simple xml-driven user interface
@@ -4271,11 +4272,9 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		
 		if (src == origSrc) return slice9;
 		
-		var srcAsset:BitmapData = FlxG.bitmap.checkCache(src) ? FlxG.bitmap.get(src).bitmap : null;
+		var origAsset = FlxUIBitmapSize.fromAsset(origSrc);
+		var srcAsset = FlxUIBitmapSize.fromCache(src);
 		
-		if (srcAsset == null) srcAsset = Assets.getBitmapData(origSrc);
-		
-		var origAsset = Assets.getBitmapData(origSrc);
 		var srcScaleFactorX = srcAsset.width / origAsset.width;
 		var srcScaleFactorY = srcAsset.height / origAsset.height;
 		
@@ -4623,16 +4622,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					var imgFrameHeight = frameHeight;
 					if (isAnimated)
 					{
-						var testAsset:BitmapData = null;
-						if (FlxG.bitmap.checkCache(src))
-						{
-							var gfx = FlxG.bitmap.get(src);
-							if (gfx != null)
-							{
-								testAsset = gfx.bitmap;
-							}
-						}
-						if(testAsset == null) testAsset = Assets.getBitmapData(src);
+						var testAsset = FlxUIBitmapSize.fromCache(src);
 						var testScale = H / testAsset.height;
 						var tileW = Std.int(frameWidth * testScale);
 						var tileH = Std.int(frameHeight * testScale);
@@ -4722,7 +4712,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 				{
 					var suffix:String = U.xml_str(scaleNode.x, "suffix");
 					var srcSuffix:String = (src + suffix);					//add the proper suffix, so "asset"->"asset_16x9"
-					var testAsset:BitmapData = null;
+					var testAsset:FlxUIBitmapSize = FlxUIBitmapSize.ZERO;
 					var scale_:Float = -1;
 					var smooth = loadSmooth(scaleNode, true);
 					
@@ -4730,8 +4720,8 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 					
 					if (to_height != -1)
 					{
-						var testAsset = U.getBmp(U.gfx(src));
-						if (testAsset != null)
+						var testAsset = FlxUIBitmapSize.fromCache(U.gfx(src));
+						if (!testAsset.isZero)
 						{
 							scale_ = to_height / testAsset.height;
 						}
@@ -4766,16 +4756,12 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						if (sw == -1 || sh == -1)
 						{
 							if (FlxG.bitmap.checkCache(src)){
-								var testFlxGfx:FlxGraphic = FlxG.bitmap.get(src);
-								if (testFlxGfx != null){
-									testAsset = testFlxGfx.bitmap;
-									trace("YEEESSSS " + src);
-								}
+								testAsset = FlxUIBitmapSize.fromCache(src);
 							}else{
-								testAsset = Assets.getBitmapData(U.gfx(src));
+								testAsset = FlxUIBitmapSize.fromAsset(U.gfx(src));
 							}
 							
-							if (testAsset == null){
+							if (testAsset.isZero){
 								break;
 							}
 							sw = testAsset.width;
@@ -4797,14 +4783,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 						if (tilesTall > 1 || tilesWide > 1)
 						{
 							var gfxSrc = U.gfx(src);
-							if (FlxG.bitmap.checkCache(gfxSrc))
-							{
-								testAsset = FlxG.bitmap.get(gfxSrc).bitmap;
-							}
-							else
-							{
-								testAsset = Assets.getBitmapData(gfxSrc);
-							}
+							testAsset = FlxUIBitmapSize.fromCache(gfxSrc);
 							var str = U.scaleAndStoreTileset(U.gfx(srcSuffix), scale_y, Std.int(testAsset.width / tilesWide), Std.int(testAsset.height / tilesTall), Std.int(sw / tilesWide), Std.int(sh / tilesTall), smooth);
 							addToScaledAssets(str);
 							return str;
