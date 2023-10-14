@@ -160,6 +160,8 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 
 		if (_slice9 == null || _slice9.length != 4)
 		{
+			if (_slice9.length != 4)
+				flixel.FlxG.log.warn("Invalid 9slice array!");
 			_slice9 = [4, 4, 7, 7];
 		}
 
