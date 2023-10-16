@@ -6,6 +6,7 @@ import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.ui.FlxButton;
 import flixel.math.FlxPoint;
+import flixel.util.FlxDestroyUtil;
 
 class FlxUIList extends FlxUIGroup
 {
@@ -184,12 +185,10 @@ class FlxUIList extends FlxUIGroup
 
 	public override function destroy():Void
 	{
-		prevButton = null;
-		nextButton = null;
-		prevButtonOffset.put();
-		nextButtonOffset.put();
-		prevButtonOffset = null;
-		nextButtonOffset = null;
+		prevButton = FlxDestroyUtil.destroy(prevButton);
+		nextButton = FlxDestroyUtil.destroy(nextButton);
+		prevButtonOffset = FlxDestroyUtil.put(prevButtonOffset);
+		nextButtonOffset = FlxDestroyUtil.put(nextButtonOffset);
 		super.destroy();
 	}
 
