@@ -430,7 +430,7 @@ class FlxInputText extends FlxText
 
 	function pasteClipboardText(clipboardText:String)
 	{
-		final newText = filter(clipboardText).substring(0, maxLength - text.length);
+		final newText = filter(clipboardText).substring(0, maxLength > 0 ? (maxLength - text.length) : clipboardText.length);
 
 		text = insertSubstring(text, newText, caretIndex);
 		caretIndex += newText.length;
