@@ -1,6 +1,6 @@
 package flixel.addons.ui;
 
-import flash.events.MouseEvent;
+import openfl.events.MouseEvent;
 import flixel.addons.ui.Anchor;
 import flixel.addons.ui.FlxUIAssets;
 import flixel.addons.ui.FlxUICursor.WidgetList;

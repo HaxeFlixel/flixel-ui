@@ -1,10 +1,10 @@
 package flixel.addons.ui;
 
-import flash.display.BitmapData;
-import flash.display.Sprite;
-import flash.geom.Matrix;
-import flash.geom.Point;
-import flash.geom.Rectangle;
+import openfl.display.BitmapData;
+import openfl.display.Sprite;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IResizable;
 import flixel.graphics.FlxGraphic;
@@ -158,8 +158,10 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 		var iw = Std.int(pt.x);
 		var ih = Std.int(pt.y);
 
-		if (_slice9 == null || _slice9 == [])
+		if (_slice9 == null || _slice9.length != 4)
 		{
+			if (_slice9 != null)
+				flixel.FlxG.log.warn("Invalid 9slice array, expected a length of 4");
 			_slice9 = [4, 4, 7, 7];
 		}
 

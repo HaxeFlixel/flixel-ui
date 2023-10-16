@@ -1,34 +1,20 @@
 package flixel.addons.ui;
 
-import flash.Lib;
-import flash.display.BitmapData;
-import flash.errors.Error;
-import flash.geom.Matrix;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-
-import flixel.FlxG;
-import flixel.FlxObject;
-import flixel.FlxSprite;
-import flixel.FlxState;
-import flixel.group.FlxSpriteGroup;
-import flixel.system.FlxAssets;
-import flixel.text.FlxText;
-import flixel.ui.FlxBar;
-import flixel.util.FlxArrayUtil;
-import flixel.util.FlxColor;
-import flixel.math.FlxPoint;
-import flixel.util.FlxStringUtil;
-
+import openfl.display.BitmapData;
+import openfl.errors.Error;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
+import openfl.Lib;
 import flixel.addons.ui.ButtonLabelStyle;
-import flixel.addons.ui.BorderDef;
-import flixel.addons.ui.FlxUIBar;
-import flixel.addons.ui.FlxUICursor;
+import flixel.addons.ui.FlxUIBar.FlxBarStyle;
+import flixel.addons.ui.FlxUICursor.WidgetList;
 import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.addons.ui.FlxUIGroup;
-import flixel.addons.ui.FlxUILine;
-import flixel.addons.ui.FlxUIRadioGroup;
-import flixel.addons.ui.FlxUITooltipManager;
+import flixel.addons.ui.BorderDef;
+import flixel.addons.ui.FlxUILine.LineAxis;
+import flixel.addons.ui.FlxUIRadioGroup.CheckStyle;
+import flixel.addons.ui.FlxUITooltipManager.FlxUITooltipData;
 import flixel.addons.ui.FontDef;
 import flixel.addons.ui.interfaces.IEventGetter;
 import flixel.addons.ui.interfaces.IFireTongue;
@@ -39,7 +25,18 @@ import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.ILabeled;
 import flixel.addons.ui.interfaces.IResizable;
-
+import flixel.FlxG;
+import flixel.FlxObject;
+import flixel.FlxSprite;
+import flixel.FlxState;
+import flixel.group.FlxSpriteGroup;
+import flixel.system.FlxAssets;
+import flixel.text.FlxText;
+import flixel.ui.FlxBar.FlxBarFillDirection;
+import flixel.util.FlxArrayUtil;
+import flixel.util.FlxColor;
+import flixel.math.FlxPoint;
+import flixel.util.FlxStringUtil;
 import openfl.Assets;
 import openfl.text.TextFormat;
 #if haxe4
