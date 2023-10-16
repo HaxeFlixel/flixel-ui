@@ -3,9 +3,9 @@ package flixel.addons.ui;
 import openfl.errors.Error;
 import openfl.events.KeyboardEvent;
 import openfl.geom.Rectangle;
-import flixel.addons.ui.FlxUI.NamedString;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.addons.ui.FlxUI.NamedString;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
@@ -13,7 +13,10 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxTimer;
-import openfl.desktop.Clipboard;
+import lime.system.Clipboard;
+#if (html5 && js)
+import lime.app.Application;
+#end
 
 /**
  * FlxInputText v1.11, ported to Haxe
@@ -225,12 +228,18 @@ class FlxInputText extends FlxText
 		}
 
 		lines = 1;
-		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false, 1);
 
 		if (Text == null)
 		{
 			Text = "";
 		}
+
+		// Register paste events for the HTML5 parent window
+		#if (html5 && js)
+		var window = Application.current.window;
+		@:privateAccess window.onTextInput.add(handleClipboardText);
+		#end
 
 		text = Text; // ensure set_text is called to avoid bugs (like not preparing _charBoundaries on sys target, making it impossible to click)
 
@@ -257,6 +266,11 @@ class FlxInputText extends FlxText
 			}
 			_charBoundaries = null;
 		}
+		#end
+
+		#if (html5 && js)
+		var window = Application.current.window;
+		@:privateAccess window.onTextInput.remove(handleClipboardText);
 		#end
 
 		super.destroy();
@@ -370,6 +384,16 @@ class FlxInputText extends FlxText
 					}
 				case ENTER:
 					onChange(ENTER_ACTION);
+				case V if (e.ctrlKey):
+					// Reapply focus  when tabbing back into the window and selecting the field
+					#if (html5 && js)
+					var window = Application.current.window;
+					@:privateAccess window.textInputEnabled = true;
+					#else
+					var clipboardText:String = Clipboard.text;
+					if (clipboardText != null)
+						pasteClipboardText(clipboardText);
+					#end
 				default:
 					// Actually add some text
 					if (e.charCode == 0) // non-printable characters crash String.fromCharCode
@@ -378,7 +402,7 @@ class FlxInputText extends FlxText
 					}
 					final newText = filter(String.fromCharCode(e.charCode));
 
-					if (newText.length > 0 && (maxLength == 0 || (text.length + newText.length) < maxLength))
+					if (newText.length > 0 && (maxLength == 0 || (text.length + newText.length) <= maxLength))
 					{
 						text = insertSubstring(text, newText, caretIndex);
 						caretIndex++;
@@ -394,6 +418,23 @@ class FlxInputText extends FlxText
 		{
 			callback(text, action);
 		}
+	}
+
+	#if (html5 && js)
+	function handleClipboardText(clipboardText:String)
+	{
+		@:privateAccess if (Clipboard._text == clipboardText)
+			pasteClipboardText(clipboardText);
+	}
+	#end
+
+	function pasteClipboardText(clipboardText:String)
+	{
+		final newText = filter(clipboardText).substring(0, maxLength > 0 ? (maxLength - text.length) : clipboardText.length);
+
+		text = insertSubstring(text, newText, caretIndex);
+		caretIndex += newText.length;
+		onChange(INPUT_ACTION);
 	}
 
 	/**
@@ -512,11 +553,9 @@ class FlxInputText extends FlxText
 				switch (getAlignStr())
 				{
 					case RIGHT:
-						X = X - textField.width + textField.textWidth
-							;
+						X = X - textField.width + textField.textWidth;
 					case CENTER:
-						X = X - textField.width / 2 + textField.textWidth / 2
-							;
+						X = X - textField.width / 2 + textField.textWidth / 2;
 					default:
 				}
 			}
@@ -808,6 +847,12 @@ class FlxInputText extends FlxText
 		if (newFocus != hasFocus)
 		{
 			calcFrame();
+
+			// Set focus on background parent text input
+			#if (html5 && js)
+			var window = Application.current.window;
+			@:privateAccess window.__backend.setTextInputEnabled(newFocus);
+			#end
 		}
 		return hasFocus = newFocus;
 	}
