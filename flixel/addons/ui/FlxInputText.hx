@@ -14,9 +14,6 @@ import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxTimer;
 import lime.system.Clipboard;
-#if (html5 && js)
-import lime.app.Application;
-#end
 
 /**
  * FlxInputText v1.11, ported to Haxe
@@ -103,6 +100,11 @@ class FlxInputText extends FlxText
 	 * Whether or not the text box is the active object on the screen.
 	 */
 	public var hasFocus(default, set):Bool = false;
+
+	/**
+	 * Determines if the input loses focus when pressing the Enter key on a physical or soft keyboard
+	 */
+	public var loseFocusOnEnter:Bool = #if mobile true; #else false; #end
 
 	/**
 	 * The position of the selection cursor. An index of 0 means the carat is before the character at index 0.
@@ -236,9 +238,8 @@ class FlxInputText extends FlxText
 		}
 
 		// Register paste events for the HTML5 parent window
-		#if (html5 && js)
-		var window = Application.current.window;
-		@:privateAccess window.onTextInput.add(handleClipboardText);
+		#if (js && html5)
+		FlxG.stage.window.onTextInput.add(handleClipboardText);
 		#end
 
 		text = Text; // ensure set_text is called to avoid bugs (like not preparing _charBoundaries on sys target, making it impossible to click)
@@ -268,9 +269,8 @@ class FlxInputText extends FlxText
 		}
 		#end
 
-		#if (html5 && js)
-		var window = Application.current.window;
-		@:privateAccess window.onTextInput.remove(handleClipboardText);
+		#if (js && html5)
+		FlxG.stage.window.onTextInput.remove(handleClipboardText);
 		#end
 
 		super.destroy();
@@ -384,11 +384,12 @@ class FlxInputText extends FlxText
 					}
 				case ENTER:
 					onChange(ENTER_ACTION);
+					if (loseFocusOnEnter)
+						hasFocus = false;
 				case V if (e.ctrlKey):
 					// Reapply focus  when tabbing back into the window and selecting the field
-					#if (html5 && js)
-					var window = Application.current.window;
-					@:privateAccess window.textInputEnabled = true;
+					#if (js && html5)
+					FlxG.stage.window.textInputEnabled = true;
 					#else
 					var clipboardText:String = Clipboard.text;
 					if (clipboardText != null)
@@ -832,6 +833,11 @@ class FlxInputText extends FlxText
 				_caretTimer = new FlxTimer().start(0.5, toggleCaret, 0);
 				caret.visible = true;
 				caretIndex = text.length;
+
+				#if mobile
+				// Initialize soft keyboard
+				FlxG.stage.window.textInputEnabled = true;
+				#end
 			}
 		}
 		else
@@ -842,6 +848,11 @@ class FlxInputText extends FlxText
 			{
 				_caretTimer.cancel();
 			}
+
+			#if mobile
+			// Remove soft keyboard
+			FlxG.stage.window.textInputEnabled = false;
+			#end
 		}
 
 		if (newFocus != hasFocus)
@@ -849,8 +860,8 @@ class FlxInputText extends FlxText
 			calcFrame();
 
 			// Set focus on background parent text input
-			#if (html5 && js)
-			var window = Application.current.window;
+			#if (js && html5)
+			var window = FlxG.stage.window;
 			@:privateAccess window.__backend.setTextInputEnabled(newFocus);
 			#end
 		}
