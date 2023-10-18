@@ -6,13 +6,11 @@ import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.Lib;
-import flixel.addons.ui.FlxUI.MaxMinSize;
 import flixel.addons.ui.ButtonLabelStyle;
-import flixel.addons.ui.FlxUI.Rounding;
-import flixel.addons.ui.FlxUI.VarValue;
 import flixel.addons.ui.FlxUIBar.FlxBarStyle;
 import flixel.addons.ui.FlxUICursor.WidgetList;
 import flixel.addons.ui.FlxUIDropDownMenu;
+import flixel.addons.ui.FlxUIGroup;
 import flixel.addons.ui.BorderDef;
 import flixel.addons.ui.FlxUILine.LineAxis;
 import flixel.addons.ui.FlxUIRadioGroup.CheckStyle;
@@ -132,17 +130,17 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 	 */
 	private function _tongueSet(list:Array<FlxSprite>, tongue:IFireTongue):Void
 	{
-		for (fs in list)
+		for (sprite in list)
 		{
-			if ((fs is FlxUIGroup))
+			if (sprite is FlxTypedUIGroup)
 			{
-				var g:FlxUIGroup = cast(fs, FlxUIGroup);
-				_tongueSet(g.members, tongue);
+				final group:FlxTypedUIGroup<FlxSprite> = cast sprite;
+				_tongueSet(group.members, tongue);
 			}
-			else if ((fs is FlxUI))
+			else if (sprite is FlxUI)
 			{
-				var fu:FlxUI = cast(fs, FlxUI);
-				fu.tongue = tongue;
+				final ui:FlxUI = cast sprite;
+				ui.tongue = tongue;
 			}
 		}
 	}

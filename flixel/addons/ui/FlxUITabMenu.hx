@@ -304,7 +304,7 @@ class FlxUITabMenu extends FlxUIGroup implements IResizable implements IFlxUICli
 			return; // DO NOT ADD A GROUP TO ITSELF
 		}
 
-		if (!hasThis(g))
+		if (!contains(g))
 		{ // ONLY ADD IF IT DOESN'T EXIST
 			g.y = (_back.y - y);
 			add(g);
