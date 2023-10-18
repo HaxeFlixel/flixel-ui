@@ -102,11 +102,6 @@ class FlxInputText extends FlxText
 	public var hasFocus(default, set):Bool = false;
 
 	/**
-	 * Determines if the input loses focus when pressing the Enter key on a physical or soft keyboard
-	 */
-	public var loseFocusOnEnter:Bool = #if mobile true; #else false; #end
-
-	/**
 	 * The position of the selection cursor. An index of 0 means the carat is before the character at index 0.
 	 */
 	public var caretIndex(default, set):Int = 0;
@@ -384,8 +379,6 @@ class FlxInputText extends FlxText
 					}
 				case ENTER:
 					onChange(ENTER_ACTION);
-					if (loseFocusOnEnter)
-						hasFocus = false;
 				case V if (e.ctrlKey):
 					// Reapply focus  when tabbing back into the window and selecting the field
 					#if (js && html5)
