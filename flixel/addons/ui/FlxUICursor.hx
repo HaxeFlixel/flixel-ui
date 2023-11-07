@@ -926,8 +926,8 @@ class FlxUICursor extends FlxUISprite
 		}
 
 		// get center point of object
-		widgetPoint.x += currWidget.width / 2;
-		widgetPoint.y += currWidget.height / 2;
+		widgetPoint.x += currWidget.width * Camera.totalScaleX * 0.5;
+		widgetPoint.y += currWidget.height * Camera.totalScaleY * 0.5;
 
 		return widgetPoint;
 	}
