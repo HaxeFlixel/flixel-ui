@@ -30,7 +30,7 @@ class FlxTypedUIGroup<T:FlxSprite> extends FlxTypedSpriteGroup<T> implements IFl
 	/** Will automatically adjust the width and height to the members, on add/remove calls */ 
 	public var autoBounds:Bool = true;
 
-	public function new(x = 0.0, Y = 0.0)
+	public function new(x = 0.0, y = 0.0)
 	{
 		super(x, y);
 	}
