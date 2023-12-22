@@ -310,14 +310,8 @@ class FlxUICursor extends FlxUISprite
 	public override function update(elapsed:Float):Void
 	{
 		#if FLX_GAMEPAD
-		if (gamepad == null)
-		{
-			var g = getGamepad(false);
-			if (g != null)
-			{
-				gamepad = g;
-			}
-		}
+		if (gamepad == null || !gamepad.connected)
+			gamepad = getGamepad(false);
 		#end
 
 		#if FLX_MOUSE
@@ -692,25 +686,24 @@ class FlxUICursor extends FlxUISprite
 	#if FLX_GAMEPAD
 	private function getGamepad(exhaustive:Bool = true):FlxGamepad
 	{
-		var gamepad = switch (gamepadAutoConnect)
+		final gamepad = switch (gamepadAutoConnect)
 		{
 			case Never: null;
 			case FirstActive: FlxG.gamepads.getFirstActiveGamepad();
 			case LastActive: FlxG.gamepads.lastActive;
 			case GamepadID(i): FlxG.gamepads.getByID(i);
 		}
-		if (gamepad == null && exhaustive)
+
+		if ((gamepad != null && gamepad.connected) || !exhaustive)
+			return gamepad;
+
+		for (i in 0...FlxG.gamepads.numActiveGamepads)
 		{
-			for (i in 0...FlxG.gamepads.numActiveGamepads)
-			{
-				gamepad = FlxG.gamepads.getByID(i);
-				if (gamepad != null)
-				{
-					return gamepad;
-				}
-			}
+			final gamepad = FlxG.gamepads.getByID(i);
+			if (gamepad != null && gamepad.connected)
+				return gamepad;
 		}
-		return gamepad;
+		return null;
 	}
 	#end
 
