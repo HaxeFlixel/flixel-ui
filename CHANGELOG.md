@@ -1,3 +1,29 @@
+2.6.0 (TBD)
+------------------------------ 
+
+#### New features:
+
+- `FlxInputText`: Various features
+    - Add paste support ([#253](https://github.com/HaxeFlixel/flixel-ui/pull/253))
+    - Add mobile keyboard support ([#257](https://github.com/HaxeFlixel/flixel-ui/pull/257))
+- `FlxUIGroup`: add `FlxTypedUIGroup` ([#246](https://github.com/HaxeFlixel/flixel-ui/pull/246))
+
+#### Changes and improvements:
+- Changed references to the `flash` package to their `openfl` equivalent, whenever possible ([#252](https://github.com/HaxeFlixel/flixel-ui/pull/252))
+- `FlxInputText`: Various changes
+    - Use `FlxKey` instead of raw ints ([#250](https://github.com/HaxeFlixel/flixel-ui/pull/250))
+    - Remove unnecessary variables ([#257](https://github.com/HaxeFlixel/flixel-ui/pull/257))
+- `FlxUIList`: Properly destroy members ([#254](https://github.com/HaxeFlixel/flixel-ui/pull/254))
+- `FlxUI9SliceSprite`: Warn on invalid slice arrays ([#256](https://github.com/HaxeFlixel/flixel-ui/pull/256))
+
+
+#### Dependencies:
+- Dropped support for haxe 4.0 and 4.1, use 4.2.5 or higher
+
+#### Bugfixes:
+- `FlxUICursor`: Prevent warning on recent haxe versions ([#244](https://github.com/HaxeFlixel/flixel-ui/pull/244))
+- `FlxInputText`: Fix maxLength input ([#253](https://github.com/HaxeFlixel/flixel-ui/pull/253))
+
 2.5.0 (November 19, 2022)
 ------------------------------ 
 * Deprecate haxe 3
