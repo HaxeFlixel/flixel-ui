@@ -330,7 +330,7 @@ class FlxInputText extends FlxText
 			var hadFocus:Bool = hasFocus;
 			if (FlxG.touches.getFirst().overlaps(this))
 			{
-				caretIndex = getCaretIndex();
+				caretIndex = getCaretIndex(false);
 				hasFocus = true;
 				if (!hadFocus && focusGained != null)
 					focusGained();
@@ -435,21 +435,30 @@ class FlxInputText extends FlxText
 	}
 
 	/**
-	 * Gets the index of the character in this box under the mouse cursor
+	 * Gets the index of the character in this box under the mouse cursor or touch event
 	 * @return The index of the character.
 	 *         between 0 and the length of the text
 	 */
-	private function getCaretIndex():Int
+	private function getCaretIndex(isMouse:Bool = true):Int
 	{
-		#if FLX_MOUSE
-		var hit = FlxPoint.get(FlxG.mouse.x - x, FlxG.mouse.y - y);
-		return getCharIndexAtPoint(hit.x, hit.y);
-		#elseif FLX_TOUCH
-		var hit = FlxPoint.get(FlxG.touches.getFirst().x - x, FlxG.touches.getFirst().y - y);
-		return getCharIndexAtPoint(hit.x, hit.y);
-		#else
-		return 0;
-		#end
+		if(isMouse)
+		{
+			#if FLX_MOUSE
+			var hit = FlxPoint.get(FlxG.mouse.x - x, FlxG.mouse.y - y);
+			return getCharIndexAtPoint(hit.x, hit.y);
+			#else
+			return 0;
+			#end
+		}
+		else
+		{
+			#if FLX_TOUCH
+			var hit = FlxPoint.get(FlxG.touches.getFirst().x - x, FlxG.touches.getFirst().y - y);
+			return getCharIndexAtPoint(hit.x, hit.y);
+			#else
+			return 0;
+			#end
+		}
 	}
 
 	private function getCharBoundaries(charIndex:Int):Rectangle
