@@ -1441,7 +1441,7 @@ class FlxUICursor extends FlxUISprite
 }
 
 /* Various default input configurations */
-enum abstract FlxUICursorInputFlag(Int) from Int
+enum abstract FlxUICursorInputFlag(Int) from Int to Int
 {
 	/* tab to go "right", shift+tab to go "left", enter to click */
 	var KEYS_TAB = 0x00000001; 
