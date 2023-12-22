@@ -202,15 +202,23 @@ class FlxUICursor extends FlxUISprite
 	public var keysClick:Array<FlxBaseMultiInput>; // intent to "click" or select
 
 	// Various default key configurations:
-	public static inline var KEYS_TAB:Int = 0x00000001; // tab to go "right", shift+tab to go "left", enter to click
-	public static inline var KEYS_WASD:Int = 0x00000010; // WASD to go up/left/down/right, enter to click
-	public static inline var KEYS_ARROWS:Int = 0x00000100; // Arrows to go up/left/down/right, enter to click
-	public static inline var KEYS_NUMPAD:Int = 0x00001000; // Numpad numbers to go up/left/down/right, enter to click
+	/* tab to go "right", shift+tab to go "left", enter to click */
+	public static inline var KEYS_TAB = FlxUICursorInputFlag.KEYS_TAB;
+	/* WASD to go up/left/down/right, enter to click */
+	public static inline var KEYS_WASD = FlxUICursorInputFlag.KEYS_WASD;
+	/* Arrows to go up/left/down/right, enter to click */
+	public static inline var KEYS_ARROWS = FlxUICursorInputFlag.KEYS_ARROWS;
+	/* Numpad numbers to go up/left/down/right, enter to click */
+	public static inline var KEYS_NUMPAD = FlxUICursorInputFlag.KEYS_NUMPAD;
 
-	public static inline var GAMEPAD_DPAD:Int = 0x00010000; // DPAD to go up/left/down/right, A to click
-	public static inline var GAMEPAD_LEFT_STICK:Int = 0x00100000; // Left STICK to go up/left/down/right, A to click
-	public static inline var GAMEPAD_RIGHT_STICK:Int = 0x01000000; // Right STICK to go up/left/down/right, A to click
-	public static inline var GAMEPAD_SHOULDER_BUTTONS:Int = 0x10000000; // Left / Right shoulder buttons to go left/right, A to click
+	/* DPAD to go up/left/down/right, A to click */
+	public static inline var GAMEPAD_DPAD = FlxUICursorInputFlag.GAMEPAD_DPAD;
+	/* Left STICK to go up/left/down/right, A to click */
+	public static inline var GAMEPAD_LEFT_STICK = FlxUICursorInputFlag.GAMEPAD_LEFT_STICK;
+	/* Right STICK to go up/left/down/right, A to click */
+	public static inline var GAMEPAD_RIGHT_STICK = FlxUICursorInputFlag.GAMEPAD_RIGHT_STICK;
+	/* Left / Right shoulder buttons to go left/right, A to click */
+	public static inline var GAMEPAD_SHOULDER_BUTTONS = FlxUICursorInputFlag.GAMEPAD_SHOULDER_BUTTONS;
 
 	// Determines how the cursor attaches itself to the widget it's pointing to
 	public var anchor:Anchor;
@@ -232,7 +240,7 @@ class FlxUICursor extends FlxUISprite
 	 * @param	DefaultKeys		default hotkey layouts, accepts KEYS_TAB, ..._WASD, etc, combine using "|" operator
 	 * @param	Asset			visual asset for the cursor. If not supplied, uses default
 	 */
-	public function new(Callback:String->IFlxUIWidget->Void, InputMethod:Int = INPUT_KEYS, DefaultKeys:Int = KEYS_TAB, ?Asset:Dynamic)
+	public function new(Callback:String->IFlxUIWidget->Void, InputMethod:Int = INPUT_KEYS, DefaultKeys = FlxUICursorInputFlag.KEYS_TAB, ?Asset:Dynamic)
 	{
 		if (Asset == null)
 		{ // No asset detected? Guess based on game's resolution
@@ -594,18 +602,18 @@ class FlxUICursor extends FlxUISprite
 	 * Set the default key layout quickly using a constant.
 	 * @param	code	KEYS_TAB, ..._WASD, etc, combine with "|" operator
 	 */
-	public function setDefaultKeys(code:Int):Void
+	public function setDefaultKeys(code:FlxUICursorInputFlag):Void
 	{
 		_defaultCode = code;
 		_clearKeys();
 		_newKeys();
-		if (code & KEYS_TAB == KEYS_TAB)
+		if (code.has(KEYS_TAB))
 		{
 			_addToKeys(keysRight, new FlxMultiKey(TAB, null, [SHIFT])); // Tab, (but NOT Shift+Tab!)
 			_addToKeys(keysLeft, new FlxMultiKey(TAB, [SHIFT])); // Shift+Tab
 			_addToKeys(keysClick, new FlxMultiKey(ENTER));
 		}
-		if (code & KEYS_ARROWS == KEYS_ARROWS)
+		if (code.has(KEYS_ARROWS))
 		{
 			_addToKeys(keysRight, new FlxMultiKey(RIGHT));
 			_addToKeys(keysLeft, new FlxMultiKey(LEFT));
@@ -613,7 +621,7 @@ class FlxUICursor extends FlxUISprite
 			_addToKeys(keysUp, new FlxMultiKey(UP));
 			_addToKeys(keysClick, new FlxMultiKey(ENTER));
 		}
-		if (code & KEYS_WASD == KEYS_WASD)
+		if (code.has(KEYS_WASD))
 		{
 			_addToKeys(keysRight, new FlxMultiKey(D));
 			_addToKeys(keysLeft, new FlxMultiKey(A));
@@ -621,7 +629,7 @@ class FlxUICursor extends FlxUISprite
 			_addToKeys(keysUp, new FlxMultiKey(W));
 			_addToKeys(keysClick, new FlxMultiKey(ENTER));
 		}
-		if (code & KEYS_NUMPAD == KEYS_NUMPAD)
+		if (code.has(KEYS_NUMPAD))
 		{
 			_addToKeys(keysRight, new FlxMultiKey(NUMPADSIX));
 			_addToKeys(keysLeft, new FlxMultiKey(NUMPADFOUR));
@@ -636,7 +644,7 @@ class FlxUICursor extends FlxUISprite
 			_gamepad = getGamepad(); // set _gamepad to avoid a stack overflow loop
 		}
 
-		if (code & GAMEPAD_DPAD == GAMEPAD_DPAD)
+		if (code.has(GAMEPAD_DPAD))
 		{
 			_addToKeys(keysLeft, new FlxMultiGamepad(gamepad, FlxGamepadInputID.DPAD_LEFT));
 			_addToKeys(keysRight, new FlxMultiGamepad(gamepad, FlxGamepadInputID.DPAD_RIGHT));
@@ -644,13 +652,13 @@ class FlxUICursor extends FlxUISprite
 			_addToKeys(keysUp, new FlxMultiGamepad(gamepad, FlxGamepadInputID.DPAD_UP));
 			_addToKeys(keysClick, new FlxMultiGamepad(gamepad, FlxGamepadInputID.A));
 		}
-		if (code & GAMEPAD_SHOULDER_BUTTONS == GAMEPAD_SHOULDER_BUTTONS)
+		if (code.has(GAMEPAD_SHOULDER_BUTTONS))
 		{
 			_addToKeys(keysLeft, new FlxMultiGamepad(gamepad, FlxGamepadInputID.LEFT_SHOULDER));
 			_addToKeys(keysRight, new FlxMultiGamepad(gamepad, FlxGamepadInputID.RIGHT_SHOULDER));
 			_addToKeys(keysClick, new FlxMultiGamepad(gamepad, FlxGamepadInputID.A));
 		}
-		if (code & GAMEPAD_LEFT_STICK == GAMEPAD_LEFT_STICK)
+		if (code.has(GAMEPAD_LEFT_STICK))
 		{
 			_addToKeys(keysLeft, new FlxMultiGamepadAnalogStick(gamepad, {id: LEFT_ANALOG_STICK, axis: X, positive: false}));
 			_addToKeys(keysRight, new FlxMultiGamepadAnalogStick(gamepad, {id: LEFT_ANALOG_STICK, axis: X, positive: true}));
@@ -658,7 +666,7 @@ class FlxUICursor extends FlxUISprite
 			_addToKeys(keysDown, new FlxMultiGamepadAnalogStick(gamepad, {id: LEFT_ANALOG_STICK, axis: Y, positive: true}));
 			_addToKeys(keysClick, new FlxMultiGamepad(gamepad, FlxGamepadInputID.A));
 		}
-		if (code & GAMEPAD_RIGHT_STICK == GAMEPAD_RIGHT_STICK)
+		if (code.has(GAMEPAD_RIGHT_STICK))
 		{
 			_addToKeys(keysLeft, new FlxMultiGamepadAnalogStick(gamepad, {id: RIGHT_ANALOG_STICK, axis: X, positive: false}));
 			_addToKeys(keysRight, new FlxMultiGamepadAnalogStick(gamepad, {id: RIGHT_ANALOG_STICK, axis: X, positive: true}));
@@ -680,7 +688,7 @@ class FlxUICursor extends FlxUISprite
 	#end
 	private var _clickPressed:Bool = false;
 
-	private var _defaultCode:Int;
+	private var _defaultCode:FlxUICursorInputFlag;
 
 	private var _rightAnchor:Anchor;
 	private var _topAnchor:Anchor;
@@ -1430,6 +1438,36 @@ class FlxUICursor extends FlxUISprite
 			theAnchor.anchorThing(this, destination);
 		}
 	}
+}
+
+/* Various default input configurations */
+enum abstract FlxUICursorInputFlag(Int) from Int
+{
+	/* tab to go "right", shift+tab to go "left", enter to click */
+	var KEYS_TAB = 0x00000001; 
+	/* WASD to go up/left/down/right, enter to click */
+	var KEYS_WASD = 0x00000010; 
+	/* Arrows to go up/left/down/right, enter to click */
+	var KEYS_ARROWS = 0x00000100; 
+	/* Numpad numbers to go up/left/down/right, enter to click */
+	var KEYS_NUMPAD = 0x00001000; 
+
+	// DPAD to go up/left/down/right, A to click
+	var GAMEPAD_DPAD = 0x00010000;
+	// Left STICK to go up/left/down/right, A to click
+	var GAMEPAD_LEFT_STICK = 0x00100000;
+	// Right STICK to go up/left/down/right, A to click
+	var GAMEPAD_RIGHT_STICK = 0x01000000;
+	// Left / Right shoulder buttons to go left/right, A to click
+	var GAMEPAD_SHOULDER_BUTTONS = 0x10000000;
+	
+	public inline function has(flag:FlxUICursorInputFlag)
+	{
+		return this & flag == flag;
+	}
+	
+	@:op(A & B) static function btAnd(a:FlxUICursorInputFlag, b:FlxUICursorInputFlag):FlxUICursorInputFlag;
+	@:op(A | B) static function btOr(a:FlxUICursorInputFlag, b:FlxUICursorInputFlag):FlxUICursorInputFlag;
 }
 
 typedef WidgetList =
