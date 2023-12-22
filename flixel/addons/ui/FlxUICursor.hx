@@ -311,7 +311,12 @@ class FlxUICursor extends FlxUISprite
 	{
 		#if FLX_GAMEPAD
 		if (gamepad == null || !gamepad.connected)
-			gamepad = getGamepad(false);
+		{
+			final g = getGamepad(false);
+			// avoid calling set_gamepad unnecessarily 
+			if (gamepad != g)
+				gamepad = g;
+		}
 		#end
 
 		#if FLX_MOUSE
