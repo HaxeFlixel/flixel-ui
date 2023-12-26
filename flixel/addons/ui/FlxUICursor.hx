@@ -1,17 +1,16 @@
 package flixel.addons.ui;
 
-import openfl.events.MouseEvent;
+import flixel.FlxG;
+import flixel.FlxObject;
+import flixel.FlxSprite;
 import flixel.addons.ui.Anchor;
 import flixel.addons.ui.FlxUIAssets;
 import flixel.addons.ui.FlxUICursor.WidgetList;
 import flixel.addons.ui.FlxUISprite;
 import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
-import flixel.FlxG;
-import flixel.FlxObject;
-import flixel.FlxSprite;
-import flixel.input.gamepad.FlxGamepadInputID;
 import flixel.input.gamepad.FlxGamepad;
+import flixel.input.gamepad.FlxGamepadInputID;
 import flixel.input.mouse.FlxMouse;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
@@ -19,6 +18,7 @@ import flixel.math.FlxRect;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
+import openfl.events.MouseEvent;
 
 /**
  * Cursor object that you can use to "click" on interface elements using a keyboard or gamepad
@@ -1039,23 +1039,24 @@ class FlxUICursor extends FlxUISprite
 		}
 
 		#if FLX_MOUSE
-		var rawMouseX:Float = pt.x * FlxG.camera.zoom;
-		var rawMouseY:Float = pt.y * FlxG.camera.zoom;
-
 		if (dispatchEvents)
 		{
 			// dispatch a low-level mouse event to the FlxG.stage object itself
-			#if FLX_KEYBOARD
-			FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP, true, false, rawMouseX, rawMouseY, FlxG.stage, FlxG.keys.pressed.CONTROL,
-				FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
+			final rawMouseX:Float = pt.x * FlxG.camera.zoom;
+			final rawMouseY:Float = pt.y * FlxG.camera.zoom;
+			
+			final ctrl = #if FLX_KEYBOARD FlxG.keys.pressed.CONTROL #else false #end;
+			final alt = #if FLX_KEYBOARD FlxG.keys.pressed.ALT #else false #end;
+			final shift = #if FLX_KEYBOARD FlxG.keys.pressed.SHIFT #else false #end;
+			
+			inline function dispatch(type)
+			{
+				FlxG.stage.dispatchEvent(new MouseEvent(type, true, false, rawMouseX, rawMouseY, FlxG.stage, ctrl, alt, shift));
+			}
+			
+			dispatch(MouseEvent.MOUSE_UP);
 			if (_clickPressed)
-				FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.CLICK, true, false, rawMouseX, rawMouseY, FlxG.stage, FlxG.keys.pressed.CONTROL,
-					FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
-			#else
-			FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP, true, false, rawMouseX, rawMouseY, FlxG.stage));
-			if (_clickPressed)
-				FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.CLICK, true, false, rawMouseX, rawMouseY, FlxG.stage));
-			#end
+				dispatch(MouseEvent.CLICK);
 		}
 		#end
 
@@ -1444,13 +1445,13 @@ class FlxUICursor extends FlxUISprite
 enum abstract FlxUICursorInputFlag(Int) from Int to Int
 {
 	/* tab to go "right", shift+tab to go "left", enter to click */
-	var KEYS_TAB = 0x00000001; 
+	var KEYS_TAB = 0x00000001;
 	/* WASD to go up/left/down/right, enter to click */
-	var KEYS_WASD = 0x00000010; 
+	var KEYS_WASD = 0x00000010;
 	/* Arrows to go up/left/down/right, enter to click */
-	var KEYS_ARROWS = 0x00000100; 
+	var KEYS_ARROWS = 0x00000100;
 	/* Numpad numbers to go up/left/down/right, enter to click */
-	var KEYS_NUMPAD = 0x00001000; 
+	var KEYS_NUMPAD = 0x00001000;
 
 	// DPAD to go up/left/down/right, A to click
 	var GAMEPAD_DPAD = 0x00010000;
