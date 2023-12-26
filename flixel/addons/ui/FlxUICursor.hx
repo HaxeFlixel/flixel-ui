@@ -997,11 +997,15 @@ class FlxUICursor extends FlxUISprite
 		#if FLX_MOUSE
 		if (dispatchEvents)
 		{
-			var rawMouseX:Float = pt.x * FlxG.camera.zoom;
-			var rawMouseY:Float = pt.y * FlxG.camera.zoom;
+			final rawMouseX:Float = pt.x * FlxG.camera.zoom;
+			final rawMouseY:Float = pt.y * FlxG.camera.zoom;
+			
 			#if FLX_KEYBOARD
-			FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN, true, false, rawMouseX, rawMouseY, FlxG.stage, FlxG.keys.pressed.CONTROL,
-				FlxG.keys.pressed.ALT, FlxG.keys.pressed.SHIFT));
+			final ctrl = FlxG.keys.pressed.CONTROL;
+			final alt = FlxG.keys.pressed.ALT;
+			final shift = FlxG.keys.pressed.SHIFT;
+			
+			FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN, true, false, rawMouseX, rawMouseY, FlxG.stage, ctrl, alt, shift));
 			#else
 			FlxG.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN, true, false, rawMouseX, rawMouseY, FlxG.stage));
 			#end
