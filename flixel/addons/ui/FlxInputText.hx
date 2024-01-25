@@ -243,7 +243,9 @@ class FlxInputText extends FlxText
 	override public function destroy():Void
 	{
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+		#if (js && html5)
 		FlxG.stage.window.onTextInput.remove(windowInputText);
+		#end
 
 		backgroundSprite = FlxDestroyUtil.destroy(backgroundSprite);
 		fieldBorderSprite = FlxDestroyUtil.destroy(fieldBorderSprite);
@@ -323,27 +325,6 @@ class FlxInputText extends FlxText
 			}
 		}
 		#end
-
-		#if FLX_TOUCH
-		// Set focus and caretIndex as a response to an initial touch event
-		if (FlxG.touches.list.length > 0)
-		{
-			var hadFocus:Bool = hasFocus;
-			if (FlxG.touches.getFirst().overlaps(this))
-			{
-				caretIndex = getCaretIndex(false);
-				hasFocus = true;
-				if (!hadFocus && focusGained != null)
-					focusGained();
-			}
-			else
-			{
-				hasFocus = false;
-				if (hadFocus && focusLost != null)
-					focusLost();
-			}
-		}
-		#end
 	}
 
 	/**
@@ -402,6 +383,20 @@ class FlxInputText extends FlxText
 						windowInputText(clipboardText);
 					#end
 				default:
+					#if !(js && html5) // Actually add some text
+					if (e.charCode == 0) // non-printable characters crash String.fromCharCode
+					{
+						return;
+					}
+					final newText = filter(String.fromCharCode(e.charCode));
+
+					if (newText.length > 0 && (maxLength == 0 || (text.length + newText.length) <= maxLength))
+					{
+						text = insertSubstring(text, newText, caretIndex);
+						caretIndex++;
+						onChange(INPUT_ACTION);
+					}
+					#end
 			}
 		}
 	}
@@ -412,6 +407,15 @@ class FlxInputText extends FlxText
 		{
 			callback(text, action);
 		}
+	}
+
+	function windowInputText(inputText:String)
+	{
+		final newText = filter(inputText).substring(0, maxLength > 0 ? (maxLength - text.length) : inputText.length);
+
+		text = insertSubstring(text, newText, caretIndex);
+		caretIndex += newText.length;
+		onChange(INPUT_ACTION);
 	}
 
 	/**
@@ -436,30 +440,18 @@ class FlxInputText extends FlxText
 	}
 
 	/**
-	 * Gets the index of the character in this box under the mouse cursor or touch event
+	 * Gets the index of the character in this box under the mouse cursor
 	 * @return The index of the character.
 	 *         between 0 and the length of the text
 	 */
-	private function getCaretIndex(isMouse:Bool = true):Int
+	private function getCaretIndex():Int
 	{
-		if(isMouse)
-		{
-			#if FLX_MOUSE
-			var hit = FlxPoint.get(FlxG.mouse.x - x, FlxG.mouse.y - y);
-			return getCharIndexAtPoint(hit.x, hit.y);
-			#else
-			return 0;
-			#end
-		}
-		else
-		{
-			#if FLX_TOUCH
-			var hit = FlxPoint.get(FlxG.touches.getFirst().x - x, FlxG.touches.getFirst().y - y);
-			return getCharIndexAtPoint(hit.x, hit.y);
-			#else
-			return 0;
-			#end
-		}
+		#if FLX_MOUSE
+		var hit = FlxPoint.get(FlxG.mouse.x - x, FlxG.mouse.y - y);
+		return getCharIndexAtPoint(hit.x, hit.y);
+		#else
+		return 0;
+		#end
 	}
 
 	private function getCharBoundaries(charIndex:Int):Rectangle
@@ -812,15 +804,6 @@ class FlxInputText extends FlxText
 		return super.set_y(Y);
 	}
 
-	function windowInputText(textInput:String)
-	{
-		final newText = filter(textInput).substring(0, maxLength > 0 ? (maxLength - text.length) : textInput.length);
-
-		text = insertSubstring(text, newText, caretIndex);
-		caretIndex += newText.length;
-		onChange(INPUT_ACTION);
-	}
-
 	private function set_hasFocus(newFocus:Bool):Bool
 	{
 		if (newFocus)
@@ -831,10 +814,10 @@ class FlxInputText extends FlxText
 				caret.visible = true;
 				caretIndex = text.length;
 
+				#if (js && html5)
 				if (!FlxG.stage.window.onTextInput.has(windowInputText))
 					FlxG.stage.window.onTextInput.add(windowInputText);
-
-				#if mobile
+				#elseif mobile
 				// Initialize soft keyboard
 				FlxG.stage.window.textInputEnabled = true;
 				#end
@@ -849,9 +832,9 @@ class FlxInputText extends FlxText
 				_caretTimer.cancel();
 			}
 
+			#if (js && html5)
 			FlxG.stage.window.onTextInput.remove(windowInputText);
-
-			#if mobile
+			#elseif mobile
 			// Remove soft keyboard
 			FlxG.stage.window.textInputEnabled = false;
 			#end
