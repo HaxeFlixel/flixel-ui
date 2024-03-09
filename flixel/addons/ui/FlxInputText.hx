@@ -1,8 +1,5 @@
 package flixel.addons.ui;
 
-import openfl.errors.Error;
-import openfl.events.KeyboardEvent;
-import openfl.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.ui.FlxUI.NamedString;
@@ -14,6 +11,9 @@ import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxTimer;
 import lime.system.Clipboard;
+import openfl.errors.Error;
+import openfl.events.KeyboardEvent;
+import openfl.geom.Rectangle;
 
 /**
  * FlxInputText v1.11, ported to Haxe
@@ -299,7 +299,7 @@ class FlxInputText extends FlxText
 		if (Sprite != null && Sprite.visible)
 		{
 			Sprite.scrollFactor = scrollFactor;
-			Sprite.cameras = cameras;
+			Sprite._cameras = _cameras;
 			Sprite.draw();
 		}
 	}

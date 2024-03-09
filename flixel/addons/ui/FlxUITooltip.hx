@@ -1,16 +1,16 @@
 package flixel.addons.ui;
 
-import flixel.addons.ui.FlxUITooltip.FlxUITooltipStyle;
 import flixel.FlxObject;
-import flixel.text.FlxText;
-import flixel.text.FlxText.FlxTextBorderStyle;
 import flixel.FlxSprite;
+import flixel.addons.ui.FlxUITooltip.FlxUITooltipStyle;
 import flixel.math.FlxPoint;
 import flixel.system.FlxAssets.FlxGraphicAsset;
+import flixel.text.FlxText.FlxTextBorderStyle;
+import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import openfl.geom.Rectangle;
 import openfl.display.BitmapData;
 import openfl.geom.Matrix;
+import openfl.geom.Rectangle;
 import openfl.text.TextFormat;
 
 /**
@@ -235,7 +235,7 @@ class FlxUITooltip extends FlxUIGroup
 		var minY:Float = Math.POSITIVE_INFINITY;
 		var maxY:Float = Math.NEGATIVE_INFINITY;
 
-		for (member in _sprites)
+		for (member in group.members)
 		{
 			if (member == null)
 				continue;

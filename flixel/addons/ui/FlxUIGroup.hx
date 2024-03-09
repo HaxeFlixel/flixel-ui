@@ -19,7 +19,9 @@ typedef FlxUIGroup = FlxTypedUIGroup<FlxSprite>;
  * without having to call reset()
  * @author Lars Doucet
  */
-class FlxTypedUIGroup<T:FlxSprite> extends FlxTypedSpriteGroup<T> implements IFlxUIWidget
+class FlxTypedUIGroup<T:FlxSprite>
+	extends #if(flixel >= "5.7.0") FlxTypedSpriteGroup<T> #else FlxTypedSpriteContainer<T> #end
+	implements IFlxUIWidget
 {
 	/** a handy string handler name for this thing */
 	public var name:String;
