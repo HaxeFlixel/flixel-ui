@@ -1,7 +1,7 @@
 package flixel.addons.ui;
 
-import openfl.display.BitmapData;
-import openfl.errors.Error;
+import flixel.FlxG;
+import flixel.FlxSprite;
 import flixel.addons.ui.FlxUI.UIEventCallback;
 import flixel.addons.ui.interfaces.ICursorPointable;
 import flixel.addons.ui.interfaces.IFlxUIButton;
@@ -9,19 +9,19 @@ import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.IResizable;
-import flixel.FlxG;
-import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.input.FlxInput;
 import flixel.input.IFlxInput;
+import flixel.math.FlxPoint;
+import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.ui.FlxButton;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
-import flixel.math.FlxPoint;
 import flixel.util.FlxStringUtil;
 import openfl.Assets;
-import flixel.system.FlxAssets.FlxGraphicAsset;
+import openfl.display.BitmapData;
+import openfl.errors.Error;
 
 class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIButton implements IResizable implements IFlxUIWidget implements IFlxUIClickable
 		implements IHasParams implements ICursorPointable
@@ -324,7 +324,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 		super.draw();
 		if (has_toggle && toggled && toggle_label != null && toggle_label.visible == true)
 		{
-			toggle_label.cameras = cameras;
+			toggle_label._cameras = _cameras;
 			toggle_label.draw();
 		}
 	}

@@ -4,6 +4,9 @@ import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxRect;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
+#if (flixel >= "5.7.0")
+import flixel.group.FlxSpriteContainer;
+#end
 
 #if (flixel < "5.4.0" && FLX_NO_POINT_POOL)
 	/* This is a weird haxe bug I haven't figured out, fixed in 5.4.0
@@ -13,13 +16,20 @@ import flixel.addons.ui.interfaces.IFlxUIWidget;
 	#error "This version of flixel-ui is not compatible with flixel versions less than 5.4.0";
 #end
 
+/**
+ * A cheap extension of FlxSpriteGroup that lets you move all the children around
+ * without having to call reset()
+ * @author Lars Doucet
+ */
 typedef FlxUIGroup = FlxTypedUIGroup<FlxSprite>;
 /**
  * A cheap extension of FlxSpriteGroup that lets you move all the children around
  * without having to call reset()
  * @author Lars Doucet
  */
-class FlxTypedUIGroup<T:FlxSprite> extends FlxTypedSpriteGroup<T> implements IFlxUIWidget
+class FlxTypedUIGroup<T:FlxSprite>
+	extends #if(flixel < "5.7.0") FlxTypedSpriteGroup<T> #else FlxTypedSpriteContainer<T> #end
+	implements IFlxUIWidget
 {
 	/** a handy string handler name for this thing */
 	public var name:String;
