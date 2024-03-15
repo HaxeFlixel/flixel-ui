@@ -1,8 +1,7 @@
-2.6.0 (March 10, 2024)
+2.6.0 (March 15, 2024)
 ------------------------------ 
 
 #### New features:
-
 - `FlxInputText`: Various features
     - Add paste support ([#253](https://github.com/HaxeFlixel/flixel-ui/pull/253))
     - Add mobile keyboard support ([#257](https://github.com/HaxeFlixel/flixel-ui/pull/257))
