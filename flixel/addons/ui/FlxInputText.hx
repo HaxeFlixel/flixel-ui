@@ -232,11 +232,6 @@ class FlxInputText extends FlxText
 			Text = "";
 		}
 
-		// Register paste events for the HTML5 parent window
-		#if (js && html5)
-		FlxG.stage.window.onTextInput.add(handleClipboardText);
-		#end
-
 		text = Text; // ensure set_text is called to avoid bugs (like not preparing _charBoundaries on sys target, making it impossible to click)
 
 		calcFrame();
@@ -248,6 +243,9 @@ class FlxInputText extends FlxText
 	override public function destroy():Void
 	{
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+		#if (js && html5)
+		FlxG.stage.window.onTextInput.remove(windowInputText);
+		#end
 
 		backgroundSprite = FlxDestroyUtil.destroy(backgroundSprite);
 		fieldBorderSprite = FlxDestroyUtil.destroy(fieldBorderSprite);
@@ -262,10 +260,6 @@ class FlxInputText extends FlxText
 			}
 			_charBoundaries = null;
 		}
-		#end
-
-		#if (js && html5)
-		FlxG.stage.window.onTextInput.remove(handleClipboardText);
 		#end
 
 		super.destroy();
@@ -386,10 +380,10 @@ class FlxInputText extends FlxText
 					#else
 					var clipboardText:String = Clipboard.text;
 					if (clipboardText != null)
-						pasteClipboardText(clipboardText);
+						windowInputText(clipboardText);
 					#end
 				default:
-					// Actually add some text
+					#if !(js && html5) // Actually add some text
 					if (e.charCode == 0) // non-printable characters crash String.fromCharCode
 					{
 						return;
@@ -402,6 +396,7 @@ class FlxInputText extends FlxText
 						caretIndex++;
 						onChange(INPUT_ACTION);
 					}
+					#end
 			}
 		}
 	}
@@ -414,17 +409,9 @@ class FlxInputText extends FlxText
 		}
 	}
 
-	#if (html5 && js)
-	function handleClipboardText(clipboardText:String)
+	function windowInputText(inputText:String)
 	{
-		@:privateAccess if (Clipboard._text == clipboardText)
-			pasteClipboardText(clipboardText);
-	}
-	#end
-
-	function pasteClipboardText(clipboardText:String)
-	{
-		final newText = filter(clipboardText).substring(0, maxLength > 0 ? (maxLength - text.length) : clipboardText.length);
+		final newText = filter(inputText).substring(0, maxLength > 0 ? (maxLength - text.length) : inputText.length);
 
 		text = insertSubstring(text, newText, caretIndex);
 		caretIndex += newText.length;
@@ -827,7 +814,10 @@ class FlxInputText extends FlxText
 				caret.visible = true;
 				caretIndex = text.length;
 
-				#if mobile
+				#if (js && html5)
+				if (!FlxG.stage.window.onTextInput.has(windowInputText))
+					FlxG.stage.window.onTextInput.add(windowInputText);
+				#elseif mobile
 				// Initialize soft keyboard
 				FlxG.stage.window.textInputEnabled = true;
 				#end
@@ -842,7 +832,9 @@ class FlxInputText extends FlxText
 				_caretTimer.cancel();
 			}
 
-			#if mobile
+			#if (js && html5)
+			FlxG.stage.window.onTextInput.remove(windowInputText);
+			#elseif mobile
 			// Remove soft keyboard
 			FlxG.stage.window.textInputEnabled = false;
 			#end
