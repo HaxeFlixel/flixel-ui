@@ -59,5 +59,7 @@ interface IFlxUIButton extends IFlxUIWidget extends IHasParams extends IFlxDestr
 
 	#if (flixel >= version("5.7.0"))
 	public var status(default, set):FlxButtonState;
+	#else
+	public var status(default, set):Int;
 	#end
 }
