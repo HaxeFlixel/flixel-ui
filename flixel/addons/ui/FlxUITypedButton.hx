@@ -23,6 +23,16 @@ import openfl.Assets;
 import openfl.display.BitmapData;
 import openfl.errors.Error;
 
+#if (flixel < version("5.7.0"))
+enum abstract FlxButtonState(Int) to Int
+{
+	var NORMAL = 0;
+	var HIGHLIGHT = 1;
+	var PRESSED = 2;
+	var DISABLED = 3;
+}
+#end
+
 class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIButton implements IResizable implements IFlxUIWidget implements IFlxUIClickable
 		implements IHasParams implements ICursorPointable
 {
@@ -274,7 +284,7 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	{
 		super.update(elapsed);
 
-		if (status == FlxButton.NORMAL && mouseIsOver && input.justReleased == false)
+		if (status == NORMAL && mouseIsOver && input.justReleased == false)
 		{
 			// Detect rare edge case:
 			// The button is not in a hilight/pressed state, but the button has ALSO not just been released, HOWEVER it thinks the mouse is still hovering
@@ -526,9 +536,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 			bd = getBmp(asset);
 		}
 
-		upB = grabButtonFrame(bd, FlxButton.NORMAL, has_toggle, 0, 0, key);
-		overB = grabButtonFrame(bd, FlxButton.HIGHLIGHT, has_toggle, 0, 0, key);
-		downB = grabButtonFrame(bd, FlxButton.PRESSED, has_toggle, 0, 0, key);
+		upB = grabButtonFrame(bd, FlxButtonState.NORMAL, has_toggle, 0, 0, key);
+		overB = grabButtonFrame(bd, FlxButtonState.HIGHLIGHT, has_toggle, 0, 0, key);
+		downB = grabButtonFrame(bd, FlxButtonState.PRESSED, has_toggle, 0, 0, key);
 
 		var normalGraphic:FlxGraphicAsset = key;
 		if (key == null || key == "" || FlxG.bitmap.checkCache(key) == false)
@@ -540,9 +550,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 		{
 			var normalPixels:BitmapData = assembleButtonFrames(upB, overB, downB);
 
-			upB = grabButtonFrame(bd, FlxButton.NORMAL + 3, true, 0, 0, key);
-			overB = grabButtonFrame(bd, FlxButton.HIGHLIGHT + 3, true, 0, 0, key);
-			downB = grabButtonFrame(bd, FlxButton.PRESSED + 3, true, 0, 0, key);
+			upB = grabButtonFrame(bd, (FlxButtonState.NORMAL:Int) + 3, true, 0, 0, key);
+			overB = grabButtonFrame(bd, (FlxButtonState.HIGHLIGHT:Int) + 3, true, 0, 0, key);
+			downB = grabButtonFrame(bd, (FlxButtonState.PRESSED:Int) + 3, true, 0, 0, key);
 
 			var togglePixels:BitmapData = assembleButtonFrames(upB, overB, downB);
 			var combinedPixels:BitmapData = combineToggleBitmaps(normalPixels, togglePixels);
@@ -1018,12 +1028,12 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 			if (framesHigh == 4)
 			{
 				// we have exactly 4 frames, assume "up","over","down","down_over"
-				if (button_state == FlxButton.HIGHLIGHT + 3)
+				if (button_state == FlxButtonState.HIGHLIGHT + 3)
 				{
 					// toggle-hilight
 					_flashRect.y = (3) * h; // show "down_over"
 				}
-				else if (button_state == FlxButton.PRESSED + 3)
+				else if (button_state == FlxButtonState.PRESSED + 3)
 				{
 					// toggle-pressed
 					_flashRect.y = (2) * h; // show "down"

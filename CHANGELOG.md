@@ -1,3 +1,8 @@
+2.6.1 (March 18, 2024)
+------------------------------ 
+Fixed compatibility with upcoming Flixel version 5.7.0
+
+
 2.6.0 (March 15, 2024)
 ------------------------------ 
 

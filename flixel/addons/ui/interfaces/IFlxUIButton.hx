@@ -57,5 +57,7 @@ interface IFlxUIButton extends IFlxUIWidget extends IHasParams extends IFlxDestr
 	public function loadGraphicsUpOverDown(asset:Dynamic, for_toggle:Bool = false, ?key:String):Void;
 	public function forceStateHandler(event:String):Void;
 
-	public var status(default, set):Int;
+	#if (flixel >= version("5.7.0"))
+	public var status(default, set):FlxButtonState;
+	#end
 }
