@@ -405,17 +405,30 @@ class FlxUIDropDownMenu extends FlxUIGroup implements IFlxUIWidget implements IF
 	public override function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-
+		
 		#if FLX_MOUSE
-		if (dropPanel.visible && FlxG.mouse.justPressed)
-		{
-			if (!FlxG.mouse.overlaps(this))
-			{
-				showList(false);
-			}
-		}
+		checkClickOff();
 		#end
 	}
+	
+	#if FLX_MOUSE
+	function checkClickOff()
+	{
+		if (dropPanel.visible && FlxG.mouse.justPressed)
+		{
+			if (header.button.justPressed)
+				return;
+			
+			for (button in list)
+			{
+				if (button.justPressed)
+					return;
+			}
+			
+			showList(false);
+		}
+	}
+	#end
 
 	override public function destroy():Void
 	{
