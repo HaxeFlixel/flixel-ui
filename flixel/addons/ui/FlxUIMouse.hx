@@ -40,10 +40,11 @@ class FlxUIMouse extends FlxMouse
 			#if (flixel < version("5.9.0"))
 			_globalScreenX = oldScreenX;
 			_globalScreenY = oldScreenY;
-			updatePositions();
 			#else
-			setRawPositionUnsafe(oldRawX, oldRawY);
+			_rawX = oldRawX;
+			_rawY = oldRawY;
 			#end
+			updatePositions();
 		}
 	}
 }
