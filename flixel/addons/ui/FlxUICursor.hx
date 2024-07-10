@@ -334,7 +334,11 @@ class FlxUICursor extends FlxUISprite
 
 			// Ad hoc fix to avoid world coordinates on UI elements
 			if (scrollFactor.x == 0 && scrollFactor.y == 0)
+				#if (flixel < version("5.9.0"))
 				jumpToXY(FlxG.mouse.screenX, FlxG.mouse.screenY);
+				#else
+				jumpToXY(FlxG.mouse.viewX, FlxG.mouse.viewY);
+				#end
 			else
 				jumpToXY(FlxG.mouse.x, FlxG.mouse.y);
 			visible = oldVis;
