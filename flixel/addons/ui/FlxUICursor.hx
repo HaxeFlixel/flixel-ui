@@ -334,7 +334,11 @@ class FlxUICursor extends FlxUISprite
 
 			// Ad hoc fix to avoid world coordinates on UI elements
 			if (scrollFactor.x == 0 && scrollFactor.y == 0)
+				#if (flixel < version("5.9.0"))
 				jumpToXY(FlxG.mouse.screenX, FlxG.mouse.screenY);
+				#else
+				jumpToXY(FlxG.mouse.viewX, FlxG.mouse.viewY);
+				#end
 			else
 				jumpToXY(FlxG.mouse.x, FlxG.mouse.y);
 			visible = oldVis;
@@ -962,7 +966,11 @@ class FlxUICursor extends FlxUISprite
 		{
 			#if FLX_MOUSE
 			// REALLY force it to this location
+			#if (flixel < version("5.9.0"))
 			FlxG.mouse.setGlobalScreenPositionUnsafe(pt.x, pt.y);
+			#else
+			FlxG.mouse.setRawPositionUnsafe(pt.x, pt.y);
+			#end
 
 			if (_newMouse != null)
 			{
@@ -1084,7 +1092,11 @@ class FlxUICursor extends FlxUISprite
 		if (_newMouse != null)
 		{
 			_newMouse.updateGlobalScreenPosition = true; // resume low-level-mouse updating now that I'm done overriding it
+			#if (flixel < version("5.9.0"))
 			_newMouse.setGlobalScreenPositionUnsafe(Std.int(FlxG.game.mouseX), Std.int(FlxG.game.mouseY));
+			#else
+			_newMouse.setRawPositionUnsafe(Std.int(FlxG.game.mouseX), Std.int(FlxG.game.mouseY));
+			#end
 		}
 		#end
 	}
