@@ -4,6 +4,8 @@ package flixel.addons.ui;
 import flixel.addons.ui.FlxSlider;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 
+#if !flixel_addons #error "haxelib flixel-addons required for FlxUISlider" #end
+
 class FlxUISlider extends FlxSlider implements IFlxUIWidget
 {
 	public var name:String;
