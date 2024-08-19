@@ -726,6 +726,8 @@ class FlxInputText extends FlxText
 					caret.pixels.fillRect(r, caretC); // draw caret
 					// we need to offset caret's drawing position since the caret is now larger than normal
 					caret.offset.x = caret.offset.y = borderSize;
+					
+				case _: //temp fix for 5.9.0
 			}
 			// Update width/height so caret's dimensions match its pixels
 			caret.width = cw;
