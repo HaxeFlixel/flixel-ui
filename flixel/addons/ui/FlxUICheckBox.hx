@@ -54,7 +54,7 @@ class FlxUICheckBox extends FlxUIGroup implements ILabeled implements IFlxUIClic
 		{
 			params = [];
 		}
-		var nb:NamedBool = {name: "checked", value: false};
+		var nb:NamedBool = {name: "checked", value: checked};
 		params.push(nb);
 		return params;
 	}
