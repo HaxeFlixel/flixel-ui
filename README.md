@@ -606,8 +606,8 @@ A Check Box is a FlxUIGroup which contains three objects: a "box" image, a "chec
 
 Attributes:
 * ```x```/```y```, ```use_def```, ```group```
-* ```check_src``` - source image for box (not 9-sliceable, not scaleable)
-* ```box_src``` - source image for check mark (not 9-sliceable, not scaleable)
+* ```check_src``` - source image for check mark (not 9-sliceable, not scaleable)
+* ```box_src``` - source image for box (not 9-sliceable, not scaleable)
 * ```text_x``` / ```text_y``` - label offsets
 * ```label``` - text to show
 * ```context``` - FireTongue context (see Button)
@@ -624,8 +624,8 @@ Child tags:
 *If you supply ```<check>``` or ```<box>``` child tags instead of their attribute equivalents, FlxUI will treat them as full-fledged ```<sprite>``` or ```<chrome>``` tags to load for the checkmark and box assets. You'll want to use this method if you want to do something complicated, like load a scaled sprite, or a 9-slice-scaled sprite, that you can't normally accomplish with the src attributes, which just load a static image as-is.
 
 Event:
-* name - "click_checkbox"
-* params - as defined by user, but with this one automatically added to the list at the end: "checked:true" or "checked:false"
+* name - "click_check_box"
+* params - as defined by user, but with this one automatically added to the list at the end: ```{name:"checked", value:false}``` or ```{name:"checked", value:true}```
 
 ## 7. Text (FlxUIText) ```<text>```
 
