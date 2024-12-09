@@ -72,7 +72,7 @@ class FlxUIPopup extends FlxUISubState implements IFlxUIWidget
 		return alpha = Value;
 	}
 
-	private function set_facing(Value:Int):Int
+	private function set_facing(Value:FlxDirectionFlags):FlxDirectionFlags
 	{
 		return facing = Value;
 	}
