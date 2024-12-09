@@ -4,7 +4,7 @@
 	"license": "MIT",
 	"tags": ["game", "openfl", "flash", "neko", "cpp", "android", "ios", "cross"],
 	"description": "A UI library for Flixel",
-	"version": "2.6.1",
-	"releasenote": "Flixel 5.7.0 compatibility",
+	"version": "2.6.2",
+	"releasenote": "Flixel 5.9.0 compatibility",
 	"contributors": ["haxeflixel", "larsiusprime", "Gama11", "GeoKureli"]
 }

@@ -1,3 +1,17 @@
+2.6.2 (December 9, 2024)
+------------------------------ 
+#### Changes and improvements:
+- Fixed compatibility with upcoming Flixel version 5.9.0 ([277](https://github.com/HaxeFlixel/flixel-ui/pull/277))
+- `FlxUIDropdownMenu`: Prevent premature closing when selecting items ([275](https://github.com/HaxeFlixel/flixel-ui/pull/275))
+- `FlxUISlider`: Check for correct Flixel-addons version ([280](https://github.com/HaxeFlixel/flixel-ui/pull/280))
+- Assets: Run oxipng on all images ([284](https://github.com/HaxeFlixel/flixel-ui/pull/284))
+- `FlxInputText`(legacy): Prevent using destroyed graphic ([285](https://github.com/HaxeFlixel/flixel-ui/pull/285))
+- `FlxUICheckBox`: Fix docs ([287](https://github.com/HaxeFlixel/flixel-ui/pull/287))
+
+#### Bugfixes
+- `FlxUICheckBox`: Fix `checked` always `false` in params ([288](https://github.com/HaxeFlixel/flixel-ui/pull/288))
+
+
 2.6.1 (april 16, 2024)
 ------------------------------ 
 Fixed compatibility with upcoming Flixel version 5.7.0
