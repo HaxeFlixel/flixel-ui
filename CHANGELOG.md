@@ -1,4 +1,4 @@
-2.6.2 (December 9, 2024)
+2.6.2 (December 10, 2024)
 ------------------------------ 
 #### Changes and improvements:
 - Fixed compatibility with upcoming Flixel version 5.9.0 ([277](https://github.com/HaxeFlixel/flixel-ui/pull/277))
