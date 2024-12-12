@@ -745,7 +745,7 @@ class FlxInputText extends FlxText
 					r.x = r.y = 0;
 					caret.pixels.fillRect(r, caretC); // draw caret
 					caret.offset.x = caret.offset.y = 0;
-					
+				#if (flixel > "5.8.0")
 				case SHADOW_XY(shadowX, shadowY):
 					// Shadow offset to the lower-right
 					cw += Std.int(Math.abs(shadowX));
@@ -758,7 +758,7 @@ class FlxInputText extends FlxText
 					caret.pixels.fillRect(r, caretC); // draw caret
 					caret.offset.x = shadowX < 0 ? -shadowX : 0;
 					caret.offset.y = shadowY < 0 ? -shadowY : 0;
-					
+				#end
 				case OUTLINE_FAST, OUTLINE:
 					// Border all around it
 					final absSize = Math.abs(borderSize);
