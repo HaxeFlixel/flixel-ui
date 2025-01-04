@@ -439,7 +439,6 @@ Nitelikler:
 
 ## 4. Button (FlxUIButton) ```<button>```
 
-Just a regular clicky button, optionally with a label.
 Sadece sıradan basmalı düğme, tercihen bir etiket ile.
 
 Nitelikler:
@@ -549,7 +548,7 @@ Diğer durumlar için renk belirtmek isterseniz, her durum için ```<text>`` eti
 ````
 
 
-## 5. Button, Toggle (FlxUIButton) ```<button_toggle>``
+## 5. Button, Toggle (FlxUIButton) ```<button_toggle>```
 
 Geçiş düğmeleri normal düğmelerle aynı sınıftan yapılır, ``FlxUIButton``.
 
@@ -589,7 +588,7 @@ Elbette, dikey olarak istiflenmiş 6 görüntü içeren tek bir varlık oluştur
 
 Dikey bir 9 dilimli varlık yığını veya normal statik boyutlu varlıklar oluşturabileceğinizi unutmayın; sistem bunlardan birini kullanabilir. 
 
-## 6. Onay kutusu (FlxUICheckBox) ```<checkbox>``
+## 6. Onay kutusu (FlxUICheckBox) ```<checkbox>```
 
 Onay Kutusu, üç nesne içeren bir FlxUIGroup'tur: bir “kutu” görüntüsü, bir “onay” görüntüsü ve bir etiket.
 
@@ -616,7 +615,7 @@ Olay:
 * isim - “click_check_box”
 * params - kullanıcı tarafından tanımlandığı gibi, ancak bu otomatik olarak listenin sonuna eklenir: ``{name: “checked”, value:false}`` veya ``{name: “checked”, value:true}``
 
-## 7. Text (FlxUIText) ```<text>``
+## 7. Text (FlxUIText) ```<text>```
 
 Normal bir metin alanı. 
 
