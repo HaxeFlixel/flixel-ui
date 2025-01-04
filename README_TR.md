@@ -26,7 +26,7 @@ haxelib'den en son bıçak kenarı geliştirici sürümünü indirin:
 
     haxelib install flixel-ui
 
-Unutmayın ki, flixel-demoları'ndaki test projesi, Şöyle kurulabilecek yerelleştirme kütüphanesi **[fireTongue](https://github.com/larsiusprime/firetongue)**'ı gerektirir:
+Unutmayın ki, flixel-demoları'ndaki test projesi, şöyle kurulabilecek yerelleştirme kütüphanesi **[fireTongue](https://github.com/larsiusprime/firetongue)**'ı gerektirir:
 
     haxelib install firetongue
 
