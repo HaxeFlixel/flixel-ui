@@ -146,7 +146,7 @@ Hepsinin üzerinden tek tek geçelim.
 --
 
 ### 1. Widget
-Bu, ```<sprite>``, ```<button>``, ```<checkbox>``, vb. gibi birçok Flixel-UI widget'ından herhangi biridir. Aşağıda her biri hakkında daha fazla ayrıntıya gireceğiz, ancak tüm widget etiketlerinin birkaç ortak noktası vardır:
+Bu, ```<sprite>```, ```<button>``` , ```<checkbox>```, vb. gibi birçok Flixel-UI widget'ından herhangi biridir. Aşağıda her biri hakkında daha fazla ayrıntıya gireceğiz, ancak tüm widget etiketlerinin birkaç ortak noktası vardır:
 
 *Özellikler:*
 * **name** - dize, isteğe bağlı, benzersiz olmalıdır. Düzen boyunca bu widget'a referans vermenizi sağlar ve ayrıca FlxUI'nin ``getAsset(“some_id”)`` fonksiyonu ile isme göre getirmenizi sağlar.
@@ -298,7 +298,7 @@ Nitelikler için yasal değerler:
 
 * değer - bir yüzde (toplam genişlik/yüksekliğin %'sini çıkarma) veya mutlak bir sayı ile sınırlandırılmıştır. 
 * özelliği - ``“genişlik”`` ve ``“yükseklik”``
-* karşılaştırma - ```<```,```>```,```<=```,```>=```,```=```,```==`` (```=``` ve ```==`` bu bağlamda eş anlamlıdır)
+* karşılaştırma - ```<```,```>```,```<=```,```>=```,```=```,```==``` (```=``` ve ```==``` bu bağlamda eş anlamlıdır)
 
 FlxUI'niz yüklendikten sonra, getAsset() kullanarak tek tek düzenlerinizi getirebilir ve ardından size başarısızlık kontrollerinin sonucunu veren bu genel özellikleri kontrol edebilirsiniz:
 
@@ -360,7 +360,7 @@ Bir **\<mode>** öğesinde çeşitli etiketler mevcuttur. En temel olanları ```
 
 Değiştir etiketi, bir widget oluşturulduktan sonra çeşitli özelliklerini değiştirmenize olanak tanır. “name” niteliğiyle eşleşen widget hedeflenecektir. Aşağıdaki nitelikler kullanılabilir:
 
-* **text** -- Widget'ın ```text`` özelliğini değiştirin (FlxUIText veya FlxUIInputText). Metin ve/veya etiket içeren nesneler için “bağlam” ve “kod” niteliklerini de ayarlayabilir. \*
+* **text** -- Widget'ın ```text``` özelliğini değiştirin (FlxUIText veya FlxUIInputText). Metin ve/veya etiket içeren nesneler için “bağlam” ve “kod” niteliklerini de ayarlayabilir. \*
 * **label** -- Widget'ın ``label`` özelliğini değiştirin (Düğmeler veya metin etiketi olan başka herhangi bir şey için). Ayrıca “context” ve “code” niteliklerini de ayarlayabilir.
 * **width** -- Genişliği değiştirin, orijinal widget etiketinde kullandığınızla aynıdır
 * **height** -- Yüksekliği değiştirin, orijinal widget etiketinde kullandığınızla aynıdır
@@ -459,7 +459,7 @@ Nitelikler:
 Alt etiketler:
 * ``<text>`` - tıpkı normal bir \<text> düğümü gibi
 * ``<param>`` - geri arama/olay sistemine aktarılacak parametre (bkz. “Düğme Parametreleri”)
-* ```<graphic>`` - grafik kaynağı (ayrıntılar aşağıda)
+* ```<graphic>``` - grafik kaynağı (ayrıntılar aşağıda)
 
 ### 4.1 Parametreler ile çalışmak
 
@@ -533,11 +533,11 @@ Statik, bireysel çerçeveler:
 
 ### 4.3 Düğme Metni
 Bir düğmedeki metnin neye benzediğini belirtmek için bir ``<text>`` alt düğümü oluşturursunuz.
-Tüm özellikleri burada belirtebilir veya bir tanım kullanabilirsiniz. Bir düğmenin içindeki ```<text>`` düğümleri için birkaç özel husus vardır.
+Tüm özellikleri burada belirtebilir veya bir tanım kullanabilirsiniz. Bir düğmenin içindeki ```<text>``` düğümleri için birkaç özel husus vardır.
 
 Ana “color” özelliği (onaltılık biçim, “0xffffff”) ana etiket rengidir
 
-Diğer durumlar için renk belirtmek isterseniz, her durum için ```<text>`` etiketinin içine ``<color>`` etiketlerini eklersiniz:
+Diğer durumlar için renk belirtmek isterseniz, her durum için ```<text>``` etiketinin içine ``<color>`` etiketlerini eklersiniz:
 
 ```xml
 <button x="200" y="505" name="some_button" use_def="text_button" label="Click Me">
@@ -554,7 +554,7 @@ Geçiş düğmeleri normal düğmelerle aynı sınıftan yapılır, ``FlxUIButto
 
 Geçiş düğmeleri, geçiş yapıldığında yukarı/aşağı/aşağı için 3 ve geçiş yapılmadığında yukarı/aşağı/aşağı için 3 olmak üzere 6 duruma sahip olmaları bakımından farklıdır. Varsayılan olarak, yeni yüklenmiş bir geçiş düğmesinin “toggle” değeri yanlıştır.
 
-Geçiş düğmeleri normal bir düğmeden daha fazla grafiğe ihtiyaç duyar. Bunu yapmak için, hem normal hem de değiştirilmemiş durumlar için grafik etiketleri sağlamanız gerekir. Geçişli ```<graphic>`` etiketleri aynıdır, sadece ek bir toggle=“true” niteliğine ihtiyaç duyarlar:
+Geçiş düğmeleri normal bir düğmeden daha fazla grafiğe ihtiyaç duyar. Bunu yapmak için, hem normal hem de değiştirilmemiş durumlar için grafik etiketleri sağlamanız gerekir. Geçişli ```<graphic>``` etiketleri aynıdır, sadece ek bir toggle=“true” niteliğine ihtiyaç duyarlar:
 
 ```xml
 <definition name="tab_button_toggle" width="50" height="20" text_x="-2" text_y="0">			
@@ -609,7 +609,7 @@ Child tags:
 * ```<check>``` - check_src'ye alternatif, daha güçlü*
 * ```<box>``` - box_src'ye alternatif, daha güçlü*
   
-*Öznitelik eşdeğerleri yerine ``<check>`` veya ``<box>`` alt etiketlerini sağlarsanız, FlxUI bunları onay işareti ve kutu varlıkları için yüklenecek tam teşekküllü ``<sprite>` veya ``<chrome>` etiketleri olarak değerlendirecektir. Normalde statik bir görüntüyü olduğu gibi yükleyen src nitelikleriyle gerçekleştiremeyeceğiniz ölçeklendirilmiş bir sprite veya 9 dilimli ölçeklendirilmiş bir sprite yüklemek gibi karmaşık bir şey yapmak istiyorsanız bu yöntemi kullanmak isteyeceksiniz.
+*Öznitelik eşdeğerleri yerine ``<check>`` veya ``<box>`` alt etiketlerini sağlarsanız, FlxUI bunları onay işareti ve kutu varlıkları için yüklenecek tam teşekküllü ``<sprite>`` veya ``<chrome>`` etiketleri olarak değerlendirecektir. Normalde statik bir görüntüyü olduğu gibi yükleyen src nitelikleriyle gerçekleştiremeyeceğiniz ölçeklendirilmiş bir sprite veya 9 dilimli ölçeklendirilmiş bir sprite yüklemek gibi karmaşık bir şey yapmak istiyorsanız bu yöntemi kullanmak isteyeceksiniz.
 
 Olay:
 * isim - “click_check_box”
