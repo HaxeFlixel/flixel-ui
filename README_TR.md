@@ -70,6 +70,7 @@ Kendi varlıklarınızı sunmak isterseniz, [demo projesinde](https://github.com
 # FlxUI public fonksiyonları
 
 Genelde FlxUI sınıfında en çok kullanılan public fonksiyonları:
+
 ```haxe
 //Initiate from XML Fast object:
 //(This is handled automatically in the recommended setup)
@@ -93,6 +94,7 @@ getDefinition(key:String,recursive:Bool=true):Fast
 `recursive`in yukarı özyinelemeye referans verdiğini, görünümlere doğru delmeye referans vermediği unutmayın. Eğer bir görünüm etiketi kullanırsanız, `cast getAsset("mylayoutname")`ı ve sonra `getAsset()`i aşağı özyineleme gerçekleştirmek için çağırmalısınız. 
 
 Daha az kullanılan public fonksiyonları:
+
 ```haxe
 //These implement the IEventGetter interface for lightweight events
 getEvent(name:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>):Void
@@ -114,6 +116,7 @@ setMode(mode_id:String,target_id:String=""):Void
 
 # XML görünüm temelleri
 flixel-ui'daki herşey xml görünüm dosyaları ile hallonulur. İşte çok basit bir örnek:
+
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
 <data>	
@@ -184,9 +187,11 @@ Example:
 \*\* Parametreler hakkında daha fazla bilgi “Pencere Araçları Listesi ”ndeki Düğme girişi altında bulunabilir. Yalnızca bazı pencere öğeleri parametre kullanır. 
 
 \*\*\* Araç İpuçları hakkında daha fazla bilgi “Araç İpuçları” bölümünde aşağıya doğru görünür.
+
 --
 
 ### 2. ```<definition>``
+
 Bu, çok sayıda yeniden kullanılabilir ayrıntıyı benzersiz bir ada sahip ayrı bir etikete yüklemenize ve ardından use_def=“definition_id” niteliğini kullanarak bunları başka bir etikete çağırmanıza olanak tanır. Tanım etiketi, etiket adının “tanım” olması dışında normal bir widget etiketi gibidir.
 
 Widget etiketinde ayrıntılar sağlarsanız ve aynı zamanda bir tanım kullanırsanız, çakıştıkları her yerde tanımdaki bilgileri geçersiz kılacaktır. Daha fazla ayrıntı için RPG Arayüzü demosuna bakın.
