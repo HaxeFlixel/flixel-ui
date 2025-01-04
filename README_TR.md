@@ -66,7 +66,6 @@ Kendi varlıklarınızı sunmak isterseniz, [demo projesinde](https://github.com
 
 ----
 
-# FlxUI public functions
 # FlxUI public fonksiyonları
 
 Genelde FlxUI sınıfında en çok kullanılan public fonksiyonları:
@@ -190,7 +189,7 @@ Example:
 
 --
 
-### 2. ```<definition>``
+### 2. ```<definition>```
 
 Bu, çok sayıda yeniden kullanılabilir ayrıntıyı benzersiz bir ada sahip ayrı bir etikete yüklemenize ve ardından use_def=“definition_id” niteliğini kullanarak bunları başka bir etikete çağırmanıza olanak tanır. Tanım etiketi, etiket adının “tanım” olması dışında normal bir widget etiketi gibidir.
 
@@ -225,7 +224,7 @@ Yazmak ile aynı şeydir
 
 “sans10“ tanımındaki tüm değerler devralınır ve ardından ‘italic_text’ etiketinin tüm yerel ayarları uygulanır ve style=”bold“ yerine style=”italic” kullanılır.
 
-### 3. ```<default>``
+### 3. ```<default>```
 Varsayılan etiket, birkaç istisna dışında tıpkı bir tanım gibidir:
 
 1. Her widget türü için yalnızca bir tane olabilir
@@ -244,7 +243,7 @@ Bunun gibi bir varsayılan tanımlarsınız:
 
 Bu da yerel ayarlar veya bir use_def bunu geçersiz kılmadığı sürece tüm ```<text>`` nesnelerinizi kırmızı yapacaktır.
 
-### 4. ```<include>``
+### 4. ```<include>```
 Include etiketleri, başka bir xml dosyasında saklanan tanımlara referans vermenizi sağlar. Bu, dosya şişkinliğini azaltmak ve organizasyona yardımcı olmak için kolaylık sağlayan bir özelliktir:
 
 Bu çağırma “some_other_file.xml” dosyasında bulunan tüm tanımları içerecektir:
