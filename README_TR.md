@@ -48,31 +48,28 @@ XML görünümünü doğru ayarladıysanız, flixel-ui o xml dosyasını alacak 
 FlxUI, temel olarak devasa, kalite FLXGroup'tır, o yüzden bu yöntemi kullanmak size bir UI kapsayıcısı ve içindeki tüm UI wigetlerini ayarlayacaktır.
 
 ## El ile widget oluşturma
-You can also create FlxUI widgets directly with Haxe code rather than using the XML setup. 
-
-To see this in action, look at the [demo project](https://github.com/HaxeFlixel/flixel-demos/tree/master/UserInterface/RPGInterface), specifically [State_CodeTest](https://github.com/HaxeFlixel/flixel-demos/blob/master/UserInterface/RPGInterface/source/State_CodeTest.hx)  (in the compiled demo, just click "Code Test" to see it in action.)
-
-You can compare this to [State_DefaultTest](https://github.com/HaxeFlixel/flixel-demos/blob/master/UserInterface/RPGInterface/source/State_DefaultTest.hx), which creates virtually the same UI output, but uses [this xml layout](https://github.com/HaxeFlixel/flixel-demos/blob/master/UserInterface/RPGInterface/assets/xml/state_default.xml) to achieve those results.
 
 XML kurulumu kullanmak yerine doğrudan Haxe kodu ile FlxUI widgetları oluşturabilirsiniz.
 
+Çalışırken görmek için, [demo projeye](https://github.com/HaxeFlixel/flixel-demos/tree/master/UserInterface/RPGInterface), özellikle [State_CodeTest](https://github.com/HaxeFlixel/flixel-demos/blob/master/UserInterface/RPGInterface/source/State_CodeTest.hx)'e bakın (derlenmiş demoda çalışırken görmek için "Code Test"e tıklayın.)
 
-## Graphic assets for Widgets
+Bunu, görsel olarak aynı UI çıktısını veren ancak o sonuçları başarmak için [bu xml görünümünü](https://github.com/HaxeFlixel/flixel-demos/blob/master/UserInterface/RPGInterface/assets/xml/state_default.xml) kullanan [State_DefaultTest](https://github.com/HaxeFlixel/flixel-demos/blob/master/UserInterface/RPGInterface/source/State_DefaultTest.hx) ile karşılaştırabilirsiniz.
 
-### Default Assets
+## Widgetlar için görsel varlıklar
+### Öntanımlı Varlıklar 
 
-Flixel-UI has a default set of assets (see [FlxUIAssets](https://github.com/HaxeFlixel/flixel-ui/blob/master/flixel/addons/ui/FlxUIAssets.hx) and the [assets folder](https://github.com/HaxeFlixel/flixel-ui/tree/master/assets)) for basic skinning. If you provide incomplete data and/or definitions for your widgets, FlxUI will automatically attempt to fall back on the default assets. 
+Flixel-UI, temel giydirme için varsayılan bir varlık seti ([FlxUIAssets](https://github.com/HaxeFlixel/flixel-ui/blob/master/flixel/addons/ui/FlxUIAssets.hx)'e ve [varlıklar klasörü](https://github.com/HaxeFlixel/flixel-ui/tree/master/assets)'ne bakın) bulundurur. Eksik veri ve/ya tanımlamalar verirseniz, FlxUI otomatikmen varsayılan varlıklara dönmeyi deneyecektir.
 
-### Custom Assets
+### Özel Varlıklar
 
-If you want to provide your own assets, you should put them in your project's "assets" folder, using the same structure you see in the [demo project](https://github.com/HaxeFlixel/flixel-demos/tree/master/UserInterface/RPGInterface).
+Kendi varlıklarınızı sunmak isterseniz, [demo projesinde](https://github.com/HaxeFlixel/flixel-demos/tree/master/UserInterface/RPGInterface) gördüğünüz aynı yapıyı kullanarak, kendi projenizin "varlıklar" klasörüne koymanız gerekmektedir.
 
 ----
 
 # FlxUI public functions
+# FlxUI public fonksiyonları
 
-Most commonly used public functions in class FlxUI:
-
+Genelde FlxUI sınıfında en çok kullanılan public fonksiyonları:
 ```haxe
 //Initiate from XML Fast object:
 //(This is handled automatically in the recommended setup)
@@ -93,10 +90,9 @@ getMode(Key:String,recursive:Bool=true):Fast
 //Get a widget definition:
 getDefinition(key:String,recursive:Bool=true):Fast
 ```
+`recursive`in yukarı özyinelemeye referans verdiğini, görünümlere doğru delmeye referans vermediği unutmayın. Eğer bir görünüm etiketi kullanırsanız, `cast getAsset("mylayoutname")`ı ve sonra `getAsset()`i aşağı özyineleme gerçekleştirmek için çağırmalısınız. 
 
-Note that `recursive` refers to an upward recursion, not drilling down into layouts.  If you use a layout tag, you must `cast getAsset("mylayoutname")` and then call `getAsset()` on that to achieve downward recursion.
-
-less commonly used public functions:
+Daha az kullanılan public fonksiyonları:
 ```haxe
 //These implement the IEventGetter interface for lightweight events
 getEvent(name:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>):Void
@@ -116,9 +112,8 @@ setMode(mode_id:String,target_id:String=""):Void
 
 ----
 
-# XML layout basics
-Everything in flixel-ui is done with xml layout files. Here's a very simple example:
-
+# XML görünüm temelleri
+flixel-ui'daki herşey xml görünüm dosyaları ile hallonulur. İşte çok basit bir örnek:
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
 <data>	
@@ -126,42 +121,43 @@ Everything in flixel-ui is done with xml layout files. Here's a very simple exam
 </data>
 ```
 
-That will create a FlxUI object whose sole child is a single sprite. The "src" parameter specifies the path to the image - FlxUI will use this to internally load the object via OpenFL thus:
+Bu, tek çocuğu tek bir sprite olan bir FlxUI nesnesi yaratacaktır. “src” parametresi görüntünün yolunu belirtir - FlxUI bunu OpenFL aracılığıyla nesneyi dahili olarak yüklemek için kullanacaktır:
+
 
 ```haxe
 Assets.getBitmapData("assets/gfx/ui/title_back.png")
 ```
 
-As you can see, all image source entries assume two things:
-* The format is PNG (might add JPG/GIF/etc support later)
-* The specified directory is inside "assets/gfx/"
-  * If you want a different directory, prepend it with "RAW:" like this:
+Gördüğünüz gibi, tüm görüntü kaynağı girişleri iki şeyi varsaymaktadır:
+* Format PNG'dir (daha sonra JPG/GIF/etc desteği eklenebilir)
+* Belirtilen dizin “assets/gfx/” içindedir
+  * Farklı bir dizin istiyorsanız, başına aşağıdaki gibi “RAW:” ekleyin:
   * ````"RAW:path/to/my/assets/image"```` will resolve as ````"path/to/my/assets/image.png"```` instead of ```"assets/gfx/path/to/my/assets/image.png"```
-
-## Types of tags
-There are several basic types of xml tags in a Flixel-UI layout file.
+    
+## Etiket türleri
+Bir Flixel-UI görünüm dosyasında birkaç basit xml etiket tipleri vardır.
 
 **Widget**, ```<definition>```, ```<include>```, ```<group>```, ```<align>```, ```<position>```, ```<layout>```, ```<failure>```, ```<mode>```, and ```<change>```.
 
-Let's go over these one by one.
+Hepsinin üzerinden tek tek geçelim.
 
 --
 
 ### 1. Widget
-This is any of the many Flixel-UI widgets, such as ```<sprite>```, ```<button>```, ```<checkbox>```, etc. We'll go into more detail on each one below, but all widget tags have a few things in common:
+Bu, ```<sprite>``, ```<button>``, ```<checkbox>``, vb. gibi birçok Flixel-UI widget'ından herhangi biridir. Aşağıda her biri hakkında daha fazla ayrıntıya gireceğiz, ancak tüm widget etiketlerinin birkaç ortak noktası vardır:
 
-*Attributes:*
-* **name** - string, optional, should be unique. Lets you reference this widget throughout the layout, and also lets you fetch it by name with FlxUI's ```getAsset("some_id")``` function.
-* **x** and **y** - integer, specifies position. If no anchor tag exists as a child node, the position is absolute. If an anchor tag exists, the position is relative to the anchor.*
-* **use_def** - string, optional, references a ```<definition>``` tag by name to use for this widget.
-* **group** - string, optional, references a ```<group>``` tag by name. Will make this widget the child of that group instead of the FlxUI itself.
-* **visible** - boolean, optional, sets the visibility of the widget when the layout is loaded
-* **active** - boolean, optional, controls whether a widget responds to any updates
-* **round** - if x/y (and/or width/height for a sizeable object) are calculated from formulas/anchors, specifies how rounding works. Legal values are:
-  * **down**: round down
-  * **up**: round up
-  * **round** or **true**: round up if decimal is >= 0.5, round down otherwise.
-  * **false** (or attribute absent): do not round 
+*Özellikler:*
+* **name** - dize, isteğe bağlı, benzersiz olmalıdır. Düzen boyunca bu widget'a referans vermenizi sağlar ve ayrıca FlxUI'nin ``getAsset(“some_id”)`` fonksiyonu ile isme göre getirmenizi sağlar.
+* **x** ve **y** - tamsayı, konumu belirtir. Alt düğüm olarak herhangi bir bağlantı etiketi yoksa, konum mutlaktır. Bir bağlantı etiketi varsa, konum bağlantıya görelidir.*
+* **use_def** - dize, isteğe bağlı, bu widget için kullanılacak ``<definition>`` etiketine adıyla başvurur.
+**group** - dize, isteğe bağlı, bir ``<group>`` etiketine adıyla referans verir. Bu widget'ı FlxUI'nin kendisi yerine o grubun çocuğu yapar.
+* **visible** - boolean, isteğe bağlı, düzen yüklendiğinde widget'ın görünürlüğünü ayarlar
+* **aktif** - boolean, isteğe bağlı, bir widget'ın herhangi bir güncellemeye yanıt verip vermediğini kontrol eder
+* **round** - x/y (ve/veya büyük boyutlu bir nesne için genişlik/yükseklik) formüllerden/çubuklardan hesaplanıyorsa, yuvarlamanın nasıl çalışacağını belirtir. Yasal değerler şunlardır:
+  * **down**: aşağı yuvarla
+  * **up**: yukarı yuvarla
+  **round** veya **true**: ondalık >= 0,5 ise yukarı yuvarla, aksi takdirde aşağı yuvarla.
+  * **false** (veya öznitelik yok): yuvarlama 
   
 --
 
@@ -170,42 +166,40 @@ This is any of the many Flixel-UI widgets, such as ```<sprite>```, ```<button>``
 * **\<param>** - optional, lets you specify parameters**
 * **\<tooltip>** - optional, lets you specify a tooltip.***
 * **size tags** - optional, lets you dynamically size a widget according to some formula.*
-* **\<locale name="xx-YY">** - optional, lets you specify a locale (like "en-US" or "nb-NO") for [fireTongue](https://github.com/larsiusprime/firetongue) integration. This lets you specify changes based on the current locale:
+* **\<locale name=“xx-YY”>** - optional, lets you specify a locale (like “en-US” or “nb-NO”) for [fireTongue](https://github.com/larsiusprime/firetongue) integration. This lets you specify changes based on the current locale:
 Example:
 
 ```xml
-<button center_x="true" x="0" y="505" name="battle" use_def="text_button" group="top" label="$TITLE_BATTLES">
-	<param type="string" value="battle"/>
-	<locale name="nb-NO">
-		<change width="96"/>
+<button center_x=“true” x=“0” y=“505” name=“battle” use_def=“text_button” group=“top” label=“$TITLE_BATTLES”>
+	<param type=“string” value=“battle”/>
+	<locale name=“nb-NO”>
+		<change width=“96”/>
 		<!--if norwegian, do 96 pixels wide instead of the default-->
 	</locale>			
 </button>
 ```
 
-\* More info on Anchor and Size tags appears towards the bottom in the "Dynamic Position & Size" section. 
+\* Anchor ve Size etiketleri hakkında daha fazla bilgi “Dinamik Konum ve Boyut” bölümünde aşağıya doğru görünür. 
 
-\*\* More info on Parameters can be found under the Button entry in "List of Widgets". Only some widgets use parameters. 
+\*\* Parametreler hakkında daha fazla bilgi “Pencere Araçları Listesi ”ndeki Düğme girişi altında bulunabilir. Yalnızca bazı pencere öğeleri parametre kullanır. 
 
-\*\*\* More info on Tooltips appears towards the bottom in the "Tooltips" section.
-
+\*\*\* Araç İpuçları hakkında daha fazla bilgi “Araç İpuçları” bölümünde aşağıya doğru görünür.
 --
 
-### 2. ```<definition>```
-This lets you offload a lot of re-usable details into a separate tag with a unique name, and then call them in to another tag using the use_def="definition_id" attribute. A definition tag is exactly like a regular widget tag, except the tag name is "definition."
+### 2. ```<definition>``
+Bu, çok sayıda yeniden kullanılabilir ayrıntıyı benzersiz bir ada sahip ayrı bir etikete yüklemenize ve ardından use_def=“definition_id” niteliğini kullanarak bunları başka bir etikete çağırmanıza olanak tanır. Tanım etiketi, etiket adının “tanım” olması dışında normal bir widget etiketi gibidir.
 
-If you provide details in the widget tag and also use a definition, it will override the information in the definition wherever they conflict. Look at the RPG Interface demo for more details.
+Widget etiketinde ayrıntılar sağlarsanız ve aynı zamanda bir tanım kullanırsanız, çakıştıkları her yerde tanımdaki bilgileri geçersiz kılacaktır. Daha fazla ayrıntı için RPG Arayüzü demosuna bakın.
 
-**Example:**
+**Örnek:**
 
-A very common usage is font definitions for text widgets. Instead of typing this:
-
+Çok yaygın bir kullanım, metin widget'ları için yazı tipi tanımlarıdır. Bunu yazmak yerine:
 ```xml
 <text name="text1" x="50" y="50" text="Text 1" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
 <text name="text2" x="50" y="50" text="Text 2" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
 ```
 
-You can do this instead:
+Bunu yapabilirsiniz:
 
 ```xml
 <definition name="sans10" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
@@ -213,111 +207,108 @@ You can do this instead:
 <text name="text2" use_def="sans10" x="50" y="50" text="Text 2"/>
 ```
 
-Notice that in this case we've created a text definition that is always bold and white with a black outline. Let's say we want some italic text instead, but we don't want to create a new definition:
-
+Bu durumda, her zaman kalın, beyaz ve siyah anahatlı bir metin tanımı oluşturduğumuza dikkat edin. Diyelim ki bunun yerine italik bir metin istiyoruz, ancak yeni bir tanım oluşturmak istemiyoruz:
 ```xml
 <text name="italic_text" use_def="sans10" style="italic" x="50" y="50" text="My Italic Text"/>
 ```
 
-This is the same as writing
+Yazmak ile aynı şeydir
 
 ```xml
 <text name="italic_text" x="50" y="50" text="My Italic Text" font="verdana" size="10" style="italic" color="0xffffff" outline="0x000000"/>
 ```
 
-All of the values from the "sans10" definition are inherited, and then all the local settings of the "italic_text" tag are applied, overriding style="bold" with style="italic."
+“sans10“ tanımındaki tüm değerler devralınır ve ardından ‘italic_text’ etiketinin tüm yerel ayarları uygulanır ve style=”bold“ yerine style=”italic” kullanılır.
 
-### 3. ```<default>```
-A default tag is just like a definition, with a few exceptions:
+### 3. ```<default>``
+Varsayılan etiket, birkaç istisna dışında tıpkı bir tanım gibidir:
 
-1. You can only have one for each type of widget
-2. The "name" property must be the name of the widget this default definition is for
-3. You don't use these definitions with "use_def" tags
+1. Her widget türü için yalnızca bir tane olabilir
+2. “name” özelliği, bu varsayılan tanımın ait olduğu widget'ın adı olmalıdır
+3. Bu tanımları “use_def” etiketleri ile kullanmazsınız
 
-Whenever a widget is loaded, it will check to see if there is a default definition set for that type of widget. If so, it will automatically apply any properties from the default definition. This is done BEFORE and in ultimately IN ADDITION TO setting any properties of a user-supplied definition tag from "use_def".
+Bir widget her yüklendiğinde, o widget türü için ayarlanmış varsayılan bir tanım olup olmadığını kontrol eder. Eğer varsa, varsayılan tanımdaki tüm özellikleri otomatik olarak uygulayacaktır. Bu, “use_def ”ten kullanıcı tarafından sağlanan bir tanım etiketinin herhangi bir özelliğinin ayarlanmasından ÖNCE ve sonuçta EK olarak yapılır.
 
-Default tags can be accessed like any other tag via the ```FlxUI.getDefinition``` function, they are stored under the key "default:X" where X is the name of the widget they define. So "default:text" or "default:button", etc.
+Varsayılan etiketlere ``FlxUI.getDefinition`` fonksiyonu aracılığıyla diğer etiketler gibi erişilebilir, bunlar “default:X” anahtarı altında saklanır, burada X tanımladıkları widget'ın adıdır. Yani “default:text” veya “default:button” vb.
 
-You define a default like this:
+Bunun gibi bir varsayılan tanımlarsınız:
 
 ```xml
-<default name="text" color="red"/>
+<default name=“text” color=“red”/>
 ```
 
-Which will make all of your ```<text>``` objects red, unless local settings or a use_def overrides that.
+Bu da yerel ayarlar veya bir use_def bunu geçersiz kılmadığı sürece tüm ```<text>`` nesnelerinizi kırmızı yapacaktır.
 
-### 4. ```<include>```
-Include tags let you reference definitions stored in another xml file. This is a convenience feature to cut down on file bloat, and aid organization:
+### 4. ```<include>``
+Include etiketleri, başka bir xml dosyasında saklanan tanımlara referans vermenizi sağlar. Bu, dosya şişkinliğini azaltmak ve organizasyona yardımcı olmak için kolaylık sağlayan bir özelliktir:
 
-This invocation will include all the definitions found in "some_other_file.xml":
+Bu çağırma “some_other_file.xml” dosyasında bulunan tüm tanımları içerecektir:
 
 ```xml
 <include name="some_other_file"/>
 ```
 
-*Only* definition and default tags will be included. It also adds a bit of scoping to your project - in the case that an included definition has the same name as one defined locally, the local definition will be used. Only in the case that FlxUI can't find your definition locally will it check for included ones. 
+*Yalnızca* tanım ve varsayılan etiketler dahil edilecektir. Ayrıca projenize biraz kapsam ekler - dahil edilen bir tanımın yerel olarak tanımlanmış bir tanımla aynı ada sahip olması durumunda, yerel tanım kullanılacaktır. Yalnızca FlxUI'nin tanımınızı yerel olarak bulamaması durumunda, dahil edilenleri kontrol edecektir. 
 
-This recursion is only one level deep. If you put \<include> tags in your included file, they'll be ignored. 
-
+Bu özyineleme sadece bir seviye derinliktedir. Eğer dahil dosyanıza \<include> etiketleri koyarsanız, bunlar göz ardı edilecektir. 
 ### 5. ```<inject>```
-Inject tags are a more direct solution than ```<include>``` tags. You just specify the name of the other xml file like you would with ```<include>```, but instead of including only the definitions, it literally replaces the ```<inject>``` tag with the contents of the other file, minus the ```<?xml>``` and ```<data>``` wrapper tags, of course. This step happens before any processing is done.
+Inject etiketleri ```<include>`` etiketlerinden daha doğrudan bir çözümdür. Diğer xml dosyasının adını ``<include>`` etiketinde olduğu gibi belirtirsiniz, ancak yalnızca tanımları dahil etmek yerine, ``<inject>`` etiketini diğer dosyanın içeriğiyle tam anlamıyla değiştirir, tabii ki ``<?xml>`` ve ``<data>`` sarmalayıcı etiketleri hariç. Bu adım herhangi bir işlem yapılmadan önce gerçekleşir.
 
-This invocation will inject all the contents found in "some_other_file.xml":
-
+Bu çağırma “some_other_file.xml” içinde bulunan tüm içeriği enjekte edecektir:
 ```xml
 <inject name="some_other_file"/>
 ```
 
 ### 6. ```<group>```
-Creates a FlxGroup (specifically a FlxUIGroup) that you can assign widgets to. Note that you do NOT add things to a group by making widget tags as child xml nodes to the \<group\> tag, but by setting the "group" attribute in a widget tag to the group's name.
+Widget'ları atayabileceğiniz bir FlxGroup (özellikle bir FlxUIGroup) oluşturur. Widget etiketlerini \<group\> etiketinin alt xml düğümleri haline getirerek değil, widget etiketindeki “group” niteliğini grubun adına ayarlayarak bir gruba bir şeyler eklediğinizi unutmayın.
 
-Groups are stacked in the order you define them, with those at the top of the file created first, and thus stacked "underneath" those that come later. 
+Gruplar, onları tanımladığınız sıraya göre yığılır; dosyanın en üstünde olanlar önce oluşturulur ve böylece daha sonra gelenlerin “altında” yığılır. 
 
-A group tag takes one attribute - name. Just define your groups somewhere in the order you want them to stack, then add widgets to them by setting the group attribute to the ids you want.
+Bir grup etiketi tek bir özellik alır - isim. Gruplarınızı istediğiniz sırada bir yerde tanımlayın, ardından grup niteliğini istediğiniz kimliklere ayarlayarak bunlara widget ekleyin.
 
 ### 7. ```<align>```
-Dynamically aligns, centers, and/or spaces objects relative to one another. 
-This is complex enough to deserve its own section below, see "Alignment Tags" under "Dynamic Position & Size" later in the document.
+Nesneleri dinamik olarak hizalar, ortalar ve/veya birbirlerine göre boşluk bırakır. 
+Bu, aşağıda kendi bölümünü hak edecek kadar karmaşıktır, belgenin ilerleyen bölümlerinde “Dinamik Konum ve Boyut” altındaki “Hizalama Etiketleri ”ne bakın.
 
 ### 8. ```<position>```
-This allows you to re-position an existing asset later in the document. This is useful for complex relative positioning and other uses, and is complex enough to deserve its own section below, see "Position Tags" under "Dynamic Position & Size" later in the document.
+Bu, mevcut bir varlığı daha sonra belgede yeniden konumlandırmanıza olanak tanır. Bu, karmaşık göreli konumlandırma ve diğer kullanımlar için yararlıdır ve aşağıda kendi bölümünü hak edecek kadar karmaşıktır, belgenin ilerleyen bölümlerinde “Dinamik Konum ve Boyut” altındaki “Konum Etiketleri ”ne bakın.
 
 ### 9. ```<layout>```
-Creates a child FlxUI object inside your master FlxUI, and childs all the widgets inside to it. This is especially useful if you want to create multiple layouts for, say, different devices and screen sizes. Combined with **failure** tags, this will let you automatically calculate the best layout depending on screen size.
+Cana FlxUI'nizin içinde bir alt FlxUI nesnesi oluşturur ve içindeki tüm widget'ları ona child eder. Bu, özellikle farklı cihazlar ve ekran boyutları için birden fazla düzen oluşturmak istiyorsanız kullanışlıdır. Bu, **failure** etiketleriyle birlikte, ekran boyutuna bağlı olarak en iyi düzeni otomatik olarak hesaplamanıza olanak tanır.
 
-A layout has only one attribute, name, and then its child nodes. Think of a \<layout> as its own sub-section of your xml file. It can have its own versions of anything you can put in the regular file since it is a full-fledged FlxUI - ie, definitions, groups, widgets, modes, presumably even other layout tags (haven't tested this). 
+Bir layout'un yalnızca bir niteliği, adı ve ardından alt düğümleri vardır. Bir \<layout>'u xml dosyanızın kendi alt bölümü olarak düşünün. Tam teşekküllü bir FlxUI olduğu için normal dosyaya koyabileceğiniz her şeyin kendi sürümlerine sahip olabilir - yani, tanımlar, gruplar, widget'lar, modlar, hatta muhtemelen diğer düzen etiketleri (bunu test etmedim). 
 
-Note that in a layout, scope comes into play when referencing ids. Definitions and object references will first look in the scope of the layout (ie, that FlxUI object), and if none is found, will try to find them in the parent FlxUI. 
+Bir düzende, kimliklere başvururken kapsamın devreye girdiğini unutmayın. Tanımlar ve nesne referansları ilk olarak düzenin kapsamına (yani, o FlxUI nesnesine) bakacak ve hiçbiri bulunamazsa, bunları üst FlxUI'de bulmaya çalışacaktır. 
 
 ### 10. ```<failure>```
-Specifies "failure" conditions for a certain layout, so FlxUI can determine which of multiple layouts to choose from in the event that one works better than another. Useful for simultaneously targeting, say, PC's with variable resolutions and mobile devices.
+Belirli bir düzen için “başarısızlık” koşullarını belirtir, böylece FlxUI, birinin diğerinden daha iyi çalışması durumunda birden fazla düzenden hangisinin seçileceğini belirleyebilir. Örneğin, değişken çözünürlüklü PC'leri ve mobil cihazları aynı anda hedeflemek için kullanışlıdır.
 
-Here's an example:
+İşte bir örnek:
 ```xml
 <failure target ="wave_bar" property="height" compare=">" value="15%"/>		
 ```
 
-"Fail if wave_bar.height is greater than 15% of total flixel canvas height."
+“wave_bar.height toplam flixel tuval yüksekliğinin %15'inden büyükse başarısız olur.”
 
-Legal values for attributes:
+Nitelikler için yasal değerler:
 
-* value - restricted to a percentage (inferring a % of total width/height) or an absolute number. 
-* property - ```"width"``` and ```"height"```
-* compare - ```<```,```>```,```<=```,```>=```,```=```,```==``` (```=``` and ```==``` are synonymous in this context)
+* değer - bir yüzde (toplam genişlik/yüksekliğin %'sini çıkarma) veya mutlak bir sayı ile sınırlandırılmıştır. 
+* özelliği - ``“genişlik”`` ve ``“yükseklik”``
+* karşılaştırma - ```<```,```>```,```<=```,```>=```,```=```,```==`` (```=``` ve ```==`` bu bağlamda eş anlamlıdır)
 
-After your FlxUI has loaded, you can fetch your individual layouts using getAsset(), and then check these public properties, which give you the result of the failure checks:
+FlxUI'niz yüklendikten sonra, getAsset() kullanarak tek tek düzenlerinizi getirebilir ve ardından size başarısızlık kontrollerinin sonucunu veren bu genel özellikleri kontrol edebilirsiniz:
 
-* **failed:Bool** - has this FlxUI "failed" according to the specified rules?
-* **failed_by:Float** - if so, by how much?
+* **failed:Bool** - bu FlxUI belirtilen kurallara göre “başarısız” mı oldu?
+* **failed_by:Float** - eğer öyleyse, ne kadar?
+  
+Bazen birden fazla düzen kurallarınıza göre “başarısız” olur ve en az başarısız olanı seçmek istersiniz. Başarısızlık koşulu “some_thing'in genişliği 100 pikselden büyük” ise, some_thing.width = 176 ise, failed_by 76 olur.
 
-Sometimes multiple layouts have "failed" according to your rules, and you want to pick the one that failed by the least. If the failure condition was "some_thing's width is greater than 100 pixels", than if some_thing.width = 176, failed_by is 76.
-
-To *respond* to failure conditions, you need to write your own code. In the RPG Interface demo, there are two battle layouts, one that is more appropriate for 4:3 resolutions, and another that works better in 16:9. The custom FlxUIState for that state will check failure conditions on load, and set the mode depending on which layout works best. Speaking of modes...
+Başarısızlık koşullarına *yanıt* vermek için kendi kodunuzu yazmanız gerekir. RPG Arayüzü demosunda, biri 4:3 çözünürlükler için daha uygun olan ve diğeri 16:9'da daha iyi çalışan iki savaş düzeni vardır. Bu durum için özel FlxUIState, yükleme sırasında hata koşullarını kontrol edecek ve hangi düzenin en iyi çalıştığına bağlı olarak modu ayarlayacaktır. Modlardan bahsetmişken...
 
 ### 11. ```<mode>```
-Specifies UI "modes" that you can switch between. For instance, in Defender's Quest we had four states for our save slots - empty, play, new_game+ (New Game+ eligible), and play+ (New Game+ started). This would determine what buttons were visible ("New Game", "Play", "Play+", "Import", "Export").
+Aralarında geçiş yapabileceğiniz kullanıcı arayüzü “modlarını” belirtir. Örneğin, Defender's Quest'te kayıt yuvalarımız için dört durumumuz vardı - boş, play, new_game+ (Yeni Oyun+ uygun) ve play+ (Yeni Oyun+ başladı). Bu, hangi düğmelerin görünür olduğunu belirlerdi (“Yeni Oyun”, “Oyna”, “Oyna+”, “İçe Aktar”, “Dışa Aktar”).
 
-The "empty" and "play" modes might look like this:
+“empty” ve ‘play’ modları şu şekilde görünebilir:
 
 ```xml
 <mode name="empty">
@@ -354,29 +345,27 @@ The "empty" and "play" modes might look like this:
 </mode>
 ```
 
-Several tags are available in a **\<mode>** element. The most basic ones are ```<hide>``` and ```<show>```, which each only take name as an attribute. They just toggle the "visible" property on and off for the widget matching the "name" attribute. The full list is:
+Bir **\<mode>** öğesinde çeşitli etiketler mevcuttur. En temel olanları ```<hide>`` ve ```<show>`` etiketleridir ve her biri yalnızca name özelliğini alır. Bunlar sadece “name” niteliğiyle eşleşen widget için “visible” özelliğini açar ve kapatır. Tam liste şu şekildedir:
 
-* **show** -- turns element visible
-* **hide** -- turns element invisible
-* **align** -- lets you align the placement of a list of widgets, see "Alignment Tags" later in the document.
-* **change** -- lets you change the property of a widget, see "Change Tags" later in the document.
-* **position** -- lets you re-position a widget, see "Position Tags" later in the document.
-
+* **show** -- öğeyi görünür hale getirir
+* **hide** -- öğeyi görünmez yapar
+* **align** -- bir pencere öğesi listesinin yerleşimini hizalamanızı sağlar, belgenin ilerleyen bölümlerinde “Hizalama Etiketleri” başlığına bakın.
+* **change** -- bir pencere aracının özelliğini değiştirmenizi sağlar, belgenin ilerleyen bölümlerinde “Etiketleri Değiştir” başlığına bakın.
+* **position** -- bir pencere öğesini yeniden konumlandırmanızı sağlar, belgenin ilerleyen bölümlerinde “Konum Etiketleri ”ne bakın.
 ### 12. ```<change>```
 
-The change tag lets you modify various properties of a widget after it has already been created. The widget matching the attribute "name" will be targeted. The following attributes may be used:
+Değiştir etiketi, bir widget oluşturulduktan sonra çeşitli özelliklerini değiştirmenize olanak tanır. “name” niteliğiyle eşleşen widget hedeflenecektir. Aşağıdaki nitelikler kullanılabilir:
 
-* **text** -- Change ```text``` property of the widget (FlxUIText or FlxUIInputText). Can also set "context" and "code" attributes for objects with text and/or labels. \*
-* **label** -- Change ```label``` property of the widget (For buttons or anything else with a text label). Can also set "context" and "code" attributes.
-* **width** -- Change width, same as using it in the original widget tag
-* **height** -- Change height, same as using it in the original widget tag
-* **<params>** (child node) -- Change ```params``` property to this list.\*\*
+* **text** -- Widget'ın ```text`` özelliğini değiştirin (FlxUIText veya FlxUIInputText). Metin ve/veya etiket içeren nesneler için “bağlam” ve “kod” niteliklerini de ayarlayabilir. \*
+* **label** -- Widget'ın ``label`` özelliğini değiştirin (Düğmeler veya metin etiketi olan başka herhangi bir şey için). Ayrıca “context” ve “code” niteliklerini de ayarlayabilir.
+* **width** -- Genişliği değiştirin, orijinal widget etiketinde kullandığınızla aynıdır
+* **height** -- Yüksekliği değiştirin, orijinal widget etiketinde kullandığınızla aynıdır
+* **<params>** (alt düğüm) -- ``params`` özelliğini bu liste olarak değiştirin.\*\*
 
-\* See "Button" entry under "List of Widgets" for more on "context" and "code" properties.
-
+\* “Bağlam” ve “kod” özellikleri hakkında daha fazla bilgi için “Pencere Araçları Listesi” altındaki “Düğme” girişine bakın.
 ----
 
-# List of Widgets
+# Widgetların Listesi
 
 | Name | Class | Tag |
 |------|-------|-----|
@@ -397,86 +386,86 @@ The change tag lets you modify various properties of a widget after it has alrea
 |**Tile Grid**|FlxUITileTest|```<tile_test>```|
 |**Custom Widget|Any (implements IFlxUIWidget)|```<whatever_you_want>```|
 
-Lets go over these one by one. Many of them share common attributes so I will only explain specific attributes in full detail the first time they appear.
+Bunların üzerinden tek tek geçelim. Birçoğu ortak niteliklere sahiptir, bu nedenle belirli nitelikleri yalnızca ilk kez ortaya çıktıklarında tüm ayrıntılarıyla açıklayacağım.
 
 ## 1. Image (FlxUISprite) ```<sprite>```
 
-Just a regular sprite. Can be scaled or fixed size.
+Sadece normal bir sprite. Ölçeklenebilir veya sabit boyutta olabilir.
 
-Attributes:
-* ```x``` and ```y```
-* ```src``` (path to source, no extension, appended to "assets/gfx/". If not present will look for "color" instead)
-* ```color``` (color of the rectangle. "color" attribute should be hexadecimal format ```0xAARRGGBB```, or ```0xRRGGBB```, or a standard color string name like "white" from ```flixel.util.FlxColor```)
-* ```use_def``` (definition name)
-* ```group``` (group name)
-* ```width``` and ```height``` (optional, use exact pixel values or formulas -- will scale the image if they differ from the source image's native width/height)
-* `smooth` (optional, defaults to true -- specifies how to scale the image if it's not 1:1 with the source. False for jaggies, True for smooth. Synonymous with `antialias`) 
-* ```resize_ratio``` (optional, if you specify width or height, you can also define this to force a scaling aspect ratio)
-* ```resize_ratio_x``` / ```resize_ratio_y``` (optional, does the same thing are resize_ratio, but only affects one axis)
-* ```resize_point``` - (optional, string) specify anchor for resizing
-    *  "nw" / "ul" -- Upper-left
-    *  "n"  / "u"  -- Top
-    *  "ne" / "ur" -- Upper-right
-    *  "sw" / "ll" -- Lower-left
-    *  "s"         -- Bottom
-    *  "se" / "lr" -- Lower-right
-    *  "m" / "c" / "mid" / "center" -- Center
+Nitelikleri:
+* ```x``` ve ```y```
+* ```src``` (kaynağa yol, uzantısız, “assets/gfx/” dosyasına eklenir. Eğer mevcut değilse bunun yerine “color” arar)
+* ```color``` (dikdörtgenin rengi. “color” niteliği onaltılık formatta ``0xAARRGGBB`` veya ``0xRRGGBB`` veya ``flixel.util.FlxColor`` öğesinden ‘white’ gibi standart bir renk dizesi adı olmalıdır)
+* ```use_def``` (tanımlama adı)
+* ```group``` (grup adı)
+* ```width``` ve ```height``` (isteğe bağlı, tam piksel değerleri veya formüller kullanın -- bunlar kaynak görüntünün doğal genişlik/yüksekliğinden farklıysa görüntüyü ölçeklendirir)
+* `smooth` (isteğe bağlı, varsayılan değer true -- kaynakla 1:1 değilse görüntünün nasıl ölçeklendirileceğini belirtir. Pürüzler için False, pürüzsüzlük için True. antialias` ile eşanlamlıdır) 
+* ```resize_ratio``` (isteğe bağlı, genişlik veya yükseklik belirtirseniz, bunu ölçekleme en boy oranını zorlamak için de tanımlayabilirsiniz)
+* ```resize_ratio_x``` / ```resize_ratio_y``` (isteğe bağlıdır, resize_ratio ile aynı şeyi yapar, ancak yalnızca bir ekseni etkiler)
+* ```resize_point``` - (isteğe bağlı, dize) yeniden boyutlandırmak için anchor tanımlayın
+    *  "nw" / "ul" -- Sol üst
+    *  "n"  / "u"  -- Üst
+    *  "ne" / "ur" -- Sağ üst
+    *  "sw" / "ll" -- Sol alt
+    *  "s"         -- ALt
+    *  "se" / "lr" -- Sağ alt
+    *  "m" / "c" / "mid" / "center" -- Merkez
 
 ## 2. 9-slice sprite/chrome (FlxUI9SliceSprite) ```<nineslicesprite>``` or ```<chrome>```
 
-A 9-slice sprite can be scaled in a more pleasing way than just stretching it directly. It divides the object up into a user-defined grid of 9 cells, (4 corners, 4 edges, 1 interior), and then repositions and scales those individually to construct a resized image. Works best for stuff like chrome and buttons.
+9 dilimli bir sprite, doğrudan germekten daha hoş bir şekilde ölçeklendirilebilir. Nesneyi kullanıcı tanımlı 9 hücrelik bir ızgaraya böler (4 köşe, 4 kenar, 1 iç) ve ardından yeniden boyutlandırılmış bir görüntü oluşturmak için bunları ayrı ayrı yeniden konumlandırır ve ölçeklendirir. En iyi krom ve düğme gibi şeyler için çalışır.
 
-Attributes:
+Nitelikler:
 * ```x```/```y```, ```use_def```, ```group```
 * ```src```
-* ```width```/```height``` **NOT OPTIONAL**: the size of your 9-slice scaled image (not the size of the source image)
-* ```slice9``` - string, two points that define the slice9 grid, format "x1,y1,x2,y2". For example, "6,6,12,12" works well for the 12x12 chrome images in the demo project.
-* ```tile``` - bool, optional (assumes false if not exist). If true, uses tiling rather than scaling for stretching 9-slice cells. Boolean true == "true", not "True" or "TRUE", or "T".
-* ```smooth``` - bool, optional (assumes false if not exist). If true, ensures the scaling uses smooth interpolation rather than nearest-neighbor (stretched blocky pixels).
-* ```color``` - color, optional, to tint the chrome to (e.g. white does nothing.)  "color" attribute should be hexadecimal format ```0xAARRGGBB```, or ```0xRRGGBB```, or a standard color string name like "green" from ```flixel.util.FlxColor```)
-
+* ```width```/```height``` **İSTEĞE BAĞLI DEĞİL**: 9 dilimli ölçeklendirilmiş görüntünüzün boyutu (kaynak görüntünün boyutu değil)
+* ```slice9``` - string, slice9 ızgarasını tanımlayan iki nokta, format “x1,y1,x2,y2”. Örneğin, “6,6,12,12” demo projesindeki 12x12 krom görüntüler için iyi çalışır.
+* ```tile``` - bool, isteğe bağlı (yoksa false varsayılır). true ise, 9 dilimli hücreleri germek için ölçekleme yerine döşeme kullanır. Boolean true == “true”, “True” veya “TRUE” veya “T” değil.
+* ```smooth``` - bool, isteğe bağlı (yoksa false varsayılır). true ise, ölçeklendirmenin en yakın komşu (gerilmiş bloklu pikseller) yerine yumuşak enterpolasyon kullanmasını sağlar.
+* ```color``` - renk, isteğe bağlı, kromu renklendirmek için (örneğin beyaz hiçbir şey yapmaz.) “renk” niteliği onaltılık formatta ``0xAARRGGBB`` veya ``0xRRGGBB`` veya ``flixel.util.FlxColor`` `dan “yeşil” gibi standart bir renk dizesi adı olmalıdır)
+  
 ## 3. Region (FlxUIRegion) ```<region>```
 
-Regions are lightweight, invisible rectangles that can only be seen in Flixel's Debug "show outlines" mode. 
+Regionlar, sadece Flixel'in Hata Ayıklama “ana hatları göster” modunda görülebilen hafif, görünmez dikdörtgenlerdir. 
 
-Despite being invisible, Regions are full-fledged IFlxUIWidget objects and are most useful as placeholders and as intermediate objects for setting up complex layouts. Basically, anytime you feel the urge to create a ```<sprite>``` or ```<chrome>``` tag where you don't really need to see that object, but just want to use it to position something else, or generate a targetable widget you can use in a subsequent formula, use a Region instead.
-
-Attributes:
+Görünmez olmalarına rağmen, Regionlar tam teşekküllü IFlxUIWidget nesneleridir ve en çok yer tutucu olarak ve karmaşık düzenler kurmak için ara nesneler olarak kullanışlıdır. Temel olarak, bir ```<sprite>`` veya ```<chrome>`` etiketi oluşturmak istediğinizde, bu nesneyi gerçekten görmeniz gerekmiyorsa, ancak yalnızca başka bir şeyi konumlandırmak için kullanmak veya sonraki bir formülde kullanabileceğiniz hedeflenebilir bir widget oluşturmak istiyorsanız, bunun yerine bir Region kullanın.
+Nitelikler:
 * ```x```/```y```, ```use_def```, ```group```
 * ```width```/```height```
 
 ## 4. Button (FlxUIButton) ```<button>```
 
 Just a regular clicky button, optionally with a label.
+Sadece sıradan basmalı düğme, tercihen bir etiket ile.
 
-Attributes:
+Nitelikler:
 * ```x```/```y```, ```use_def```, ```group```
-* ```width```/```height``` - optional, only needed if you're using a 9-slice sprite as source
-* ```text_x```/```text_y``` - label x & y offsets
-* ```label``` - text to show
-* ```context``` - (optional) context value if label is a [firetongue](http://www.github.com/larsiusprime/firetongue) flag
-* ```code``` - (optional) firetongue formatting code. Applies a formatting rule to the text:
-    * "u" - all uppercase
-    * "l" - all lowercase
-    * "fu" - first letter uppercase
-    * "fu_" - first letter in each word uppercase
-* ```resize_ratio```, ```resize_point``` (see Image)
-* ```resize_label``` - (optional, boolean) whether or not to let the label scale when the button is resized
-* ```color``` - color, optional, to tint the chrome to (e.g. white does nothing.)  "color" attribute should be hexadecimal format ```0xAARRGGBB```, or ```0xRRGGBB```, or a standard color string name like "green" from ```flixel.util.FlxColor```)
+* ```width```/```height``` - tercihe bağlı, bir 9-slice sprite'ını kaynak olarak kullandığında gerekir
+* ```text_x```/```text_y``` - x & y offsetlerini etiketleyin
+* ```label``` - göstermek için yazı
+* ```context``` - (isteğe bağlı) etiket bir [firetongue](http://www.github.com/larsiusprime/firetongue) bayrağı ise bağlam değeri
+* ```code``` - (isteğe bağlı) firetongue biçimlendirme kodu. Metne bir biçimlendirme kuralı uygular:
+    * “u” - tamamı büyük harf
+    * “l” - tamamı küçük harf
+    * “fu” - ilk harf büyük
+    * “fu_” - her kelimenin ilk harfi büyük
+* ```resize_ratio```, ```resize_point``` (Image'e bakın)
+* ```resize_label``` - (isteğe bağlı, boolean) düğme yeniden boyutlandırıldığında etiketin ölçeklenmesine izin verilip verilmeyeceği
+* ```color``` - renk, isteğe bağlı, kromu renklendirmek için (örneğin beyaz hiçbir şey yapmaz.) “renk” niteliği onaltılık formatta ``0xAARRGGBB`` veya ``0xRRGGBB`` veya ``flixel.util.FlxColor`` `dan “yeşil” gibi standart bir renk dizesi adı olmalıdır)
 
-Child tags:
-* ```<text>``` - just like a regular \<text> node
-* ```<param>``` - parameter to pass to the callback/event system (see "Button Parameters")
-* ```<graphic>``` - graphic source (details below)
+Alt etiketler:
+* ``<text>`` - tıpkı normal bir \<text> düğümü gibi
+* ``<param>`` - geri arama/olay sistemine aktarılacak parametre (bkz. “Düğme Parametreleri”)
+* ```<graphic>`` - grafik kaynağı (ayrıntılar aşağıda)
 
-### 4.1 Working With Parameters
+### 4.1 Parametreler ile çalışmak
 
-Parameters can be attached to buttons and many other types of interactive objects to give context to UI events. You do this by adding ```<param>``` child tags to the appropriate widget.
+UI olaylarına bağlam kazandırmak için düğmelere ve diğer birçok etkileşimli nesne türüne parametreler eklenebilir. Bunu, uygun widget'a ``<param>`` alt etiketleri ekleyerek yapabilirsiniz.
 
-A ```<param>``` tag takes two attributes: ```type``` and ```value```. 
+A ```<param>``` etiketi 2 nitelik alır: ```type``` ve ```value```. 
 
-* ```type```: "string", "int", "float", and "color" or "hex" for a value like ```"0xFF00FF"```
-* ```value```: the value, as a string. The type attribute will ensure it typecasts correctly.
+* ```type```: ```"0xFF00FF"``` gibi bir değer için "string", "int", "float", ve "color" ya da "hex" 
+* ```value```: değeri, bir dize olarak. type niteliği, doğru şekilde yazılmasını sağlayacaktır.
 
 ```xml
 <button name="new_game" use_def="big_button_gold" x="594" y="11" group="top" label="New Game">
@@ -484,33 +473,32 @@ A ```<param>``` tag takes two attributes: ```type``` and ```value```.
 </button>
 ```
 
-You can add as many ```<param>``` tags as you want. When you click this button, it will by default call FlxUI's internal public static event callback:
+İstediğiniz kadar ```<param>`` etiketi ekleyebilirsiniz. Bu düğmeye tıkladığınızda, varsayılan olarak FlxUI'nin dahili genel statik olay geri çağrısını çağıracaktır:
 
 ```haxe
 FlxUI.event(CLICK_EVENT, this, null, params);
 ```
 
-This, in turn, will call ```getEvent()``` on whatever ```IEventGetter``` "owns" this ```FlxUI``` object. In the default setup, this is your ```FlxUIState```. So extend this function in your ```FlxUIState```:
+Bu da, bu ``FlxUI`` nesnesinin “sahibi” olan ``IEventGetter`` üzerinde ``getEvent()`` işlevini çağıracaktır. Varsayılan kurulumda, bu sizin ``FlxUIState`` nesnenizdir. Bu yüzden bu fonksiyonu ``FlxUIState`` nesnenizde genişletin:
 
 ```haxe
 getEvent(name:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>):Void
 ```
 
-The "sender" parameter will be the widget that originated the event -- in this case, the button. On a ```FlxUIButton``` click, the other parameters will be:
+“Gönderen” parametresi, olayı başlatan widget olacaktır - bu durumda düğme. Bir ``FlxUIButton`` tıklandığında, diğer parametreler şöyle olacaktır:
 
-* **event name**: "click\_button" (ie, ```FlxUITypedButton.CLICK_EVENT```)
+* **event name**: "click\_button" (ieörneğin, ```FlxUITypedButton.CLICK_EVENT```)
 * **data**: ```null```
-* **params**: an ```Array<Dynamic>``` containing all the parameters you've defined.
+* **params**: bir ```Array<Dynamic>``` tanımladığınız tüm parametreleri içerir.
 
-Some other interactive widgets can take parameters, and they work in basically the same way.
+Diğer bazı interaktif widget'lar parametre alabilir ve temelde aynı şekilde çalışırlar.
 
-### 4.2 Button Graphics
+### 4.2 Düğme Grafikleri
+Düğmeler için grafikler biraz karmaşık olabilir. Belirtmek istediğiniz her düğme durumu için bir tane olmak üzere birden fazla grafik etiketi koyabilir veya tüm durumları dikey olarak yığılmış tek bir görüntüde birleştiren ve FlxUIButton'dan tek tek kareleri kendisinin sıralamasını isteyen “all” adında bir tane koyabilirsiniz.
 
-Graphics for buttons can be kinda complex. You can put in multiple graphic tags, one for each button state you want to specify, or just one with the name "all" that combines all the states into one vertically stacked image, and asks the FlxUIButton to sort the individual frames out itself.
+Sistem bazen görüntüye göre çerçeve boyutunun ne olması gerektiğini çıkarabilir ve genişlik/yükseklik ayarlanmamıştır, ancak statik olarak boyutlandırılmışlarsa ve 9 dilimli ölçekleme kullanmıyorsanız genişlik/yükseklik ile açık olmak yardımcı olur.
 
-The system can sometimes infer what the frame size should be based on the image and width/height are not set, but it helps to be explicit with width/height if they are statically sized and you're not using 9-slice scaling.
-
-Static, individual frames:
+Statik, bireysel çerçeveler:
 
 ```xml
 <definition name="button_blue" width="96" height="32">
@@ -520,7 +508,7 @@ Static, individual frames:
 </definition>
 ```
 
-9-slice scaling, individual frames:
+9 dilimli ölçeklendirme, ayrı kareler:
 
 ```xml
 <definition name="button_blue" width="96" height="32">
@@ -530,7 +518,7 @@ Static, individual frames:
 </definition>
 ```
 
-9-slice scaling, all-in-one frame:
+9 dilimli ölçeklendirme, hepsi bir arada çerçeve:
 
 ```xml
 <definition name="button_blue" width="96" height="32">
@@ -538,15 +526,15 @@ Static, individual frames:
 <definition>
 ```
 
-I'm not 100% sure what will happen if you do individual frames and omit one, but I think I set it up to copy one of the other ones in some kind of "smart" way. Again, it's always best to be explicit about what you want rather than be ambiguous and have the system guess.
+Çerçeveleri tek tek yaparsanız ve birini atlarsanız ne olacağından %100 emin değilim, ancak sanırım diğerlerinden birini bir tür “akıllı” şekilde kopyalayacak şekilde ayarladım. Yine, muğlak olmak ve sistemin tahmin etmesini sağlamak yerine ne istediğiniz konusunda açık olmak her zaman en iyisidir.
 
-### 4.3 Button Text
-To specify what the text in a button looks like, you create a ```<text>``` child node.
-You can specify all the properties right here, or use a definition. There's a few special considerations for ```<text>``` nodes inside of a button.
+### 4.3 Düğme Metni
+Bir düğmedeki metnin neye benzediğini belirtmek için bir ``<text>`` alt düğümü oluşturursunuz.
+Tüm özellikleri burada belirtebilir veya bir tanım kullanabilirsiniz. Bir düğmenin içindeki ```<text>`` düğümleri için birkaç özel husus vardır.
 
-The main "color" attribute (hexadecimal format, "0xffffff") is the main label color
+Ana “color” özelliği (onaltılık biçim, “0xffffff”) ana etiket rengidir
 
-If you want to specify colors for other states, you add ```<color>``` tags inside the ```<text>``` tag for each state:
+Diğer durumlar için renk belirtmek isterseniz, her durum için ```<text>`` etiketinin içine ``<color>`` etiketlerini eklersiniz:
 
 ```xml
 <button x="200" y="505" name="some_button" use_def="text_button" label="Click Me">
@@ -557,13 +545,13 @@ If you want to specify colors for other states, you add ```<color>``` tags insid
 ````
 
 
-## 5. Button, Toggle (FlxUIButton) ```<button_toggle>```
+## 5. Button, Toggle (FlxUIButton) ```<button_toggle>``
 
-Toggle buttons are made from the same class as regular buttons, ```FlxUIButton```.
+Geçiş düğmeleri normal düğmelerle aynı sınıftan yapılır, ``FlxUIButton``.
 
-Toggle buttons are different in that they have 6 states, 3 for up/over/down when toggled, and 3 for up/over/down when not toggled. By default, a freshly loaded toggle button's "toggle" value is false.
+Geçiş düğmeleri, geçiş yapıldığında yukarı/aşağı/aşağı için 3 ve geçiş yapılmadığında yukarı/aşağı/aşağı için 3 olmak üzere 6 duruma sahip olmaları bakımından farklıdır. Varsayılan olarak, yeni yüklenmiş bir geçiş düğmesinin “toggle” değeri yanlıştır.
 
-Toggle buttons need more graphics than a regular button. To do this, you need to provide graphic tags for both the regular and untoggled states. The toggled ```<graphic>``` tags are the same, they just need an additional toggle="true" attribute:
+Geçiş düğmeleri normal bir düğmeden daha fazla grafiğe ihtiyaç duyar. Bunu yapmak için, hem normal hem de değiştirilmemiş durumlar için grafik etiketleri sağlamanız gerekir. Geçişli ```<graphic>`` etiketleri aynıdır, sadece ek bir toggle=“true” niteliğine ihtiyaç duyarlar:
 
 ```xml
 <definition name="tab_button_toggle" width="50" height="20" text_x="-2" text_y="0">			
@@ -583,7 +571,7 @@ Toggle buttons need more graphics than a regular button. To do this, you need to
 </definition>
 ```
 
-Of course, if you create a single asset with 6 images stacked vertically, you can save yourself some room:
+Elbette, dikey olarak istiflenmiş 6 görüntü içeren tek bir varlık oluşturursanız, kendinize biraz yer kazandırabilirsiniz:
 
 ```xml
 <definition name="button_toggle" width="50" height="20">		
@@ -595,13 +583,13 @@ Of course, if you create a single asset with 6 images stacked vertically, you ca
 </definition>
 ```
 
-Note that you can create a vertical stack of 9-slice assets, or regular statically-sized assets, the system can use either one. 
+Dikey bir 9 dilimli varlık yığını veya normal statik boyutlu varlıklar oluşturabileceğinizi unutmayın; sistem bunlardan birini kullanabilir. 
 
-## 6. Check box (FlxUICheckBox) ```<checkbox>```
+## 6. Onay kutusu (FlxUICheckBox) ```<checkbox>``
 
-A Check Box is a FlxUIGroup which contains three objects: a "box" image, a "check" image, and a label.
+Onay Kutusu, üç nesne içeren bir FlxUIGroup'tur: bir “kutu” görüntüsü, bir “onay” görüntüsü ve bir etiket.
 
-Attributes:
+Öznitelikler:
 * ```x```/```y```, ```use_def```, ```group```
 * ```check_src``` - source image for check mark (not 9-sliceable, not scaleable)
 * ```box_src``` - source image for box (not 9-sliceable, not scaleable)
@@ -613,22 +601,22 @@ Attributes:
 * ```label_width``` - width of the label
 
 Child tags:
-* ```<text>``` - same as ```<button>```
-* ```<param>``` - same as ```<button>```
-* ```<check>``` - alternate to check_src, more powerful*
-* ```<box>``` - alternate to box_src, more powerful*
+* ```<text>``` - ```<button>``` ile aynı
+* ```<param>``` - ```<button>``` ile aynı
+* ```<check>``` - check_src'ye alternatif, daha güçlü*
+* ```<box>``` - box_src'ye alternatif, daha güçlü*
+  
+*Öznitelik eşdeğerleri yerine ``<check>`` veya ``<box>`` alt etiketlerini sağlarsanız, FlxUI bunları onay işareti ve kutu varlıkları için yüklenecek tam teşekküllü ``<sprite>` veya ``<chrome>` etiketleri olarak değerlendirecektir. Normalde statik bir görüntüyü olduğu gibi yükleyen src nitelikleriyle gerçekleştiremeyeceğiniz ölçeklendirilmiş bir sprite veya 9 dilimli ölçeklendirilmiş bir sprite yüklemek gibi karmaşık bir şey yapmak istiyorsanız bu yöntemi kullanmak isteyeceksiniz.
 
-*If you supply ```<check>``` or ```<box>``` child tags instead of their attribute equivalents, FlxUI will treat them as full-fledged ```<sprite>``` or ```<chrome>``` tags to load for the checkmark and box assets. You'll want to use this method if you want to do something complicated, like load a scaled sprite, or a 9-slice-scaled sprite, that you can't normally accomplish with the src attributes, which just load a static image as-is.
+Olay:
+* isim - “click_check_box”
+* params - kullanıcı tarafından tanımlandığı gibi, ancak bu otomatik olarak listenin sonuna eklenir: ``{name: “checked”, value:false}`` veya ``{name: “checked”, value:true}``
 
-Event:
-* name - "click_check_box"
-* params - as defined by user, but with this one automatically added to the list at the end: ```{name:"checked", value:false}``` or ```{name:"checked", value:true}```
+## 7. Text (FlxUIText) ```<text>``
 
-## 7. Text (FlxUIText) ```<text>```
+Normal bir metin alanı. 
 
-A regular text field. 
-
-Attributes:
+Nitelikler:
 * ```text``` - the actual text in the textfield
 * ```x```/```y```, ```use_def```, ```group```
 * ```font``` - string, something like "vera" or "verdana"
