@@ -170,27 +170,38 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 
 		_centerLabelOffset = FlxPoint.get(0, 0);
 
-		statusAnimations[3] = "normal_toggled";
-		statusAnimations[4] = "highlight_toggled";
-		statusAnimations[5] = "pressed_toggled";
-
 		labelAlphas = [for (i in 0...3) 1];
 
 		inputOver = new FlxInput(0);
 	}
-
+	
 	override public function graphicLoaded():Void
 	{
 		super.graphicLoaded();
-
-		setupAnimation("normal_toggled", 3);
-		setupAnimation("highlight_toggled", 4);
-		setupAnimation("pressed_toggled", 5);
+		
+		setupAnimation(getToggleStatusAnimation(NORMAL, 3));
+		setupAnimation(getToggleStatusAnimation(HIGHLIGHT, #if FLX_MOUSE 4 #else 3 #end));
+		setupAnimation(getToggleStatusAnimation(PRESSED, 5));
 
 		if (_autoCleanup)
 		{
 			cleanup();
 		}
+	}
+	
+	function getToggleStatusAnimation(status:FlxButtonState)
+	{
+		#if (flixel <= "5.9.0")
+		return switch(status)
+		{
+			case NORMAL: "normal_toggled";
+			case PRESSED: "pressed_toggled";
+			case HIGHLIGHT: "highlight_toggled";
+			case DISABLED: "disabled_toggled";
+		}
+		#else
+		return status.toString() + "_toggled";
+		#end
 	}
 
 	@:access(flixel.addons.ui.FlxUITypedButton)
@@ -311,14 +322,11 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 		}
 	}
 
-	/**
-	 * Offset the statusAnimations-index by 3 when toggled.
-	 */
-	override public function updateStatusAnimation():Void
+	override function updateStatusAnimation():Void
 	{
 		if (has_toggle && toggled)
 		{
-			animation.play(statusAnimations[status + 3]);
+			animation.play(getToggleStatusAnimation(status));
 		}
 		else
 		{
