@@ -179,9 +179,9 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	{
 		super.graphicLoaded();
 		
-		setupAnimation(getToggleStatusAnimation(NORMAL, 3));
-		setupAnimation(getToggleStatusAnimation(HIGHLIGHT, #if FLX_MOUSE 4 #else 3 #end));
-		setupAnimation(getToggleStatusAnimation(PRESSED, 5));
+		setupAnimation(getToggleStatusAnimation(NORMAL), 3);
+		setupAnimation(getToggleStatusAnimation(HIGHLIGHT), #if FLX_MOUSE 4 #else 3 #end);
+		setupAnimation(getToggleStatusAnimation(PRESSED), 5);
 
 		if (_autoCleanup)
 		{
