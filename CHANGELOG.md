@@ -1,3 +1,7 @@
+2.6.4 (December 10, 2024)
+------------------------------
+`FlxUITypedButton`: Avoid deprecated `statusAnimations` field ([#291](https://github.com/HaxeFlixel/flixel-ui/pull/291))
+
 2.6.3 (December 10, 2024)
 ------------------------------ 
 Fix compile error with Flixel 5.8.0 ([289](https://github.com/HaxeFlixel/flixel-ui/pull/289))
