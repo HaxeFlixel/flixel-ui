@@ -36,7 +36,7 @@ class FlxUIRegion extends FlxSprite implements IFlxUIWidget implements IResizabl
 		height = h;
 
 		#if FLX_DEBUG
-		debugBoundingBoxColor = FlxG.random.color().to24Bit();
+		debugBoundingBoxColor = FlxG.random.color().rgb;
 		#end
 	}
 
