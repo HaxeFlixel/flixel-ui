@@ -77,7 +77,7 @@ class FlxUI9SliceSprite extends FlxUISprite implements IResizable implements IFl
 	 * @param	Resize_axis	Whether resizing is based around the X or Y axis
 	 * @param	Color	Color to tint this graphic to.  (White has no effect.)
 	 */
-	public function new(X:Float, Y:Float, Graphic:Dynamic, Rect:Rectangle, Slice9:Array<Int> = null, Tile:Int = TILE_NONE, Smooth:Bool = false,
+	public function new(X:Float, Y:Float, Graphic:Dynamic, Rect:Rectangle, Slice9:Array<Int> = null, Tile:Int = FlxUI9SliceSprite.TILE_NONE, Smooth:Bool = false,
 			Id:String = "", Ratio:Float = -1, Resize_point = null, Resize_axis:Int = FlxUISprite.RESIZE_RATIO_Y, DeferResize:Bool = false,
 			Color:FlxColor = FlxColor.WHITE)
 	{

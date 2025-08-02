@@ -200,7 +200,7 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 	 * @param	IsPercent			Whether to portray the number as a percentage
 	 */
 	public function new(X:Float = 0, Y:Float = 0, StepSize:Float = 1, DefaultValue:Float = 0, Min:Float = -999, Max:Float = 999, Decimals:Int = 0,
-			Stack:Int = STACK_HORIZONTAL, ?TextField:FlxText, ?ButtonPlus:FlxUITypedButton<FlxSprite>, ?ButtonMinus:FlxUITypedButton<FlxSprite>,
+			Stack:Int = FlxUINumericStepper.STACK_HORIZONTAL, ?TextField:FlxText, ?ButtonPlus:FlxUITypedButton<FlxSprite>, ?ButtonMinus:FlxUITypedButton<FlxSprite>,
 			IsPercent:Bool = false)
 	{
 		super(X, Y);

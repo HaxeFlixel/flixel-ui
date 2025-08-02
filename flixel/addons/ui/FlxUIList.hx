@@ -77,7 +77,7 @@ class FlxUIList extends FlxUIGroup
 	 * @param	NextButton	Button to Scroll +
 	 */
 	public function new(X:Float = 0, Y:Float = 0, ?Widgets:Array<IFlxUIWidget> = null, W:Float = 0, H:Float = 0, ?MoreString:String = "<X> more...",
-			?Stacking:Int = STACK_VERTICAL, ?Spacing:Float = 0, PrevButtonOffset:FlxPoint = null, NextButtonOffset:FlxPoint = null,
+			?Stacking:Int = FlxUIList.STACK_VERTICAL, ?Spacing:Float = 0, PrevButtonOffset:FlxPoint = null, NextButtonOffset:FlxPoint = null,
 			PrevButton:IFlxUIButton = null, NextButton:IFlxUIButton = null)
 	{
 		_skipRefresh = true;

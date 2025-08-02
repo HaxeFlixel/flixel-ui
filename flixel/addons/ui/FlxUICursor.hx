@@ -240,7 +240,7 @@ class FlxUICursor extends FlxUISprite
 	 * @param	DefaultKeys		default hotkey layouts, accepts KEYS_TAB, ..._WASD, etc, combine using "|" operator
 	 * @param	Asset			visual asset for the cursor. If not supplied, uses default
 	 */
-	public function new(Callback:String->IFlxUIWidget->Void, InputMethod:Int = INPUT_KEYS, DefaultKeys = FlxUICursorInputFlag.KEYS_TAB, ?Asset:Dynamic)
+	public function new(Callback:String->IFlxUIWidget->Void, InputMethod:Int = FlxUICursor.INPUT_KEYS, DefaultKeys = FlxUICursorInputFlag.KEYS_TAB, ?Asset:Dynamic)
 	{
 		if (Asset == null)
 		{ // No asset detected? Guess based on game's resolution
