@@ -22,7 +22,7 @@ haxelib'den en son kararlı sürümünü indirin:
 
     haxelib install flixel-ui
 
-haxelib'den en son bıçak kenarı geliştirici sürümünü indirin:
+haxelib'den en son bleeding-edge geliştirici sürümünü indirin:
 
     haxelib install flixel-ui
 
@@ -164,12 +164,12 @@ Bu, ```<sprite>```, ```<button>``` , ```<checkbox>```, vb. gibi birçok Flixel-U
 --
 
 *Child nodes:*
-* **\<anchor>** - optional, lets you position this widget relative to another object's position.*
-* **\<param>** - optional, lets you specify parameters**
-* **\<tooltip>** - optional, lets you specify a tooltip.***
-* **size tags** - optional, lets you dynamically size a widget according to some formula.*
-* **\<locale name=“xx-YY”>** - optional, lets you specify a locale (like “en-US” or “nb-NO”) for [fireTongue](https://github.com/larsiusprime/firetongue) integration. This lets you specify changes based on the current locale:
-Example:
+* **\<anchor>** -  isteğe bağlı, bu widgeti diğer objenin pozisyonuna bağlı olarak yerleştirmenize izin verir.*
+* **\<param>** - isteğe bağlı, parametreleri özelleştirmenize izin verir**
+* **\<tooltip>** - isteğe bağlı, tooltip'i özelleştirmenize izin verir.***
+* **size tags** - isteğe bağlı, bir formüle dayanarak bir widgeti dinamik olarak boyutlandırmanıza izin verir.*
+* **\<locale name=“xx-YY”>** - isteğe bağlı, [fireTongue](https://github.com/larsiusprime/firetongue) entegrasyonu için bir yerel ("en-US" veya "tr-TR" gibi) ayarlamanıza olanak sağlar. Bu, yerel saatinize bağlı olarak değişiklikler yapmanıza olanak sağlar:
+Örneğin:
 
 ```xml
 <button center_x=“true” x=“0” y=“505” name=“battle” use_def=“text_button” group=“top” label=“$TITLE_BATTLES”>
