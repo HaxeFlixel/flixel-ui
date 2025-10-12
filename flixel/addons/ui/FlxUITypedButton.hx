@@ -24,7 +24,7 @@ import openfl.display.BitmapData;
 import openfl.errors.Error;
 
 #if (flixel < version("5.7.0"))
-enum abstract FlxButtonState(Int) to Int
+enum abstract FlxButtonState(Int) from Int to Int
 {
 	var NORMAL = 0;
 	var HIGHLIGHT = 1;
