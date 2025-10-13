@@ -288,7 +288,8 @@ class FlxInputText extends FlxText
 		drawSprite(fieldBorderSprite);
 		drawSprite(backgroundSprite);
 		
-		for (camera in getCamerasLegacy())
+		final defaultCameras = #if (flixel < version("5.7.0")) cameras #else getCamerasLegacy() #end;
+		for (camera in defaultCameras)
 		{
 			if (!camera.visible || !camera.exists || !isOnScreen(camera))
 				continue;
