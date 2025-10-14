@@ -326,7 +326,11 @@ class FlxUITypedButton<T:FlxSprite> extends FlxTypedButton<T> implements IFlxUIB
 	{
 		if (has_toggle && toggled)
 		{
+			#if (flixel < version("5.7.0"))
+			animation.play(getToggleStatusAnimation((cast status:FlxButtonState)));
+			#else
 			animation.play(getToggleStatusAnimation(status));
+			#end
 		}
 		else
 		{
