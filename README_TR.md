@@ -278,11 +278,11 @@ Bu, aşağıda kendi bölümünü hak edecek kadar karmaşıktır, belgenin iler
 Bu, mevcut bir varlığı daha sonra belgede yeniden konumlandırmanıza olanak tanır. Bu, karmaşık göreli konumlandırma ve diğer kullanımlar için yararlıdır ve aşağıda kendi bölümünü hak edecek kadar karmaşıktır, belgenin ilerleyen bölümlerinde “Dinamik Konum ve Boyut” altındaki “Konum Etiketleri ”ne bakın.
 
 ### 9. ```<layout>```
-Cana FlxUI'nizin içinde bir alt FlxUI nesnesi oluşturur ve içindeki tüm widget'ları ona child eder. Bu, özellikle farklı cihazlar ve ekran boyutları için birden fazla düzen oluşturmak istiyorsanız kullanışlıdır. Bu, **failure** etiketleriyle birlikte, ekran boyutuna bağlı olarak en iyi düzeni otomatik olarak hesaplamanıza olanak tanır.
+Ana FlxUI içinde bir alt FlxUI nesnesi oluşturur ve içindeki tüm widget'ları ona alt nesne olarak ekler. Bu, örneğin farklı cihazlar ve ekran boyutları için birden fazla düzen oluşturmak istediğinizde özellikle kullanışlıdır. Hata etiketleriyle birleştirildiğinde, ekran boyutuna bağlı olarak en iyi düzeni otomatik olarak hesaplamanıza olanak tanır.
 
-Bir layout'un yalnızca bir niteliği, adı ve ardından alt düğümleri vardır. Bir \<layout>'u xml dosyanızın kendi alt bölümü olarak düşünün. Tam teşekküllü bir FlxUI olduğu için normal dosyaya koyabileceğiniz her şeyin kendi sürümlerine sahip olabilir - yani, tanımlar, gruplar, widget'lar, modlar, hatta muhtemelen diğer düzen etiketleri (bunu test etmedim). 
+Bir düzenin yalnızca bir özniteliği, adı ve alt düğümleri vardır. <layout> öğesini xml dosyanızın kendi alt bölümü olarak düşünün. Tam teşekküllü bir FlxUI olduğu için, normal dosyaya koyabileceğiniz her şeyin kendi sürümlerine sahip olabilir - yani tanımlar, gruplar, widget'lar, modlar, muhtemelen diğer düzen etiketleri bile (bu test edilmemiştir).
 
-Bir düzende, kimliklere başvururken kapsamın devreye girdiğini unutmayın. Tanımlar ve nesne referansları ilk olarak düzenin kapsamına (yani, o FlxUI nesnesine) bakacak ve hiçbiri bulunamazsa, bunları üst FlxUI'de bulmaya çalışacaktır. 
+Bir düzen içinde, kimliklere başvururken kapsamın devreye girdiğini unutmayın. Tanımlar ve nesne başvuruları önce düzenin kapsamına (yani FlxUI nesnesine) bakar ve hiçbir şey bulamazsa, üst FlxUI'da bulmaya çalışır.
 
 ### 10. ```<failure>```
 Belirli bir düzen için “başarısızlık” koşullarını belirtir, böylece FlxUI, birinin diğerinden daha iyi çalışması durumunda birden fazla düzenden hangisinin seçileceğini belirleyebilir. Örneğin, değişken çözünürlüklü PC'leri ve mobil cihazları aynı anda hedeflemek için kullanışlıdır.
@@ -594,14 +594,14 @@ Onay Kutusu, üç nesne içeren bir FlxUIGroup'tur: bir “kutu” görüntüsü
 
 Öznitelikler:
 * ```x```/```y```, ```use_def```, ```group```
-* ```check_src``` - source image for check mark (not 9-sliceable, not scaleable)
-* ```box_src``` - source image for box (not 9-sliceable, not scaleable)
-* ```text_x``` / ```text_y``` - label offsets
-* ```label``` - text to show
-* ```context``` - FireTongue context (see Button)
-* ```code``` - Formatting code (see Button)
-* ```checked``` - (boolean) is it checked or not?
-* ```label_width``` - width of the label
+* ```check_src``` - onay işareti için kaynak görüntü (9-bölünemez, boyutlandırılamaz)
+* ```box_src``` - kutu için kaynak görüntü (9-bölünemez, boyutlandırılamaz)
+* ```text_x``` / ```text_y``` - etiket ofsetleri
+* ```label``` - gösterecek yazılar
+* ```context``` - FireTongue bağlamı (bkz. Button)
+* ```code``` - Kod formatlama (bkz. Button)
+* ```checked``` - (boolean) dolu mu, değil mi?
+* ```label_width``` - etiket genişliği
 
 Child tags:
 * ```<text>``` - ```<button>``` ile aynı
@@ -620,34 +620,34 @@ Olay:
 Normal bir metin alanı. 
 
 Nitelikler:
-* ```text``` - the actual text in the textfield
+* ```text``` - yazı alanındaki asıl yazı
 * ```x```/```y```, ```use_def```, ```group```
-* ```font``` - string, something like "vera" or "verdana"
-* ```size``` - integer, size of font
-* ```style``` - string, "regular", "bold", "italic", or "bold-italic"
-* ```color``` - hex string, ie, "0xffffff" is white
-* ```align``` - "left", "center", or "right". Haven't tested "justify"
-* ```context``` - FireTongue context (see Button)
-* ```code``` - Formatting code (see Button)
+* ```font``` - dize, "vera" veya "verdana" gibi birşey
+* ```size``` - tamsayı, fontun boyutu
+* ```style``` - dize, "regular", "bold", "italic", veya "bold-italic"
+* ```color``` - hex dizesi, örneğin, "0xffffff" beyazdır
+* ```align``` - "left", "center", veya "right". "justify" ı test etmedim
+* ```context``` - FireTongue bağlamı (bkz. Button)
+* ```code``` - Kodu formatlama (bkz. Button)
 
-Text fields can also have borders. You can do this by specifying these four values:
+Yazı alanlarının da kenarlıkları olabilir. Şu dört değeri atayarak bunu yapabilirsiniz:
 
-* ```border``` - string, border style:
-  * ```false```/```none``` - no border
-  * ```shadow``` - drop shadow
-  * ```outline``` - border (higher quality)
-  * ```outline_fast``` - border (lower quality)
-* ```border_color``` - color of the border
-* ```border_size``` - thickness in pixels
-* ```border_quality``` - number between 0.0 (lowest) and 1.0 (highest)
+* ```border``` - dize, kenarlık stili:
+  * ```false```/```none``` - kenarlıksız
+  * ```shadow``` - gölge efekti
+  * ```outline``` - kenarlık (yüksek kalite)
+  * ```outline_fast``` - kenarlık (düşük kalite)
+* ```border_color``` - kenarlığın rengi
+* ```border_size``` - piksel bazında kalınlık
+* ```border_quality``` - 0.0 (en düşük) ve 1.0 (en yüksek) arasındaki sayı
 
-You can also use a shortcut for border value to save space by just using "shadow", "outline", or "outline_fast" directly as attributes and assigning them a color.
+Ayrıca, yer kazanmak için kenarlık değeri için kısayol kullanabilirsiniz. Bunun için “shadow”, ‘outline’ veya “outline_fast” özniteliklerini doğrudan kullanın ve bunlara bir renk atayın.
 
 ```xml
 <text name="my_text" text="My Text" outline="0xFF0000"/>
 ```
 
-As for fonts, FlxUI will look for a font file in your ```assets/fonts/``` directory, formatted like this:
+Yazı tipleri için FlxUI, ```assets/fonts/``` dizininde şu şekilde biçimlendirilmiş bir yazı tipi dosyası arayacaktır:
 
 |Filename|Family|Style|
 |---|---|---|
