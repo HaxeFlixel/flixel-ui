@@ -4,11 +4,11 @@ import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxRect;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
-#if (flixel >= "5.7.0")
+#if (flixel >= version("5.7.0"))
 import flixel.group.FlxSpriteContainer;
 #end
 
-#if (flixel < "5.4.0" && FLX_NO_POINT_POOL)
+#if (flixel < version("5.4.0") && FLX_NO_POINT_POOL)
 	/* This is a weird haxe bug I haven't figured out, fixed in 5.4.0
 	 * via https://github.com/HaxeFlixel/flixel/pull/2808
 	 * Note: this is only the case when FLX_NO_POINT_POOL is defined.

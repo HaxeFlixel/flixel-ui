@@ -27,7 +27,7 @@ import sys.FileSystem;
 import sys.io.File;
 import sys.io.FileOutput;
 #end
-#if (openfl >= "4.0.0")
+#if (openfl >= version("4.0.0"))
 import openfl.utils.AssetType;
 #end
 #if haxe4

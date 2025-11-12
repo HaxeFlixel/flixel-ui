@@ -288,7 +288,8 @@ class FlxInputText extends FlxText
 		drawSprite(fieldBorderSprite);
 		drawSprite(backgroundSprite);
 		
-		for (camera in getCamerasLegacy())
+		final defaultCameras = #if (flixel < version("5.7.0")) cameras #else getCamerasLegacy() #end;
+		for (camera in defaultCameras)
 		{
 			if (!camera.visible || !camera.exists || !isOnScreen(camera))
 				continue;
@@ -745,7 +746,7 @@ class FlxInputText extends FlxText
 					r.x = r.y = 0;
 					caret.pixels.fillRect(r, caretC); // draw caret
 					caret.offset.x = caret.offset.y = 0;
-				#if (flixel > "5.8.0")
+				#if (flixel > version("5.8.0"))
 				case SHADOW_XY(shadowX, shadowY):
 					// Shadow offset to the lower-right
 					cw += Std.int(Math.abs(shadowX));
