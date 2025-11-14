@@ -656,44 +656,44 @@ verab.ttf|Vera|Bold
 verai.ttf|Vera|Italic
 veraz.ttf|Vera|Bold-Italic
 
-So far just .ttf fonts are supported, and you MUST name them according to this scheme (for now at least).
+Şu ana kadar sadece .ttf dosyaları desteklenmektedir, ve (en azından şimdilik) bu şemaya göre ADLANDIRMALISINIZ. 
 
-FlxUI does not yet support FlxBitmapFonts, but we'll be adding it eventually.
+FlxUI şu anda FlxBitmapFonts'u desteklememektedir, ancak yakın zamanda ekleyeceğiz. 
 
-### 8. Text, input (FlxUIInputText) ```<input_text>```
+### 8. Yazı, giriş (FlxUIInputText) ```<input_text>```
 
-This has not been thoroughly tested, but it exists.
+Sıkı bir biçimde test edilmedi, ama var.
 
-Attributes:
+Öznitelikler:
 * ```x```/```y```, ```use_def```, ```group```
 * ```font```, ```size```, ```style```, ```color```, ```align```
-* (border attributes)
-* ```password_mode``` - bool, hides text if true
-* ```background``` - (optional, FlxColor) the background color
-* ```force_case``` - (string) force text to appear in a specific case
+* (kenar öznitelikleri)
+* ```password_mode``` - bool, true ise yazıyı gizler
+* ```background``` - (tercihen, FlxColor) arkaplan rengi
+* ```force_case``` - (dize) yazıyı özel bir durumda görünmeye zorla
     * "upper" / "upper_case" / "uppercase"
     * "lower" / "lower_case" / "lowercase"
-* ```filter``` - (string) allow only certain kinds of text (not thoroughly tested with non-english locales)
-    * "alpha" / "onlyalpha" - only standard alphabet characters
-    * "num" / "numeric" - only standard number characters
-    * "alphanum" / "alphanumeric", "onlyalphanumeric" -- only standard alphabet & number characters
-* ```context``` - FireTongue context (see Button)
-* ```code``` - Formatting code (see Button)
+* ```filter``` - (dize) sadece bazı tip yazılara izin ver (ingilizce-dışı dillerde test edilmedi)
+    * "alpha" / "onlyalpha" - sadece standart alfabe karakterleri
+    * "num" / "numeric" - sadece standart rakamlar
+    * "alphanum" / "alphanumeric", "onlyalphanumeric" -- sadece standart alfabe karakterleri & rakamlar
+* ```context``` - FireTongue bağlamı (bkz. Button)
+* ```code``` - Kodu formatlama (bkz. Button)
 
-## 9. Radio button group (FlxUIRadioGroup) ```<radio_group>```
+## 9. Radyo buton grubu (FlxUIRadioGroup) ```<radio_group>```
 
-Radio groups are a set of buttons where only one can be clicked at a time. We implement these as a ```FlxUIGroup``` of ```FlxUICheckBox```'es, and then internal logic makes only one clickable at a time. 
+Radyo grupları, tek seferde sadece birinin tıklanabildiği bir takım butonlardır. Bunları ```FlxUIGroup``` of ```FlxUICheckBox```'ları olarak uygularız,ve iç sistemse tek seferde sadece birini tıklanabilir hâle getirir. 
 
-Attributes:
+Öznitelikler:
 * ```x```/```y```, ```use_def```, ```group```
-* ```radio_src``` - image src for radio button back (ie, checkbox "box")
-* ```dot_src``` - image src for radio dot (ie, checkbox "check mark")
+* ```radio_src``` - radyo arkası için görüntü kaynağı (örneğin, checkbox "box") 
+* ```dot_src``` - radyo noktası için görüntü kaynağı (örneğin, checkbox "check mark")
 
-You construct a radio group by providing as many ```<radio>``` child tags as you want radio buttons. Give each of them an name and a label.
+Bir radyo grubunu istediğiniz kadar ```<radio>``` alt etiketlerinden vererek üretirsiniz. Her birine birer ad ve etiket verin. 
 
-Child Nodes:
-* ```<param>``` - same as ```<button>```, 
-* ```<radio>``` - two attributes, name (string) and label (string)
+Alt Düğümler:
+* ```<param>``` - ```<button>``` ile aynı, 
+* ```<radio>``` - two attributes, name (string) and label (string) iki öznitelik, ad (dize) ve etiket (dize)
 * ```<dot>``` - alternate to dot_src, more powerful*
 * ```<box>``` - alternate to radio_src, more powerful*
 
