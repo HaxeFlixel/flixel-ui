@@ -22,7 +22,7 @@ haxelib'den en son kararlı sürümünü indirin:
 
     haxelib install flixel-ui
 
-haxelib'den en son bleeding-edge geliştirici sürümünü indirin:
+haxelib'den en son bıçak-kenarı geliştirici sürümünü indirin:
 
     haxelib install flixel-ui
 
@@ -693,17 +693,17 @@ Bir radyo grubunu istediğiniz kadar ```<radio>``` alt etiketlerinden vererek ü
 
 Alt Düğümler:
 * ```<param>``` - ```<button>``` ile aynı, 
-* ```<radio>``` - two attributes, name (string) and label (string) iki öznitelik, ad (dize) ve etiket (dize)
-* ```<dot>``` - alternate to dot_src, more powerful*
-* ```<box>``` - alternate to radio_src, more powerful*
+* ```<radio>``` - iki öznitelik, ad (dize) ve etiket (dize)
+* ```<dot>``` - dot_src muadili, daha güçlü*
+* ```<box>``` - radio_src muadili, daha güçlü*
 
 *If you supply ```<dot>``` or ```<box>``` child tags instead of their attribute equivalents, FlxUI will treat them as full-fledged ```<sprite>``` or ```<chrome>``` tags to load for the dot and radio-box assets. You'll want to use this method if you want to do something complicated, like load a scaled sprite, or a 9-slice-scaled sprite, that you can't normally accomplish with the src attributes, which just load a static image as-is.
 
-Event:
-* ```name``` - "click_radio_group"
-* ```params``` - same as Button
+Olay:
+* ```name``` - "radyo grubuna tıkla"
+* ```params``` - Button ile aynı
 
-## 10. Tabbed menu (FlxUITabMenu) ```<tab_menu>```
+## 10. Sekmeli Menü (FlxUITabMenu) ```<tab_menu>```
 
 Tab menus are the most complex ```FlxUI``` widget. ```FlxUITabMenu``` extends ```FlxUI``` and is thus a full-fledged ```FlxUI``` in and of itself, just like the ```<layout>``` tag.
 
