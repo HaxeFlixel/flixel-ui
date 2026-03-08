@@ -751,82 +751,82 @@ Sağlığı ve ilerlemeyi gösterebilecek bir Bar sağlar.
 * ```rotation``` - Gradyanın dereceyle eğrisi. Yukarıdan aşağı 90, soldan sağaysa 180.Herhangi bir açı olur
 * ```src_filled```/```src_empty``` - Boş/dolu bir bar için bir görsel kullanın.
 
-Possible `fill_direction` values:
-* "left_to_right"
-* "right_to_left"
-* "top_to_bottom"
-* "bottom_to_top"
-* "horizontal_inside_out"
-* "horizontal_outside_in"
-* "vertical_inside_out"
-* "vertical_outside_in"
+Olası `fill_direction` değerleri:
+* “left_to_right”
+* “right_to_left”
+* “top_to_bottom”
+* “bottom_to_top”
+* “horizontal_inside_out”
+* “horizontal_outside_in”
+* “vertical_inside_out”
+* “vertical_outside_in”
 
 
 ## 15. TileTest (FlxUITileTest) ```<tile_test>```
 
 TODO
 
-## 16. Custom Widget (Any Class which implements IFlxUIWidget) ```<whatever_you_want>```
+## 16. Özel Widget (IFlxUIWidget'ı uygulayan herhangi bir sınıf) ```<whatever_you_want>```
 
-You can also add a handler to render a custom widget when you add certain tags to your UI. You can specify whichever tags you want, as long as you have a class which implements IFlxUIWidget that you can use to render it.
+UI'nize belirli etiketler eklediğinizde, özel bir widget'ı görüntülemek için bir işleyici de ekleyebilirsiniz. Görüntülemek için kullanabileceğiniz IFlxUIWidget'ı uygulayan bir sınıfınız olduğu sürece, istediğiniz etiketleri belirtebilirsiniz.
 	
-Any widget in the layout whose name does not match those provided by default will be referred to the FlxUI class; simply override `getRequest(name:String, sender:Dynamic, data:Dynamic):Dynamic`, look for a request of the name `ui_get:whatever_you_want`, and return your custom widget.
+Yerleşimdeki adı varsayılan olarak sağlananlarla eşleşmeyen herhangi bir widget, FlxUI sınıfına yönlendirilir; `getRequest(name:String, sender:Dynamic, data:Dynamic):Dynamic` öğesini geçersiz kılın, `ui_get:whatever_you_want` adlı bir istek arayın ve özel widget'ınızı döndürün.
 	
-Here is an example. You can see that any instance of `<save_slot>` in the XML will be populated with a SaveSlot widget.
-	
+İşte bir örnek. XML'deki `<save_slot>` örneğinin SaveSlot widget'ıyla doldurulduğunu görebilirsiniz.
+
 ```
 public override function getRequest(id:String, target:Dynamic, data:Dynamic, ?params:Array<Dynamic>):Dynamic
 {
-    if (id.indexOf("ui_get:") == 0)
+    if (id.indexOf(“ui_get:”) == 0)
     {
-        switch (id.remove("ui_get:"))
+        switch (id.remove(“ui_get:”))
         {
-            case "save_slot":
+            case “save_slot”:
                 return new SaveSlot(data, _ui);
         }
     }
     return null;
 }
-```	
+```    
 
 ----
 
-# Tooltips
+# Araç İpuçları
 
-Tooltips can be added to button and button-like widgets, including ```<button>```, ```<button_toggle>```, ```<checkbox>```, the ```<radio>``` child tags of a ```FlxUIRadioGroup```, and the ```<tab>``` child tags of a ```FlxUITabMenu```.
+Araç ipuçları, ```<button>```, ```<button_toggle>```, ```<checkbox>```, ```FlxUIRadioGroup``` öğesinin ```<radio>``` alt etiketleri ve ```FlxUITabMenu``` öğesinin ```<tab>``` alt etiketleri dahil olmak üzere düğme ve düğme benzeri widget'lara eklenebilir.
 
-(Note that there is a full-featured "Tooltips" demo in [flixel-demos](https://github.com/haxeflixel/flixel-demos), underneath the "User Interface" category.)
+( [flixel-demos](https://github.com/haxeflixel/flixel-demos) adresinde, “Kullanıcı Arayüzü” kategorisi altında tam özellikli bir “Araç İpuçları” demosu bulunduğunu unutmayın.)
 
-Attributes:
-* ```x```/```y``` - x/y offset for the tooltip's anchor
-* ```use_def``` - you can specify a definition for a tooltip just like anything else
+Özellikler:
+* ```x```/```y``` - araç ipucunun bağlantı noktası için x/y ofseti
+* ```use_def``` - diğer her şey gibi araç ipucu için bir tanım belirtebilirsiniz
 * ```width```/```height```
-* ```text``` - string, set this if you only want one text field, not two (a title and a body text)
-* ```background``` - the color of the background
-* ```border``` - the size of the outline border, in pixels
-* ```border_color``` - the color of the outline border
-* ```arrow``` - string, sprite asset source for the arrow
-* ```auto_size_horizontal``` - bool, whether to crop the width of the tooltip to bounds of the visible text + padding (default true)
-* ```auto_size_vertical``` - bool, whether to crop the height of the tooltip to bounds of the visible text + padding (default true)
-* ```pad_left``` - left-side padding, in pixels
-* ```pad_right``` - right-side padding, in pixels
-* ```pad_top``` - top-side padding, in pixels
-* ```pad_bottom``` - bottom-side padding, in pixels
-* ```pad_all``` - shortcut, set all 4 padding values in one attribute
+* ```text``` - dize, iki metin alanı (başlık ve gövde metni) değil, yalnızca bir metin alanı istiyorsanız bunu ayarlayın
+* ```background``` - arka plan rengi
+* ```border``` - kontur kenarlığının boyutu, piksel cinsinden
+* ```border_color``` - kontur kenarlığının rengi
+* ```arrow``` - dize, ok için sprite varlık kaynağı
+* ```auto_size_horizontal``` - bool, araç ipucunun genişliğini görünür metin + dolgu sınırlarına göre kırpıp kırpmayacağınız (varsayılan true)
+* ```auto_size_vertical``` - bool, araç ipucunun yüksekliğini görünür metin + dolgu sınırlarına göre kırpıp kırpmayacağı (varsayılan true)
+* ```pad_left``` - sol kenar dolgusu, piksel cinsinden
+* ```pad_right``` - sağ kenar dolgusu, piksel cinsinden
+* ```pad_top``` - üst kenar dolgusu, piksel cinsinden
+* ```pad_bottom``` - alt kenar dolgusu, piksel cinsinden
+* ```pad_all``` - kısayol, 4 dolgu değerinin tümünü tek bir öznitelikte ayarla
  
-Child Nodes:
-* ```title``` - a FlxUIText node, specifies the title text content and sty
-  * ```x```/```y``` - you can specify an x/y offset for the title text itself
-  * if you specified the tooltip text via the "text" shortcut attribute, it uses the "title" textfield and hides the body
-  * in this case you can still set a style via the "title" node
-* ```body``` - a FlxUIText node, specifies the body text content and style
-  * ```x```/```y``` - you can specify an x/y offset for the body text itself
-  * note that the default position of the ```body``` text field is directly underneath the title textfield
-* ```anchor``` - this specifies how your tooltip attaches to its parent object. 
-  * You do this the same way you would use anchor tags elsewhere, with ```x```/```y``` and ```x-flush```/```y-flush```. 
-  * Note that the ```x```/```y``` *attributes* set in the ```<tooltip>``` node itself serve as the x/y *offsets* for the anchor, just as they do with every other widget.
+Alt Düğümler:
+* ```title``` - bir FlxUIText düğümü, başlık metni içeriğini ve stilini belirtir.
+  * ```x```/```y``` - başlık metni için x/y ofsetini belirtebilirsiniz.
+  * “text” kısayol özniteliği aracılığıyla araç ipucu metnini belirlediyseniz, “title” metin alanı kullanılır ve gövde gizlenir.
+  * bu durumda, “title” düğümü aracılığıyla bir stil ayarlayabilirsiniz
+* ```body``` - bir FlxUIText düğümü, gövde metin içeriğini ve stilini belirtir
+  * ```x```/```y``` - gövde metni için x/y ofseti belirtebilirsiniz
+  * ```body``` metin alanının varsayılan konumunun başlık metin alanının hemen altında olduğunu unutmayın
+* ```anchor``` - bu, araç ipucunuzun üst nesnesine nasıl bağlandığını belirtir. 
+  * Bunu, başka yerlerde anchor etiketlerini kullandığınız şekilde, ```x```/```y``` ve ```x-flush```/```y-flush``` kullanarak yapabilirsiniz. 
+  * ```<tooltip>``` düğümünde ayarlanan ```x```/```y``` *özellikleri*, diğer tüm widget'larda olduğu gibi, bağlantı için x/y *ofsetleri* olarak işlev görür.
 
-A very basic tooltip is added like this:
+Çok basit bir araç ipucu şu şekilde eklenir:
 
 ```xml
 <button name="basic" x="160" y="120" label="Basic">
@@ -834,344 +834,344 @@ A very basic tooltip is added like this:
 </button>
 ```
 
-This tooltip uses both text fields:
+Bu araç ipucu her iki metin alanını da kullanır:
 
 ```xml
 <button name="fancier" x="basic.x" y="basic.bottom+10" label="Fancier">
 	<tooltip>
-		<title text="Fancier tooltip!" width="100"/>
-		<body text="This tooltip has a title AND a body." width="100" />
-	</tooltip>
+        <title text="Daha süslü araç ipucu!" width="100"/>
+        <body text="Bu araç ipucunda bir başlık VE bir gövde vardır." width="100" />
+    </tooltip>
 </button>
 ```
 
-This tooltip sets just about everything:
+Bu araç ipucu hemen hemen her şeyi ayarlar:
 
 ```xml
 <button name="fanciest" x="basic.x" y="even_fancier.bottom+10" label="Fanciest">
-	<tooltip pad_all="5" background="red" border="1" border_color="white">
-		<title use_def="sans12" text="Fanciest tooltip!" width="125"/>
-		<body use_def="sans10" text="This tooltip has a title and a body, custom padding and offsets, as well as custom text formatting" width="120" x="5" y="5"/>
-		<anchor x="center" x-flush="center" y="bottom" y-flush="top"/>
-	</tooltip>
+    <tooltip pad_all="5" background="red" border="1" border_color="white">
+		<title use_def="sans12" text="En süslü araç ipucu!" width="125"/>
+        <body use_def="sans10" text="Bu araç ipucunda bir başlık ve gövde, özel dolgu ve ofsetler ile özel metin biçimlendirmesi vardır" width="120" x="5" y="5"/>
+		<anchor x="center" x-flush=“center” y="bottom" y-flush=“top”/>
+    </tooltip>
 </button>
 ```
 
 ----
 
-# Dynamic position & size
+# Dinamik pozisyon ve boyut
 
-## 1. Anchor Tags
+## 1. Bağlantı Etiketleri
 
-Here's an example of a health bar from an RPG:
+İşte bir RPG oyunundaki sağlık çubuğunun bir örneği:
 
 ```xml
 <nineslicesprite name="health_bar" x="10" y="5" width="134" height="16" use_def="health">
-	<anchor x="portrait.right" y="portrait.top" x-flush="left" y-flush="top"/>
+    <anchor x="portrait.right" y="portrait.top" x-flush=“left” y-flush=“top”/>
 </nineslicesprite>
 ```
 
-There is presumably another sprite defined somewhere called "portrait" and we want our health bar to show up relative to wherever that is. 
+Muhtemelen başka bir yerde “portrait” adında başka bir sprite tanımlanmıştır ve sağlık çubuğumuzun bu sprite'ın bulunduğu yere göre gösterilmesini istiyoruz. 
 
-The anchor's x and y specify a specific point, and x-flush and y-flush specify which corner of the object should be aligned to that point. The main object's x / y will be added on as offsets after the object is flushed to the anchor.
+Anchor'un x ve y değerleri belirli bir noktayı belirtir, x-flush ve y-flush ise nesnenin hangi köşesinin bu noktaya hizalanacağını belirtir. Ana nesnenin x / y değerleri, nesne anchor'a hizalandıktan sonra ofset olarak eklenir.
 
-Acceptable values for x/y:
-* "left", "right", "top", or "bottom": edges of the flixel canvas.
-* object properties (ie, "some_id.some_property"):
- * "left", "right", "top", "bottom": edges of that object
- * "center": center of that object (axis inferred from x or y attribute)
+X/y için kabul edilebilir değerler:
+* “left”, “right”, ‘top’ veya “bottom”: flixel tuvalinin kenarları.
+* nesne özellikleri (yani, “some_id.some_property”):
+ * “left”, “right”, ‘top’, “bottom”: o nesnenin kenarları
+ * “center”: o nesnenin merkezi (x veya y özniteliğinden çıkarılan eksen)
 
-Acceptable values for x-flush/y-flush:
-* "left"
-* "right"
-* "top"
-* "bottom"
-* "center"
+x-flush/y-flush için kabul edilebilir değerler:
+* “sol”
+* “sağ”
+* “üst”
+* “alt”
+* “merkez”
 
-You can also specify a **round** attribute (up/down/round/true/false) in the anchor tag itself to round the final calculated position.
+Ayrıca, nihai hesaplanan konumu yuvarlamak için bağlantı etiketinin içinde **round** özniteliği (yukarı/aşağı/yuvarlak/doğru/yanlış) belirtebilirsiniz.
 
-**Note to non-native speakers of English:** "flush" is a carpentry term, so if one side of one object is parallel to and touching another object's side with no air between them, the objects are "flush." This has nothing to do with toilets :)
+**İngilizceyi ana dili olarak konuşmayanlar için not:** “flush” marangozluk terimidir, yani bir nesnenin bir tarafı başka bir nesnenin tarafına paralel ve aralarında boşluk kalmayacak şekilde temas ediyorsa, nesneler “flush” durumundadır. Bunun tuvaletlerle hiçbir ilgisi yoktur :)
 
 --
-## 2. Position Tags
+## 2. Konum Etiketleri
 
-Sometimes you want to be able to change the position of a widget later in the xml markup. Position tags work much like the original creation tag for the object, except you ONLY include the attribute name of the object you want to move, and any relevant position information.
+Bazen xml işaretlemesinde bir widget'ın konumunu daha sonra değiştirmek isteyebilirsiniz. Konum etiketleri, nesnenin orijinal oluşturma etiketi gibi çalışır, ancak SADECE taşımak istediğiniz nesnenin öznitelik adını ve ilgili konum bilgilerini eklemeniz gerekir.
 
 ```xml
 <position name="thing" x="12" y="240"/>
 ```
 
-You can use anchor tags, formulas, etc inside a position tag:
+Konum etiketi içinde bağlantı etiketleri, formüller vb. kullanabilirsiniz:
 ```xml
 <position name="thing" x="other_thing.right" y="other_thing.bottom">
-  <anchor name="other_thing" x-flush="left" y-flush="top"/>
+  <anchor name="other_thing" x-flush=“left” y-flush=“top”/>
 </position>
 ```
 
 --
-## 3. Size Tags
+## 3. Boyut Etiketleri
 
-Let's add a size tag to our health bar:
+Sağlık çubuğumuza bir boyut etiketi ekleyelim:
 ```xml
 <nineslicesprite name="health_bar" x="10" y="5" width="134" height="16" use_def="health" group="mcguffin">
-	<anchor x="portrait.right" y="portrait.top" x-flush="left" y-flush="top"/>
-	<exact_size width="stretch:portrait.right+10,right-10"/>
+	<anchor x="portrait.right" y="portrait.top" x-flush=“left” y-flush=“top”/>
+    <exact_size width="stretch:portrait.right+10,right-10"/>
 </nineslicesprite>
 ```
 
-There are three size tags: ```<min_size>```, ```<max_size>```, and ```<exact_size>```
+Üç boyut etiketi vardır: ```<min_size>```, ```<max_size>``` ve ```<exact_size>```
 
-This lets you either specify dynamic lower/upper bounds for an object's size, or force it to be an exact size. This lets you create a UI that can work in multiple resolutions, or just avoid having to do manual pixel calculations yourself. 
+Bu, bir nesnenin boyutu için dinamik alt/üst sınırları belirlemenizi veya tam boyutta olmasını zorlamanızı sağlar. Bu, birden fazla çözünürlükte çalışabilen bir kullanıcı arayüzü oluşturmanıza veya manuel piksel hesaplamaları yapmanız gerekmemesine olanak tanır. 
 
-Size tags take only three attributes, **width**, **height**, and **round**. If either width or height is not specified, that part of the size is ignored and remains the same size.
+Boyut etiketleri yalnızca üç öznitelik alır: **width**, **height** ve **round**. Genişlik veya yükseklik belirtilmezse, boyutun o kısmı yok sayılır ve aynı boyutta kalır.
 
-There are several ways to formulate a width/height attribute:
+Genişlik/yükseklik özniteliğini formüle etmenin birkaç yolu vardır:
 
-* **number** (ie, width="100")
-* **stretch** (ie, width="stretch:some_value,another_value")
-* **reference** (ie, width="some_id.some_value")
+* **sayı** (ör. width="100")
+* **uzatma** (ör. width="stretch:some_value,another_value")
+* **referans** (ör. width="some_id.some_value")
 
-A **stretch** formula will tell FlxUI to calculate the difference between two values separated by a comma. These values are formatted and calculated just like a **reference** formula. The axis is inferred from whether it's width or height. 
+Bir **stretch** formülü, FlxUI'ye virgülle ayrılmış iki değer arasındaki farkı hesaplamasını söyler. Bu değerler, **reference** formülü gibi biçimlendirilir ve hesaplanır. Eksen, genişlik mi yoksa yükseklik mi olduğuna göre çıkarılır. 
 
-So, if you have a scoreboard at the top of the screen, and you want the playfield to stretch from the bottom of the scoreboard to the bottom of the screen:
+Dolayısıyla, ekranın üst kısmında bir skor tahtası varsa ve oyun alanının skor tahtasının altından ekranın altına kadar uzanmasını istiyorsanız:
 
 ```xml
 <exact_size height="stretch:scoreboard.bottom,bottom"/>
 ```
 
-Acceptable property values for reference formula, used alone or in a stretch:
-* **naked reference** (ie, "some_id") - returns inferred x or y position of that thing.
-* **property reference** (ie, "some_id.some_value") - returns a thing's property
- * "left", "right", "top", "bottom", "width", "height", "halfwidth", "halfheight", "centerx", "centery"
- * "center" (infers centerx or centery)
-* **arithmetic formula** (ie, "some_id.some_value+10") - do some math
- * You can tack on **one** operator and **one** operand (numeric value or widget property) to any of the above.
- * Legal operators = (+, -, *, \, ^)
- * Don't try to get too crazy here. If you need to do some super duper math, just add some code in your FlxUIState, call getAsset("some_id") to grab your assets, and do the craziness yourself.
+Referans formülü için tek başına veya stretch ile birlikte kullanılabilen kabul edilebilir özellik değerleri:
+* **çıplak referans** (yani, “some_id”) - o şeyin çıkarılan x veya y konumunu döndürür.
+* **özellik referansı** (yani, “some_id.some_value”) - bir nesnenin özelliğini döndürür.
+ * “left”, “right”, “top”, “bottom”, “width”, “height”, “halfwidth”, “halfheight”, “centerx”, ‘centery’
+ * “center” (centerx veya centery'yi çıkarır)
+* **aritmetik formül** (örneğin, “some_id.some_value+10”) - bazı matematik işlemleri yapar
+ * Yukarıdakilerin herhangi birine **bir** operatör ve **bir** işlenen (sayısal değer veya widget özelliği) ekleyebilirsiniz.
+ * Geçerli operatörler = (+, -, *, \, ^)
+ * Burada çok fazla abartmaya çalışmayın. Çok karmaşık matematiksel işlemler yapmanız gerekiyorsa, FlxUIState'inize biraz kod ekleyin, getAsset(“some_id”) işlevini çağırarak varlıklarınızı alın ve karmaşık işlemleri kendiniz yapın.
 
 --
-## 4. Alignment Tags
+## 4. Hizalama Etiketleri
 
-An ```<align>``` tag lets you automatically align and space various objects together.
+```<align>``` etiketi, çeşitli nesneleri otomatik olarak hizalamanızı ve aralıklarını ayarlamanızı sağlar.
 
 ```xml
 <align axis="horizontal" spacing="2" resize="true">
-	<bounds left="options.left" right="options.right"/>
-	<objects value="spell_0,spell_1,spell_2,spell_3,spell_4,spell_5"/>
+    <bounds left="options.left" right="options.right"/>
+    <objects value="spell_0,spell_1,spell_2,spell_3,spell_4,spell_5"/>
 </align>
 ```
 
-Attributes:
-* axis - "horizontal" or "vertical"
-* spacing - number
-* resize - bool, optional, "true" or "false" (if not exist, assumes false)
+Özellikler:
+* axis - “horizontal” veya “vertical”
+* spacing - sayı
+* resize - bool, isteğe bağlı, “true” veya “false” (yoksa false olarak kabul edilir)
 
-Child tags:
-* ```<bounds>``` - string, reference formula, specify left & right for horizontal, or top & bottom for vertical
-* ```<objects>``` - string, comma separated list of object name's
+Alt etiketler:
+* ```<bounds>``` - dize, referans formülü, yatay için sol ve sağ, dikey için üst ve alt belirtir
+* ```<objects>``` - dize, virgülle ayrılmış nesne adları listesi
 
-If you specify more than one "objects" tag, you can align several groups of objects at once according to the same rules. For instance, if you have obj_0 through obj_9 (10 in total), and you want two rows spaced evenly in five columns, this would do the trick:
+Birden fazla “objects” etiketi belirtirseniz, aynı kurallara göre birkaç nesne grubunu aynı anda hizalayabilirsiniz. Örneğin, obj_0'dan obj_9'a kadar (toplam 10) nesneniz varsa ve beş sütunda eşit aralıklı iki satır istiyorsanız, bunu şu şekilde yapabilirsiniz:
 
 ```xml
 <align axis="horizontal" spacing="2" resize="true">
-	<bounds left="options.left" right="options.right"/>
-	<objects value="obj_0,obj_1,obj_2,obj_3,obj_4"/>
+    <bounds left="options.left" right="options.right"/>
+    <objects value="obj_0,obj_1,obj_2,obj_3,obj_4"/>
 	<objects value="obj_5,obj_6,obj_7,obj_8,obj_9"/>
 </align>
 ```
 
-Whereas putting all 10 objects in one ```<objects>``` tag would instead get you one row with 10 columns.
+Oysa 10 nesneyi tek bir ```<objects>``` etiketine koyarsanız, 10 sütunlu tek bir satır elde edersiniz.
 
 ----
 
-# Localization (FireTongue)
-First, Firetongue has some [documentation](https://github.com/larsiusprime/firetongue) on its Github page. Read that. 
+# Yerelleştirme (FireTongue)
+İlk olarak, Firetongue'un Github sayfasında bazı [belgeler](https://github.com/larsiusprime/firetongue) bulunmaktadır. Bunları okuyun. 
 
-In your local project, follow these steps:
+Yerel projenizde şu adımları izleyin:
 
-**1. Create a FireTongue wrapper class**
+**1. FireTongue sarmalayıcı sınıfı oluşturun**
 
- It just needs to:
- 1. Extend **firetongue.FireTongue**
- 2. Implement **flixel.addons.ui.IFireTongue** 
- 3. Source is below, "FireTongueEx" [1]
+ Bunun için yapmanız gerekenler:
+ 1. **firetongue.FireTongue**'u genişletin.
+ 2. **flixel.addons.ui.IFireTongue**'u uygulayın. 
+ 3. Kaynak aşağıdadır, “FireTongueEx” [1]
 
-**2. Create a FireTongue instance somewhere**
+**2. Bir yerde bir FireTongue örneği oluşturun**
 
-Add this variable declaration in Main, for instance:
+Örneğin, Main'e şu değişken bildirimini ekleyin:
 
 ```haxe
 public static var tongue:FireTongueEx;
 ```
-Note that it's type is ```FireTongueEx```, not ```FireTongue```. (This way the instance implements ```IFireTongue```, which ```FlxUI``` needs).
+Tipinin ```FireTongueEx``` olduğunu, ```FireTongue``` olmadığını unutmayın. (Bu şekilde örnek, ```FlxUI```'nin ihtiyaç duyduğu ```IFireTongue```'yi uygular).
 
-**3. Initialize your FireTongue instance**
+**3. FireTongue örneğini başlatın**
 
-Add this initialization block anywhere in your early setup code (either in ```Main``` or in the ```create()``` block of your first ```FlxUIState```, for instance):
+Bu başlatma bloğunu erken kurulum kodunuzun herhangi bir yerine ekleyin (örneğin, ```Main``` veya ilk ```FlxUIState```'inizin ```create()``` bloğuna):
 
 ```haxe
 if (Main.tongue == null) {
-	Main.tongue = new FireTongueEx();
-	Main.tongue.init("en-US");
-	FlxUIState.static_tongue = Main.tongue;
+    Main.tongue = new FireTongueEx();
+	Main.tongue.init(“en-US”);
+    FlxUIState.static_tongue = Main.tongue;
 }
 ```
 
-Setting ```FlxUIState.static_tongue``` will make every ```FlxUIState``` instance automatically use this ```FireTongue``` instance without any additional setup. If you don't want to use a static reference, you can just do this on a per-state basis:
+```FlxUIState.static_tongue``` ayarını yaparsanız, her ```FlxUIState``` örneği ek bir kurulum yapmaya gerek kalmadan otomatik olarak bu ```FireTongue``` örneğini kullanır. Statik referans kullanmak istemiyorsanız, bunu durum bazında yapabilirsiniz:
 
 ```haxe
-//In the create() function of some FlxUIState object:
-_tongue = someFireTongueInstance;	
+//Bazı FlxUIState nesnelerinin create() işlevinde:
+_tongue = someFireTongueInstance;    
 ```
 
-**4. Start using FireTongue flags**
+**4. FireTongue bayraklarını kullanmaya başlayın**
 
-Once a ```FlxUIState``` is hooked up to a ```FireTongue``` instance, it will automatically attempt to translate any raw text information as if it were a ```FireTongue``` flag -- see ```FireTongue```'s [documentation](https://github.com/larsiusprime/firetongue).
+Bir ```FlxUIState``` bir ```FireTongue``` örneğine bağlandığında, herhangi bir ham metin bilgisini sanki bir ```FireTongue``` bayrağıymış gibi otomatik olarak çevirmeye çalışacaktır -- bkz. ```FireTongue```'un [belgeleri](https://github.com/larsiusprime/firetongue).
 
-Here's an example, where the word "Back" is translated via the localization flag "$MISC_BACK":
+Aşağıda, “Geri” kelimesinin yerelleştirme bayrağı “$MISC_BACK” aracılığıyla çevrildiği bir örnek verilmiştir:
 ```haxe
-<button center_x="true" x="0" y="535" name="start" label="$MISC_BACK">		
-	<param type="string" value="back"/>
+<button center_x="true" x="0" y="535" name="start" label="$MISC_BACK">        
+    <param type="string" value="back"/>
 </button>
 ```
-In English (en-US) this will be "Back," in Norwegian (nb-NO) this will be "Tilbake."
+İngilizce'de (en-US) bu “Back” olacak, Norveççe'de (nb-NO) ise “Tilbake” olacaktır....
 
-...
 
-[1] Here's the source code snippet for ```FireTongueEx.hx```:
+
+[1] İşte ```FireTongueEx.hx``` için kaynak kodu parçacığı:
 ```haxe
 import firetongue.FireTongue;
 import flixel.addons.ui.interfaces.IFireTongue;
 
 /**
- * This is a simple wrapper class to solve a dilemma:
+ * Bu, bir ikilemi çözmek için basit bir sarmalayıcı sınıftır:
  * 
- * I don't want flixel-ui to depend on firetongue
- * I don't want firetongue to depend on flixel-ui
+ * flixel-ui'nin firetongue'a bağımlı olmasını istemiyorum.
+ * firetongue'un flixel-ui'ye bağımlı olmasını istemiyorum.
  * 
- * I can solve this by using an interface, IFireTongue, in flixel-ui
- * However, that interface has to go in one namespace or the other and if I put
- * it in firetongue, then there's a dependency. And vice-versa.
+ * Bunu flixel-ui'de IFireTongue arayüzünü kullanarak çözebilirim.
+ * Ancak, bu arayüz bir isim alanına veya diğerine girmeli ve eğer onu
+ * firetongue'a koyarsam, bir bağımlılık oluşur. Ve tersi de geçerlidir.
  * 
- * This is solved by making a simple wrapper class in the actual project
- * code that includes both libraries. 
+ * Bu, her iki kütüphaneyi de içeren gerçek proje
+ * kodunda basit bir sarmalayıcı sınıf oluşturarak çözülür. 
  * 
- * The wrapper extends FireTongue, and implements IFireTongue
+ * Sarmalayıcı, FireTongue'u genişletir ve IFireTongue'u uygular.
  * 
- * The actual extended class does nothing, it just falls through to FireTongue.
+ * Gerçek genişletilmiş sınıf hiçbir şey yapmaz, sadece FireTongue'a geçer.
  */
 class FireTongueEx extends FireTongue implements IFireTongue
 {
-	public function new() 
-	{
-		super();
-	}	
+    public function new() 
+    {
+        super();
+    }    
 }
 ````
 
 ----------
 
-# Advanced Tip & Tricks
+# Gelişmiş İpuçları ve Püf Noktaları
 
-There's a lot of clever things you can do with flixel-ui once you know what you're doing.
+Ne yaptığınızı bir kez öğrendikten sonra, flixel-ui ile yapabileceğiniz birçok akıllı şey vardır.
 
-## 1. "screen" widget always represents the flixel canvas
+## 1. “screen” widget'ı her zaman flixel tuvalini temsil eder.
 
-There is always a FlxUIRegion defined by the system in any root-level FlxUI objects with the reserved named "screen". So you can always use "screen.width", "screen.top", "screen.right", etc, in any of your formulas.
+Herhangi bir kök düzey FlxUI nesnesinde, sistem tarafından “screen” adıyla ayrılmış bir FlxUIRegion her zaman tanımlanmıştır. Böylece, formüllerinizde her zaman “screen.width”, “screen.top”, “screen.right” vb. kullanabilirsiniz.
 
-## 2. Resolution independent text
+## 2. Çözünürlükten bağımsız metin
 
-It's common for beginners to define their fonts in absolute terms like this:
+Yeni başlayanlar genellikle yazı tiplerini şu şekilde mutlak terimlerle tanımlar:
 ```xml
 <definition name="sans10" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
 <definition name="sans12" font="verdana" size="12" style="bold" color="0xffffff" outline="0x000000"/>
 <definition name="sans12" font="verdana" size="16" style="bold" color="0xffffff" outline="0x000000"/>
-<definition name="sans12" font="verdana" size="20" style="bold" color="0xffffff" outline="0x000000"/>
-<definition name="sans12" font="verdana" size="30" style="bold" color="0xffffff" outline="0x000000"/>
+<tanım adı="sans12" yazı tipi="verdana" boyut="20" stil="kalın" renk="0xffffff" dış çizgi="0x000000"/>
+<tanım adı="sans12" yazı tipi="verdana" boyut="30" stil="kalın" renk="0xffffff" dış çizgi="0x000000"/>
 ```
 
-Size 10 font might look just fine if your game is 800x600, but what if you let the user choose the window/screen size, and they're viewing the game in 1920x1080? What if you're targetting multiple different devices? At 800x600, Size 10 font is 1.67% of the total screen height. At 1920x1080, it's 0.93%, almost half the size! So we should use a bigger font. But it might be a huge pain to use code to inspect every text field and update it. Here's a better way to do things:
+Oyununuz 800x600 çözünürlükteyse 10 punto yazı tipi gayet iyi görünebilir, ancak kullanıcıya pencere/ekran boyutunu seçme imkanı verirseniz ve kullanıcı oyunu 1920x1080 çözünürlükte görüntülerse ne olur? Ya birden fazla farklı cihazı hedefliyorsanız? 800x600 çözünürlükte, 10 punto yazı tipi toplam ekran yüksekliğinin %1,67'sini kaplar. 1920x1080 çözünürlükte ise %0,93'ünü kaplar, yani neredeyse yarısı kadar! Bu yüzden daha büyük bir yazı tipi kullanmalıyız. Ancak her metin alanını incelemek ve güncellemek için kod kullanmak çok zahmetli olabilir. İşte daha iyi bir yöntem:
 
 ```xml
 <definition name="sans_tiny"     font="verdana" size="screen.height*0.01667" style="bold" color="0xffffff" outline="0x000000"/>
 <definition name="sans_small"    font="verdana" size="screen.height*0.02000" style="bold" color="0xffffff" outline="0x000000"/>
-<definition name="sans_medium"   font="verdana" size="screen.height*0.02667" style="bold" color="0xffffff" outline="0x000000"/>
-<definition name="sans_large"    font="verdana" size="screen.height*0.03334" style="bold" color="0xffffff" outline="0x000000"/>
-<definition name="sans_huge"     font="verdana" size="screen.height*0.04167" style="bold" color="0xffffff" outline="0x000000"/>
+<tanım adı="sans_medium"   yazı tipi="verdana" boyut="ekran yüksekliği*0,02667" stil="kalın" renk="0xffffff" dış çizgi="0x000000"/>
+<tanım adı="sans_large"    yazı tipi="verdana" boyut="ekran yüksekliği*0.03334" stil="kalın" renk="0xffffff" dış çizgi="0x000000"/>
+<tanım adı="sans_huge"     yazı tipi="verdana" boyut="ekran yüksekliği*0,04167" stil="kalın" renk="0xffffff" dış çizgi="0x000000"/>
 <definition name="sans_enormous" font="verdana" size="screen.height*0.05000" style="bold" color="0xffffff" outline="0x000000"/>
 ```
 
-By defining the font size in terms of the screen height, we can achieve the same results at 800x600, but make the text grow dynamically with the size of the screen. "sans_tiny" will be 10 points high in 800x600, but 18 points high in 1920x1080, representing the same proportion of the screen.
+Yazı tipi boyutunu ekran yüksekliği cinsinden tanımlayarak, 800x600 çözünürlükte aynı sonuçları elde edebiliriz, ancak metni ekranın boyutuna göre dinamik olarak büyütürüz. “sans_tiny” 800x600 çözünürlükte 10 punto yüksekliğinde olacak, ancak 1920x1080 çözünürlükte 18 punto yüksekliğinde olacak ve ekranın aynı oranını temsil edecektir.
 
-# 3. Conditional scaling
+# 3. Koşullu ölçeklendirme
 
-Let's say you want to load a different asset in a 16x9 screen mode than a 4x3 mode, and fit it to the screen.
+Diyelim ki 16x9 ekran modunda 4x3 modundan farklı bir varlık yüklemek ve bunu ekrana sığdırmak istiyorsunuz.
 
 ```xml
 <sprite name="thing" src="ui/asset">
 	<scale screen_ratio="1.77" tolerance="0.25" suffix="_16x9" width="100%" height="100%"/>
-	<scale screen_ratio="1.33" tolerance="0.25" suffix="_4x3" width="100%" height="100%"/>
+    <scale screen_ratio="1.33" tolerance="0.25" suffix="_4x3" width="100%" height="100%"/>
 </sprite>
 ```
 
-```screen_ratio``` and ```tolerance``` are optional -- they let you filter whether the ```<scale>``` node is activated. If not supplied, the given <scale> node is immediately applied. The ratio is width/height and tolerance is the wiggle room.
+```screen_ratio``` ve ```tolerance``` isteğe bağlıdır -- bunlar, ```<scale>``` düğümünün etkinleştirilip etkinleştirilmeyeceğini filtrelemenizi sağlar. Belirtilmezse, verilen <scale> düğümü hemen uygulanır. Oran genişlik/yüksekliktir ve tolerans, hareket alanıdır.
 
-```suffix``` is the suffix to apply to your src parameter, "ui/asset". ```width```/```height```, of course, are treated as they are throughout Flixel-UI markup.
+```suffix```, src parametrenize uygulanacak son ek, “ui/asset”tir. ```width```/```height```, elbette, Flixel-UI işaretlemesinde olduğu gibi ele alınır.
 
-So in the above example, if the screen is within 0.25 of a 16:9 ratio, it will load "ui/asset_16x9.png", if it's within 0.25 of a 4:3 ratio, it will load "ui/asset_4x3.png", and in both cases will scale them to fit the screen.
+Yukarıdaki örnekte, ekran 16:9 oranının 0,25 içindeyse “ui/asset_16x9.png” dosyasını yükler, 4:3 oranının 0,25 içindeyse “ui/asset_4x3.png” dosyasını yükler ve her iki durumda da ekranı sığdırmak için ölçeklendirir.
 
-But sometimes you don't want to scale both ```width```/```height``` separately, the most common use case is to scale based on the vertical axis alone and then automatically scale width proportionately. Use "to_height" for this:
+Ancak bazen ```width```/```height``` değerlerini ayrı ayrı ölçeklendirmek istemeyebilirsiniz. En yaygın kullanım örneği, yalnızca dikey eksene göre ölçeklendirme yapmak ve ardından genişliği otomatik olarak orantılı olarak ölçeklendirmektir. Bunun için “to_height” kullanın:
 
 ```xml
 <sprite name="thing" src="ui/asset">
-	<scale screen_ratio="1.77" tolerance="0.25" suffix="_16x9" to_height="100%"/>
+    <scale screen_ratio="1.77" tolerance="0.25" suffix="_16x9" to_height="100%"/>
 	<scale screen_ratio="1.33" tolerance="0.25" suffix="_4x3" to_height="100%"/>
 </sprite>
 ```
 
-Note that these `<scale>` tags accept the "smooth" attribute to turn antialiasing off/on when scaling, just like a sprite can.
+Bu `<scale>` etiketlerinin, bir sprite gibi ölçeklendirme sırasında antialiasing özelliğini kapatmak/açmak için “smooth” özniteliğini kabul ettiğini unutmayın.
 
-# 4. Scaling 9-slice-sprite source BEFORE 9-slice-scaling
+# 4. 9 dilimli sprite kaynağını ölçeklendirme 9 dilimli ölçeklendirmeden ÖNCE
 
-Let's say you've got a 9-slice-sprite, but for whatever reason you want to scale the *source* image first, *before* you then subject it to the 9-slice matrix. You can do that like this:
+Diyelim ki 9 dilimli bir sprite'ınız var, ancak herhangi bir nedenle *kaynak* görüntüyü önce ölçeklendirmek istiyorsunuz, *sonra* 9 dilimli matrise tabi tutmak istiyorsunuz. Bunu şu şekilde yapabilirsiniz:
 
 ```xml
 <chrome name="chrome" width="600" height="50" src="ui/asset" slice9="4,4,395,95">
-	<scale_src to_height="10%"/>
-	<anchor y="bottom" y-flush="bottom"/>
+    <scale_src to_height="10%"/>
+    <anchor y="bottom" y-flush=“bottom”/>
 </chrome>
 ```
 
-Here's what's happening. Let's say "ui/asset.png" is 400x50 pixels. In this case I scale it down first using the ```<scale_src>``` tag, which is unique to 9-slice-sprites. The "to_height" property scales the asset to a target height (10% of the screen height in this case), and also scales the width proportionately. (You can also use "width" and "height" parameters instead). Whenever you scale an asset like this in a 9-slice sprite, the slice9 coordinates will be automatically be scaled to match the new scaled source material. Then, your final asset will be 9-slice scaled.
+İşte olanlar. Diyelim ki “ui/asset.png” 400x50 piksel. Bu durumda, önce 9 dilimli sprite'lara özgü ```<scale_src>``` etiketini kullanarak küçültüyorum. “to_height” özelliği, varlığı hedef yüksekliğe (bu durumda ekran yüksekliğinin %10'u) ölçeklendirir ve genişliği de orantılı olarak ölçeklendirir. (Bunun yerine “width” ve “height” parametrelerini de kullanabilirsiniz). 9-slice sprite'ta bir varlığı bu şekilde ölçeklediğinizde, slice9 koordinatları otomatik olarak yeni ölçeklenmiş kaynak malzemeye uyacak şekilde ölçeklenir. Ardından, nihai varlığınız 9-slice ölçeklenir.
 
-# 5. Defining "points"
+# 5. “Noktalar” tanımlama
 
-So previously we had this:
+Daha önce şuna sahiptik:
 
 ```xml
 <definition name="sans10" font="verdana" size="10" style="bold" color="0xffffff" outline="0x000000"/>
 ```
 
-Which we changed to this:
+Bunu şuna değiştirdik:
 
 ```xml
 <definition name="sans_tiny"     font="verdana" size="screen.height*0.01667" style="bold" color="0xffffff" outline="0x000000"/>
 ```
 
-Now you can just do this!
+Artık bunu yapabilirsiniz!
 ```xml
 <point_size x="screen.height*0.001667" y="screen.width*0.001667"/>
 <definition name="sans10" font="verdana" size="10pt" style="bold" color="0xffffff" outline="0x000000"/>
 ```
 
-Whenever you use the ```<point_size/>``` tag, you are defining the horizontal and vertical size of a "point", which is referenced whenever you enter a numerical value and add the letters "pt" to the end. Basically whenever it sees "10pt" it will multiply 10 by the size of the point. For font sizes this is the vertical size of the point, in other places it infers from the context (x="15pt" is horizontal pt size, y="25pt" is vertical pt size).
+```<point_size/>``` etiketini kullandığınızda, sayısal bir değer girip sonuna “pt” harflerini eklediğinizde referans alınan “nokta”nın yatay ve dikey boyutunu tanımlamış olursunuz. Temel olarak, “10pt” gördüğünde, 10'u noktanın boyutuyla çarpar. Yazı tipi boyutları için bu, noktanın dikey boyutudur, diğer yerlerde ise bağlamdan çıkarılır (x=“15pt” yatay pt boyutu, y="25pt" dikey pt boyutudur).
 
-If you do this:
+Bunu yaparsanız:
 ```xml
 <point_size value="screen.height*0.001667"/>
 ```
-It uses the same value for both vertical and horizontal point size. In case you were wondering, 0.001667 is the value of 1/600. So if you have a game where you do the base layout at say 800x600, then you can define this point value to make it easily scale to other resolutions.
+Dikey ve yatay nokta boyutu için aynı değeri kullanır. Merak ediyorsanız, 0.001667, 1/600 değeridir. Yani, temel düzeni 800x600 olarak yaptığınız bir oyununuz varsa, bu nokta değerini tanımlayarak diğer çözünürlüklere kolayca ölçeklendirebilirsiniz.
 
-Only one ```<point_size/>``` tag is active at a time, the last one that the parse finds in the document. You can, however, put one in an included file and it will be loaded (so long as your current file doesn't have one that overrides it).
+Aynı anda yalnızca bir ```<point_size/>``` etiketi etkindir, bu da belgede ayrıştırma işlemi sırasında bulunan son etikettir. Ancak, bir etiketi dahil edilen dosyaya ekleyebilirsiniz ve bu etiket yüklenecektir (mevcut dosyanızda bunu geçersiz kılan bir etiket bulunmadığı sürece).
 
-You can use a point-number anywhere (at least, I think) you can use a normal numerical value.
+Normal sayısal değerleri kullanabileceğiniz her yerde (en azından bence) nokta sayısını da kullanabilirsiniz.
