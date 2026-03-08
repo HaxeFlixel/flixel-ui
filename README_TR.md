@@ -34,6 +34,17 @@ Veya github'dan en son geliştirme sürümü için şöyle:
 
     haxelib git firetongue https://github.com/larsiusprime/firetongue
 
+## Demo Projesi!
+ [flixel-demos](http://github.com/HaxeFlixel/flixel-demos) adresinde bir [test projesi](https://haxeflixel.com/demos/RPGInterface/) mevcuttur. Bu projeyi mutlaka inceleyin. XML dosyalarında çok sayıda satır içi dokümantasyon bulunmakta ve bazı karmaşık ve ince özellikler sergilenmektedir.
+
+flixel-demos'daki test projesinin **[fireTongue](https://github.com/larsiusprime/firetongue)** yerelleştirme kütüphanesini gerektirdiğini lütfen unutmayın. Bu kütüphane şu şekilde yüklenebilir:
+
+    haxelib install firetongue
+
+Veya github'dan en son geliştirme sürümü için:
+
+    haxelib git firetongue https://github.com/larsiusprime/firetongue
+
 ## Hızlı proje kurulumu
 1. openfl varlıklar klasörünüzde bir "xml" yolu oluşturun
 2. Her bir durum için bir xml görünüm dosyası oluşturun
