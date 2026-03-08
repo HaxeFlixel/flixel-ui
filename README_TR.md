@@ -26,14 +26,6 @@ haxelib'den en son bıçak-kenarı geliştirici sürümünü indirin:
 
     haxelib install flixel-ui
 
-Unutmayın ki, flixel-demoları'ndaki test projesi, şöyle kurulabilecek yerelleştirme kütüphanesi **[fireTongue](https://github.com/larsiusprime/firetongue)**'ı gerektirir:
-
-    haxelib install firetongue
-
-Veya github'dan en son geliştirme sürümü için şöyle:
-
-    haxelib git firetongue https://github.com/larsiusprime/firetongue
-
 ## Demo Projesi!
  [flixel-demos](http://github.com/HaxeFlixel/flixel-demos) adresinde bir [test projesi](https://haxeflixel.com/demos/RPGInterface/) mevcuttur. Bu projeyi mutlaka inceleyin. XML dosyalarında çok sayıda satır içi dokümantasyon bulunmakta ve bazı karmaşık ve ince özellikler sergilenmektedir.
 
