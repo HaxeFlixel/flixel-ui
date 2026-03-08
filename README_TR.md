@@ -682,7 +682,7 @@ Sıkı bir biçimde test edilmedi, ama var.
 
 ## 9. Radyo buton grubu (FlxUIRadioGroup) ```<radio_group>```
 
-Radyo grupları, tek seferde sadece birinin tıklanabildiği bir takım butonlardır. Bunları ```FlxUIGroup``` of ```FlxUICheckBox```'ları olarak uygularız,ve iç sistemse tek seferde sadece birini tıklanabilir hâle getirir. 
+Radyo grupları, tek seferde sadece birinin tıklanabildiği bir takım butonlardır. Bunları ```FlxUIGroup``` of ```FlxUICheckBox```'ları olarak uygularız,ve iç sistemse tek seferde sadece birini tıklanabilir hâle getirir.  
 
 Öznitelikler:
 * ```x```/```y```, ```use_def```, ```group```
@@ -696,31 +696,29 @@ Alt Düğümler:
 * ```<radio>``` - iki öznitelik, ad (dize) ve etiket (dize)
 * ```<dot>``` - dot_src muadili, daha güçlü*
 * ```<box>``` - radio_src muadili, daha güçlü*
-
-*If you supply ```<dot>``` or ```<box>``` child tags instead of their attribute equivalents, FlxUI will treat them as full-fledged ```<sprite>``` or ```<chrome>``` tags to load for the dot and radio-box assets. You'll want to use this method if you want to do something complicated, like load a scaled sprite, or a 9-slice-scaled sprite, that you can't normally accomplish with the src attributes, which just load a static image as-is.
-
+*Eğer özellik eşdeğerlerinin yerine ```<dot>``` veya ```<box>``` alt etiketlerini kullanırsanız, nokta ve radyo kutularını yüklemek için FlxUI onlara tam ```<sprite>``` veya ```<chrome>``` etiketi gibi davranacaktır. Ölçeklendirilmiş sprite yüklemek veya normalda src özellikleriyle başaramayacağınız sadece bir statik görseli olduğu gibi yükleyen 9 parçalı ölçekli bir sprite yüklemek gibi karışık bir şey yapmak isterseniz bu metodu kullanmak isteyebilirsiniz. 
 Olay:
 * ```name``` - "radyo grubuna tıkla"
 * ```params``` - Button ile aynı
 
 ## 10. Sekmeli Menü (FlxUITabMenu) ```<tab_menu>```
 
-Tab menus are the most complex ```FlxUI``` widget. ```FlxUITabMenu``` extends ```FlxUI``` and is thus a full-fledged ```FlxUI``` in and of itself, just like the ```<layout>``` tag.
+Sekmeli menüler en karışık ```FlxUI``` araç takımıdır. ```FlxUITabMenu``` , ```FlxUI``` 'yi genişletir ve bu nedenle, ```<layout>``` etiketi gibi, kendi başına tam teşekküllü bir ```FlxUI``` 'dir.
 
-This provides a menu with various tabbed buttons on top. When you click on one tab, it will show the content for that tab and hide the rest. 
+Bu, üstte çeşitli sekmeli düğmeler içeren bir menü sağlar. Bir sekmeye tıkladığınızda, o sekmenin içeriği gösterilir ve geri kalanı gizlenir. 
 
-Attributes:
+Özellikler:
 * ```x```/```y```, ```use_def```, ```group```
 * ```width```/```height```
-* ```back_def``` - name for a 9-slice chrome definition (MUST be 9-sliceable!)
+* ```back_def``` - 9 parçalı bir sprite için isim (9'a BÖLÜNEBİLMELİ!) 
 * ```slice9```
 
-Child Nodes:
-* ```<tab>``` - attributes are "name" and "label", much like in ```<radio_group>```
-* ```<group>``` - attributes are only "name"
- * Put regular FlxUI content tags here, within the ```<group></group>``` node.
+Alt Düğümler:
+* ```<tab>``` - attributes are "name" and "label", much like in ```<radio_group>```'da olduğu gibi özellikler "name" ve "label"dır.
+* ```<group>``` - özellikler sadece "name"dir
+ * ```<group></group>``` düğümüyle beraber sıradan FlxUI içerik etiketlerini koyun.
 
-## 11. Line (FlxUISprite) ```<line>```
+## 11. Sıra (FlxUISprite) ```<line>```
 
 TODO
 
@@ -728,30 +726,30 @@ TODO
 
 TODO
 
-## 13. Dropdown/Pulldown (FlxUIDropDownMenu) ```<dropdown>```
+## 13. Listeleme/Çekme (FlxUIDropDownMenu) ```<dropdown>```
 
 TODO
 
 ## 14. Bar ([FlxUIBar](https://api.haxeflixel.com/flixel/addons/ui/FlxUIBar.html)) ```<bar>```
 
-Provides a Bar that can be used for displaying health or progress.
+Sağlığı ve ilerlemeyi gösterebilecek bir Bar sağlar.
 
-Attributes:
-* ```x```/```y``` - position of the bar
-* ```width```/```height``` - dimensions of the bar
-* ```fill_direction``` - the fill direction. `left_to_right` is the default. See below for a list of possible values.
-* ```parent_ref``` - A reference to an object in your game that you wish the bar to track (the value of)
-* ```variable``` - The variable of the object that is used to determine the bar position. For example if the parent was an FlxSprite this could be "health" to track the health value
-* ```min``` - The minimum value. I.e. for a progress bar this would be zero (nothing loaded yet)
-* ```max``` - The maximum value the bar can reach. I.e. for a progress bar this would typically be 100.
-* ```value``` - The value that the bar is at initially. Default is `max`
-* ```border_color``` - Color of the border. If omitted there is no border at all.
-* ```filled_color``` or ```color``` - The color of the bar when full in hexformat. Default is red.
-* ```empty_color``` - The color of the bar when empty in hexformat. Default is red.
-* ```filled_colors``` or ```colors``` and ```empty_colors``` - Creates a gradient filled health bar using the given colour ranges.
-* ```chunk_size``` - If you want a more old-skool looking chunky gradient, increase this value!
-* ```rotation``` - Angle of the gradient in degrees. 90 = top to bottom, 180 = left to right. Any angle is valid
-* ```src_filled```/```src_empty``` - Use an image for the filled/empty bar.
+Özellikler:
+* ```x```/```y``` - barın pozisyonu
+* ```width```/```height``` - barın boyutu
+* ```fill_direction``` - doldurma yönü. Varsayıılan `left_to_right`dır. Mümkün olan değerler için aşağıya bakın.
+* ```parent_ref``` - Oyununuzda barın takip etmesini istediğiniz (değeri) nesneye bir referans
+* ```variable``` - Bar pozisyonunu belirlemekte kullanılan objenin değişkeni. Örneğin, eğer üst FlxSprite ise, sağlık değerini takip edebilmek için "health" olabilir
+* ```min``` - Minimum değer. Örneğin, bir ilerleme barı için bu "sıfır" olabilir (henüz hiçbir şey yüklenmemiş)
+* ```max``` - Barın ulaşabileceği maksimum değer. Örneğin, bir ilerleme barı için bu genelde "100" olabilir.
+* ```value``` - Barın başlangıçtaki değeri. Varsayılan `max`dır
+* ```border_color``` - Kenarlığın rengi. Kaldırılısa kenarlık yoktur.
+* ```filled_color``` veya ```color``` - hexformat içinde dolu olduğu takdirde barın rengi. Varsayılan kırmızıdır.
+* ```empty_color``` - hexformat içinde boş olduğu takdirde barın rengi. Varsayılan kırmızıdır.
+* ```filled_colors``` veya ```colors``` ve ```empty_colors``` -Verilen renk aralıklarını kullanarak gradyan bir sağlık barı oluşturur.
+* ```chunk_size``` - Eski görünümlü parça gradyanı isterseniz, bu değeri yükseltin!
+* ```rotation``` - Gradyanın dereceyle eğrisi. Yukarıdan aşağı 90, soldan sağaysa 180.Herhangi bir açı olur
+* ```src_filled```/```src_empty``` - Boş/dolu bir bar için bir görsel kullanın.
 
 Possible `fill_direction` values:
 * "left_to_right"
