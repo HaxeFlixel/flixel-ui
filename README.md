@@ -11,6 +11,10 @@
 
 ----
 
+# Deprecated
+
+Flixel-UI will no longer be adding new features, and maintenance will be kept a to a minimum. We recommend using [haxeui-flixel](https://github.com/haxeui/haxeui-flixel) for all your UI needs in flixel games and applications
+
 # About
 
 A series of tools for creating UI elements and managing UI events in [HaxeFlixel](https://github.com/HaxeFlixel/flixel).
