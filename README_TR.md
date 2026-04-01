@@ -10,6 +10,8 @@
 [![Patreon](https://img.shields.io/badge/donate-patreon-blue.svg)](https://www.patreon.com/haxeflixel)
 
 ----
+# Artık Kullanılmıyor
+Flixel-UI için artık özellik geliştirilmeyecek, bakımsa en azda tutulacak. Flixel oyun ve uygulamalarınızın UI ihtiyaçları için [haxeui-flixel](https://github.com/haxeui/haxeui-flixel)'ı kullanmanızı öneriyoruz.
 
 # Hakkında
 
