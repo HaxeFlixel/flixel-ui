@@ -760,7 +760,7 @@ class FlxInputText extends FlxText
 					caret.offset.x = shadowX < 0 ? -shadowX : 0;
 					caret.offset.y = shadowY < 0 ? -shadowY : 0;
 				#end
-				case OUTLINE_FAST, OUTLINE:
+				case OUTLINE_FAST, OUTLINE, OUTLINE_CARDINAL:
 					// Border all around it
 					final absSize = Math.abs(borderSize);
 					cw += Std.int(absSize * 2);
