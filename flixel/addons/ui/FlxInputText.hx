@@ -28,6 +28,7 @@ import openfl.geom.Rectangle;
  * License: Creative Commons Attribution 3.0 United States
  * @link http://creativecommons.org/licenses/by/3.0/us/
  */
+@:deprecated("flixel.addons.ui.FlxInputText is deprecated, use flixel.text.FlxInputText, instead")
 class FlxInputText extends FlxText
 {
 	public static inline var NO_FILTER:Int = 0;
@@ -770,6 +771,8 @@ class FlxInputText extends FlxText
 					caret.pixels.fillRect(r, caretC); // draw caret
 					// we need to offset caret's drawing position since the caret is now larger than normal
 					caret.offset.x = caret.offset.y = absSize;
+				default:
+					// Fix for https://github.com/HaxeFlixel/flixel/pull/3593
 			}
 			// Update width/height so caret's dimensions match its pixels
 			caret.width = cw;
