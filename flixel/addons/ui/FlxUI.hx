@@ -1,17 +1,15 @@
 package flixel.addons.ui;
 
-import openfl.display.BitmapData;
-import openfl.errors.Error;
-import openfl.geom.Matrix;
-import openfl.geom.Point;
-import openfl.geom.Rectangle;
-import openfl.Lib;
+import flixel.FlxG;
+import flixel.FlxObject;
+import flixel.FlxSprite;
+import flixel.FlxState;
+import flixel.addons.ui.BorderDef;
 import flixel.addons.ui.ButtonLabelStyle;
 import flixel.addons.ui.FlxUIBar.FlxBarStyle;
 import flixel.addons.ui.FlxUICursor.WidgetList;
 import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.addons.ui.FlxUIGroup;
-import flixel.addons.ui.BorderDef;
 import flixel.addons.ui.FlxUILine.LineAxis;
 import flixel.addons.ui.FlxUIRadioGroup.CheckStyle;
 import flixel.addons.ui.FlxUITooltipManager.FlxUITooltipData;
@@ -25,19 +23,21 @@ import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
 import flixel.addons.ui.interfaces.ILabeled;
 import flixel.addons.ui.interfaces.IResizable;
-import flixel.FlxG;
-import flixel.FlxObject;
-import flixel.FlxSprite;
-import flixel.FlxState;
 import flixel.group.FlxSpriteGroup;
+import flixel.math.FlxPoint;
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.ui.FlxBar.FlxBarFillDirection;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxColor;
-import flixel.math.FlxPoint;
 import flixel.util.FlxStringUtil;
 import openfl.Assets;
+import openfl.Lib;
+import openfl.display.BitmapData;
+import openfl.errors.Error;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
 import openfl.text.TextFormat;
 #if haxe4
 import haxe.xml.Access;
@@ -2898,6 +2898,7 @@ class FlxUI extends FlxUIGroup implements IEventGetter
 		return ft;
 	}
 
+	@:haxe.warning("-WDeprecated")
 	private function _loadInputText(data:Access):IFlxUIWidget
 	{
 		var text:String = U.xml_str(data.x, "text");
