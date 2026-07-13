@@ -1,6 +1,6 @@
 ![](https://github.com/HaxeFlixel/haxeflixel.com/blob/dev/content/_static/images/flixel-logos/flixel-ui.png?raw=true)
 
-[flixel](https://github.com/HaxeFlixel/flixel) | [addons](https://github.com/HaxeFlixel/flixel-addons) | [ui](https://github.com/HaxeFlixel/flixel-ui) | [demos](https://github.com/HaxeFlixel/flixel-demos) | [tools](https://github.com/HaxeFlixel/flixel-tools) | [templates](https://github.com/HaxeFlixel/flixel-templates) | [docs](https://github.com/HaxeFlixel/flixel-docs) | [haxeflixel.com](https://github.com/HaxeFlixel/haxeflixel.com)
+[flixel](https://github.com/HaxeFlixel/flixel) | [addons](https://github.com/HaxeFlixel/flixel-addons) | [ui](https://github.com/HaxeFlixel/flixel-ui) | [demos](https://github.com/HaxeFlixel/flixel-demos) | [tools](https://github.com/HaxeFlixel/flixel-tools) | [templates](https://github.com/HaxeFlixel/flixel-templates) | [docs](https://github.com/HaxeFlixel/flixel-docs) | [haxeflixel.com](https://github.com/HaxeFlixel/haxeflixel.com) | [türkçe](README_TR.md)
 
 [![CI](https://img.shields.io/github/actions/workflow/status/HaxeFlixel/flixel-ui/main.yml?branch=dev&logo=github)](https://github.com/HaxeFlixel/flixel-ui/actions?query=workflow%3ACI)
 [![Discord](https://img.shields.io/discord/162395145352904705.svg?logo=discord)](https://discordapp.com/invite/rqEBAgF)
@@ -10,6 +10,10 @@
 [![Patreon](https://img.shields.io/badge/donate-patreon-blue.svg)](https://www.patreon.com/haxeflixel)
 
 ----
+
+# Deprecated
+
+Flixel-UI will no longer be adding new features, and maintenance will be kept a to a minimum. We recommend using [haxeui-flixel](https://github.com/haxeui/haxeui-flixel) for all your UI needs in flixel games and applications
 
 # About
 
