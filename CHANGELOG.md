@@ -1,3 +1,11 @@
+2.6.5 (June 13, 2026)
+------------------------------
+`FlxUIRegion`: Fix Deprecation warning ([#294](https://github.com/HaxeFlixel/flixelui/pull/294))
+`FlxInputText`: Fix compatibility with flixel versions < 5.7.0 ([#297](https://github.com/HaxeFlixel/flixelui/pull/297))
+Turkish translation of Readme ([#299](https://github.com/HaxeFlixel/flixelui/pull/299))
+Deprecate `FlxInputText` (No PR)
+
+
 2.6.4 (December 10, 2024)
 ------------------------------
 `FlxUITypedButton`: Avoid deprecated `statusAnimations` field ([#291](https://github.com/HaxeFlixel/flixel-ui/pull/291))
