@@ -1,13 +1,13 @@
 package flixel.addons.ui;
 
+import flixel.FlxSprite;
 import flixel.addons.ui.FlxUI.NamedFloat;
 import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
-import flixel.FlxSprite;
+import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import flixel.util.FlxArrayUtil;
-import flixel.math.FlxPoint;
 import flixel.util.FlxStringUtil;
 
 class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements IFlxUIClickable implements IHasParams
@@ -50,6 +50,7 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 		return b;
 	}
 
+	@:haxe.warning("-WDeprecated")
 	private override function set_color(Value:Int):Int
 	{
 		color = Value;
@@ -199,6 +200,7 @@ class FlxUINumericStepper extends FlxUIGroup implements IFlxUIWidget implements 
 	 * @param	ButtonMinus			Optional button to use for minus
 	 * @param	IsPercent			Whether to portray the number as a percentage
 	 */
+	@:haxe.warning("-WDeprecated")
 	public function new(X:Float = 0, Y:Float = 0, StepSize:Float = 1, DefaultValue:Float = 0, Min:Float = -999, Max:Float = 999, Decimals:Int = 0,
 			Stack:Int = STACK_HORIZONTAL, ?TextField:FlxText, ?ButtonPlus:FlxUITypedButton<FlxSprite>, ?ButtonMinus:FlxUITypedButton<FlxSprite>,
 			IsPercent:Bool = false)
